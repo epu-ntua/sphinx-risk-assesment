@@ -18,6 +18,9 @@ From Pycharms' starting screen
 *  Create new virtual environment (File -> Settings -> Project -> Project Intepreter => icon -> Add local -> ok)
 *  Install requirements from requirements.txt (Go to requirements.txt -> Press install on pop up)
 
+Current Database used is Sqlite but it isn't included in github due to size
+In fresh installs always recreate database 
 #Running Risk Assessment Module
--In cmd line:
+`flask db migrate` (Shouldn't be needed)
+`flask db upgrade` (Necessary to recreate db)
 `flask run`
