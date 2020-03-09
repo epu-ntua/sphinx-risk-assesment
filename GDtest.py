@@ -28,15 +28,20 @@ def my_excel_read(xpath, xcol, cwe_code):
                 yield currentSheet.cell(cell.row, 1).value, currentSheet.cell(cell.row, 2).value
 
 
-# v_report("Json_texts/report1.json")
-# for x in my_excel_read('xlsx_texts/CWE-Research Concepts-1000.xlsx', 'R', 'CVE-1999-0524'):
+#v_report("app/Json_texts/report1.json")
+# for x in my_excel_read('app/xlsx_texts/CWE-Research Concepts-1000.xlsx', 'R', 'CVE-1999-0524'):
 #    print(x)
-# for x, y in my_excel_read('xlsx_texts/CAPEC-Domains of Attack-3000.xlsx', 'R','200'):
-#    print(x)
+# for x, y in my_excel_read('app/xlsx_texts/CAPEC-Domains of Attack-3000.xlsx', 'R','200'):
+#     print(x,y)
 
 response = requests.get("https://services.nvd.nist.gov/rest/json/cve/1.0/CVE-1999-0524")
 if response.status_code == 200:
     myreport = response.json()
-    print(myreport['result']['CVE_Items'][0]["cve"]['problemtype']['problemtype_data'][0]['description'][0]['value'])
+    # print(myreport['result']['CVE_Items'][0]["cve"]['problemtype']['problemtype_data'][0]['description'][0]['value'])
+    for item in myreport['result']['CVE_Items']:
+        print(item["cve"]["ID"])
+        for problem in item["cve"]['problemtype']['problemtype_data']:
+            for descr in problem['description']:
+                print(item["cve"]["ID"] + ' - ' + descr["value"])
 
 # print(response.json())
