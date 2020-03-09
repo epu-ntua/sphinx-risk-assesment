@@ -1,3 +1,4 @@
+openpyxl
 alembic==1.4.0
 asgiref==3.2.3
 Click==7.0
