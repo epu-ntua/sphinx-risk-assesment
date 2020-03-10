@@ -3,20 +3,27 @@ from app.models import CAPEC
 import openpyxl
 
 
-def my_excel_read(xpath, xcol, cwe_code):
+######## Insert all CAPEC records from Excel
+def my_excel_read(xpath):
     theFile = openpyxl.load_workbook(xpath)
     currentSheet = theFile.active
-    for cell in currentSheet[xcol]:
-        if cell.value is not None:  # We need to check that the cell is not empty.
-            if cwe_code in cell.value:  # Check if the value of the cell contains the text 'Table'
-                yield currentSheet.cell(cell.row, 1).value, currentSheet.cell(cell.row, 2).value
+    for row in currentSheet.iter_rows(min_row=2, values_only=True):
+        if row[0] is not None:  # We need to check that the cell is not empty.
+            # id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+            my_row = CAPEC(capecId=row[0], name=row[1], abstraction=row[2], status=row[3], description=row[4],
+                           alternateTerms=row[5], likelihoodOfAttack=row[6], typicalSeverity=row[7],
+                           relatedAttackpatterns=row[8], executionFlow=row[9], prerequisites=row[10],
+                           skillsRequired=row[11], resourcesRequired=row[12], indicators=row[13], consequences=row[14],
+                           mitigations=row[15], exampleInstances=row[16], relatedWeaknesses=row[17],
+                           taxonomyMappings=row[18], notes=row[19])
+            db.session.add(my_row)
+    db.session.commit()
+    return 1
 
 
-#
-# for x, y in my_excel_read('xlsx_texts/CAPEC-Domains of Attack-3000.xlsx', 'R','200'):
-#     print(x,y)
+# x = my_excel_read('xlsx_texts/CAPEC-Domains of Attack-3000.xlsx')
+# print('Return: {}'.format(x))
 
-# for x, y in my_excel_read('xlsx_texts/CAPEC-Domains of Attack-3000.xlsx', 'R', '200'):
-my_row = CAPEC(capecId=int(116), name='Excavation')
-db.session.add(my_row)
-db.session.commit()
+# db.create_all()
+print(CAPEC.query.order_by(CAPEC.id).all())
+

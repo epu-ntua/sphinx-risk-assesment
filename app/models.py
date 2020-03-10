@@ -1,8 +1,9 @@
 from app import db
 from datetime import datetime
 
+
 class CVE(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     CVEId = db.Column(db.String(), index=True, unique=True)
     status = db.Column(db.String(), index=True)
     description = db.Column(db.String())
@@ -14,8 +15,9 @@ class CVE(db.Model):
     def __repr__(self):
         return '<CVE {}>'.format(self.CVEId)
 
+
 class CWE(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     CWEId = db.Column(db.String(), index=True, unique=True)
     name = db.Column(db.String())
     weakness = db.Column(db.String())
@@ -29,7 +31,7 @@ class CWE(db.Model):
     backgroundDetails = db.Column(db.String())
     alternateTerms = db.Column(db.String())
     modesOfIntroduction = db.Column(db.String())
-    exploitationFactors= db.Column(db.String())
+    exploitationFactors = db.Column(db.String())
     likelihoodOfExploit = db.Column(db.String())
     commonConsequences = db.Column(db.String())
     detectionMethods = db.Column(db.String())
@@ -44,8 +46,9 @@ class CWE(db.Model):
     def __repr__(self):
         return '<CWE {}>'.format(self.CWEId)
 
+
 class CAPEC(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     capecId = db.Column(db.String(), index=True, unique=True)
     name = db.Column(db.String())
     abstraction = db.Column(db.String())
@@ -54,8 +57,7 @@ class CAPEC(db.Model):
     alternateTerms = db.Column(db.String())
     likelihoodOfAttack = db.Column(db.String())
     typicalSeverity = db.Column(db.String())
-    relatedAttack = db.Column(db.String())
-    patterns = db.Column(db.String())
+    relatedAttackpatterns = db.Column(db.String())
     executionFlow = db.Column(db.String())
     prerequisites = db.Column(db.String())
     skillsRequired = db.Column(db.String())
