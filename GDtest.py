@@ -7,8 +7,7 @@ def v_report(fpath):
     with open(fpath, "r") as fp:
         obj = json.load(fp)
         for item in obj['report']['report']['results']['result']:
-            yield obj["ip"], item["host"]["asset"]["@asset_id"], item["nvt"]["cvss_base"], item["nvt"]["cve"], \
-                  item["nvt"]["@oid"], item["name"]
+            yield obj["ip"], obj["report"]["@id"], item["port"], item["host"]["asset"]["@asset_id"], item["nvt"]["cvss_base"], item["nvt"]["cve"], item["nvt"]["@oid"], item["name"]
             # print(item["host"]["asset"]["@asset_id"],
             #       ' - ' + item["nvt"]["cvss_base"] + ' - ' + item["nvt"]["cve"] + ' - ' + item["nvt"]["@oid"],
             #       ' - ' + item["name"])
@@ -41,17 +40,17 @@ def get_cwe_codes(myreport):
 
 ###### console tests
 # for VAaaS report - get CVE codes
-# for ip, asset, cvss, cve, oid, name in v_report("app/Json_texts/report1.json"):
-##     print(ip, asset, cvss, cve, oid, name)
+for ip, rid, port, asset, cvss, cve, oid, name in v_report("app/Json_texts/report1.json"):
+     print(ip, rid, port, asset, cvss, cve, oid, name)
 ##### through NVD API - get CWE codes
-response = requests.get("https://services.nvd.nist.gov/rest/json/cve/1.0/CVE-2009-3421")
-if response.status_code == 200:
-    myreport = response.json()
-    for cve, id, cwe in get_cwe_codes(myreport):
-        cwe_number = cwe.split("CWE-", 1)[1].strip()
-        if cwe_number.isnumeric():
-            print(cve, id, cwe.split("CWE-", 1)[1].strip())
-######## for CWE - get CAPEC patterns
-            for x, y in my_excel_read('app/xlsx_texts/CAPEC-Domains of Attack-3000.xlsx', 'R', cwe_number):
-                print(x, y)
+# response = requests.get("https://services.nvd.nist.gov/rest/json/cve/1.0/CVE-2009-3421")
+# if response.status_code == 200:
+#     myreport = response.json()
+#     for cve, id, cwe in get_cwe_codes(myreport):
+#         cwe_number = cwe.split("CWE-", 1)[1].strip()
+#         if cwe_number.isnumeric():
+#             print(cve, id, cwe.split("CWE-", 1)[1].strip())
+# ######## for CWE - get CAPEC patterns
+#             for x, y in my_excel_read('app/xlsx_texts/CAPEC-Domains of Attack-3000.xlsx', 'R', cwe_number):
+#                 print(x, y)
 
