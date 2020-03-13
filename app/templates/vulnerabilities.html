@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form action="/action_page.php">
+    <div class="row d-flex information-bar">
+        <div class="col-10">
+            <h5> Assets Setup: 5/10 Remaining: 5</h5>
+        </div>
+        <div class="col-2">
+            <button type="submit" class="btn btn-primary">Select Threats ></button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2 custom-select-column">
+            <h3> Select Asset</h3>
+            <hr>
+            <ul class="list-group list-group-flush">
+                <a href="" class="list-group-item">Asset 1
+                    <br>(0/10 Vulnurabilities Configured)
+                </a>
+                <a class="list-group-item">Asset 2
+                    <br>(0/10 Vulnurabilities Configured)
+                </a>
+                <a class="list-group-item">Asset 3
+                    <br>(0/10 Vulnurabilities Configured)
+                </a>
+
+            </ul>
+        </div>
+        <div class="col-2 custom-select-column">
+            <h3> Select CVE</h3>
+            <hr>
+            <ul class="list-group list-group-flush">
+                <a href="" class="list-group-item">CVE - ####
+                </a>
+                <a class="list-group-item">CVE - ####
+                </a>
+                <a class="list-group-item">CVE - ####
+                </a>
+
+            </ul>
+        </div>
+        <div class="col-4 d-flex flex-wrap align-content-start custom-select-column">
+            <div class="row flex-grow custom-select-column-header">
+                <h3> Proposed Threats</h3>
+            </div>
+
+            <div class="card custom-card ">
+                <div class="card-body">
+                    <h5 class="card-title">CAPEC - ###</h5>
+                    <p class="card-text">CVSS:.</p>
+                    <!--<button class="btn btn-primary" type="button" data-toggle="modal" data-target="#myModal">Configure-->
+                    <!--</button>-->
+                    <label class="form-check-label">
+                        <input class="form-check-input" type="checkbox"> Add Threat
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="col-4 d-flex flex-wrap align-content-start custom-select-column">
+            <div class="custom-select-column-header row">
+                <h3> Other Threats</h3>
+            </div>
+
+            <div class="card custom-card">
+                <div class="card-body">
+                    <h5 class="card-title">CAPEC - ###</h5>
+                    <p class="card-text">CVSS:.</p>
+                    <label class="form-check-label">
+                        <input class="form-check-input" type="checkbox">Add Threat
+                    </label>
+                    <!--<button class="btn btn-primary" type="button" data-toggle="modal" data-target="#myModal">Configure-->
+                    <!--</button>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% endblock %}
