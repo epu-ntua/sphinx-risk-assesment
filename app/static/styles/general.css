@@ -32,3 +32,23 @@ html, body {
     width: 100%;
     height: min-content;
 }
+
+.unselected-a{
+    color: #4f4f4f;
+    background-color: white;
+}
+
+.unselected-a:hover{
+    color: white;
+    background-color: #0069d9;
+}
+
+.selected-a{
+    color: white;
+    background-color: #0069d9;
+}
+
+.selected-a:hover{
+    color: white;
+    background-color: #0069d9;
+}
