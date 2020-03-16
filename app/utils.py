@@ -1,7 +1,6 @@
 from sqlalchemy.exc import SQLAlchemyError
-
 from app import db
-from app.models import CAPEC, CWE, CVE, VReport, Association, cVecWe
+from app.models import CAPEC, CWE, CVE, VReport, VReportCVELink, cVecWe
 from sqlalchemy import exists
 from datetime import date
 import openpyxl
@@ -103,64 +102,86 @@ def v_report(fpath):
             my_report.name=obj["report"]["name"] if obj["report"]["name"] is not None else ""
             db.session.add(my_report)
             try:
-                db.session.flush()
+                db.session.commit()
             except SQLAlchemyError as e:
                 db.session.rollback()
                 return e
-
+        # Get CVE from the result nodes of the report
             for item in obj['report']['report']['results']['result']:
                 if item["nvt"]["cve"] == "NOCVE":
                     continue
                 else:
                     reprow_cveId = item["nvt"]["cve"]
-                    # my_cve_code = CVE.query.filter_by(CVEId=item["nvt"]["cve"])[0]
-                    if db.session.query(exists().where(CVE.CVEId == reprow_cveId)).scalar():
-                        my_CVE_row = db.session.query(CVE).filter_by(CVEId=reprow_cveId).one()
+                    if not db.session.query(exists().where(CVE.CVEId == reprow_cveId)).scalar():
+                        continue
+                    my_report = db.session.query(VReport).filter_by(reportId=reprow_reportId).one()
+                    my_cve = db.session.query(CVE).filter_by(CVEId=reprow_cveId).one()
+                    if VReport.query.join(VReportCVELink).join(CVE).filter((VReportCVELink.vreport_id == my_report.id) & (VReportCVELink.cve_id == my_cve.id)).first() is None:
+                        my_link = VReportCVELink(vreport_id=my_report.id, cve_id = my_cve.id)
                     else:
-                        my_CVE_row = CVE(CVEId=reprow_cveId)
-                    db.session.add(my_CVE_row)
-                    db.session.flush()
-                    my_association = Association(
-                        VReport_assetID=item["host"]["asset"]["@asset_id"] if item["host"]["asset"][
-                                                                                  "@asset_id"] is not None else "",
-                        VReport_assetIp=obj["ip"] if obj["ip"] is not None else "",
-                        VReport_port=item["port"] if item["port"] is not None else "",
-                        comments=item["nvt"]["@oid"] if item["nvt"]["@oid"] is not None else "")
-                    my_association.cve_s = db.session.query(CVE).filter_by(CVEId=reprow_cveId).one()
-                    my_report.CVEs.append(my_association)
-                    db.session.add(my_report)
+                        my_link = VReport.query.join(VReportCVELink).join(CVE).filter((VReportCVELink.vreport_id == my_report.id) & (VReportCVELink.cve_id == my_cve.id)).first()
+                    my_link.VReport_assetID=item["host"]["asset"]["@asset_id"] if item["host"]["asset"][
+                                                                                  "@asset_id"] is not None else ""
+                    my_link.VReport_assetIp=obj["ip"] if obj["ip"] is not None else ""
+                    my_link.VReport_port=item["port"] if item["port"] is not None else ""
+                    my_link.comments=item["nvt"]["@oid"] if item["nvt"]["@oid"] is not None else ""
+                    db.session.add(my_link)
                     try:
                         db.session.commit()
                     except SQLAlchemyError as e:
                         db.session.rollback()
-                        return e
-                    # response = requests.get("https://services.nvd.nist.gov/rest/json/cve/1.0/" + item["nvt"]["cve"])
-                    # if response is not None and response.status_code == 200:
-                    #     myNVDreport = response.json()
-                    #     for api_cve_desc, api_cveId, api_cweId in get_cwe_codes(myNVDreport):
-                    #         cwe_number = api_cweId.split("CWE-", 1)[1].strip()
-                    #         if cwe_number.isnumeric():
-                    #             print(api_cve_desc, api_cveId, cwe_number)
-                    #             # todo update CVE - CWE table based on responses
-                    #             if db.session.query(exists().where(CWE.CWEId == cwe_number)).scalar():
-                    #                 my_CWE_row = db.session.query(CWE).filter_by(CWEId=cwe_number)[0]
-                    #             else:
-                    #                 my_CWE_row = CWE(CWEId=cwe_number)
-                    #             db.session.add(my_CWE_row)
-                    #
-                    #             #not here-- because i will have to return the values---- my_CVE_row.accessVector
-                    #             db.session.add(my_CVE_row)
-                    #             comp_cVecWe = cVecWe(cve_id=my_CVE_row.CVEId,cwe_id=cwe_number, date=date.today())
-            db.session.commit()
+                        continue
+        # call API for CVE and CWE information
+                    response = requests.get("https://services.nvd.nist.gov/rest/json/cve/1.0/" + item["nvt"]["cve"])
+                    if response is not None and response.status_code == 200:
+                        myNVDreport = response.json()
+            # update CVE table with API values
+                        impact = myNVDreport['result']['CVE_Items'][0]['impact']
+                        my_cve = db.session.query(CVE).filter_by(CVEId=reprow_cveId).one()
+                        my_cve.severity = impact["baseMetricV2"]["severity"] if impact["baseMetricV2"]["severity"] is not None else ""
+                        my_cve.exploitabilityScore = impact["baseMetricV2"]['exploitabilityScore'] if impact["baseMetricV2"][
+                                                                                          'exploitabilityScore'] is not None else ""
+                        my_cve.impactScore = impact["baseMetricV2"]['impactScore'] if impact["baseMetricV2"]['impactScore'] is not None else ""
+                        my_cve.obtainAllPrivilege = impact["baseMetricV2"]['obtainAllPrivilege'] if impact["baseMetricV2"][
+                                                                                        'obtainAllPrivilege'] is not None else ""
+                        my_cve.obtainUserPrivilege = impact["baseMetricV2"]['obtainUserPrivilege'] if impact["baseMetricV2"][
+                                                                                          'obtainUserPrivilege'] is not None else ""
+                        my_cve.obtainOtherPrivilege = impact["baseMetricV2"]['obtainOtherPrivilege'] if impact["baseMetricV2"][
+                                                                                            'obtainOtherPrivilege'] is not None else ""
+                        my_cve.userInteractionRequired = impact["baseMetricV2"]['userInteractionRequired'] if impact["baseMetricV2"][
+                                                                                                  'userInteractionRequired'] is not None else ""
+                        my_cve.accessVector = impact['baseMetricV2']['cvssV2']['accessVector'] if impact[
+                                                                                                      'baseMetricV2']['cvssV2']['accessVector'] is not None else ""
+                        my_cve.accessComplexity = impact['baseMetricV2']['cvssV2']['accessComplexity'] if impact[
+                                                                                                              'baseMetricV2']['cvssV2']['accessComplexity'] is not None else ""
+                        my_cve.authentication = impact['baseMetricV2']['cvssV2']['authentication'] if impact[
+                                                                                                          'baseMetricV2']['cvssV2']['authentication'] is not None else ""
+                        my_cve.confidentialityImpact = impact['baseMetricV2']['cvssV2']['confidentialityImpact'] if impact[
+                                                                                                                        'baseMetricV2']['cvssV2']['confidentialityImpact'] is not None else ""
+                        my_cve.integrityImpact = impact['baseMetricV2']['cvssV2']['integrityImpact'] if impact[
+                                                                                                            'baseMetricV2']['cvssV2']['integrityImpact'] is not None else ""
+                        my_cve.availabilityImpact = impact['baseMetricV2']['cvssV2']['availabilityImpact'] if impact[
+                                                                                                                  'baseMetricV2']['cvssV2']['availabilityImpact'] is not None else ""
+                        my_cve.baseScore = impact['baseMetricV2']['cvssV2']['baseScore'] if impact['baseMetricV2']['cvssV2']['baseScore'] is not None else ""
+                        db.session.add(my_cve)
+            # Get CWEs and link them with CVE
+                        for api_cve_desc, api_cveId, api_cweId in get_cwe_codes(myNVDreport):
+                            cwe_number = api_cweId.split("CWE-", 1)[1].strip()
+                            if cwe_number.isnumeric():
+                                if db.session.query(exists().where(CWE.CWEId == cwe_number)).scalar():
+                                    my_CWE_row = db.session.query(CWE).filter_by(CWEId=cwe_number)[0]
+                                else:
+                                    my_CWE_row = CWE(CWEId=cwe_number)
+                                    db.session.add(my_CWE_row)
+                                if db.session.query(CVE).filter(cVecWe.cwe_id == my_CWE_row.id, cVecWe.cve_id == my_cve.id).first() is None:
+                                    my_cVecWe = cVecWe(cve_id=my_cve.id, cwe_id=my_CWE_row.id, date=date.today())
+                                else:
+                                    my_cVecWe = db.session.query(CVE).filter(cVecWe.cwe_id == my_CWE_row.id, cVecWe.cve_id == my_cve.id).first()
+                                    my_cVecWe.date = date.today()
+                                db.session.add(my_cVecWe)
+                        db.session.commit()
             return 1
-
-
 # </editor-fold>
-
-# todo find DISTINCT CAPEC values based on CWEs
-# ######## for CWE - get CAPEC patterns
-#             for x, y in my_excel_read('app/xlsx_texts/CAPEC-Domains of Attack-3000.xlsx', 'R', cwe_number):
-#                 print(x, y)
 
 
 # <editor-fold desc="NVD API get_cwe_codes">
@@ -170,26 +191,24 @@ def get_cwe_codes(myreport):
         for problem in item["cve"]['problemtype']['problemtype_data']:
             for descr in problem['description']:
                 yield itemdescr, item["cve"]["CVE_data_meta"]["ID"], descr["value"]
-
-
 # </editor-fold>
 
-# <editor-fold desc="Test area">
-# reprow_cveId='CVE-1999-0524'
-# x=db.session.query(exists().where(CVE.CVEId == reprow_cveId)).scalar()
-# y = db.session.query(CVE).filter_by(CVEId=reprow_cveId).one()
-# z=  CVE.query.filter_by(CVEId=reprow_cveId).one()
-# print (z.CVEId, z.status)
 
-for x in v_report("Json_texts/report1.json"):
-  print(x)
+# <editor-fold desc="Test area">
+# db.create_all()
+x= v_report("Json_texts/report1.json")# for x in v_report("Json_texts/report1.json"):
+print(x)
+
+
+for y in cVecWe.query.all():
+    print(y.cwe_id, y.cve_id, y.date)
 
 # db.create_all()
 # x = CAPEC_excel_insertData('xlsx_texts/CAPEC-Domains of Attack-3000.xlsx')
 # print('Return: {}'.format(x))
 # for xx in CAPEC.query.all():
-#     print(xx.id, xx.capecId, xx.name)
-
+#     print(xx.id, xx.capecId, xx.name, xx.relatedWeaknesses)
+#
 # x = CWE_excel_insertData('xlsx_texts/CWE-Research Concepts-1000.xlsx')
 # print('Return: {}'.format(x))
 # for xx in CWE.query.all():

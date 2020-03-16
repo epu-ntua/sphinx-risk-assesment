@@ -1,16 +1,17 @@
 from app import db
 
 
-class Association(db.Model):
-    __tablename__ = 'association'
-    left_id = db.Column(db.Integer, db.ForeignKey('VReportTable.id'), primary_key=True)
-    right_id = db.Column(db.Integer, db.ForeignKey('CVETable.id'), primary_key=True)
-    VReport_assetID = db.Column(db.String())
-    VReport_assetIp = db.Column(db.String())
-    VReport_port = db.Column(db.String())
-    comments = db.Column(db.String(50))
-    cve_s = db.relationship("CVE", back_populates="VReports")
-    vreport_s = db.relationship("VReport", back_populates="CVEs")
+class VReport(db.Model):
+    __tablename__ = 'VReportTable'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    reportId = db.Column(db.String(), index=True, unique=True)
+    creation_time = db.Column(db.String())
+    name = db.Column(db.String())
+    comments = db.Column(db.String())
+    # CVEs = db.relationship("VReportCVELink", back_populates="vreport_s")
+
+    def __repr__(self):
+        return '<VaasReport {}>'.format(self.reportId)
 
 
 class CVE(db.Model):
@@ -33,24 +34,23 @@ class CVE(db.Model):
     obtainUserPrivilege = db.Column(db.Boolean)
     obtainOtherPrivilege = db.Column(db.Boolean)
     userInteractionRequired = db.Column(db.Boolean)
-    # Relationships
-    VReports = db.relationship("Association", back_populates="cve_s")
+    # # Relationships
+    # VReports = db.relationship("VReportCVELink", back_populates="cve_s")
 
     def __repr__(self):
         return '<CVE {}>'.format(self.CVEId)
 
 
-class VReport(db.Model):
-    __tablename__ = 'VReportTable'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    reportId = db.Column(db.String(), index=True, unique=True)
-    creation_time = db.Column(db.String())
-    name = db.Column(db.String())
-    comments = db.Column(db.String())
-    CVEs = db.relationship("Association", back_populates="vreport_s")
-
-    def __repr__(self):
-        return '<VaasReport {}>'.format(self.reportId)
+class VReportCVELink(db.Model):
+    __tablename__ = 'vreport_cve_link'
+    vreport_id = db.Column(db.Integer, db.ForeignKey('VReportTable.id'), primary_key=True)
+    cve_id = db.Column(db.Integer, db.ForeignKey('CVETable.id'), primary_key=True)
+    VReport_assetID = db.Column(db.String())
+    VReport_assetIp = db.Column(db.String())
+    VReport_port = db.Column(db.String())
+    comments = db.Column(db.String(50))
+#     cve_s = db.relationship("CVE", back_populates="VReports")
+#     vreport_s = db.relationship("VReport", back_populates="CVEs")
 
 
 class CWE(db.Model):
