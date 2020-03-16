@@ -18,6 +18,7 @@ class CVE(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     CVEId = db.Column(db.String(), index=True, unique=True)
     description = db.Column(db.String(), index=True)
+    status = db.Column(db.String())
     accessVector = db.Column(db.String())
     accessComplexity = db.Column(db.String())
     authentication = db.Column(db.String())
@@ -108,3 +109,14 @@ class CAPEC(db.Model):
 
     def __repr__(self):
         return '<CAPEC {}>'.format(self.capecId)
+
+
+class cVecWe(db.Model):
+    __tablename__ = 'cVecWeTable'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    cve_id = db.Column(db.Integer, db.ForeignKey('CVETable.id'), nullable=False)
+    cwe_id = db.Column(db.Integer, db.ForeignKey('CWE.id'), nullable=False)
+    date = db.Column(db.DateTime)
+
+    def __repr__(self):
+        return '<VaasReport {}>'.format(self.Id)

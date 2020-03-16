@@ -49,7 +49,7 @@ for ip, rid, port, asset, cvss, cve, oid, name in v_report("app/Json_texts/repor
 #     for cve, id, cwe in get_cwe_codes(myreport):
 #         cwe_number = cwe.split("CWE-", 1)[1].strip()
 #         if cwe_number.isnumeric():
-#             print(cve, id, cwe.split("CWE-", 1)[1].strip())
+#             print(cve, id, cwe_number)
 # ######## for CWE - get CAPEC patterns
 #             for x, y in my_excel_read('app/xlsx_texts/CAPEC-Domains of Attack-3000.xlsx', 'R', cwe_number):
 #                 print(x, y)

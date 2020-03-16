@@ -1,3 +1,5 @@
+from sqlalchemy.exc import SQLAlchemyError
+
 from app import db
 from app.models import CAPEC, CWE, CVE, VReport, Association, cVecWe
 from sqlalchemy import exists
@@ -14,15 +16,14 @@ def CAPEC_excel_insertData(capecexcelpath):
     currentSheet = theFile.active
     for row in currentSheet.iter_rows(min_row=2, values_only=True):
         if row[0] is not None:  # We need to check that the cell is not empty.
-            # id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-            # todo check if the records already exists in db
-            my_row = CAPEC(capecId=row[0], name=row[1], abstraction=row[2], status=row[3], description=row[4],
-                           alternateTerms=row[5], likelihoodOfAttack=row[6], typicalSeverity=row[7],
-                           relatedAttackpatterns=row[8], executionFlow=row[9], prerequisites=row[10],
-                           skillsRequired=row[11], resourcesRequired=row[12], indicators=row[13], consequences=row[14],
-                           mitigations=row[15], exampleInstances=row[16], relatedWeaknesses=row[17],
-                           taxonomyMappings=row[18], notes=row[19])
-            db.session.add(my_row)
+            if not db.session.query(exists().where(CAPEC.capecId == row[0])).scalar():
+                my_row = CAPEC(capecId=row[0], name=row[1], abstraction=row[2], status=row[3], description=row[4],
+                               alternateTerms=row[5], likelihoodOfAttack=row[6], typicalSeverity=row[7],
+                               relatedAttackpatterns=row[8], executionFlow=row[9], prerequisites=row[10],
+                               skillsRequired=row[11], resourcesRequired=row[12], indicators=row[13], consequences=row[14],
+                               mitigations=row[15], exampleInstances=row[16], relatedWeaknesses=row[17],
+                               taxonomyMappings=row[18], notes=row[19])
+                db.session.add(my_row)
     db.session.commit()
     return 1
 
@@ -76,7 +77,7 @@ def CVE_excel_insertData(cveexcelpath):
     currentSheet = theFile.active
     for row in currentSheet.iter_rows(min_row=2, values_only=True):
         if row[0] is not None:
-            if CVE.query(exists().where(CVE.CVEId == row[0])).scalar() == False:
+            if not CVE.query(exists().where(CVE.CVEId == row[0])).scalar():
                 my_row = CVE(CVEId=row[0], status=row[1])
                 db.session.add(my_row)
     db.session.commit()
@@ -93,45 +94,63 @@ def v_report(fpath):
         obj = json.load(fp)
         # todo: check what must be changed if a report has more than one devices
         if obj["report"]["@id"] is not None:
-            my_report = VReport(
-                reportId=obj["report"]["@id"],
-                creation_time=obj["report"]["creation_time"] if obj["report"]["creation_time"] is not None else "",
-                name=obj["report"]["name"] if obj["report"]["name"] is not None else "")
+            reprow_reportId = obj["report"]["@id"]
+            if db.session.query(exists().where(VReport.reportId == reprow_reportId)).scalar():
+                my_report = db.session.query(VReport).filter_by(reportId=reprow_reportId).one()
+            else:
+                my_report = VReport(reportId=reprow_reportId)
+            my_report.creation_time=obj["report"]["creation_time"] if obj["report"]["creation_time"] is not None else ""
+            my_report.name=obj["report"]["name"] if obj["report"]["name"] is not None else ""
+            db.session.add(my_report)
+            try:
+                db.session.flush()
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                return e
+
             for item in obj['report']['report']['results']['result']:
                 if item["nvt"]["cve"] == "NOCVE":
                     continue
                 else:
-                    # todo CWE -> insert VReport - CVE association
-                    my_cve_code = CVE.query.filter_by(CVEId=item["nvt"]["cve"])
+                    reprow_cveId = item["nvt"]["cve"]
+                    # my_cve_code = CVE.query.filter_by(CVEId=item["nvt"]["cve"])[0]
+                    if db.session.query(exists().where(CVE.CVEId == reprow_cveId)).scalar():
+                        my_CVE_row = db.session.query(CVE).filter_by(CVEId=reprow_cveId).one()
+                    else:
+                        my_CVE_row = CVE(CVEId=reprow_cveId)
+                    db.session.add(my_CVE_row)
+                    db.session.flush()
                     my_association = Association(
                         VReport_assetID=item["host"]["asset"]["@asset_id"] if item["host"]["asset"][
                                                                                   "@asset_id"] is not None else "",
                         VReport_assetIp=obj["ip"] if obj["ip"] is not None else "",
                         VReport_port=item["port"] if item["port"] is not None else "",
                         comments=item["nvt"]["@oid"] if item["nvt"]["@oid"] is not None else "")
-                    my_association.cve_s = my_cve_code
+                    my_association.cve_s = db.session.query(CVE).filter_by(CVEId=reprow_cveId).one()
                     my_report.CVEs.append(my_association)
                     db.session.add(my_report)
-                    response = requests.get("https://services.nvd.nist.gov/rest/json/cve/1.0/" + item["nvt"]["cve"])
-                    if response is not None and response.status_code == 200:
-                        myNVDreport = response.json()
-                        for cve_desc, cveId, cwe in get_cwe_codes(myNVDreport):
-                            cwe_number = cwe.split("CWE-", 1)[1].strip()
-                            if cwe_number.isnumeric():
-                                print(cve_desc, cveId, cwe_number)
-                                # todo update CVE - CWE table based on responses
-                                if db.session.query(exists().where(CWE.CWEId == cwe_number)).scalar():
-                                    my_CWE_row = db.session.query(CWE).filter_by(CWEId=cwe_number)[0]
-                                else:
-                                    my_CWE_row = CWE(CWEId=cwe_number)
-                                db.session.add(my_CWE_row)
-                                if db.session.query(exists().where(CVE.CVEId == cveId)).scalar():
-                                    my_CVE_row = db.session.query(CVE).filter_by(CVEId=cveId)[0]
-                                else:
-                                    my_CVE_row = CVE(CVEId=cveId)
-                                #not here-- because i will have to return the values---- my_CVE_row.accessVector
-                                db.session.add(my_CVE_row)
-                                comp_cVecWe = cVecWe(cve_id=my_CVE_row.CVEId,cwe_id=cwe_number, date=date.today())
+                    try:
+                        db.session.commit()
+                    except SQLAlchemyError as e:
+                        db.session.rollback()
+                        return e
+                    # response = requests.get("https://services.nvd.nist.gov/rest/json/cve/1.0/" + item["nvt"]["cve"])
+                    # if response is not None and response.status_code == 200:
+                    #     myNVDreport = response.json()
+                    #     for api_cve_desc, api_cveId, api_cweId in get_cwe_codes(myNVDreport):
+                    #         cwe_number = api_cweId.split("CWE-", 1)[1].strip()
+                    #         if cwe_number.isnumeric():
+                    #             print(api_cve_desc, api_cveId, cwe_number)
+                    #             # todo update CVE - CWE table based on responses
+                    #             if db.session.query(exists().where(CWE.CWEId == cwe_number)).scalar():
+                    #                 my_CWE_row = db.session.query(CWE).filter_by(CWEId=cwe_number)[0]
+                    #             else:
+                    #                 my_CWE_row = CWE(CWEId=cwe_number)
+                    #             db.session.add(my_CWE_row)
+                    #
+                    #             #not here-- because i will have to return the values---- my_CVE_row.accessVector
+                    #             db.session.add(my_CVE_row)
+                    #             comp_cVecWe = cVecWe(cve_id=my_CVE_row.CVEId,cwe_id=cwe_number, date=date.today())
             db.session.commit()
             return 1
 
@@ -156,7 +175,14 @@ def get_cwe_codes(myreport):
 # </editor-fold>
 
 # <editor-fold desc="Test area">
+# reprow_cveId='CVE-1999-0524'
+# x=db.session.query(exists().where(CVE.CVEId == reprow_cveId)).scalar()
+# y = db.session.query(CVE).filter_by(CVEId=reprow_cveId).one()
+# z=  CVE.query.filter_by(CVEId=reprow_cveId).one()
+# print (z.CVEId, z.status)
 
+for x in v_report("Json_texts/report1.json"):
+  print(x)
 
 # db.create_all()
 # x = CAPEC_excel_insertData('xlsx_texts/CAPEC-Domains of Attack-3000.xlsx')
@@ -164,10 +190,10 @@ def get_cwe_codes(myreport):
 # for xx in CAPEC.query.all():
 #     print(xx.id, xx.capecId, xx.name)
 
-x = CWE_excel_insertData('xlsx_texts/CWE-Research Concepts-1000.xlsx')
-print('Return: {}'.format(x))
-for xx in CWE.query.all():
-    print(xx.id, xx.CWEId, xx.name)
+# x = CWE_excel_insertData('xlsx_texts/CWE-Research Concepts-1000.xlsx')
+# print('Return: {}'.format(x))
+# for xx in CWE.query.all():
+#     print(xx.id, xx.CWEId, xx.name)
 
 # x = CVE_excel_insertData('xlsx_texts/CVE-allitems.xlsx')
 # print('Return: {}'.format(x))
