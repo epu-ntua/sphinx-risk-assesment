@@ -2,7 +2,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app import db
 from app.models import CAPEC, CWE, CVE, VReport, VReportCVELink, cVecWe
 from sqlalchemy import exists
-from datetime import date
+from datetime import date, datetime
 import openpyxl
 import json
 import requests
@@ -25,8 +25,6 @@ def CAPEC_excel_insertData(capecexcelpath):
                 db.session.add(my_row)
     db.session.commit()
     return 1
-
-
 # </editor-fold>
 
 # <editor-fold desc="Insert all CWE records from Excel">
@@ -95,17 +93,17 @@ def v_report(fpath):
         if obj["report"]["@id"] is not None:
             reprow_reportId = obj["report"]["@id"]
             if db.session.query(exists().where(VReport.reportId == reprow_reportId)).scalar():
-                my_report = db.session.query(VReport).filter_by(reportId=reprow_reportId).one()
+                my_json_report = db.session.query(VReport).filter_by(reportId=reprow_reportId).one()
             else:
-                my_report = VReport(reportId=reprow_reportId)
-            my_report.creation_time=obj["report"]["creation_time"] if obj["report"]["creation_time"] is not None else ""
-            my_report.name=obj["report"]["name"] if obj["report"]["name"] is not None else ""
-            db.session.add(my_report)
+                my_json_report = VReport(reportId=reprow_reportId)
+            my_json_report.creation_time=obj["report"]["creation_time"] if obj["report"]["creation_time"] is not None else ""
+            my_json_report.name=obj["report"]["name"] if obj["report"]["name"] is not None else ""
+            db.session.add(my_json_report)
             try:
                 db.session.commit()
             except SQLAlchemyError as e:
                 db.session.rollback()
-                return e
+                return -1
         # Get CVE from the result nodes of the report
             for item in obj['report']['report']['results']['result']:
                 if item["nvt"]["cve"] == "NOCVE":
@@ -114,12 +112,12 @@ def v_report(fpath):
                     reprow_cveId = item["nvt"]["cve"]
                     if not db.session.query(exists().where(CVE.CVEId == reprow_cveId)).scalar():
                         continue
-                    my_report = db.session.query(VReport).filter_by(reportId=reprow_reportId).one()
+                    #my_report = db.session.query(VReport).filter_by(reportId=reprow_reportId).one()
                     my_cve = db.session.query(CVE).filter_by(CVEId=reprow_cveId).one()
-                    if VReport.query.join(VReportCVELink).join(CVE).filter((VReportCVELink.vreport_id == my_report.id) & (VReportCVELink.cve_id == my_cve.id)).first() is None:
-                        my_link = VReportCVELink(vreport_id=my_report.id, cve_id = my_cve.id)
+                    if VReport.query.join(VReportCVELink).join(CVE).filter((VReportCVELink.vreport_id == my_json_report.id) & (VReportCVELink.cve_id == my_cve.id)).first() is None:
+                        my_link = VReportCVELink(vreport_id=my_json_report.id, cve_id = my_cve.id)
                     else:
-                        my_link = VReport.query.join(VReportCVELink).join(CVE).filter((VReportCVELink.vreport_id == my_report.id) & (VReportCVELink.cve_id == my_cve.id)).first()
+                        my_link = VReport.query.join(VReportCVELink).join(CVE).filter((VReportCVELink.vreport_id == my_json_report.id) & (VReportCVELink.cve_id == my_cve.id)).first()
                     my_link.VReport_assetID=item["host"]["asset"]["@asset_id"] if item["host"]["asset"][
                                                                                   "@asset_id"] is not None else ""
                     my_link.VReport_assetIp=obj["ip"] if obj["ip"] is not None else ""
@@ -134,9 +132,9 @@ def v_report(fpath):
         # call API for CVE and CWE information
                     response = requests.get("https://services.nvd.nist.gov/rest/json/cve/1.0/" + item["nvt"]["cve"])
                     if response is not None and response.status_code == 200:
-                        myNVDreport = response.json()
+                        NVDreport = response.json()
             # update CVE table with API values
-                        impact = myNVDreport['result']['CVE_Items'][0]['impact']
+                        impact = NVDreport['result']['CVE_Items'][0]['impact']
                         my_cve = db.session.query(CVE).filter_by(CVEId=reprow_cveId).one()
                         my_cve.severity = impact["baseMetricV2"]["severity"] if impact["baseMetricV2"]["severity"] is not None else ""
                         my_cve.exploitabilityScore = impact["baseMetricV2"]['exploitabilityScore'] if impact["baseMetricV2"][
@@ -165,7 +163,8 @@ def v_report(fpath):
                         my_cve.baseScore = impact['baseMetricV2']['cvssV2']['baseScore'] if impact['baseMetricV2']['cvssV2']['baseScore'] is not None else ""
                         db.session.add(my_cve)
             # Get CWEs and link them with CVE
-                        for api_cve_desc, api_cveId, api_cweId in get_cwe_codes(myNVDreport):
+                        for api_cve_desc, api_cveId, api_cweId in get_cwe_codes_from_API_report(NVDreport):
+                            my_cve.description = api_cve_desc
                             cwe_number = api_cweId.split("CWE-", 1)[1].strip()
                             if cwe_number.isnumeric():
                                 if db.session.query(exists().where(CWE.CWEId == cwe_number)).scalar():
@@ -174,10 +173,10 @@ def v_report(fpath):
                                     my_CWE_row = CWE(CWEId=cwe_number)
                                     db.session.add(my_CWE_row)
                                 if db.session.query(CVE).filter(cVecWe.cwe_id == my_CWE_row.id, cVecWe.cve_id == my_cve.id).first() is None:
-                                    my_cVecWe = cVecWe(cve_id=my_cve.id, cwe_id=my_CWE_row.id, date=date.today())
+                                    my_cVecWe = cVecWe(cve_id=my_cve.id, cwe_id=my_CWE_row.id, date=datetime.utcnow())
                                 else:
                                     my_cVecWe = db.session.query(CVE).filter(cVecWe.cwe_id == my_CWE_row.id, cVecWe.cve_id == my_cve.id).first()
-                                    my_cVecWe.date = date.today()
+                                    my_cVecWe.date = datetime.utcnow()
                                 db.session.add(my_cVecWe)
                         db.session.commit()
             return 1
@@ -185,8 +184,8 @@ def v_report(fpath):
 
 
 # <editor-fold desc="NVD API get_cwe_codes">
-def get_cwe_codes(myreport):
-    for item in myreport['result']['CVE_Items']:
+def get_cwe_codes_from_API_report(APIreport):
+    for item in APIreport['result']['CVE_Items']:
         itemdescr = item["cve"]["description"]["description_data"][0]["value"]
         for problem in item["cve"]['problemtype']['problemtype_data']:
             for descr in problem['description']:
@@ -194,14 +193,84 @@ def get_cwe_codes(myreport):
 # </editor-fold>
 
 
+# <editor-fold desc="get_assets">
+# temporarily from VaasReport table
+def get_assets():
+    if db.session.query(VReportCVELink).distinct(VReportCVELink.VReport_assetID).count()>0:
+        list_of_assets = db.session.query(VReportCVELink).distinct(VReportCVELink.VReport_assetID)
+        return list_of_assets
+    else:
+        return -1
+    # db.session.query(your_table.column1.distinct()).filter_by(column2 = 'some_column2_value').all()
+# </editor-fold>
+
+# <editor-fold desc="get Recommended CVEs for an asset">
+def get_cve_recommendations(asset_id):
+    if db.session.query(VReportCVELink).distinct(VReportCVELink.cve_id).filter(VReportCVELink.VReport_assetID == asset_id).count()>0:
+        list_of_cve = db.session.query(VReportCVELink.cve_id).distinct(VReportCVELink.cve_id).filter(VReportCVELink.VReport_assetID == asset_id)
+        result = db.session.query(CVE).filter(CVE.id.in_(list_of_cve))
+        return result.all()
+    else:
+        return -1
+# </editor-fold>
+
+# <editor-fold desc="get Recommended CWEs for a selected CVE">
+def get_cwe_recommendations(selected_cve_id):
+    if db.session.query(cVecWe).distinct(cVecWe.cwe_id).filter(cVecWe.cve_id == selected_cve_id).count()>0:
+        list_of_cwe = db.session.query(cVecWe.cwe_id).distinct(cVecWe.cwe_id).filter(cVecWe.cve_id == selected_cve_id)
+        result = db.session.query(CWE).filter(CWE.id.in_(list_of_cwe))
+        return result.all()
+    else:
+        return -1
+# </editor-fold>
+
+# <editor-fold desc="get Recommended CAPECs for a selected CVE">
+def get_capec_recommendations(selected_cve_id):
+    for cwe_item in get_cwe_recommendations(selected_cve_id):
+        capecList = []
+        for capec_item in CAPEC.query.filter(CAPEC.relatedWeaknesses.like("%" + cwe_item.CWEId + "%")):
+            capecList.append(capec_item.id)
+    if capecList:
+        result = db.session.query(CAPEC).distinct(CAPEC.capecId).filter(CAPEC.id.in_(capecList)) if db.session.query(CAPEC).filter(CAPEC.id.in_(capecList)) is not None else -1
+        return result.all()
+    else:
+        return -1
+# </editor-fold>
+
+
+
 # <editor-fold desc="Test area">
 # db.create_all()
-x= v_report("Json_texts/report1.json")# for x in v_report("Json_texts/report1.json"):
-print(x)
+# x= v_report("Json_texts/report1.json")# for x in v_report("Json_texts/report1.json"):
+# print(x)
 
+# for y in get_assets():
+#     print(y.VReport_assetID, y.cve_id)
+#
+# for y in get_cve_recommendations('f080c7b3-3038-4a52-8b14-4397136c9dad'):
+#     print(y.CVEId, y.id)
+#
+# for y in get_cwe_recommendations('170528'):
+#     print(y.CWEId, y.id)
 
-for y in cVecWe.query.all():
-    print(y.cwe_id, y.cve_id, y.date)
+# for xx in CAPEC.query.filter(CAPEC.relatedWeaknesses.like("%200%")):
+#     print(xx.capecId, xx.relatedWeaknesses)
+i=0
+for xx in get_capec_recommendations('170528'):
+    i=i+1
+    print(i,xx.capecId, xx.relatedWeaknesses)
+
+# for y in db.session.query(VReportCVELink).distinct(VReportCVELink.VReport_assetID):
+#     print(y.VReport_assetID, y.VReport_port, y.VReport_assetIp)
+
+#
+# for y in cVecWe.query.all():
+#     print(y.cwe_id, y.cve_id, y.date)
+#
+# x= db.session.query(CVE).filter_by(CVEId="CVE-1999-0524").one()
+# print(x.id, x.CVEId, x.description)
+# for y in CVE.query.all():
+#     print(y.CVEId, y.description)
 
 # db.create_all()
 # x = CAPEC_excel_insertData('xlsx_texts/CAPEC-Domains of Attack-3000.xlsx')

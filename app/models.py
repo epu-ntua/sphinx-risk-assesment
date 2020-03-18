@@ -52,6 +52,9 @@ class VReportCVELink(db.Model):
 #     cve_s = db.relationship("CVE", back_populates="VReports")
 #     vreport_s = db.relationship("VReport", back_populates="CVEs")
 
+    def __repr__(self):
+        return '<VReportCVELink {}>'.format(self.vreport_id)
+
 
 class CWE(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -85,6 +88,7 @@ class CWE(db.Model):
 
 
 class CAPEC(db.Model):
+    __tablename__ = 'capecTable'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     capecId = db.Column(db.String(), index=True, unique=True)
     name = db.Column(db.String())
@@ -119,4 +123,37 @@ class cVecWe(db.Model):
     date = db.Column(db.DateTime)
 
     def __repr__(self):
-        return '<VaasReport {}>'.format(self.Id)
+        return '<cVecWe {}>'.format(self.Id)
+
+
+class Asset(db.Model):
+    __tablename__ = 'assetTable'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    assetID = db.Column(db.String())
+    assetIp = db.Column(db.String())
+    date = db.Column(db.DateTime)
+
+    def __repr__(self):
+        return '<Asset {}>'.format(self.Id)
+
+
+class Risk_Assessment(db.Model):
+    __tablename__ = 'riskassessmentTable'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    asset_id = db.Column(db.Integer, db.ForeignKey('assetTable.id'), nullable=False)
+    date = db.Column(db.DateTime)
+
+    def __repr__(self):
+        return '<Risk_Assessment {}>'.format(self.Id)
+
+
+    class Risk_Vuln_Threat(db.Model):
+        __tablename__ = 'riskvulnerabilitythreatTable'
+        id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+        risk_id = db.Column(db.Integer, db.ForeignKey('riskassessmentTable.id'), nullable=False)
+        CVE_id = db.Column(db.Integer, db.ForeignKey('CVETable.id'), nullable=False)
+        CAPEC_id = db.Column(db.Integer, db.ForeignKey('capecTable.id'), nullable=False)
+        date = db.Column(db.DateTime)
+
+        def __repr__(self):
+            return '<Risk_Vulnerability_Threat {}>'.format(self.Id)
