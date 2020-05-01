@@ -1,14 +1,16 @@
 from app import app
 from flask import render_template,request ,redirect
 import flask
+from app.utils import *
+from app.globalVariables import *
 
 @app.route('/')
 @app.route('/home')
 def entry_page():
-    return render_template('entry_page.html')
+    return render_template('entry_page.html',port = port)
 
 @app.route('/assets/' ,defaults={"asset": -1})
-@app.route('/assets/<int:asset>/' , methods=['GET', 'POST'])
+@app.route('/assets/<asset>/' , methods=['GET', 'POST'])
 def assets(asset):
     if request.method == 'POST':
         if asset != -1:
@@ -19,22 +21,31 @@ def assets(asset):
         else:
             return redirect("/assets/")
     else:
-        assetsArray = [ 1 , 2 ,3 ]
-        proposedCVEArray = [ 1 , 2 ,3 ]
-        othersCVEArray = [ 4 , 5 ]
+        assetsArray = get_assets()
+        print(assetsArray[0].VReport_assetID)
 
-        return render_template('assets.html', asset = asset , assets = assetsArray , proposedCVEArray = proposedCVEArray ,othersCVEArray = othersCVEArray)
+        proposedCVEArray = []
+        for tempAsset in assetsArray:
+            proposedCVEArray.append(get_cve_recommendations(tempAsset.VReport_assetID))
 
-@app.route('/assets/<int:asset>/vulnerabilities/', defaults={"asset": -1 ,"vulnerability" : -1})
-@app.route('/assets/<int:asset>/vulnerabilities/<int:vulnerability>/' , methods=['GET', 'POST'])
+
+        # Still need an fuction that will get the other CVE, or preferably being able to add CVE one by one by hand
+        othersCVEArray = []
+        # for tempAsset in assetsArray:
+            # othersCVEArray.append()
+
+        return render_template('assets.html',port = port, asset = asset , assets = assetsArray , proposedCVEArray = proposedCVEArray ,othersCVEArray = othersCVEArray)
+
+@app.route('/assets/<asset>/vulnerabilities/', defaults={"asset": -1 ,"vulnerability" : -1})
+@app.route('/assets/<asset>/vulnerabilities/<vulnerability>/' , methods=['GET', 'POST'])
 def vulnerabilities(asset, vulnerability):
     if request.method == 'POST':
         i = 5
     else:
         return render_template('vulnerabilities.html', asset = asset, vulnerability = vulnerability)
 
-@app.route('/assets/<int:asset>/vulnerabilities/<int:vulnerability>/threats/' , defaults={"asset": -1 ,"vulnerability" : -1, "threat": -1})
-@app.route('/assets/<int:asset>/vulnerabilities/<int:vulnerability>/threats/<int:threat>/' , methods=['GET', 'POST'])
+@app.route('/assets/<asset>/vulnerabilities/<vulnerability>/threats/' , defaults={"asset": -1 ,"vulnerability" : -1, "threat": -1})
+@app.route('/assets/<asset>/vulnerabilities/<vulnerability>/threats/<threat>/' , methods=['GET', 'POST'])
 def threats(asset, vulnerability,threat):
     if request.method == 'POST':
         i = 5

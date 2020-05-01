@@ -17,14 +17,14 @@
             <h3> Select Asset</h3>
             <hr>
             <ul class="list-group list-group-flush">
-                {% for assetId in assets %}
-                <a href="/assets/{{assetId}}/" class="list-group-item
-                  {%if assetId == asset%}
+                {% for tempAsset in assets %}
+                <a href="/assets/{{tempAsset.VReport_assetID}}/" class="list-group-item
+                  {%if tempAsset == asset%}
                    selected-a
                    {% else %}
                    unselected-a
                    {% endif %}
-                    ">Asset {{assetId}}
+                    ">Asset {{tempAsset.VReport_assetID}}
                     <br>(0/10 Vulnurabilities Configured)
                 </a>
                 {% endfor %}
@@ -40,15 +40,15 @@
                 <h3> Proposed Vulnerabilites</h3>
             </div>
 
-            {% for cveId in proposedCVEArray %}
+            {% for tempCVE in proposedCVEArray %}
             <div class="card custom-card ">
                 <div class="card-body">
-                    <h5 class="card-title">CVE - {{cveId}}</h5>
+                    <h5 class="card-title">{{tempCVE[0].CVEId}}</h5>
                     <p class="card-text">CVSS:.</p>
                     <!--<button class="btn btn-primary" type="button" data-toggle="modal" data-target="#myModal">Configure-->
                     <!--</button>-->
                     <label class="form-check-label">
-                        <input class="form-check-input" type="checkbox" name="{{cveId}}" value="Y"> Add CVE
+                        <input class="form-check-input" type="checkbox" name="{{tempCVE[0].id}}" value="Y"> Add CVE
                     </label>
                 </div>
             </div>
@@ -58,13 +58,13 @@
             <div class="row custom-select-column-header">
                 <h3> Other Vulnerabilites</h3>
             </div>
-            {% for cveId in othersCVEArray %}
+            {% for tempCVE in othersCVEArray %}
             <div class="card custom-card">
                 <div class="card-body">
-                    <h5 class="card-title">CVE - {{cveId}}</h5>
+                    <h5 class="card-title">CVE - {{tempCVE}}</h5>
                     <p class="card-text">CVSS:.</p>
                     <label class="form-check-label">
-                        <input class="form-check-input" type="checkbox" name="{{cveId}}" value="Y">Add CVE
+                        <input class="form-check-input" type="checkbox" name="{{tempCVE}}" value="Y">Add CVE
                     </label>
                     <!--<button class="btn btn-primary" type="button" data-toggle="modal" data-target="#myModal">Configure-->
                     <!--</button>-->
