@@ -42,7 +42,11 @@ def vulnerabilities(asset, vulnerability):
     if request.method == 'POST':
         i = 5
     else:
-        return render_template('vulnerabilities.html', asset = asset, vulnerability = vulnerability)
+        assetsArray = get_assets()
+        print(assetsArray[0].VReport_assetID)
+
+
+        return render_template('vulnerabilities.html', asset = asset, vulnerability = vulnerability, assets = assetsArray)
 
 @app.route('/assets/<asset>/vulnerabilities/<vulnerability>/threats/' , defaults={"asset": -1 ,"vulnerability" : -1, "threat": -1})
 @app.route('/assets/<asset>/vulnerabilities/<vulnerability>/threats/<threat>/' , methods=['GET', 'POST'])
@@ -50,7 +54,10 @@ def threats(asset, vulnerability,threat):
     if request.method == 'POST':
         i = 5
     else:
-        return render_template('threats.html' ,asset = asset, vulnerability = vulnerability , threat = threat )
+        assetsArray = get_assets()
+        print(assetsArray[0].VReport_assetID)
+
+        return render_template('threats.html' ,asset = asset, vulnerability = vulnerability , threat = threat, assets = assetsArray)
 
 @app.route('/test_gd')
 def test_gd():

@@ -157,3 +157,44 @@ class Risk_Assessment(db.Model):
 
         def __repr__(self):
             return '<Risk_Vulnerability_Threat {}>'.format(self.Id)
+
+
+ # region GiraModels
+
+# High level Gira assets describing business logic or high level assets like doctors or patients(not network assets)
+class GiraAsset(db.models):
+    # __tablename__ = 'riskvulnerabilitythreatTable'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String, nullable = False)
+    number_of_options = db.Column(db.Integer)
+    status = db.relationship('GiraAssetStatus', backref = 'GiraAsset', lazy = True)
+
+# Gira Asset status table has all the different status of a single Gira asset since they are dynamic
+class GiraIncidentResponse:
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String, nullable = False)
+    description = db.Column(db.String, nullable= False)
+
+
+class GiraAssetStatus:
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String, nullable = False)
+    asset = db.Column(db.Integer, db.ForeignKey('GiraAsset.id'), nullable=False)
+
+#
+class GiraConsequences:
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String, nullable = False)
+    description = db.Column(db.String, nullable= False)
+
+#
+class GiraObjective:
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String, nullable = False)
+
+class GiraObjectivesOptions:
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String, nullable = False)
+    objective = db.Column( db.Integer, db.ForeignKey(GiraObjective.id), nullable=False)
+
+# endregion
