@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form action="/assets/{{ asset }}/" , method="post">
+        <div class="row d-flex gira-bar">
+            <div class="col-1 gira-bar-nav">
+                <a class="gira-bar-nav-link custom-white-color" href="/threat_exposure"
+                   style="   background-image: url({{ url_for('static', filename='/images/gira_menu_assessment.jpg') }});
+                           ">
+                    <h5> Exposure </h5>
+                </a>
+            </div>
+            <div id="gira_menu_response" class="col-1 gira-bar-nav"
+                 style="   background-image: url({{ url_for('static', filename='/images/gira_menu_response.jpg') }});
+                         ">
+                <a class="gira-bar-nav-link custom-white-color" href="/threat_exposure">
+                    <h5> Response </h5>
+                </a>
+            </div>
+            <div class="col-2 gira-bar-nav"
+                 style="   background-image: url({{ url_for('static', filename='/images/gira_menu_materilisation.jpg') }});
+                         ">
+                <a class="gira-bar-nav-link custom-white-color" href="/threat_materialisation">
+                    <h5> Materialisation </h5>
+                </a>
+            </div>
+            <div class="col-2 gira-bar-nav"
+                 style="   background-image: url({{ url_for('static', filename='/images/gira_menu_consequence.jpg') }});
+                         ">
+                <a class="gira-bar-nav-link custom-white-color" href="/threat_exposure">
+                    <h5> Consequence </h5>
+                </a>
+            </div>
+            <div class="col-2 gira-bar-nav "
+                 style="   background-image: url({{ url_for('static', filename='/images/gira_menu_asset.jpg') }});">
+                <a class="gira-bar-nav-link custom-white-color" href="/asset_status">
+                    <h5> Asset Status</h5>
+                </a>
+            </div>
+            <div class="col-1 gira-bar-nav "
+                 style="   background-image: url({{ url_for('static', filename='/images/gira_menu_impact.jpg') }});">
+                <a class="gira-bar-nav-link custom-white-color" href="/asset_impact">
+                    <h5>Impact</h5>
+                </a>
+            </div>
+            <div class="col-1 gira-bar-nav"
+                 style=" background-image: url({{ url_for('static', filename='/images/gira_menu_objective.jpg') }});">
+                <a class="gira-bar-nav-link custom-white-color" href="/objective">
+                    <h5> Objective</h5>
+                </a>
+            </div>
+            <div class="col-1 gira-bar-nav custom-green-background"
+            style=" background-image: url({{ url_for('static', filename='/images/gira_menu_objective.jpg') }});">
+                <a class="gira-bar-nav-link custom-white-color" href="/result">
+                    <h5> Result </h5>
+                </a>
+            </div>
+        </div>
+        {#        <div class="row">#}
+        {#            <div class="col-2 custom-select-column">#}
+        {#            </div>#}
+        {#            <div class="col-10 d-flex flex-wrap align-content-start custom-select-column">#}
+        {#                <h2> Please select an asset from the left list to proceed</h2>#}
+        {#            </div>#}
+        {#        </div>#}
+    </form>
+
+
+{% endblock %}
