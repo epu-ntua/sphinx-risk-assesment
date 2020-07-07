@@ -131,15 +131,58 @@ class VulnerabilitiesWeaknessLink(db.Model):
 
 
 class Asset(db.Model):
-    __tablename__ = 'asset'
+    __tablename__ = 'assetTable'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     assetID = db.Column(db.String())
     assetIp = db.Column(db.String())
     date = db.Column(db.DateTime)
-
+    assetName = db.Column(db.String())
+    assetModel = db.Column(db.String())
+    assetSerialNumber = db.Column(db.String())
+    assetRecoveryKey = db.Column(db.String())
+    assetVendor = db.Column(db.String())
+    assetDomain = db.Column(db.String())
+    assetWarranty = db.Column(db.String())
+    assetWarrantyExpDate = db.Column(db.DateTime())
+    assetStatus = db.Column(db.Integer, db.ForeignKey('AssetHardwareStatus.AssetHardwareStatusID'))
+    assetType = db.Column(db.Integer, db.ForeignKey('AssetHardwareType.AssetHardwareTypeID'))
+    assetPurchasePrice = db.Column(db.Float())
+    assetPurchaseDate = db.Column(db.DateTime)
+    assetCreatedBy = db.Column(db.String())
+    assetCreatedDate = db.Column(db.DateTime)
+    assetAssignedTo = db.Column(db.String())
+    assetManagedBy = db.Column(db.String())
+    assetOwner = db.Column(db.String())
+    assetUsageType = db.Column(db.String()) #--add hoc or permanent
+    assetLocation = db.Column(db.String())
+    assetClassification = db.Column(db.Integer, db.ForeignKey('AssetClassification.AssetClassificationID'))
+    assetInformationProcessed = db.Column(db.String()) #--Personal or Business
     def __repr__(self):
         return '<Asset {}>'.format(self.Id)
 
+class AssetHardwareStatus(db.Model):
+    __tablename__ = 'asset_hardware_status'
+    AssetHardwareStatusID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    AssetHardwareStatusDescr = db.Column(db.String())
+    AssetHardwareStatusInsertedDate = db.Column(db.DateTime)
+    def __repr__(self):
+        return '<AssetHardwareStatus {}>'.format(self.AssetHardwareStatusID)
+    
+class AssetHardwareType(db.Model):
+    __tablename__ = 'asset_hardware_type'
+    AssetHardwareTypeID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    AssetHardwareTypeDescr = db.Column(db.String())
+    AssetHardwareTypeInsertedDate = db.Column(db.DateTime)
+    def __repr__(self):
+        return '<AssetHardwareType {}>'.format(self.AssetHardwareTypeID)
+
+class AssetClassification(db.Model):
+    __tablename__ = 'asset_classification'
+    AssetClassificationID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    AssetClassificationDescr = db.Column(db.String())
+    AssetClassificationInsertedDate = db.Column(db.DateTime)
+    def __repr__(self):
+        return '<AssetHardwareType {}>'.format(self.AssetClassificationID)
 
 class RiskAssessment(db.Model):
     __tablename__ = 'risk_assessment'
