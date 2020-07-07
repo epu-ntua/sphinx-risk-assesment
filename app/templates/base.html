@@ -29,14 +29,18 @@
                 <a class="nav-link" href="http://{{ serverAddress }}:{{ serverPort }}/assets">Threat Assessment</a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="http://{{ serverAddress }}:{{ serverPort }}/gira_overview">Gira Management
-                    nodes</a>
+                <a class="nav-link" href="http://{{ serverAddress }}:{{ serverPort }}/gira_overview">Gira Static
+                    Information Management</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="http://{{ serverAddress }}:{{ serverPort }}/gira_assess"> Start Gira
+                    Assessment</a>
             </li>
             {#        <li class="nav-item">#}
             {#            <a class="nav-link" href="http://0.0.0.0:5002/shutdown">Shutdown</a>#}
             {#        </li>#}
         </div>
-
+    </div>
 </nav>
 <div class="container-fluid">
     {% block content %}
@@ -44,6 +48,9 @@
     {% endblock %}
 </div>
 
+{% block script %}
+
+{% endblock %}
 
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->

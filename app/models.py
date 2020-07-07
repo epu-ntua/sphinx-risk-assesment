@@ -131,7 +131,7 @@ class VulnerabilitiesWeaknessLink(db.Model):
 
 
 class Asset(db.Model):
-    __tablename__ = 'assetTable'
+    __tablename__ = 'asset'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     assetID = db.Column(db.String())
     assetIp = db.Column(db.String())
@@ -167,7 +167,7 @@ class AssetHardwareStatus(db.Model):
     AssetHardwareStatusInsertedDate = db.Column(db.DateTime)
     def __repr__(self):
         return '<AssetHardwareStatus {}>'.format(self.AssetHardwareStatusID)
-    
+
 class AssetHardwareType(db.Model):
     __tablename__ = 'asset_hardware_type'
     AssetHardwareTypeID = db.Column(db.Integer, primary_key=True, autoincrement=True)

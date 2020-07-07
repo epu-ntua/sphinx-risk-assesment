@@ -6,9 +6,9 @@
 
         function addState() {
             var newState = '<div class="form-group row">\n' +
-                '                        <label for="description">State 1</label>\n' +
+                '                        <label for="description">Asset </label>\n' +
                 '                        <input type="text" class="form-control" name="description" id="description"\n' +
-                '                               placeholder="State name">\n' +
+                '                               placeholder="Asset name">\n' +
                 '                    </div>'
             var div = document.createElement("div");
             div.innerHTML = newState;
@@ -43,14 +43,14 @@
                     <h5> Asset Status</h5>
                 </a>
             </div>
-            <div class="col-1 gira-bar-nav ">
+            <div class="col-1 gira-bar-nav custom-border-finished">
                 {#                <img id="gira-background-impact" src={{  url_for('static', filename='/images/gira_menu_impact.jpg') }}#}
                 {#                     class="gira-menu-background">#}
                 <a class="gira-bar-nav-link   custom-white-color" href="/gira_overview/gira_asset_impact">
                     <h5>Impact</h5>
                 </a>
             </div>
-            <div class="col-1 gira-bar-nav custom-border-finished ">
+            <div class="col-1 gira-bar-nav  ">
                 {#                <img id="gira-background-objective" src={{  url_for('static', filename='/images/gira_menu_objective.jpg') }}#}
                 {#                     class="gira-menu-background">#}
                 <a class="gira-bar-nav-link   custom-white-color" href="/gira_overview/gira_objective">
@@ -60,14 +60,14 @@
         </div>
         <div class="row">
             <div class="col-2 custom-select-column">
-                <h4> Add new Objective </h4>
+                <h4> Add new Asset </h4>
                 <hr>
                 <div class="form-group row">
-                    <label for="name">Objective Name</label>
+                    <label for="name">Asset Name</label>
                     <input type="text" class="form-control" name="name" id="name" placeholder="Name">
                 </div>
                 <div class="form-group row">
-                    <label for="description">Objective Description</label>
+                    <label for="description">Asset Description</label>
                     <input type="text" class="form-control" name="description" id="description"
                            placeholder="Description">
                 </div>
@@ -75,19 +75,21 @@
 
                 </div>
                 <hr/>
-                <button type="button" class="btn btn-primary" onclick="addState()"> Add new state +></button>
+                <button type="button" class="btn btn-primary" onclick="addState()"> Add new status +></button>
                 <br/>
                 <button type="submit" name="new_group_flow_form" class="btn btn-primary">Submit ></button>
             </div>
             <div class="col-10 d-flex flex-wrap align-content-start custom-select-column">
                 <div class="card bg-light mb-3 custom-card" style="max-width: 18rem;">
-                    <div class="card-header">Monetary</div>
+                    <div class="card-header">CAT Scanner</div>
                     <div class="card-body">
-                        <h4 class="card-title">States</h4>
-                        <p class="card-text"> x > 10mil</p>
-                        <p class="card-text"> 5mil< x <10mil</p>
-                        <p class="card-text"> 2.5mil < x <5 mil</p>
-                        <p class="card-text"> x < 2.5mil</p>
+                        <h4 class="card-title">Impact</h4>
+                        <p class="card-text"> Available</p>
+                        <p class="card-text"> Defective</p>
+                        <p class="card-text"> In transit</p>
+                        <p class="card-text"> Under repair</p>
+                        <p class="card-text"> Broken</p>
+
                         <a href="#" class="card-link"> Remove</a>
                         <a href="#" class="card-link"> Edit</a>
                     </div>
@@ -96,24 +98,43 @@
                 <div class="card bg-light mb-3 custom-card" style="max-width: 18rem;">
                     <div class="card-header">Appointments</div>
                     <div class="card-body">
-                        <h4 class="card-title">States</h4>
-                        <p class="card-text"> 75% < x < 100% </p>
-                        <p class="card-text"> 50% < x < 100%</p>
-                        <p class="card-text"> 25% < x < 50%</p>
-                        <p class="card-text"> 0% < x < 25%</p>
+                        <h4 class="card-title">Impact</h4>
+                        <p class="card-text"> Normal</p>
+                        <p class="card-text"> Delayed - Some</p>
+                        <p class="card-text"> Delayed  - Most</p>
+                        <p class="card-text"> Canceled - Some</p>
+                        <p class="card-text"> Canceled - All</p>
+
                         <a href="#" class="card-link"> Remove</a>
                         <a href="#" class="card-link"> Edit</a>
                     </div>
                 </div>
 
                 <div class="card bg-light mb-3 custom-card" style="max-width: 18rem;">
-                    <div class="card-header"> Injured Patients</div>
+                    <div class="card-header">Doctors</div>
                     <div class="card-body">
-                        <h4 class="card-title">States</h4>
-                        <p class="card-text"> 75% < x < 100% </p>
-                        <p class="card-text"> 50% < x < 100%</p>
-                        <p class="card-text"> 25% < x < 50%</p>
-                        <p class="card-text"> 0% < x < 25%</p>
+                        <h4 class="card-title">Impact</h4>
+                        <p class="card-text"> Working</p>
+                        <p class="card-text"> Delayed Work</p>
+                        <p class="card-text"> Not Working</p>
+                        <p class="card-text"> Leaves</p>
+
+                        <a href="#" class="card-link"> Remove</a>
+                        <a href="#" class="card-link"> Edit</a>
+                    </div>
+                </div>
+
+
+                <div class="card bg-light mb-3 custom-card" style="max-width: 18rem;">
+                    <div class="card-header">IT Department Equipment</div>
+                    <div class="card-body">
+                        <h4 class="card-title">Impact</h4>
+                        <p class="card-text"> Available</p>
+                        <p class="card-text"> Defective</p>
+                        <p class="card-text"> In transit</p>
+                        <p class="card-text"> Under repair</p>
+                        <p class="card-text"> Broken</p>
+
                         <a href="#" class="card-link"> Remove</a>
                         <a href="#" class="card-link"> Edit</a>
                     </div>
