@@ -7,12 +7,14 @@ html, body {
     background-color: #00a79d;
     padding: 0 !important;
     height: 8vh;
+    box-shadow: inset 0 -7px 7px -7px grey;
 }
 
 .logo-custom {
     background-color: #444444;
     color: #00a79d !important;
     padding-right: 10px;
+    box-shadow: inset 0 -4px 4px -4px grey;
 }
 
 .btn-primary {
@@ -101,6 +103,22 @@ html, body {
     color: white;
 }
 
+.custom-border-finished{
+    box-shadow: inset 5px 5px 3px rgba(0, 167, 157 , 1.0 ) ,inset -5px -5px 4px rgba(0, 167, 157 , 1)
+}
+
+.custom-border-unfinished{
+    box-shadow: inset 5px 5px 3px rgba(255, 51, 0 , 1.0) ,inset -5px -5px 4px rgba(255, 51, 0 , 1);
+}
+
+.custom-border-finished-big{
+    box-shadow: inset 15px 15px 3px rgba(0, 167, 157 , 1.0 ) ,inset -15px -15px 4px rgba(0, 167, 157 , 1)
+}
+
+.custom-border-unfinished-big{
+    box-shadow: inset 15px 15px 3px rgba(255, 51, 0 , 1.0) ,inset -15px -15px 4px rgba(255, 51, 0 , 1);
+}
+
 .gira-bar {
     border-bottom: 2px solid #999999;
 }
@@ -109,66 +127,76 @@ html, body {
     border-left: solid 2px #999999;
     border-right: solid 2px #999999;
     overflow: hidden;
-
 }
 
 .gira-bar-nav-link {
     z-index: 1;
     position: relative;
+
 }
 
-.gira-menu-background{
+.gira-bar-nav-link-big {
+    font-size: 200%;
+    top:50%;
+    left:25%;
+}
+
+.gira-menu-background {
     padding: 10px;
     position: absolute;
     content: "";
     box-shadow: inset 0 0 0 3000px rgba(255, 255, 255, 0.3);
     filter: blur(3px);
+    opacity: 0.8;
     z-index: 0;
 }
 
-.gira-menu-background:hover{
+.gira-menu-background:hover {
     filter: none;
+    opacity: 1.0;
 }
 
-#gira-background-assessment{
+#gira-background-assessment {
     left: -80vh;
     top: -15vh;
 }
 
-#gira-background-response{
+#gira-background-response {
     left: -200vh;
     top: -15vh;
 }
 
-#gira-background-materialisation{
+#gira-background-materialisation {
     left: -80vh;
     top: -50vh;
 }
 
-#gira-background-consequence{
+#gira-background-consequence {
     left: -80vh;
     top: -15vh;
 }
 
-#gira-background-asset{
+#gira-background-asset {
     left: -80vh;
     top: -15vh;
 }
 
-#gira-background-impact{
+#gira-background-impact {
     left: -130vh;
     top: -50vh;
 }
 
-#gira-background-objective{
+#gira-background-objective {
     left: -190vh;
     top: -15vh;
 }
 
-#gira-background-conclusion{
+#gira-background-conclusion {
     left: -80vh;
     top: -15vh;
 }
+
+
 
 h5 {
     text-shadow: 2px 0 0 grey, -2px 0 0 grey, 0 2px 0 grey, 0 -2px 0 grey, 1px 1px grey, -1px -1px 0 grey, 1px -1px 0 grey, -1px 1px 0 grey;
