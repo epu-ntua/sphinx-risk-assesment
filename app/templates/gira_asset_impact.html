@@ -6,9 +6,9 @@
 
         function addState() {
             var newState = '<div class="form-group row">\n' +
-                '                        <label for="description">Asset </label>\n' +
+                '                        <label for="description">Impact </label>\n' +
                 '                        <input type="text" class="form-control" name="description" id="description"\n' +
-                '                               placeholder="Asset name">\n' +
+                '                               placeholder="Asset Impact">\n' +
                 '                    </div>'
             var div = document.createElement("div");
             div.innerHTML = newState;
@@ -60,14 +60,23 @@
         </div>
         <div class="row">
             <div class="col-2 custom-select-column">
-                <h4> Add new Asset </h4>
+                <h4> Asset:</h4>
+                <select class="form-control"
+                        name=""
+                        onchange="">
+                    <option>CAT Scanner</option>
+                    <option>IT Equipment</option>
+                    <option>Doctors</option>
+                </select>
+                <hr/>
+                <h4> Add new Impact </h4>
                 <hr>
                 <div class="form-group row">
-                    <label for="name">Asset Name</label>
+                    <label for="name">Asset Impact</label>
                     <input type="text" class="form-control" name="name" id="name" placeholder="Name">
                 </div>
                 <div class="form-group row">
-                    <label for="description">Asset Description</label>
+                    <label for="description">Impact Description</label>
                     <input type="text" class="form-control" name="description" id="description"
                            placeholder="Description">
                 </div>
@@ -75,7 +84,7 @@
 
                 </div>
                 <hr/>
-                <button type="button" class="btn btn-primary" onclick="addState()"> Add new status +></button>
+                <button type="button" class="btn btn-primary" onclick="addState()"> Add new impact +></button>
                 <br/>
                 <button type="submit" name="new_group_flow_form" class="btn btn-primary">Submit ></button>
             </div>
@@ -101,7 +110,7 @@
                         <h4 class="card-title">Impact</h4>
                         <p class="card-text"> Normal</p>
                         <p class="card-text"> Delayed - Some</p>
-                        <p class="card-text"> Delayed  - Most</p>
+                        <p class="card-text"> Delayed - Most</p>
                         <p class="card-text"> Canceled - Some</p>
                         <p class="card-text"> Canceled - All</p>
 

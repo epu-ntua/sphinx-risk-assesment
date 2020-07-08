@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <form action="/gira_assess/gira_assess_objective/" , method="post">
+    <form action="/home" , method="get">
         <div id="gira-bar" class="row d-flex flex-grow-1 gira-bar">
             <div class="col-2 gira-bar-nav ">
                 {#                <img id="gira-background-assessment" src={{ url_for('static', filename='/images/gira_menu_assessment.jpg') }}#}
@@ -27,7 +27,7 @@
             <div class="col-2 gira-bar-nav ">
                 {#                <img id="gira-background-consequence" src={{  url_for('static', filename='/images/gira_menu_consequences.jpg') }}#}
                 {#                     class="gira-menu-background">#}
-                <a class="gira-bar-nav-link   custom-white-color" href="/gira_assess/gira_assess_consequence">
+                <a class="gira-bar-nav-link   custom-white-color" href="/gira_assess/gira_asess_consequence">
                     <h5> Consequence </h5>
                 </a>
             </div>
@@ -38,14 +38,14 @@
                     <h5> Asset Status</h5>
                 </a>
             </div>
-            <div class="col-1 gira-bar-nav custom-border-finished">
+            <div class="col-1 gira-bar-nav ">
                 {#                <img id="gira-background-impact" src={{  url_for('static', filename='/images/gira_menu_impact.jpg') }}#}
                 {#                     class="gira-menu-background">#}
                 <a class="gira-bar-nav-link   custom-white-color" href="/gira_assess/gira_assess_asset_impact">
                     <h5>Impact</h5>
                 </a>
             </div>
-            <div class="col-2 gira-bar-nav  ">
+            <div class="col-2 gira-bar-nav custom-border-finished">
                 {#                <img id="gira-background-objective" src={{  url_for('static', filename='/images/gira_menu_objective.jpg') }}#}
                 {#                     class="gira-menu-background">#}
                 <a class="gira-bar-nav-link   custom-white-color" href="/gira_assess/gira_assess_objective">
@@ -82,140 +82,67 @@
                 </ul>
             </div>
             <div class="col-9 d-flex flex-wrap align-content-start custom-select-column">
-                <h3> IT department Equipment</h3>
+                <h3>Monetary </h3>
                 <table class="table  table-bordered">
                     <thead>
                     <tr>
-                        <th scope="col" class="custom-table-header"> Consequence</th>
-                        <th scope="col" class="custom-table-header" colspan="3">Modify Data</th>
-                        <th scope="col" class="custom-table-header" colspan="3">Gain Privilege</th>
-                        <th scope="col" class="custom-table-header" colspan="3">Unauthorised Command</th>
+                        <th scope="col" class="custom-table-header"> Asset:Consequence</th>
+                        <th scope="col" class="custom-table-header" colspan="3"> IT Department Equipment: Modify data
+                        </th>
+                        <th scope="col" class="custom-table-header"> ....
+                        </th>
+                    </tr>
+                    </thead>
+                    <thead class="thead-light">
+                    <tr>
+                        <th scope="col" class="custom-table-header"> Impact</th>
+                        <th scope="col" class="custom-table-header" colspan="3"> Defective</th>
+                        <th scope="col" class="custom-table-header"> ....</th>
                     </tr>
                     </thead>
                     <thead class="thead-light">
                     <tr>
                         <th scope="col" class="custom-table-header"> State</th>
-                        <th scope="col" class="custom-table-header">In use</th>
-                        <th scope="col" class="custom-table-header">Online</th>
-                        <th scope="col" class="custom-table-header">Offline</th>
-                        <th scope="col" class="custom-table-header">In use</th>
-                        <th scope="col" class="custom-table-header">Online</th>
-                        <th scope="col" class="custom-table-header">Offline</th>
-                        <th scope="col" class="custom-table-header">In use</th>
-                        <th scope="col" class="custom-table-header">Online</th>
-                        <th scope="col" class="custom-table-header">Offline</th>
+                        <th scope="col" class="custom-table-header"> In use</th>
+                        <th scope="col" class="custom-table-header"> Online</th>
+                        <th scope="col" class="custom-table-header"> Offline</th>
+                        <th scope="col" class="custom-table-header"> ...</th>
+
                     </tr>
                     </thead>
                     <tbody>
                     <tr>
-                        <th scope="row">Impact:Available</th>
+                        <th scope="row">State: x > 10mil</th>
                         <td> xx%</td>
                         <td> yy%</td>
                         <td> xx%</td>
-                        <td> yy%</td>
-                        <td> xx%</td>
-                        <td> yy%</td>
-                        <td> xx%</td>
-                        <td> yy%</td>
-                        <td> xx%</td>
+                        <td> ....</td>
+
+
                     </tr>
                     <tr>
-                        <th scope="row">Impact:Defective</th>
+                        <th scope="row">State: 5mil< x <10mil</th>
                         <td> xx%</td>
                         <td> yy%</td>
                         <td> xx%</td>
-                        <td> yy%</td>
-                        <td> xx%</td>
-                        <td> yy%</td>
-                        <td> xx%</td>
-                        <td> yy%</td>
-                        <td> xx%</td>
+                        <td> ....</td>
+
                     </tr>
                     <tr>
-                        <th scope="row">Impact:Broken</th>
-                        <td> xx%</td>
-                        <td> xx%</td>
+                        <th scope="row">x <5mil</th>
                         <td> xx%</td>
                         <td> yy%</td>
                         <td> xx%</td>
-                        <td> yy%</td>
-                        <td> xx%</td>
-                        <td> yy%</td>
-                        <td> xx%</td>
+                        <td> ....</td>
+
                     </tr>
                     </tbody>
                 </table>
-
-                <hr/>
-                <h3> Doctors </h3>
-                <table class="table  table-bordered">
-                    <thead>
-                    <tr>
-                        <th scope="col" class="custom-table-header"> Consequence</th>
-                        <th scope="col" class="custom-table-header" colspan="3">#1</th>
-                        <th scope="col" class="custom-table-header" colspan="3">#2</th>
-                        <th scope="col" class="custom-table-header" colspan="3">#3</th>
-                    </tr>
-                    </thead>
-                    <thead class="thead-light">
-                    <tr>
-                        <th scope="col" class="custom-table-header"> State</th>
-                        <th scope="col" class="custom-table-header">#1</th>
-                        <th scope="col" class="custom-table-header">#2</th>
-                        <th scope="col" class="custom-table-header">#3</th>
-                        <th scope="col" class="custom-table-header">#1</th>
-                        <th scope="col" class="custom-table-header">#2</th>
-                        <th scope="col" class="custom-table-header">#3</th>
-                        <th scope="col" class="custom-table-header">#1</th>
-                        <th scope="col" class="custom-table-header">#2</th>
-                        <th scope="col" class="custom-table-header">#3</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <th scope="row">Impact:xxe</th>
-                        <td> xx%</td>
-                        <td> yy%</td>
-                        <td> xx%</td>
-                        <td> yy%</td>
-                        <td> xx%</td>
-                        <td> yy%</td>
-                        <td> xx%</td>
-                        <td> yy%</td>
-                        <td> xx%</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Impact:xx</th>
-                        <td> xx%</td>
-                        <td> yy%</td>
-                        <td> xx%</td>
-                        <td> yy%</td>
-                        <td> xx%</td>
-                        <td> yy%</td>
-                        <td> xx%</td>
-                        <td> yy%</td>
-                        <td> xx%</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Impact:xx</th>
-                        <td> xx%</td>
-                        <td> xx%</td>
-                        <td> xx%</td>
-                        <td> yy%</td>
-                        <td> xx%</td>
-                        <td> yy%</td>
-                        <td> xx%</td>
-                        <td> yy%</td>
-                        <td> xx%</td>
-                    </tr>
-                    </tbody>
-                </table>
-
             </div>
 
 
             <div class="col-1 custom-select-column">
-                <button type="submit" name="new_group_flow_form" class="btn btn-primary">Proceed >
+                <button type="submit" name="new_group_flow_form" class="btn btn-primary">Finish >
                 </button>
             </div>
         </div>

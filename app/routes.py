@@ -125,6 +125,14 @@ def gira_assess_asset_impact():
     else:
         return render_template('gira_assess_asset_impact.html' )
 
+@app.route('/gira_assess/gira_assess_objective/' , methods=['GET', 'POST'])
+def gira_assess_objective():
+    if request.method == 'POST':
+        return redirect("/gira_assess/gira_assess_objective/")
+    else:
+        return render_template('gira_assess_objective.html' )
+
+
 
 @app.route('/gira_overview/' , methods=['GET', 'POST'])
 def gira_overview():
