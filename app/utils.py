@@ -260,6 +260,12 @@ def get_assets():
         return []
     # db.session.query(your_table.column1.distinct()).filter_by(column2 = 'some_column2_value').all()
 
+def get_assetsfromrepository():
+    if db.session.query().distinct(HardwareAsset.id).count() > 0:
+        list_of_assets = db.session.query(HardwareAsset).distinct(HardwareAsset.id)
+        return list_of_assets
+    else:
+        return -1
 
 # region get Recommended CVEs for an asset
 def get_cve_recommendations(asset_id):
@@ -385,9 +391,9 @@ def get_capec_consequences():
 # x= v_report("Json_texts/report1.json")# for x in v_report("Json_texts/report1.json"):
 # print(x)
 
-# for y in get_assets():
-#     print(y.VReport_assetID, y.cve_id)
-#
+# for y in get_assetsfromrepository():
+#     print(y.id)
+
 # for y in get_cve_recommendations('f080c7b3-3038-4a52-8b14-4397136c9dad'):
 #     print(y.CVEId, y.id)
 #

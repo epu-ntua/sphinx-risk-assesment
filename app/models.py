@@ -130,8 +130,9 @@ class VulnerabilitiesWeaknessLink(db.Model):
         return '<cVecWe {}>'.format(self.Id)
 
 
-class Asset(db.Model):
-    __tablename__ = 'asset'
+
+class HardwareAsset(db.Model):
+    __tablename__ = 'hardware_asset'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     assetID = db.Column(db.String())
     assetIp = db.Column(db.String())
@@ -144,8 +145,8 @@ class Asset(db.Model):
     assetDomain = db.Column(db.String())
     assetWarranty = db.Column(db.String())
     assetWarrantyExpDate = db.Column(db.DateTime())
-    assetStatus = db.Column(db.Integer, db.ForeignKey('AssetHardwareStatus.AssetHardwareStatusID'))
-    assetType = db.Column(db.Integer, db.ForeignKey('AssetHardwareType.AssetHardwareTypeID'))
+    assetStatus = db.Column(db.Integer, db.ForeignKey('asset_hardware_status.AssetHardwareStatusID'))
+    assetType = db.Column(db.Integer, db.ForeignKey('asset_hardware_type.AssetHardwareTypeID'))
     assetPurchasePrice = db.Column(db.Float())
     assetPurchaseDate = db.Column(db.DateTime)
     assetCreatedBy = db.Column(db.String())
@@ -155,10 +156,10 @@ class Asset(db.Model):
     assetOwner = db.Column(db.String())
     assetUsageType = db.Column(db.String()) #--add hoc or permanent
     assetLocation = db.Column(db.String())
-    assetClassification = db.Column(db.Integer, db.ForeignKey('AssetClassification.AssetClassificationID'))
+    assetClassification = db.Column(db.Integer, db.ForeignKey('asset_classification.AssetClassificationID'))
     assetInformationProcessed = db.Column(db.String()) #--Personal or Business
     def __repr__(self):
-        return '<Asset {}>'.format(self.Id)
+        return '<HardwareAsset {}>'.format(self.id)
 
 class AssetHardwareStatus(db.Model):
     __tablename__ = 'asset_hardware_status'
@@ -187,7 +188,7 @@ class AssetClassification(db.Model):
 class RiskAssessment(db.Model):
     __tablename__ = 'risk_assessment'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    asset_id = db.Column(db.Integer, db.ForeignKey('asset.id'), nullable=False)
+    asset_id = db.Column(db.Integer, db.ForeignKey('hardware_asset.id'), nullable=False)
     date = db.Column(db.DateTime)
 
     def __repr__(self):
