@@ -221,6 +221,23 @@ def asset_dashboard():
         # else:
         return render_template('asset_dashboard.html')
 
+
+@app.route('/general_dashboard/', defaults={"asset": -1})
+@app.route('/general_dashboard/<asset>/', methods=['GET', 'POST'])
+def general_dashboard(asset):
+    if request.method == 'POST':
+        i = 5
+        toRedirect = "/general_dashboard/"
+        return redirect(toRedirect)
+    else:
+        # assetsArray = get_assets()
+
+        # print(assetsArray[0].VReport_assetID)
+        assetsArray = []
+        return render_template('general_dashboard.html', asset=asset, assets=assetsArray)
+
+
 @app.route('/test_gd')
 def test_gd():
     return render_template('test_gd.html')
+

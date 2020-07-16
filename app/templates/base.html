@@ -13,6 +13,9 @@
 
     <title>SPHINX Risk Assessment Module</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/general.css') }}">
+    {% block head %}
+
+    {% endblock %}
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark nav-custom">
@@ -36,6 +39,9 @@
                 <a class="nav-link" href="http://{{ serverAddress }}:{{ serverPort }}/gira_assess/gira_assess_exposure"> Start Gira
                     Assessment</a>
             </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="http://{{ serverAddress }}:{{ serverPort }}/general_dashboard"> General Dashboard</a>
+            </li>
             {#        <li class="nav-item">#}
             {#            <a class="nav-link" href="http://0.0.0.0:5002/shutdown">Shutdown</a>#}
             {#        </li>#}
@@ -49,9 +55,6 @@
     {% endblock %}
 </div>
 
-{% block script %}
-
-{% endblock %}
 
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -64,7 +67,10 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
         integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
         crossorigin="anonymous"></script>
-<script src="{{url_for('static', filename='sidebar.js')}}"></script>
+
+{% block script %}
+
+{% endblock %}
 
 </body>
 </html>
