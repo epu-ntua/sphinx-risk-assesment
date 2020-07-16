@@ -21,11 +21,19 @@ html, body {
     background-color: #00a79d;
 }
 
+.card-header{
+    color: white;
+    background-color: #00a79d;
+}
+
 .custom-card {
     width: 22%;
     margin: 2vh;
 }
 
+.custom-card-assessment{
+    width: 40%;
+}
 .threat-card {
     border-radius: 2em;
 }
@@ -104,19 +112,19 @@ html, body {
 }
 
 .custom-border-finished{
-    box-shadow: inset 5px 5px 3px rgba(0, 167, 157 , 1.0 ) ,inset -5px -5px 4px rgba(0, 167, 157 , 1)
+    box-shadow: inset 5px 5px 3px rgba(0, 167, 157 , 0.5 ) ,inset -5px -5px 4px rgba(0, 167, 157 , 0.5)
 }
 
 .custom-border-unfinished{
-    box-shadow: inset 5px 5px 3px rgba(255, 51, 0 , 1.0) ,inset -5px -5px 4px rgba(255, 51, 0 , 1);
+    box-shadow: inset 5px 5px 3px rgba(255, 51, 0 , 0.5) ,inset -5px -5px 4px rgba(255, 51, 0 , 0.5);
 }
 
 .custom-border-finished-big{
-    box-shadow: inset 15px 15px 3px rgba(0, 167, 157 , 1.0 ) ,inset -15px -15px 4px rgba(0, 167, 157 , 1)
+    box-shadow: inset 15px 15px 3px rgba(0, 167, 157 ,0.5 ) ,inset -15px -15px 4px rgba(0, 167, 157 ,0.5)
 }
 
 .custom-border-unfinished-big{
-    box-shadow: inset 15px 15px 3px rgba(255, 51, 0 , 1.0) ,inset -15px -15px 4px rgba(255, 51, 0 , 1);
+    box-shadow: inset 15px 15px 3px rgba(255, 51, 0 , 0.5) ,inset -15px -15px 4px rgba(255, 51, 0 , 0.5);
 }
 
 .gira-bar {
@@ -200,9 +208,19 @@ html, body {
 
 h5 {
     text-shadow: 2px 0 0 grey, -2px 0 0 grey, 0 2px 0 grey, 0 -2px 0 grey, 1px 1px grey, -1px -1px 0 grey, 1px -1px 0 grey, -1px 1px 0 grey;
+    color: white;
 }
 
 #gira-bar-big {
     height: 92vh;
     border-bottom: none;
+}
+
+.custom-table-header{
+    color: white;
+    background-color: #00a79d;
+}
+
+.table{
+    margin-top: 5px;
 }

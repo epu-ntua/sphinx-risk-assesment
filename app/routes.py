@@ -49,6 +49,8 @@ def assets(asset):
 def vulnerabilities(asset, vulnerability):
     if request.method == 'POST':
         i = 5
+        toRedirect = "threats/"
+        return redirect(toRedirect)
     else:
         assetsArray = get_assets()
         print(assetsArray[0].VReport_assetID)
@@ -66,6 +68,71 @@ def threats(asset, vulnerability,threat):
         print(assetsArray[0].VReport_assetID)
 
         return render_template('threats.html' ,asset = asset, vulnerability = vulnerability , threat = threat, assets = assetsArray)
+
+
+@app.route('/gira_assess/' , methods=['GET', 'POST'])
+def gira_assess():
+    if request.method == 'POST':
+        return redirect("/gira_assess/")
+    else:
+        return render_template('gira_assess.html' )
+
+
+
+@app.route('/gira_assess/gira_assess_exposure/' , methods=['GET', 'POST'])
+def gira_assess_exposure():
+    if request.method == 'POST':
+        return redirect("/gira_assess_exposure/")
+    else:
+        return render_template('gira_assess_exposure.html' )
+
+@app.route('/gira_assess/gira_assess_response/' , methods=['GET', 'POST'])
+def gira_assess_response():
+    if request.method == 'POST':
+        return redirect("/gira_assess/gira_assess_response/")
+    else:
+        return render_template('gira_assess_response.html' )
+
+@app.route('/gira_assess/gira_assess_materialisation/' , methods=['GET', 'POST'])
+def gira_assess_materialisation():
+    if request.method == 'POST':
+        return redirect("/gira_assess/gira_assess_materialisation/")
+    else:
+        return render_template('gira_assess_materialisation.html' )
+
+
+
+@app.route('/gira_assess/gira_assess_consequence/' , methods=['GET', 'POST'])
+def gira_assess_consequence():
+    if request.method == 'POST':
+        return redirect("/gira_assess/gira_assess_consequence/")
+    else:
+        return render_template('gira_assess_consequence.html' )
+
+
+
+@app.route('/gira_assess/gira_assess_asset_status/' , methods=['GET', 'POST'])
+def gira_assess_asset_status():
+    if request.method == 'POST':
+        return redirect("/gira_assess/gira_assess_asset_status/")
+    else:
+        return render_template('gira_assess_asset_status.html' )
+
+@app.route('/gira_assess/gira_assess_asset_impact/' , methods=['GET', 'POST'])
+def gira_assess_asset_impact():
+    if request.method == 'POST':
+        return redirect("/gira_assess/gira_assess_asset_impact/")
+    else:
+        return render_template('gira_assess_asset_impact.html' )
+
+@app.route('/gira_assess/gira_assess_objective/' , methods=['GET', 'POST'])
+def gira_assess_objective():
+    if request.method == 'POST':
+        return redirect("/gira_assess/gira_assess_objective/")
+    else:
+        return render_template('gira_assess_objective.html' )
+
+
 
 @app.route('/gira_overview/' , methods=['GET', 'POST'])
 def gira_overview():
@@ -100,7 +167,7 @@ def gira_consequence():
     if request.method == 'POST':
         return redirect("/gira_overview/")
     else:
-        return render_template('gira_consequence.html')
+        return render_template('gira_consequences.html')
 
 @app.route('/gira_overview/gira_asset_status/' , methods=['GET', 'POST'])
 def gira_asset_status():
