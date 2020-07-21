@@ -1,12 +1,13 @@
-{% extends "base.html" %}
+{% extends "sidebar_static_information.html" %}
 
 {% block head %}
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css"
           crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/general_dashboard.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/Treant.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/Treant.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/general_dashboard_tree.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/css_tree.css') }}">
+    {#    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/css_tree.css') }}">#}
+{#    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/arg-graph.min.css') }}">#}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 {% endblock %}
 
@@ -15,9 +16,11 @@
     <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
     <script src=" https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/Treant.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/raphael.js') }}"></script>
+{#    <script type="text/javascript" src="{{ url_for('static', filename='js/arg-graph.min.js') }}"></script>#}
+        <script type="text/javascript" src="{{ url_for('static', filename='js/Treant.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/raphael.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/dashboard_tree.js') }}"></script>
+    {#  <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>#}
 {% endblock %}
 
 {% block content %}
@@ -105,59 +108,7 @@
             </div>
         </div>
         <div class="col-8 custom-select-column">
-            <ul class="tree">
-                <li><span> <div class="card bg-light mb-3 custom-dashboard-single-asset-card" style="max-width: 18rem;">
-                            <div class="card-header"> Threat XXXX</div>
-                            <div class="card-body">
-                                <h4 class="card-title">Consequences</h4>
-                                <p class="card-text"> Lorem Ipsum --- </p>
-                                <h4 class="card-title"> Typical Severity</h4>
-                                <p class="card-text"> Lorem Ipsum --- </p>
-                            </div>
-                        </div></span>
-                    <ul>
-                        <li><span>About us</span>
-                            <ul>
-                                <li><span>Our history</span>
-                                    <ul>
-                                        <li><span>Founder</span></li>
-                                    </ul>
-                                </li>
-                                <li><span>Our board</span>
-                                    <ul>
-                                        <li><span>Brad Whiteman</span></li>
-                                        <li><span>Cynthia Tolken</span></li>
-                                        <li><span>Bobby Founderson</span></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li>
-                        <li><span>Our products</span>
-                            <ul>
-                                <li><span>The Widget 2000™</span>
-                                    <ul>
-                                        <li><span>Order form</span></li>
-                                    </ul>
-                                </li>
-                                <li><span>The McGuffin V2</span>
-                                    <ul>
-                                        <li><span>Order form</span></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li>
-                        <li><span>Contact us</span>
-                            <ul>
-                                <li><span>Social media</span>
-                                    <ul>
-                                        <li><span>Facebook</span></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
+            <div id="tree-simple" style="width:100%; height: 100%"> </div>
         </div>
     </div>
 {% endblock %}

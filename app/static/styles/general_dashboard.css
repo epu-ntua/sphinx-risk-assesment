@@ -54,6 +54,9 @@ h3:hover{
     border-bottom: none;
 }
 
+h4{
+    width: 100%;
+}
 .custom-dashboard-single-asset-card {
     width: 95%;
     min-width: 95%;
