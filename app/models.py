@@ -183,7 +183,28 @@ class AssetClassification(db.Model):
     AssetClassificationDescr = db.Column(db.String())
     AssetClassificationInsertedDate = db.Column(db.DateTime)
     def __repr__(self):
-        return '<AssetHardwareType {}>'.format(self.AssetClassificationID)
+        return '<AssetClassification {}>'.format(self.AssetClassificationID)
+
+class SoftwareAsset(db.Model):
+    __tablename__ = 'software_asset'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    softwareName = db.Column(db.String())
+    softwareManufacturer = db.Column(db.String())
+    softwareCategory = db.Column(db.String())
+    softwareType = db.Column(db.Integer, db.ForeignKey('asset_software_type.AssetSoftwareTypeID'))
+    softwarePurchaseDate = db.Column(db.DateTime)
+    softwareInstalled = db.Column(db.String())
+    def __repr__(self):
+        return '<SoftwareAsset {}>'.format(self.id)
+
+class AssetSoftwareType(db.Model):
+    __tablename__ = 'asset_software_type'
+    AssetSoftwareTypeID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    AssetSoftwareTypeshortDescr = db.Column(db.String())
+    AssetSoftwareTypeDescr = db.Column(db.String())
+    AssetSoftwareTypeInsertedDate = db.Column(db.DateTime)
+    def __repr__(self):
+        return '<AssetSoftwareType {}>'.format(self.AssetSoftwareTypeID)
 
 class RiskAssessment(db.Model):
     __tablename__ = 'risk_assessment'

@@ -1,0 +1,86 @@
+{% extends "sidebar_asset_management.html" %}
+{% block content %}
+
+<!--    MAIN -->
+<h1>License Types</h1>
+<table id="example" class="table  table table-striped table-bordered" style="width:100%">
+    <thead>
+        <tr>
+            <th>License Type</th>
+            <th>Track By</th>
+            <th>Installation</th>
+            <th>Expires</th>
+            <th>Free of charge</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Individual</td>
+            <td>Workstation</td>
+            <td>Single</td>
+            <td>Yes</td>
+            <td>No</td>
+        </tr>
+        <tr>
+            <td>Volume</td>
+            <td>Workstation</td>
+            <td>Volume</td>
+            <td>Yes</td>
+            <td>No</td>
+        </tr>
+        <tr>
+            <td>Enterprise</td>
+            <td>Workstation</td>
+            <td>Unlimited</td>
+            <td>No</td>
+            <td>No</td>
+        </tr>
+        <tr>
+            <td>User License</td>
+            <td>User</td>
+            <td>Single</td>
+            <td>Yes</td>
+            <td>No</td>
+        </tr>
+        <tr>
+            <td>Trial</td>
+            <td>Workstation</td>
+            <td>Volume</td>
+            <td>Yes</td>
+            <td>No</td>
+        </tr>
+        <tr>
+            <td>Free</td>
+            <td>Workstation</td>
+            <td>Unlimited</td>
+            <td>No</td>
+            <td>No</td>
+        </tr>
+        <tr>
+            <td>Original Equipment Manufacturer (OEM)</td>
+            <td>Workstation</td>
+            <td>Single</td>
+            <td>No</td>
+            <td>No</td>
+        </tr>
+            </tbody>
+             <tfoot>
+                 <tr>
+                    <th>License Type</th>
+                    <th>Track By</th>
+                    <th>Installation</th>
+                    <th>Expires</th>
+                    <th>Free of charge</th>
+                </tr>
+             </tfoot>
+        </table>
+{%- endblock %}
+
+{% block script %}
+
+    <script>
+    $(document).ready(function() {
+    $('#example').DataTable();
+    } );
+    </script>
+{% endblock %}
