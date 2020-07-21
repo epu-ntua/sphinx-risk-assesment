@@ -1,0 +1,131 @@
+{% extends "sidebar_asset_management.html" %}
+{% block content %}
+
+<!--    MAIN -->
+<h1>Asset Hardware List</h1>
+<table id="example" class="table  table table-striped table-bordered" style="width:100%">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>IP</th>
+            <th>Model</th>
+            <th>Vendor</th>
+            <th>Domain</th>
+            <th>Status</th>
+            <th>Type</th>
+            <th>Created By</th>
+            <th>CreatedDate</th>
+            <th>AssignedTo</th>
+            <th>ManagedBy</th>
+            <th>UsageType</th>
+            <th>Location</th>
+            <th>Classification</th>
+            <th>InformationProcessed</th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>Tiger</td>
+        <td>127.100.100.001</td>
+        <td>RJ45</td>
+        <td>Intel</td>
+        <td>Work</td>
+        <td>Status</td>
+        <td>Workstation</td>
+        <td>User01</td>
+        <td>30/05/2019</td>
+        <td>User123</td>
+        <td>User01</td>
+        <td>Permanent</td>
+        <td>City</td>
+        <td>Critical</td>
+        <td>Business</td>
+    </tr>
+        <tr>
+        <td>L2</td>
+        <td>127.100.100.003</td>
+        <td>SGF2</td>
+        <td>TPlink</td>
+        <td>Work</td>
+        <td>Active</td>
+        <td>Rooter</td>
+        <td>User01</td>
+        <td>30/05/2019</td>
+        <td>User123</td>
+        <td>User01</td>
+        <td>Permanent</td>
+        <td>City</td>
+        <td>Critical</td>
+        <td>Business</td>
+    </tr>
+    <tr>
+        <td>L2</td>
+        <td>127.100.100.002</td>
+        <td>SD56</td>
+        <td>Intel</td>
+        <td>Work</td>
+        <td>Service</td>
+        <td>Rooter</td>
+        <td>User01</td>
+        <td>30/05/2019</td>
+        <td>User123</td>
+        <td>User01</td>
+        <td>Permanent</td>
+        <td>City</td>
+        <td>Critical</td>
+        <td>Business</td>
+    </tr>
+
+
+            {% for tempCVE in proposedCVEArray %}
+            <tr>
+                <td> {{ tempCVE[0].assetName }}</td>
+                <td>Customer Support</td>
+                <td>New York</td>
+                <td>27</td>
+                <td>2011/01/25</td>
+                <td>$112,000</td>
+                <td>$320,800</td>
+                <td>$320,800</td>
+                <td>$320,800</td>
+                <td>$320,800</td>
+                <td>$320,800</td>
+                <td>$320,800</td>
+                <td>$320,800</td>
+                <td>$320,800</td>
+                <td>$320,800</td>
+            </tr>
+<!--            {% else %}-->
+<!--            <th scope="row"> No assets </th>-->
+            {% endfor %}
+            </tbody>
+             <tfoot>
+                 <tr>
+                    <th>Name</th>
+                    <th>IP</th>
+                    <th>Model</th>
+                    <th>Vendor</th>
+                    <th>Domain</th>
+                    <th>Status</th>
+                    <th>Type</th>
+                    <th>Created By</th>
+                    <th>CreatedDate</th>
+                    <th>AssignedTo</th>
+                    <th>ManagedBy</th>
+                    <th>UsageType</th>
+                    <th>Location</th>
+                    <th>Classification</th>
+                    <th>InformationProcessed</th>
+                </tr>
+             </tfoot>
+        </table>
+{%- endblock %}
+
+{% block script %}
+
+    <script>
+    $(document).ready(function() {
+    $('#example').DataTable();
+    } );
+    </script>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "sidebar_asset_management.html" %}
+{% block content %}
+
+<!--    MAIN -->
+<h1>Software List</h1>
+<table id="example" class="table  table table-striped table-bordered" style="width:100%">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Manufacturer</th>
+            <th>Category</th>
+            <th>Type</th>
+            <th>PurchaseDate</th>
+            <th>Installed</th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>Microsoft .NET Framework 4.8 SP1</td>
+        <td>Microsoft Corp</td>
+        <td>Other</td>
+        <td>Managed</td>
+        <td>28/05/2019</td>
+        <td>6</td>
+    </tr>
+        <tr>
+        <td>Microsoft Windows 7 Professional</td>
+        <td>Microsoft Corp</td>
+        <td>Operating System</td>
+        <td>Managed</td>
+        <td>02/05/2010</td>
+        <td>2</td>
+    </tr>
+    <tr>
+        <td>Microsoft SQL Server 2012</td>
+        <td>Microsoft Corp</td>
+        <td>Database</td>
+        <td>Managed</td>
+        <td>15/10/2014</td>
+        <td>5</td>
+    </tr>
+
+
+            {% for tempCVE in proposedCVEArray %}
+            <tr>
+                <td> {{ tempCVE[0].assetName }}</td>
+                <td>Customer Support</td>
+                <td>New York</td>
+                <td>27</td>
+                <td>2011/01/25</td>
+                <td>$112,000</td>
+            </tr>
+<!--            {% else %}-->
+<!--            <th scope="row"> No assets </th>-->
+            {% endfor %}
+            </tbody>
+             <tfoot>
+                 <tr>
+                    <th>Name</th>
+                    <th>Manufacturer</th>
+                    <th>Category</th>
+                    <th>Type</th>
+                    <th>PurchaseDate</th>
+                    <th>Installed</th>
+                </tr>
+             </tfoot>
+        </table>
+{%- endblock %}
+
+{% block script %}
+
+    <script>
+    $(document).ready(function() {
+    $('#example').DataTable();
+    } );
+    </script>
+{% endblock %}

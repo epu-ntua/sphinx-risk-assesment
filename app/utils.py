@@ -383,6 +383,15 @@ def get_capec_consequences():
             else:
                 temp_scope.append(temp_it)
 
+def get_hardwareassets():
+    if db.session.query(HardwareAsset).distinct(
+            HardwareAsset.id).count() > 0:
+        list_of_hardwareassets = db.session.query(HardwareAsset).distinct(
+            HardwareAsset.id)
+        return list_of_hardwareassets
+    else:
+        return []
+
 
 # endregion
 

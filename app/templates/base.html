@@ -49,10 +49,6 @@
     {% endblock %}
 </div>
 
-{% block script %}
-
-{% endblock %}
-
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
@@ -64,7 +60,11 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
         integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
         crossorigin="anonymous"></script>
-<script src="{{url_for('static', filename='sidebar.js')}}"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src=" https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
 
+{% block script %}
+
+{% endblock %}
 </body>
 </html>

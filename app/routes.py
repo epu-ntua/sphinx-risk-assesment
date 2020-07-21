@@ -224,3 +224,49 @@ def asset_dashboard():
 @app.route('/test_gd')
 def test_gd():
     return render_template('test_gd.html')
+
+@app.route('/hardwareassets/', defaults={"hardwareasset": -1})
+@app.route('/hardwareassets/<hardwareasset>/', methods=['GET', 'POST'])
+def hardwareassets(hardwareasset):
+    if request.method == 'POST':
+        if hardwareasset != -1:
+            print(request.form)
+            toRedirect = "/hardwareassets/"
+            return redirect(toRedirect)
+        else:
+            return redirect("/hardwareassets/")
+    else:
+        hardwareassetsArray = get_hardwareassets()
+        return render_template('assets.html', asset=hardwareasset, assets=hardwareassetsArray)
+
+@app.route('/asset_discovery')
+def asset_discovery():
+    return render_template('asset_discovery.html')
+
+@app.route('/asset_Asset_hardware')
+def asset_Asset_hardware():
+    return render_template('asset_Asset_hardware.html')
+
+@app.route('/asset_Asset_hardware_type')
+def asset_Asset_hardware_type():
+    return render_template('asset_Asset_hardware_type.html')
+
+@app.route('/asset_Asset_software')
+def asset_Asset_software():
+    return render_template('asset_Asset_software.html')
+
+@app.route('/asset_Asset_software_type')
+def asset_Asset_software_type():
+    return render_template('asset_Asset_software_type.html')
+
+@app.route('/asset_Asset_License_Type')
+def asset_Asset_License_Type():
+    return render_template('asset_Asset_License_Type.html')
+
+@app.route('/asset_organisation_structure')
+def asset_organisation_structure():
+    return render_template('asset_organisation_structure.html')
+
+@app.route('/asset_organisation_process')
+def asset_organisation_process():
+    return render_template('asset_organisation_process.html')
