@@ -251,6 +251,20 @@ def general_dashboard_threat_view(threat):
         assetsArray = []
         return render_template('general_dashboard_threat_view.html', threat=threat, assets=assetsArray)
 
+@app.route('/general_dashboard/tree_view/', defaults={"threat": -1})
+@app.route('/general_dashboard/tree_view/<threat>/', methods=['GET', 'POST'])
+def general_dashboard_tree_view(threat):
+    if request.method == 'POST':
+        i = 5
+        toRedirect = "/general_dashboard/threat_view/"
+        return redirect(toRedirect)
+    else:
+        # assetsArray = get_assets()
+
+        # print(assetsArray[0].VReport_assetID)
+        assetsArray = []
+        return render_template('general_dashboard_tree_view.html', threat=threat, assets=assetsArray)
+
 
 @app.route('/test_gd')
 def test_gd():
