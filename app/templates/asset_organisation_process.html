@@ -1,7 +1,6 @@
 {% extends "sidebar_asset_management.html" %}
 {% block content %}
 
-<!--    MAIN -->
 <h1>Organisation - Business services</h1>
 <table id="example" class="table  table table-striped table-bordered" style="width:100%">
     <thead>
@@ -55,15 +54,6 @@
             <td>Advisory services</td>
             <td>Emergency – Outpatient</td>
         </tr>
-            {% for tempCVE in proposedCVEArray %}
-            <tr>
-                <td> {{ tempCVE[0].assetName }}</td>
-                <td>Customer Support</td>
-                <td>New York</td>
-            </tr>
-<!--            {% else %}-->
-<!--            <th scope="row"> No assets </th>-->
-            {% endfor %}
             </tbody>
              <tfoot>
                  <tr>
