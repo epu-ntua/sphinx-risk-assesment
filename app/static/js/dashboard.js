@@ -1,6 +1,7 @@
 $(document).ready(function () {
             $('#asset-table-1').DataTable();
 
+            $("#dashboard_tab_content_0").toggle();
             $("#dashboard_tab_content_1").toggle();
             $("#dashboard_tab_content_2").toggle();
             $("#dashboard_tab_content_3").toggle();

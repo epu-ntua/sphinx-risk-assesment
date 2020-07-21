@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "sidebar_static_information.html" %}
 
 {% block head %}
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css"
@@ -55,7 +55,7 @@
             <hr/>
             <h5> Current Threat </h5>
             <div class="card bg-light mb-3 custom-dashboard-single-asset-card" style="max-width: 18rem;">
-                <div class="card-header"> In Depth Capec Information</div>
+                <div class="card-header"> In Depth Threat Information</div>
                 <div class="card-body">
                     <h4 class="card-title">Description</h4>
                     <p class="card-text"> Lorem Ipsum --- </p>
@@ -66,39 +66,85 @@
                     <h4 class="card-title"> Typical Severity</h4>
                     <p class="card-text"> Lorem Ipsum --- </p>
                 </div>
-                <h2 class="custom-card-inner-header"> In Depth Threat Assessment</h2>
-                    <div class="card-body">
-                        <h4 class="card-title">Likelihood</h4>
-
-                        <h4 class="card-title">Threat Agent Factory</h4>
-                        <p class="card-text"> Skill Level -x</p>
-                        <p class="card-text"> Motive -x </p>
-                        <p class="card-text"> Opportunity -x</p>
-
-
-                        <h4 class="card-title">Vulnerability Factors</h4>
-                        <p class="card-text"> Ease of discovery - x</p>
-                        <p class="card-text"> Ease of exploit - x</p>
-                        <p class="card-text"> Awareness -x </p>
-
-                        <h4 class="card-title">Impact</h4>
-
-                        <h4 class="card-title">Technical Impacts</h4>
-                        <p class="card-text"> Loss of confidentiality - x</p>
-                        <p class="card-text"> Loss of integrity - x</p>
-                        <p class="card-text"> Loss of availability -x</p>
-
-                        <h4 class="card-title">Business Impact</h4>
-                        <p class="card-text"> >Financial Damage - x</p>
-                        <p class="card-text"> Reputation Damage - x</p>
-                        <p class="card-text"> Non-compliance - x</p>
-
-                        <hr/>
-                        <a href="#" class="card-link"> Redo Assessment</a>
-                    </div>
+{#                <h2 class="custom-card-inner-header"> In Depth Threat Assessment</h2>#}
+{#                    <div class="card-body">#}
+{#                        <h4 class="card-title">Likelihood</h4>#}
+{##}
+{#                        <h4 class="card-title">Threat Agent Factory</h4>#}
+{#                        <p class="card-text"> Skill Level -x</p>#}
+{#                        <p class="card-text"> Motive -x </p>#}
+{#                        <p class="card-text"> Opportunity -x</p>#}
+{##}
+{##}
+{#                        <h4 class="card-title">Vulnerability Factors</h4>#}
+{#                        <p class="card-text"> Ease of discovery - x</p>#}
+{#                        <p class="card-text"> Ease of exploit - x</p>#}
+{#                        <p class="card-text"> Awareness -x </p>#}
+{##}
+{#                        <h4 class="card-title">Impact</h4>#}
+{##}
+{#                        <h4 class="card-title">Technical Impacts</h4>#}
+{#                        <p class="card-text"> Loss of confidentiality - x</p>#}
+{#                        <p class="card-text"> Loss of integrity - x</p>#}
+{#                        <p class="card-text"> Loss of availability -x</p>#}
+{##}
+{#                        <h4 class="card-title">Business Impact</h4>#}
+{#                        <p class="card-text"> >Financial Damage - x</p>#}
+{#                        <p class="card-text"> Reputation Damage - x</p>#}
+{#                        <p class="card-text"> Non-compliance - x</p>#}
+{##}
+{#                        <hr/>#}
+{#                        <a href="#" class="card-link"> Redo Assessment</a>#}
+{#                    </div>#}
             </div>
         </div>
         <div class="col-8 flex-wrap align-content-start custom-select-column">
+            <button id="dashboard_tab_0" class="general-dashboard-tab" onclick=toggleTab(0)>
+                <h5> Threat Assessment </h5>
+                <i id="dashboard_tab_icon_0" class="fa fa-toggle-right general-dashboard-tab-icon"
+                   style="font-size:25px"></i>
+            </button>
+            <div id="dashboard_tab_content_0"  class="row">
+                <div class="col-6 d-flex flex-wrap align-content-start">
+                    <div class="row flex-grow custom-select-column-header">
+                        <h3> Likelihood &lt Medium 50% &gt </h3>
+                        <h4> Threat Agent Factory </h4>
+                        <label for="formControlRange">Skill Level</label>
+                        <input type="range" class="form-control-range" id="formControlRange">
+                        <label for="formControlRange">Motive</label>
+                        <input type="range" class="form-control-range" id="formControlRange">
+                        <label for="formControlRange">Opportunity</label>
+                        <h4> Vulnerability Factors</h4>
+                        <input type="range" class="form-control-range" id="formControlRange">
+                        <label for="formControlRange">Ease of discovery</label>
+                        <input type="range" class="form-control-range" id="formControlRange">
+                        <label for="formControlRange">Ease of exploit</label>
+                        <input type="range" class="form-control-range" id="formControlRange">
+                        <label for="formControlRange">Awareness</label>
+                        <input type="range" class="form-control-range" id="formControlRange">
+                    </div>
+                </div>
+                <div class="col-6 d-flex flex-wrap align-content-start">
+                    <div class="row flex-grow custom-select-column-header">
+                        <h3> Impact &lt Medium 59% &gt </h3>
+                        <h4> Technical Impact Factor</h4>
+                        <label for="formControlRange">Loss of confidentiality</label>
+                        <input type="range" class="form-control-range" id="formControlRange">
+                        <label for="formControlRange">Loss of integrity</label>
+                        <input type="range" class="form-control-range" id="formControlRange">
+                        <label for="formControlRange">Loss of availability</label>
+                        <input type="range" class="form-control-range" id="formControlRange">
+                        <h4> Business Impact Factors</h4>
+                        <label for="formControlRange">Financial Damage</label>
+                        <input type="range" class="form-control-range" id="formControlRange">
+                        <label for="formControlRange">Reputation Damage</label>
+                        <input type="range" class="form-control-range" id="formControlRange">
+                        <label for="formControlRange">Non-compliance</label>
+                        <input type="range" class="form-control-range" id="formControlRange">
+                    </div>
+                </div>
+            </div>
+            <hr/>
             <button id="dashboard_tab_1" class="general-dashboard-tab" onclick=toggleTab(1)>
                 <h5> Affected Assets </h5>
                 <i id="dashboard_tab_icon_1" class="fa fa-toggle-right general-dashboard-tab-icon"
