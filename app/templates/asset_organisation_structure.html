@@ -1,5 +1,5 @@
 {% extends "sidebar_asset_management.html" %}
-
+{% block head %}
   <head>
     <meta charset="utf-8">
 
@@ -24,6 +24,7 @@
     </style>
 
   </head>
+{% endblock %}
 {% block content %}
 
 <!--    MAIN -->
@@ -200,5 +201,10 @@ function update(source) {
 }
 
 </script>
+ <script>
+    $(document).ready(function() {
+    $('#example').DataTable();
+    } );
+    </script>
 {% endblock %}
 
