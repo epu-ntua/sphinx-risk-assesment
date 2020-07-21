@@ -284,3 +284,7 @@ h5 {
     a.bg-dark {
         background-color: #132644 !important;
     }
+
+    .main-link-navbar{
+        height: 100%;
+    }
