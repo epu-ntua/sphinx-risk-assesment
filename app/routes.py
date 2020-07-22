@@ -28,7 +28,7 @@ def assets(asset):
         else:
             return redirect("/assets/")
     else:
-        assetsArray = get_assets()
+        # assetsArray = get_assets()
         # # print(assetsArray[0].VReport_assetID)
         #
         # proposedCVEArray = []
@@ -292,34 +292,85 @@ def hardwareassets(hardwareasset):
         hardwareassetsArray = get_hardwareassets()
         return render_template('assets.html', asset=hardwareasset, assets=hardwareassetsArray)
 
+
 @app.route('/asset_discovery')
 def asset_discovery():
     return render_template('asset_discovery.html')
+
 
 @app.route('/asset_Asset_hardware')
 def asset_Asset_hardware():
     return render_template('asset_Asset_hardware.html')
 
+
 @app.route('/asset_Asset_hardware_type')
 def asset_Asset_hardware_type():
     return render_template('asset_Asset_hardware_type.html')
+
 
 @app.route('/asset_Asset_software')
 def asset_Asset_software():
     return render_template('asset_Asset_software.html')
 
+
 @app.route('/asset_Asset_software_type')
 def asset_Asset_software_type():
     return render_template('asset_Asset_software_type.html')
+
 
 @app.route('/asset_Asset_License_Type')
 def asset_Asset_License_Type():
     return render_template('asset_Asset_License_Type.html')
 
+
 @app.route('/asset_organisation_structure')
 def asset_organisation_structure():
     return render_template('asset_organisation_structure.html')
 
+
 @app.route('/asset_organisation_process')
 def asset_organisation_process():
     return render_template('asset_organisation_process.html')
+
+
+@app.route('/forensic_dashboard/', defaults={"report": -1})
+@app.route('/forensic_dashboard/<report>/', methods=['GET', 'POST'])
+def forensic_dashboard(report):
+    if request.method == 'POST':
+        i = 5
+        toRedirect = "/forensic_dashboard/"
+        return redirect(toRedirect)
+    else:
+        # assetsArray = get_assets()
+
+        # print(assetsArray[0].VReport_assetID)
+        assetsArray = []
+        return render_template('forensic_dashboard.html', report=report, assets=assetsArray)
+
+@app.route('/forensic_new_report/', defaults={"report": -1})
+@app.route('/forensic_new_report/<report>/', methods=['GET', 'POST'])
+def forensic_new_report(report):
+    if request.method == 'POST':
+        i = 5
+        toRedirect = "/forensic_new_report/"
+        return redirect(toRedirect)
+    else:
+        # assetsArray = get_assets()
+
+        # print(assetsArray[0].VReport_assetID)
+        assetsArray = []
+        return render_template('forensic_new_report.html', report=report, assets=assetsArray)
+
+@app.route('/forensic_data_sources/', defaults={"report": -1})
+@app.route('/forensic_data_sources/<report>/', methods=['GET', 'POST'])
+def forensic_data_sources(report):
+    if request.method == 'POST':
+        i = 5
+        toRedirect = "/forensic_data_sources/"
+        return redirect(toRedirect)
+    else:
+        # assetsArray = get_assets()
+
+        # print(assetsArray[0].VReport_assetID)
+        assetsArray = []
+        return render_template('forensic_data_sources.html', report=report, assets=assetsArray)
