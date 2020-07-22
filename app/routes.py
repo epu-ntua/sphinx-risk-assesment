@@ -28,7 +28,7 @@ def assets(asset):
         else:
             return redirect("/assets/")
     else:
-        assetsArray = get_assets()
+        # assetsArray = get_assets()
         # # print(assetsArray[0].VReport_assetID)
         #
         # proposedCVEArray = []
@@ -323,3 +323,19 @@ def asset_organisation_structure():
 @app.route('/asset_organisation_process')
 def asset_organisation_process():
     return render_template('asset_organisation_process.html')
+
+@app.route('/asset_Asset_usage_type')
+def asset_Asset_usage_type():
+    return render_template('asset_Asset_usage_type.html')
+
+@app.route('/asset_Asset_hardware_non_it')
+def asset_Asset_hardware_non_it():
+    return render_template('asset_Asset_hardware_non_it.html')
+
+@app.route('/asset_Asset_hardware_classification')
+def asset_Asset_hardware_classification():
+    return render_template('asset_Asset_hardware_classification.html')
+
+@app.route('/asset_configuration_relationship')
+def asset_configuration_relationship():
+    return render_template('asset_configuration_relationship.html')
