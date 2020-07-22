@@ -29,18 +29,22 @@ def assets(asset):
             return redirect("/assets/")
     else:
         assetsArray = get_assets()
-        # print(assetsArray[0].VReport_assetID)
-
-        proposedCVEArray = []
-        # print(assetsArray)
-        if assetsArray != -1:
-            for tempAsset in assetsArray:
-                proposedCVEArray.append(get_cve_recommendations(tempAsset.VReport_assetID))
-
-        # Still need an fuction that will get the other CVE, or preferably being able to add CVE one by one by hand
-        othersCVEArray = []
+        # # print(assetsArray[0].VReport_assetID)
+        #
+        # proposedCVEArray = []
+        # # print(assetsArray)
+        # if assetsArray != -1:
+        #     for tempAsset in assetsArray:
+        #         proposedCVEArray.append(get_cve_recommendations(tempAsset.VReport_assetID))
+        #
+        # # Still need an fuction that will get the other CVE, or preferably being able to add CVE one by one by hand
+        # othersCVEArray = []
         # for tempAsset in assetsArray:
         # othersCVEArray.append()
+
+        assetsArray = [{"VReport_assetID": "85"}, {"VReport_assetID": "80"} ]
+        proposedCVEArray = ["2020-13720" , "2020-13730"]
+        othersCVEArray = ["2020-12350"]
 
         return render_template('assets.html', asset=asset, assets=assetsArray, proposedCVEArray=proposedCVEArray,
                                othersCVEArray=othersCVEArray)
@@ -54,8 +58,10 @@ def vulnerabilities(asset, vulnerability):
         toRedirect = "threats/"
         return redirect(toRedirect)
     else:
-        assetsArray = get_assets()
-        print(assetsArray[0].VReport_assetID)
+        # assetsArray = get_assets()
+        # print(assetsArray[0].VReport_assetID)
+
+        assetsArray = [{"VReport_assetID": "85"}, {"VReport_assetID": "80"} ]
 
         return render_template('vulnerabilities.html', asset=asset, vulnerability=vulnerability, assets=assetsArray)
 
@@ -67,8 +73,10 @@ def threats(asset, vulnerability, threat):
     if request.method == 'POST':
         i = 5
     else:
-        assetsArray = get_assets()
-        print(assetsArray[0].VReport_assetID)
+        # assetsArray = get_assets()
+        # print(assetsArray[0].VReport_assetID)
+
+        assetsArray = [{"VReport_assetID": "85"}, {"VReport_assetID": "80"} ]
 
         return render_template('threats.html', asset=asset, vulnerability=vulnerability, threat=threat,
                                assets=assetsArray)
