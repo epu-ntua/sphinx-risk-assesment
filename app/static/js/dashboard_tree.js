@@ -18,7 +18,7 @@ threat_exposure_node = {
         '                <div class="card-header"> Threat Node</div>\n' +
         '                <div class="card-body">\n' +
         '                    <h5 class="card-title">Description</h5>\n' +
-        '                    <p class="card-text"> Lorem Ipsum --- </p>\n' +
+        '                    <p class="card-text"> An adversary modifies content to make it contain something other than what the original content producer intended while keeping the apparent source of the content unchanged.  </p>\n' +
         '                    <h5 class="card-title"> Calculated Occurance Risk</h5>\n' +
         '                    <p class="card-text"> 45% </p>\n' +
         '                </div>\n' +
@@ -30,12 +30,28 @@ pre_incident_response_node = {
     text: {name: "Pre Incident Response"},
     innerHTML: '<div class="card bg-light mb-3 custom-dashboard-single-asset-card" style="max-width: 18rem;">\n' +
         '                    <div class="card-header"> Response Node #2:\n' +
-        '                        Added Security Software xxx\n' +
+        '                       Better security rules in mail filter \n' +
         '                    </div>\n' +
         '                    <div class="card-body">\n' +
         '                        <h5 class="card-title">Description</h5>\n' +
-        '                        <p class="card-text"> Lorem Ipsum --- </p>\n' +
+        '                        <p class="card-text"> Add new rules in mail filter that handles all mail communication  </p>\n' +
         '                        <h5 class="card-title">Incident Probability Effect (Positive)</h5>\n' +
+        '                        <p class="card-text"> Major Impact </p>\n' +
+        '                    </div>\n' +
+        '                </div>'
+}
+
+pre_incident_response_node_1 = {
+    parent: threat_exposure_node,
+    text: {name: "Pre Incident Response"},
+    innerHTML: '<div class="card bg-light mb-3 custom-dashboard-single-asset-card" style="max-width: 18rem;">\n' +
+        '                    <div class="card-header"> Response Node #1:\n' +
+        '                       Do nothing \n' +
+        '                    </div>\n' +
+        '                    <div class="card-body">\n' +
+        '                        <h5 class="card-title">Description</h5>\n' +
+        '                        <p class="card-text"> Take no further action </p>\n' +
+        '                        <h5 class="card-title">Incident Probability Effect (Negative)</h5>\n' +
         '                        <p class="card-text"> Major Impact </p>\n' +
         '                    </div>\n' +
         '                </div>'
@@ -69,24 +85,24 @@ incident_materialisation_node = {
         '                    <tbody>\n' +
         '                    <tr>\n' +
         '                        <th scope="row">Incident 1# Confidentiality</th>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
+        '                        <td> 80%</td>\n' +
+        '                        <td> 20%</td>\n' +
+        '                        <td> 20%</td>\n' +
+        '                        <td> 80%</td>\n' +
         '                    </tr>\n' +
         '                    <tr>\n' +
         '                        <th scope="row">Incident 2# Integrity</th>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
+        '                        <td> 65%</td>\n' +
+        '                        <td> 10%</td>\n' +
+        '                        <td> 10%</td>\n' +
+        '                        <td> 65%</td>\n' +
         '                    </tr>\n' +
         '                    <tr>\n' +
         '                        <th scope="row">Incident 3# Authentication</th>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
+        '                        <td> 10%</td>\n' +
+        '                        <td> 0%</td>\n' +
+        '                        <td> 0%</td>\n' +
+        '                        <td> 10%</td>\n' +
         '                    </tr>\n' +
         '                    </tbody>\n' +
         '                </table>'
@@ -97,13 +113,29 @@ post_incident_response_node = {
     text: {name: "Post Incident Response"},
     innerHTML: '<div class="card bg-light mb-3 custom-dashboard-single-asset-card" style="max-width: 18rem;">\n' +
         '                    <div class="card-header"> Response Node #2:\n' +
-        '                        Added Security Software xxx\n' +
+        '                        Hash Files\n' +
         '                    </div>\n' +
         '                    <div class="card-body">\n' +
         '                        <h5 class="card-title">Description</h5>\n' +
-        '                        <p class="card-text"> Lorem Ipsum --- </p>\n' +
+        '                        <p class="card-text"> Apply hashes to files sent with email.</p>\n' +
         '                        <h5 class="card-title">Incident Probability Effect (Positive)</h5>\n' +
-        '                        <p class="card-text"> Major Impact </p>\n' +
+        '                        <p class="card-text"> Positive Impact </p>\n' +
+        '                    </div>\n' +
+        '                </div>'
+}
+
+post_incident_response_node_1 = {
+    parent: incident_materialisation_node,
+    text: {name: "Post Incident Response"},
+    innerHTML: '<div class="card bg-light mb-3 custom-dashboard-single-asset-card" style="max-width: 18rem;">\n' +
+        '                    <div class="card-header"> Response Node #2:\n' +
+        '                        Hash Files\n' +
+        '                    </div>\n' +
+        '                    <div class="card-body">\n' +
+        '                        <h5 class="card-title">Description</h5>\n' +
+        '                        <p class="card-text"> Apply hashes to files sent with email.</p>\n' +
+        '                        <h5 class="card-title">Incident Probability Effect (Positive)</h5>\n' +
+        '                        <p class="card-text"> Major Negative Impact </p>\n' +
         '                    </div>\n' +
         '                </div>'
 }
@@ -138,30 +170,30 @@ consequence_node = {
         '                    <tbody>\n' +
         '                    <tr>\n' +
         '                        <th scope="row">Consequence 1# Modify Data</th>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
+        '                        <td> 85%</td>\n' +
+        '                        <td> 15%</td>\n' +
+        '                        <td> 80%</td>\n' +
+        '                        <td> 20%</td>\n' +
+        '                        <td> 85%</td>\n' +
+        '                        <td> 15%</td>\n' +
         '                    </tr>\n' +
         '                    <tr>\n' +
         '                        <th scope="row">Consequence 2# Gain Privileges</th>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
+        '                        <td> 65%</td>\n' +
+        '                        <td> 35%</td>\n' +
+        '                        <td> 50%</td>\n' +
+        '                        <td> 50%</td>\n' +
+        '                        <td> 70%</td>\n' +
+        '                        <td> 30%</td>\n' +
         '                    </tr>\n' +
         '                    <tr>\n' +
         '                        <th scope="row">Consequence 3# Execute Unauthorized Commands</th>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
+        '                        <td> 65%</td>\n' +
+        '                        <td> 35%</td>\n' +
+        '                        <td> 50%</td>\n' +
+        '                        <td> 50%</td>\n' +
+        '                        <td> 70%</td>\n' +
+        '                        <td> 30%</td>\n' +
         '                    </tr>\n' +
         '                    </tbody>\n' +
         '                </table>'
@@ -201,39 +233,39 @@ impact_on_asset_node = {
         '                    <tbody>\n' +
         '                    <tr>\n' +
         '                        <th scope="row">Impact:Available</th>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
+        '                        <td> 65%</td>\n' +
+        '                        <td> 35%</td>\n' +
+        '                        <td> 50%</td>\n' +
+        '                        <td> 50%</td>\n' +
+        '                        <td> 70%</td>\n' +
+        '                        <td> 30%</td>\n' +
+        '                        <td> 50%</td>\n' +
+        '                        <td> 50%</td>\n' +
+        '                        <td> 20%</td>\n' +
         '                    </tr>\n' +
         '                    <tr>\n' +
         '                        <th scope="row">Impact:Defective</th>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
+        '                        <td> 65%</td>\n' +
+        '                        <td> 35%</td>\n' +
+        '                        <td> 50%</td>\n' +
+        '                        <td> 50%</td>\n' +
+        '                        <td> 70%</td>\n' +
+        '                        <td> 30%</td>\n' +
+        '                        <td> 50%</td>\n' +
+        '                        <td> 50%</td>\n' +
+        '                        <td> 20%</td>\n' +
         '                    </tr>\n' +
         '                    <tr>\n' +
         '                        <th scope="row">Impact:Broken</th>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
+        '                        <td> 65%</td>\n' +
+        '                        <td> 35%</td>\n' +
+        '                        <td> 50%</td>\n' +
+        '                        <td> 50%</td>\n' +
+        '                        <td> 70%</td>\n' +
+        '                        <td> 30%</td>\n' +
+        '                        <td> 50%</td>\n' +
+        '                        <td> 50%</td>\n' +
+        '                        <td> 20%</td>\n' +
         '                    </tr>\n' +
         '                    </tbody>\n' +
         '                </table>'
@@ -273,39 +305,39 @@ impact_on_asset_node_1 = {
         '                    <tbody>\n' +
         '                    <tr>\n' +
         '                        <th scope="row">Impact:Available</th>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
+        '                        <td> 65%</td>\n' +
+        '                        <td> 35%</td>\n' +
+        '                        <td> 50%</td>\n' +
+        '                        <td> 50%</td>\n' +
+        '                        <td> 70%</td>\n' +
+        '                        <td> 30%</td>\n' +
+        '                        <td> 50%</td>\n' +
+        '                        <td> 50%</td>\n' +
+        '                        <td> 20%</td>\n' +
         '                    </tr>\n' +
         '                    <tr>\n' +
         '                        <th scope="row">Impact:Defective</th>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
+         '                        <td> 65%</td>\n' +
+        '                        <td> 35%</td>\n' +
+        '                        <td> 50%</td>\n' +
+        '                        <td> 50%</td>\n' +
+        '                        <td> 70%</td>\n' +
+        '                        <td> 30%</td>\n' +
+        '                        <td> 50%</td>\n' +
+        '                        <td> 50%</td>\n' +
+        '                        <td> 20%</td>\n' +
         '                    </tr>\n' +
         '                    <tr>\n' +
         '                        <th scope="row">Impact:Broken</th>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
+        '                        <td> 65%</td>\n' +
+        '                        <td> 35%</td>\n' +
+        '                        <td> 50%</td>\n' +
+        '                        <td> 50%</td>\n' +
+        '                        <td> 70%</td>\n' +
+        '                        <td> 30%</td>\n' +
+        '                        <td> 50%</td>\n' +
+        '                        <td> 50%</td>\n' +
+        '                        <td> 20%</td>\n' +
         '                    </tr>\n' +
         '                    </tbody>\n' +
         '                </table>'
@@ -348,26 +380,26 @@ objective_node = {
         '                    <tbody>\n' +
         '                    <tr>\n' +
         '                        <th scope="row">State: x > 10mil</th>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
+        '                        <td> 65%</td>\n' +
+        '                        <td> 35%</td>\n' +
+        '                        <td> 50%</td>\n' +
         '                        <td> ....</td>\n' +
         '\n' +
         '\n' +
         '                    </tr>\n' +
         '                    <tr>\n' +
         '                        <th scope="row">State: 5mil< x <10mil</th>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
+        '                        <td> 65%</td>\n' +
+        '                        <td> 35%</td>\n' +
+        '                        <td> 50%</td>\n' +
         '                        <td> ....</td>\n' +
         '\n' +
         '                    </tr>\n' +
         '                    <tr>\n' +
         '                        <th scope="row">x <5mil</th>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
+        '                        <td> 65%</td>\n' +
+        '                        <td> 35%</td>\n' +
+        '                        <td> 50%</td>\n' +
         '                        <td> ....</td>\n' +
         '\n' +
         '                    </tr>\n' +
@@ -412,26 +444,26 @@ objective_node_1 = {
         '                    <tbody>\n' +
         '                    <tr>\n' +
         '                        <th scope="row">State: x > 10mil</th>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
+        '                        <td> 65%</td>\n' +
+        '                        <td> 35%</td>\n' +
+        '                        <td> 50%</td>\n' +
         '                        <td> ....</td>\n' +
         '\n' +
         '\n' +
         '                    </tr>\n' +
         '                    <tr>\n' +
         '                        <th scope="row">State: 5mil< x <10mil</th>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
+        '                        <td> 65%</td>\n' +
+        '                        <td> 35%</td>\n' +
+        '                        <td> 50%</td>\n' +
         '                        <td> ....</td>\n' +
         '\n' +
         '                    </tr>\n' +
         '                    <tr>\n' +
         '                        <th scope="row">x <5mil</th>\n' +
-        '                        <td> xx%</td>\n' +
-        '                        <td> yy%</td>\n' +
-        '                        <td> xx%</td>\n' +
+        '                        <td> 65%</td>\n' +
+        '                        <td> 35%</td>\n' +
+        '                        <td> 50%</td>\n' +
         '                        <td> ....</td>\n' +
         '\n' +
         '                    </tr>\n' +
@@ -440,8 +472,8 @@ objective_node_1 = {
 }
 
 simple_chart_config = [
-    config, threat_exposure_node, pre_incident_response_node, incident_materialisation_node, post_incident_response_node,
-    consequence_node, impact_on_asset_node, impact_on_asset_node_1, objective_node, objective_node_1
+    config, threat_exposure_node, pre_incident_response_node, pre_incident_response_node_1, incident_materialisation_node, post_incident_response_node,
+    post_incident_response_node_1, consequence_node, impact_on_asset_node, impact_on_asset_node_1, objective_node, objective_node_1
 ];
 
 // simple_chart_config = {

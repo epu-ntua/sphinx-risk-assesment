@@ -357,7 +357,10 @@ def forensic_dashboard(report):
         return redirect(toRedirect)
     else:
         # assetsArray = get_assets()
-
+        # if report == 1:
+        #     print("Hey")
+        # else:
+        #     print("Not hey")
         # print(assetsArray[0].VReport_assetID)
         assetsArray = []
         return render_template('forensic_dashboard.html', report=report, assets=assetsArray)

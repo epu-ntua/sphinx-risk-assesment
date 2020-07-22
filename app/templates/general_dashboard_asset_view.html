@@ -12,7 +12,7 @@
 {% block script %}
     <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
     <script src=" https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/dashboard.js') }}"> </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 {% endblock %}
 
 {% block content %}
@@ -44,8 +44,40 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td>It server #1</td>
-                    <td>Server</td>
+                    <td>Desc01</td>
+                    <td>Workstation</td>
+                    <td>Yes</td>
+                    <td>
+                        <button class="btn btn-primary"> Select</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Desc01</td>
+                    <td>Workstation</td>
+                    <td>Yes</td>
+                    <td>
+                        <button class="btn btn-primary"> Select</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Desc02</td>
+                    <td>Workstation</td>
+                    <td>No</td>
+                    <td>
+                        <button class="btn btn-primary"> Select</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>L2</td>
+                    <td>Router</td>
+                    <td>No</td>
+                    <td>
+                        <button class="btn btn-primary"> Select</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Lap01</td>
+                    <td>Laptop</td>
                     <td>Yes</td>
                     <td>
                         <button class="btn btn-primary"> Select</button>
@@ -59,13 +91,13 @@
                 <div class="card-header"> Asset: It Server #1</div>
                 <div class="card-body">
                     <h4 class="card-title">Name</h4>
-                    <p class="card-text"> Lorem Ipsum --- </p>
+                    <p class="card-text"> Lap01 </p>
                     <h4 class="card-title">Description</h4>
-                    <p class="card-text"> Lorem Ipsum --- </p>
+                    <p class="card-text">Assigned - Work  </p>
                     <h4 class="card-title">Technical Specifications</h4>
-                    <p class="card-text"> Lorem Ipsum --- </p>
+                    <p class="card-text">Macbook Pro 13 - Apple  </p>
                     <h4 class="card-title"> Vulnerable</h4>
-                    <p class="card-text"> Lorem Ipsum --- </p>
+                    <p class="card-text"> Yes </p>
                 </div>
             </div>
         </div>
@@ -75,9 +107,9 @@
                 <i id="dashboard_tab_icon_1" class="fa fa-toggle-right general-dashboard-tab-icon"
                    style="font-size:25px"></i>
             </button>
-            <div id="dashboard_tab_content_1"  class="row">
+            <div id="dashboard_tab_content_1" class="row">
                 <div class="card bg-light mb-3 custom-card" style="max-width: 18rem;">
-                    <div class="card-header"> Asset: Affected Asset #1</div>
+                    <div class="card-header"> Affected asset: Desc01</div>
                     <div class="card-body">
                         <h4 class="card-title">Consequences</h4>
                         <p class="card-text"> Data Loss </p>
@@ -90,15 +122,14 @@
                 <i id="dashboard_tab_icon_2" class="fa fa-toggle-right general-dashboard-tab-icon"
                    style="font-size:25px"></i>
             </button>
-            <div id="dashboard_tab_content_2"  class="row">
+            <div id="dashboard_tab_content_2" class="row">
                 <div class="card bg-light mb-3 custom-card" style="max-width: 18rem;">
-                    <div class="card-header"> CVE - XXXX</div>
+                    <div class="card-header"> CVE-2019-20051</div>
                     <div class="card-body">
                         <h4 class="card-title">CVSS</h4>
-                        <p class="card-text"> 5 </p>
+                        <p class="card-text"> 5.5 </p>
                         <h4 class="card-title">Related CWE</h4>
-                        <p class="card-text"> CWE - XXX </p>
-                        <p class="card-text"> CWE - XXX </p>
+                        <p class="card-text"> CWE-682 </p>
                     </div>
                 </div>
             </div>
@@ -108,17 +139,17 @@
                 <i id="dashboard_tab_icon_3" class="fa fa-toggle-right general-dashboard-tab-icon"
                    style="font-size:25px"></i>
             </button>
-            <div id="dashboard_tab_content_3"  class="row">
+            <div id="dashboard_tab_content_3" class="row">
                 <div class="card bg-light mb-3 custom-card" style="max-width: 18rem;">
-                    <div class="card-header"> CWE - XXXX</div>
+                    <div class="card-header"> CWE-682</div>
                     <div class="card-body">
                         <h4 class="card-title">Modes of Introduction</h4>
-                        <p class="card-text"> Implementation </p>
+                        <p class="card-text"> Architecture and Design, Implementation </p>
                         <h4 class="card-title">Application Platforms</h4>
                         <h5> Languages </h5>
-                        <p class="card-text"> xxxx </p>
+                        <p class="card-text">  Language-Independent </p>
                         <h5> Operating System</h5>
-                        <p class="card-text"> xxxx </p>
+                        <p class="card-text"> Technology-Independent </p>
                     </div>
                 </div>
             </div>
@@ -128,174 +159,96 @@
                 <i id="dashboard_tab_icon_4" class="fa fa-toggle-right general-dashboard-tab-icon"
                    style="font-size:25px"></i>
             </button>
-            <div id="dashboard_tab_content_4"  class="row flex-wrap align-content-start">
+            <div id="dashboard_tab_content_4" class="row flex-wrap align-content-start">
                 <div class="card bg-light mb-3 custom-card" style="max-width: 18rem;">
-                    <div class="card-header"> In Depth Capec Information</div>
+                    <div class="card-header"> In Depth CAPEC - 128 Information</div>
                     <div class="card-body">
                         <h4 class="card-title">Description</h4>
-                        <p class="card-text"> Lorem Ipsum --- </p>
+                        <p class="card-text"> An adversary modifies content to make it contain something other than what
+                            the original content producer intended while keeping the apparent source of the content
+                            unchanged. </p>
                         <h4 class="card-title">Skills Required</h4>
-                        <p class="card-text"> Lorem Ipsum --- </p>
+                        <p class="card-text"> The adversary requires a tool capable of intercepting the target's
+                            communication and generating/creating custom packets to impact the communications. </p>
                         <h4 class="card-title">Consequences</h4>
-                        <p class="card-text"> Lorem Ipsum --- </p>
+                        <p class="card-text"> Integrity - Modify Data </p>
                         <h4 class="card-title"> Typical Severity</h4>
-                        <p class="card-text"> Lorem Ipsum --- </p>
+                        <p class="card-text"> Medium </p>
                     </div>
                     <h2 class="custom-card-inner-header"> In Depth Threat Assessment</h2>
                     <div class="card-body">
-                        <h4 class="card-title">Likelihood</h4>
+                        <h4 class="card-title">Likelihood - 45%</h4>
 
                         <h4 class="card-title">Threat Agent Factory</h4>
-                        <p class="card-text"> Skill Level -x</p>
-                        <p class="card-text"> Motive -x </p>
-                        <p class="card-text"> Opportunity -x</p>
+                        <p class="card-text"> Skill Level - 3/5</p>
+                        <p class="card-text"> Motive -5/5 </p>
+                        <p class="card-text"> Opportunity -5/5</p>
 
 
                         <h4 class="card-title">Vulnerability Factors</h4>
-                        <p class="card-text"> Ease of discovery - x</p>
-                        <p class="card-text"> Ease of exploit - x</p>
-                        <p class="card-text"> Awareness -x </p>
+                        <p class="card-text"> Ease of discovery - 1/5</p>
+                        <p class="card-text"> Ease of exploit - 2/5</p>
+                        <p class="card-text"> Awareness - 1/5 </p>
 
                         <h4 class="card-title">Impact</h4>
 
                         <h4 class="card-title">Technical Impacts</h4>
-                        <p class="card-text"> Loss of confidentiality - x</p>
-                        <p class="card-text"> Loss of integrity - x</p>
-                        <p class="card-text"> Loss of availability -x</p>
+                        <p class="card-text"> Loss of confidentiality - 4/5</p>
+                        <p class="card-text"> Loss of integrity - 4/5</p>
+                        <p class="card-text"> Loss of availability -1/5</p>
 
                         <h4 class="card-title">Business Impact</h4>
-                        <p class="card-text"> >Financial Damage - x</p>
-                        <p class="card-text"> Reputation Damage - x</p>
-                        <p class="card-text"> Non-compliance - x</p>
+                        <p class="card-text"> >Financial Damage - 2/5</p>
+                        <p class="card-text"> Reputation Damage - 4/5</p>
+                        <p class="card-text"> Non-compliance - 0/5</p>
 
                         <hr/>
                         <a href="#" class="card-link"> Redo Assessment</a>
                     </div>
                 </div>
                 <div class="card bg-light mb-3 custom-card" style="max-width: 18rem;">
-                    <div class="card-header"> In Depth Capec Information</div>
+                    <div class="card-header"> In Depth CAPEC - 416 Information</div>
                     <div class="card-body">
                         <h4 class="card-title">Description</h4>
-                        <p class="card-text"> Lorem Ipsum --- </p>
+                        <p class="card-text"> An adversary exploits inherent human psychological predisposition to
+                            influence a targeted individual or group to solicit information or manipulate the target
+                            into performing an action that serves the adversary's interests. </p>
                         <h4 class="card-title">Skills Required</h4>
-                        <p class="card-text"> Lorem Ipsum --- </p>
+                        <p class="card-text"> The adversary must have the means and knowledge of how to communicate with
+                            the target in some manner. </p>
                         <h4 class="card-title">Consequences</h4>
-                        <p class="card-text"> Lorem Ipsum --- </p>
+                        <p class="card-text"> Other - Confidentiality
+                            Integrity
+                            Availability </p>
                         <h4 class="card-title"> Typical Severity</h4>
-                        <p class="card-text"> Lorem Ipsum --- </p>
+                        <p class="card-text"> Medium </p>
                     </div>
                     <h2 class="custom-card-inner-header"> In Depth Threat Assessment</h2>
                     <div class="card-body">
-                        <h4 class="card-title">Likelihood</h4>
+                        <h4 class="card-title">Likelihood - 45%</h4>
 
                         <h4 class="card-title">Threat Agent Factory</h4>
-                        <p class="card-text"> Skill Level -x</p>
-                        <p class="card-text"> Motive -x </p>
-                        <p class="card-text"> Opportunity -x</p>
+                        <p class="card-text"> Skill Level - 3/5</p>
+                        <p class="card-text"> Motive -5/5 </p>
+                        <p class="card-text"> Opportunity -5/5</p>
 
 
                         <h4 class="card-title">Vulnerability Factors</h4>
-                        <p class="card-text"> Ease of discovery - x</p>
-                        <p class="card-text"> Ease of exploit - x</p>
-                        <p class="card-text"> Awareness -x </p>
+                        <p class="card-text"> Ease of discovery - 1/5</p>
+                        <p class="card-text"> Ease of exploit - 2/5</p>
+                        <p class="card-text"> Awareness - 1/5 </p>
 
                         <h4 class="card-title">Impact</h4>
 
                         <h4 class="card-title">Technical Impacts</h4>
-                        <p class="card-text"> Loss of confidentiality - x</p>
-                        <p class="card-text"> Loss of integrity - x</p>
-                        <p class="card-text"> Loss of availability -x</p>
+                        <p class="card-text"> Loss of confidentiality - 4/5</p>
+                        <p class="card-text"> Loss of integrity - 4/5</p>
+                        <p class="card-text"> Loss of availability -1/5</p>
 
                         <h4 class="card-title">Business Impact</h4>
-                        <p class="card-text"> >Financial Damage - x</p>
-                        <p class="card-text"> Reputation Damage - x</p>
-                        <p class="card-text"> Non-compliance - x</p>
-
-                        <hr/>
-                        <a href="#" class="card-link"> Redo Assessment</a>
-                    </div>
-                </div>
-                <div class="card bg-light mb-3 custom-card" style="max-width: 18rem;">
-                    <div class="card-header"> In Depth Capec Information</div>
-                    <div class="card-body">
-                        <h4 class="card-title">Description</h4>
-                        <p class="card-text"> Lorem Ipsum --- </p>
-                        <h4 class="card-title">Skills Required</h4>
-                        <p class="card-text"> Lorem Ipsum --- </p>
-                        <h4 class="card-title">Consequences</h4>
-                        <p class="card-text"> Lorem Ipsum --- </p>
-                        <h4 class="card-title"> Typical Severity</h4>
-                        <p class="card-text"> Lorem Ipsum --- </p>
-                    </div>
-                    <h2 class="custom-card-inner-header"> In Depth Threat Assessment</h2>
-                    <div class="card-body">
-                        <h4 class="card-title">Likelihood</h4>
-
-                        <h4 class="card-title">Threat Agent Factory</h4>
-                        <p class="card-text"> Skill Level -x</p>
-                        <p class="card-text"> Motive -x </p>
-                        <p class="card-text"> Opportunity -x</p>
-
-
-                        <h4 class="card-title">Vulnerability Factors</h4>
-                        <p class="card-text"> Ease of discovery - x</p>
-                        <p class="card-text"> Ease of exploit - x</p>
-                        <p class="card-text"> Awareness -x </p>
-
-                        <h4 class="card-title">Impact</h4>
-
-                        <h4 class="card-title">Technical Impacts</h4>
-                        <p class="card-text"> Loss of confidentiality - x</p>
-                        <p class="card-text"> Loss of integrity - x</p>
-                        <p class="card-text"> Loss of availability -x</p>
-
-                        <h4 class="card-title">Business Impact</h4>
-                        <p class="card-text"> >Financial Damage - x</p>
-                        <p class="card-text"> Reputation Damage - x</p>
-                        <p class="card-text"> Non-compliance - x</p>
-
-                        <hr/>
-                        <a href="#" class="card-link"> Redo Assessment</a>
-                    </div>
-                </div>
-                <div class="card bg-light mb-3 custom-card" style="max-width: 18rem;">
-                    <div class="card-header"> In Depth Capec Information</div>
-                    <div class="card-body">
-                        <h4 class="card-title">Description</h4>
-                        <p class="card-text"> Lorem Ipsum --- </p>
-                        <h4 class="card-title">Skills Required</h4>
-                        <p class="card-text"> Lorem Ipsum --- </p>
-                        <h4 class="card-title">Consequences</h4>
-                        <p class="card-text"> Lorem Ipsum --- </p>
-                        <h4 class="card-title"> Typical Severity</h4>
-                        <p class="card-text"> Lorem Ipsum --- </p>
-                    </div>
-                    <h2 class="custom-card-inner-header"> In Depth Threat Assessment</h2>
-                    <div class="card-body">
-                        <h4 class="card-title">Likelihood</h4>
-
-                        <h4 class="card-title">Threat Agent Factory</h4>
-                        <p class="card-text"> Skill Level -x</p>
-                        <p class="card-text"> Motive -x </p>
-                        <p class="card-text"> Opportunity -x</p>
-
-
-                        <h4 class="card-title">Vulnerability Factors</h4>
-                        <p class="card-text"> Ease of discovery - x</p>
-                        <p class="card-text"> Ease of exploit - x</p>
-                        <p class="card-text"> Awareness -x </p>
-
-                        <h4 class="card-title">Impact</h4>
-
-                        <h4 class="card-title">Technical Impacts</h4>
-                        <p class="card-text"> Loss of confidentiality - x</p>
-                        <p class="card-text"> Loss of integrity - x</p>
-                        <p class="card-text"> Loss of availability -x</p>
-
-                        <h4 class="card-title">Business Impact</h4>
-                        <p class="card-text"> >Financial Damage - x</p>
-                        <p class="card-text"> Reputation Damage - x</p>
-                        <p class="card-text"> Non-compliance - x</p>
+                        <p class="card-text"> >Financial Damage - 2/5</p>
+                        <p class="card-text"> Reputation Damage - 4/5</p>
+                        <p class="card-text"> Non-compliance - 0/5</p>
 
                         <hr/>
                         <a href="#" class="card-link"> Redo Assessment</a>
@@ -308,7 +261,7 @@
                 <i id="dashboard_tab_icon_5" class="fa fa-toggle-right general-dashboard-tab-icon"
                    style="font-size:25px"></i>
             </button>
-            <div id="dashboard_tab_content_5"  class="row">
+            <div id="dashboard_tab_content_5" class="row">
                 <table class="table  table-bordered">
                     <thead>
                     <tr>
@@ -339,26 +292,26 @@
                     <tbody>
                     <tr>
                         <th scope="row">State: x > 10mil</th>
-                        <td> xx%</td>
-                        <td> yy%</td>
-                        <td> xx%</td>
+                        <td> 65%</td>
+                        <td> 35%</td>
+                        <td> 0%</td>
                         <td> ....</td>
 
 
                     </tr>
                     <tr>
                         <th scope="row">State: 5mil< x <10mil</th>
-                        <td> xx%</td>
-                        <td> yy%</td>
-                        <td> xx%</td>
+                        <td> 15%</td>
+                        <td> 35%</td>
+                        <td> 50%</td>
                         <td> ....</td>
 
                     </tr>
                     <tr>
                         <th scope="row">x <5mil</th>
-                        <td> xx%</td>
-                        <td> yy%</td>
-                        <td> xx%</td>
+                        <td> 20%</td>
+                        <td> 30%</td>
+                        <td> 50%</td>
                         <td> ....</td>
 
                     </tr>
