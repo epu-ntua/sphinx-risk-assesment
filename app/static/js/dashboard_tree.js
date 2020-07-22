@@ -17,9 +17,9 @@ threat_exposure_node = {
         '<div class="card bg-light mb-3 custom-dashboard-single-asset-card" style="max-width: 18rem;">\n' +
         '                <div class="card-header"> Threat Node</div>\n' +
         '                <div class="card-body">\n' +
-        '                    <h4 class="card-title">Description</h4>\n' +
+        '                    <h5 class="card-title">Description</h5>\n' +
         '                    <p class="card-text"> Lorem Ipsum --- </p>\n' +
-        '                    <h4 class="card-title"> Calculated Occurance Risk</h4>\n' +
+        '                    <h5 class="card-title"> Calculated Occurance Risk</h5>\n' +
         '                    <p class="card-text"> 45% </p>\n' +
         '                </div>\n' +
         '            </div>'
@@ -33,9 +33,9 @@ pre_incident_response_node = {
         '                        Added Security Software xxx\n' +
         '                    </div>\n' +
         '                    <div class="card-body">\n' +
-        '                        <h4 class="card-title">Description</h4>\n' +
+        '                        <h5 class="card-title">Description</h5>\n' +
         '                        <p class="card-text"> Lorem Ipsum --- </p>\n' +
-        '                        <h4 class="card-title">Incident Probability Effect (Positive)</h4>\n' +
+        '                        <h5 class="card-title">Incident Probability Effect (Positive)</h5>\n' +
         '                        <p class="card-text"> Major Impact </p>\n' +
         '                    </div>\n' +
         '                </div>'
@@ -100,9 +100,9 @@ post_incident_response_node = {
         '                        Added Security Software xxx\n' +
         '                    </div>\n' +
         '                    <div class="card-body">\n' +
-        '                        <h4 class="card-title">Description</h4>\n' +
+        '                        <h5 class="card-title">Description</h5>\n' +
         '                        <p class="card-text"> Lorem Ipsum --- </p>\n' +
-        '                        <h4 class="card-title">Incident Probability Effect (Positive)</h4>\n' +
+        '                        <h5 class="card-title">Incident Probability Effect (Positive)</h5>\n' +
         '                        <p class="card-text"> Major Impact </p>\n' +
         '                    </div>\n' +
         '                </div>'
@@ -453,9 +453,9 @@ simple_chart_config = [
 //         innerHTML: '<div class="card bg-light mb-3 custom-dashboard-single-asset-card" style="max-width: 18rem;">\n' +
 //             '                <div class="card-header"> Threat XXXX</div>\n' +
 //             '                <div class="card-body">\n' +
-//             '                    <h4 class="card-title">Consequences</h4>\n' +
+//             '                    <h5 class="card-title">Consequences</h5>\n' +
 //             '                    <p class="card-text"> Lorem Ipsum --- </p>\n' +
-//             '                    <h4 class="card-title"> Typical Severity</h4>\n' +
+//             '                    <h5 class="card-title"> Typical Severity</h5>\n' +
 //             '                    <p class="card-text"> Lorem Ipsum --- </p>\n' +
 //             '                </div>\n' +
 //             '            </div>',
@@ -464,7 +464,7 @@ simple_chart_config = [
 //                 innerHTML : '<div class="card bg-light mb-3 custom-card-tree" style="max-width: 18rem;">\n' +
 //                     '                    <div class="card-header">Gain Privileges</div>\n' +
 //                     '                    <div class="card-body">\n' +
-//                     '                        <h4 class="card-title">Scope</h4>\n' +
+//                     '                        <h5 class="card-title">Scope</h5>\n' +
 //                     '                        <p class="card-text">Confidentiality </p>\n' +
 //                     '                        <p class="card-text"> Integrity </p>\n' +
 //                     '                        <p class="card-text"> Authentication </p>\n' +

@@ -5,6 +5,14 @@ body{
 .custom-card-tree{
     width: 100%;
 }
+
+.card {
+    font-size: small;
+}
+
+.table{
+    font-size: small;
+}
 /*#asset-table-1{*/
 /*    padding: 5px;*/
 /*}*/
