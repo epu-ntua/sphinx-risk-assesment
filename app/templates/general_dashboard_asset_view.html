@@ -1,0 +1,323 @@
+{#{% extends "base.html" %}#}
+{% extends "sidebar_static_information.html" %}
+
+{% block head %}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css"
+          crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/general_dashboard.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock %}
+
+
+{% block script %}
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
+    <script src=" https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+    <div id="gira-bar" class="row flex flex-grow-1 general-dashboard-bar">
+        <a class="selected-general-dashboard-header" href="/general_dashboard/asset_view/">
+            <h3> Asset View </h3>
+        </a>
+        <a class="general-dashboard-header" href="/general_dashboard/threat_view/">
+            <h3> Threat View </h3>
+        </a>
+        <a class="general-dashboard-header" href="/general_dashboard/tree_view/">
+            <h3> Tree View </h3>
+        </a>
+    </div>
+
+    <div class="row">
+        <div id="custom-table-column" class="col-4 custom-select-column">
+            <h5> Select Asset </h5>
+            <table id="asset-table-1" class="table table-striped table-bordered table-custom" style="width:100%">
+                <thead>
+                <tr>
+                    <th colspan="4"> Assets</th>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Vulnerable</th>
+                    <th>Select</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Desc01</td>
+                    <td>Workstation</td>
+                    <td>Yes</td>
+                    <td>
+                        <button class="btn btn-primary"> Select</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Desc01</td>
+                    <td>Workstation</td>
+                    <td>Yes</td>
+                    <td>
+                        <button class="btn btn-primary"> Select</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Desc02</td>
+                    <td>Workstation</td>
+                    <td>No</td>
+                    <td>
+                        <button class="btn btn-primary"> Select</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>L2</td>
+                    <td>Router</td>
+                    <td>No</td>
+                    <td>
+                        <button class="btn btn-primary"> Select</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Lap01</td>
+                    <td>Laptop</td>
+                    <td>Yes</td>
+                    <td>
+                        <button class="btn btn-primary"> Select</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <hr/>
+            <h5> Current Asset </h5>
+            <div class="card bg-light mb-3 custom-dashboard-single-asset-card" style="max-width: 18rem;">
+                <div class="card-header"> Asset: It Server #1</div>
+                <div class="card-body">
+                    <h4 class="card-title">Name</h4>
+                    <p class="card-text"> Lap01 </p>
+                    <h4 class="card-title">Description</h4>
+                    <p class="card-text">Assigned - Work  </p>
+                    <h4 class="card-title">Technical Specifications</h4>
+                    <p class="card-text">Macbook Pro 13 - Apple  </p>
+                    <h4 class="card-title"> Vulnerable</h4>
+                    <p class="card-text"> Yes </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-8 flex-wrap align-content-start custom-select-column">
+            <button id="dashboard_tab_1" class="general-dashboard-tab" onclick=toggleTab(1)>
+                <h5> Other Affected Assets </h5>
+                <i id="dashboard_tab_icon_1" class="fa fa-toggle-right general-dashboard-tab-icon"
+                   style="font-size:25px"></i>
+            </button>
+            <div id="dashboard_tab_content_1" class="row">
+                <div class="card bg-light mb-3 custom-card" style="max-width: 18rem;">
+                    <div class="card-header"> Affected asset: Desc01</div>
+                    <div class="card-body">
+                        <h4 class="card-title">Consequences</h4>
+                        <p class="card-text"> Data Loss </p>
+                    </div>
+                </div>
+            </div>
+            <hr/>
+            <button id="dashboard_tab_2" class="general-dashboard-tab" onclick=toggleTab(2)>
+                <h5> CVEs affecting asset </h5>
+                <i id="dashboard_tab_icon_2" class="fa fa-toggle-right general-dashboard-tab-icon"
+                   style="font-size:25px"></i>
+            </button>
+            <div id="dashboard_tab_content_2" class="row">
+                <div class="card bg-light mb-3 custom-card" style="max-width: 18rem;">
+                    <div class="card-header"> CVE-2019-20051</div>
+                    <div class="card-body">
+                        <h4 class="card-title">CVSS</h4>
+                        <p class="card-text"> 5.5 </p>
+                        <h4 class="card-title">Related CWE</h4>
+                        <p class="card-text"> CWE-682 </p>
+                    </div>
+                </div>
+            </div>
+            <hr/>
+            <button id="dashboard_tab_3" class="general-dashboard-tab" onclick=toggleTab(3)>
+                <h5> CWE affecting asset </h5>
+                <i id="dashboard_tab_icon_3" class="fa fa-toggle-right general-dashboard-tab-icon"
+                   style="font-size:25px"></i>
+            </button>
+            <div id="dashboard_tab_content_3" class="row">
+                <div class="card bg-light mb-3 custom-card" style="max-width: 18rem;">
+                    <div class="card-header"> CWE-682</div>
+                    <div class="card-body">
+                        <h4 class="card-title">Modes of Introduction</h4>
+                        <p class="card-text"> Architecture and Design, Implementation </p>
+                        <h4 class="card-title">Application Platforms</h4>
+                        <h5> Languages </h5>
+                        <p class="card-text">  Language-Independent </p>
+                        <h5> Operating System</h5>
+                        <p class="card-text"> Technology-Independent </p>
+                    </div>
+                </div>
+            </div>
+            <hr/>
+            <button id="dashboard_tab_4" class="general-dashboard-tab" onclick=toggleTab(4)>
+                <h5> CAPEC affecting asset </h5>
+                <i id="dashboard_tab_icon_4" class="fa fa-toggle-right general-dashboard-tab-icon"
+                   style="font-size:25px"></i>
+            </button>
+            <div id="dashboard_tab_content_4" class="row flex-wrap align-content-start">
+                <div class="card bg-light mb-3 custom-card" style="max-width: 18rem;">
+                    <div class="card-header"> In Depth CAPEC - 128 Information</div>
+                    <div class="card-body">
+                        <h4 class="card-title">Description</h4>
+                        <p class="card-text"> An adversary modifies content to make it contain something other than what
+                            the original content producer intended while keeping the apparent source of the content
+                            unchanged. </p>
+                        <h4 class="card-title">Skills Required</h4>
+                        <p class="card-text"> The adversary requires a tool capable of intercepting the target's
+                            communication and generating/creating custom packets to impact the communications. </p>
+                        <h4 class="card-title">Consequences</h4>
+                        <p class="card-text"> Integrity - Modify Data </p>
+                        <h4 class="card-title"> Typical Severity</h4>
+                        <p class="card-text"> Medium </p>
+                    </div>
+                    <h2 class="custom-card-inner-header"> In Depth Threat Assessment</h2>
+                    <div class="card-body">
+                        <h4 class="card-title">Likelihood - 45%</h4>
+
+                        <h4 class="card-title">Threat Agent Factory</h4>
+                        <p class="card-text"> Skill Level - 3/5</p>
+                        <p class="card-text"> Motive -5/5 </p>
+                        <p class="card-text"> Opportunity -5/5</p>
+
+
+                        <h4 class="card-title">Vulnerability Factors</h4>
+                        <p class="card-text"> Ease of discovery - 1/5</p>
+                        <p class="card-text"> Ease of exploit - 2/5</p>
+                        <p class="card-text"> Awareness - 1/5 </p>
+
+                        <h4 class="card-title">Impact</h4>
+
+                        <h4 class="card-title">Technical Impacts</h4>
+                        <p class="card-text"> Loss of confidentiality - 4/5</p>
+                        <p class="card-text"> Loss of integrity - 4/5</p>
+                        <p class="card-text"> Loss of availability -1/5</p>
+
+                        <h4 class="card-title">Business Impact</h4>
+                        <p class="card-text"> >Financial Damage - 2/5</p>
+                        <p class="card-text"> Reputation Damage - 4/5</p>
+                        <p class="card-text"> Non-compliance - 0/5</p>
+
+                        <hr/>
+                        <a href="#" class="card-link"> Redo Assessment</a>
+                    </div>
+                </div>
+                <div class="card bg-light mb-3 custom-card" style="max-width: 18rem;">
+                    <div class="card-header"> In Depth CAPEC - 416 Information</div>
+                    <div class="card-body">
+                        <h4 class="card-title">Description</h4>
+                        <p class="card-text"> An adversary exploits inherent human psychological predisposition to
+                            influence a targeted individual or group to solicit information or manipulate the target
+                            into performing an action that serves the adversary's interests. </p>
+                        <h4 class="card-title">Skills Required</h4>
+                        <p class="card-text"> The adversary must have the means and knowledge of how to communicate with
+                            the target in some manner. </p>
+                        <h4 class="card-title">Consequences</h4>
+                        <p class="card-text"> Other - Confidentiality
+                            Integrity
+                            Availability </p>
+                        <h4 class="card-title"> Typical Severity</h4>
+                        <p class="card-text"> Medium </p>
+                    </div>
+                    <h2 class="custom-card-inner-header"> In Depth Threat Assessment</h2>
+                    <div class="card-body">
+                        <h4 class="card-title">Likelihood - 45%</h4>
+
+                        <h4 class="card-title">Threat Agent Factory</h4>
+                        <p class="card-text"> Skill Level - 3/5</p>
+                        <p class="card-text"> Motive -5/5 </p>
+                        <p class="card-text"> Opportunity -5/5</p>
+
+
+                        <h4 class="card-title">Vulnerability Factors</h4>
+                        <p class="card-text"> Ease of discovery - 1/5</p>
+                        <p class="card-text"> Ease of exploit - 2/5</p>
+                        <p class="card-text"> Awareness - 1/5 </p>
+
+                        <h4 class="card-title">Impact</h4>
+
+                        <h4 class="card-title">Technical Impacts</h4>
+                        <p class="card-text"> Loss of confidentiality - 4/5</p>
+                        <p class="card-text"> Loss of integrity - 4/5</p>
+                        <p class="card-text"> Loss of availability -1/5</p>
+
+                        <h4 class="card-title">Business Impact</h4>
+                        <p class="card-text"> >Financial Damage - 2/5</p>
+                        <p class="card-text"> Reputation Damage - 4/5</p>
+                        <p class="card-text"> Non-compliance - 0/5</p>
+
+                        <hr/>
+                        <a href="#" class="card-link"> Redo Assessment</a>
+                    </div>
+                </div>
+            </div>
+            <hr/>
+            <button id="dashboard_tab_5" class="general-dashboard-tab" onclick=toggleTab(5)>
+                <h5> Relevant Objectives</h5>
+                <i id="dashboard_tab_icon_5" class="fa fa-toggle-right general-dashboard-tab-icon"
+                   style="font-size:25px"></i>
+            </button>
+            <div id="dashboard_tab_content_5" class="row">
+                <table class="table  table-bordered">
+                    <thead>
+                    <tr>
+                        <th scope="col" class="custom-table-header"> Asset:Consequence</th>
+                        <th scope="col" class="custom-table-header" colspan="3"> IT Department Equipment: Modify data
+                        </th>
+                        <th scope="col" class="custom-table-header"> ....
+                        </th>
+                    </tr>
+                    </thead>
+                    <thead class="thead-light">
+                    <tr>
+                        <th scope="col" class="custom-table-header"> Impact</th>
+                        <th scope="col" class="custom-table-header" colspan="3"> Defective</th>
+                        <th scope="col" class="custom-table-header"> ....</th>
+                    </tr>
+                    </thead>
+                    <thead class="thead-light">
+                    <tr>
+                        <th scope="col" class="custom-table-header"> State</th>
+                        <th scope="col" class="custom-table-header"> In use</th>
+                        <th scope="col" class="custom-table-header"> Online</th>
+                        <th scope="col" class="custom-table-header"> Offline</th>
+                        <th scope="col" class="custom-table-header"> ...</th>
+
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th scope="row">State: x > 10mil</th>
+                        <td> 65%</td>
+                        <td> 35%</td>
+                        <td> 0%</td>
+                        <td> ....</td>
+
+
+                    </tr>
+                    <tr>
+                        <th scope="row">State: 5mil< x <10mil</th>
+                        <td> 15%</td>
+                        <td> 35%</td>
+                        <td> 50%</td>
+                        <td> ....</td>
+
+                    </tr>
+                    <tr>
+                        <th scope="row">x <5mil</th>
+                        <td> 20%</td>
+                        <td> 30%</td>
+                        <td> 50%</td>
+                        <td> ....</td>
+
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

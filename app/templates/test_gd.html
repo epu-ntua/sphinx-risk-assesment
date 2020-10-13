@@ -1,6 +1,154 @@
-{% extends "base.html" %}
-
+{% extends "sidebar_asset_management.html" %}
 {% block content %}
-    <h1>George</h1>
-    <p>Hello!</p>
+
+<!--    MAIN -->
+    <h1>Asset Dashboard</h1>
+        <table id="example" class="table  table table-striped table-bordered" style="width:100%">
+            <thead>
+        <tr>
+            <th>Name</th>
+                    <th>Position</th>
+                    <th>Office</th>
+                    <th>Age</th>
+                    <th>Start date</th>
+                    <th>Salary</th>
+                     <th>Salary</th>
+                     <th>Salary</th>
+                     <th>Salary</th>
+                     <th>Salary</th>
+                     <th>Salary</th>
+                     <th>Salary</th>
+                     <th>Salary</th>
+            <th>Salary</th>
+                     <th>Salary</th>
+                     <th>Salary</th>
+        </tr>
+        </thead>
+
+<!--            <thead class="thead-light">-->
+<!--            <tr>-->
+<!--                <th scope="col" class="custom-table-header"> Asset Name</th>-->
+<!--                <th scope="col" class="custom-table-header"> Status</th>-->
+<!--                <th scope="col" class="custom-table-header"> Location</th>-->
+<!--                <th scope="col" class="custom-table-header"> Owner</th>-->
+<!--                <th scope="col" class="custom-table-header"> Owner/Lead</th>-->
+<!--                <th scope="col" class="custom-table-header"> Classification</th>-->
+<!--                <th scope="col" class="custom-table-header"> Type</th>-->
+<!--                <th scope="col" class="custom-table-header"> Assigned to</th>-->
+<!--                <th scope="col" class="custom-table-header"> Due date</th>-->
+<!--                <th scope="col" class="custom-table-header"> Classification</th>-->
+<!--            </tr>-->
+<!--            </thead>-->
+            <tbody>
+                <tr>
+                    <td>Tiger Nixon</td>
+                    <td>System Architect</td>
+                    <td>Edinburgh</td>
+                    <td>61</td>
+                    <td>2011/04/25</td>
+                    <td>$320,800</td>
+                    <td>$320,800</td>
+                    <td>$320,800</td>
+                    <td>$320,800</td>
+                    <td>$320,800</td>
+                    <td>$320,800</td>
+                    <td>$320,800</td>
+                    <td>$320,800</td>
+                </tr>
+                <tr>
+                    <td>Tiger Nixon</td>
+                    <td>System Architect</td>
+                    <td>Edinburgh</td>
+                    <td>61</td>
+                    <td>2011/04/25</td>
+                    <td>$320,800</td>
+                    <td>$320,800</td>
+                    <td>$320,800</td>
+                    <td>$320,800</td>
+                    <td>$320,800</td>
+                    <td>$320,800</td>
+                    <td>$320,800</td>
+                    <td>$320,800</td>
+                </tr>
+                <tr>
+                    <td>Michael Bruce</td>
+                    <td>Javascript Developer</td>
+                    <td>Singapore</td>
+                    <td>29</td>
+                    <td>2011/06/27</td>
+                    <td>$183,000</td>
+                    <td>$320,800</td>
+                    <td>$320,800</td>
+                    <td>$320,800</td>
+                    <td>$320,800</td>
+                    <td>$320,800</td>
+                    <td>$320,800</td>
+                    <td>$320,800</td>
+                </tr>
+                <tr>
+                    <td>Donna Snider</td>
+                    <td>Customer Support</td>
+                    <td>New York</td>
+                    <td>27</td>
+                    <td>2011/01/25</td>
+                    <td>$112,000</td>
+                    <td>$320,800</td>
+                    <td>$320,800</td>
+                    <td>$320,800</td>
+                    <td>$320,800</td>
+                    <td>$320,800</td>
+                    <td>$320,800</td>
+                    <td>$320,800</td>
+                </tr>
+
+            {% for tempCVE in proposedCVEArray %}
+            <tr>
+                <td> {{ tempCVE[0].assetName }}</td>
+                <td>Customer Support</td>
+                <td>New York</td>
+                <td>27</td>
+                <td>2011/01/25</td>
+                <td>$112,000</td>
+                <td>$320,800</td>
+                <td>$320,800</td>
+                <td>$320,800</td>
+                <td>$320,800</td>
+                <td>$320,800</td>
+                <td>$320,800</td>
+                <td>$320,800</td>
+            </tr>
+<!--            {% else %}-->
+<!--            <th scope="row"> No assets </th>-->
+            {% endfor %}
+            </tbody>
+             <tfoot>
+                 <tr>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Office</th>
+                    <th>Age</th>
+                    <th>Start date</th>
+                    <th>Salary</th>
+                     <th>Salary</th>
+                     <th>Salary</th>
+                     <th>Salary</th>
+                     <th>Salary</th>
+                     <th>Salary</th>
+                     <th>Salary</th>
+                     <th>Salary</th>
+                     <th>Salary</th>
+                     <th>Salary</th>
+                     <th>Salary</th>
+                </tr>
+             </tfoot>
+        </table>
 {%- endblock %}
+
+{% block script %}
+
+    <script>
+    $(document).ready(function() {
+    $('#example').DataTable();
+    } );
+    </script>
+{% endblock %}

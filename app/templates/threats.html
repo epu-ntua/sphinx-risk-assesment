@@ -1,4 +1,5 @@
-{% extends "base.html" %}
+{#{% extends "base.html" %}#}
+{% extends "sidebar_static_information.html" %}
 
 {% block content %}
 <form action="/assets/{{asset}}/vulnerabilities/{{vulnerability}}/threats/{{threat}}/" , method="post">
@@ -10,7 +11,7 @@
             <button type="submit" class="btn btn-primary"> Update Threat Info ></button>
         </div>
         <div class="col-2">
-            <a href="http://127.0.0.1:5000/home" class="btn btn-primary">Done ></a>
+            <a href="http://{{ serverAddress }}:{{ serverPort }}/home" class="btn btn-primary">Done ></a>
         </div>
     </div>
     <div class="row">

@@ -1,0 +1,169 @@
+{% include "base.html" %}
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/sidebar.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css"
+          crossorigin="anonymous">
+<!-- load the d3.js library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+    {% block head %}
+    {% endblock %}
+</head>
+
+
+<div class="container-fluid p-0">
+
+<!-- Bootstrap row -->
+<div class="row" id="body-row">
+<!--    Sidebar -->
+    <div id="sidebar-container" class="sidebar-expanded d-none d-md-block"><!-- d-* hiddens the Sidebar in smaller devices. Its itens can be kept on the Navbar 'Menu' -->
+<!--        Bootstrap List Group -->
+        <ul class="list-group">
+<!--            Separator with title -->
+            <li class="list-group-item sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
+                <small>MAIN MENU</small>
+            </li>
+<!--            /END Separator -->
+            <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_dashboard" class="bg-dark list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-start align-items-center">
+                    <span class="fa fa-dashboard fa-fw mr-3"></span>
+                    <span class="menu-collapsed" >Dashboard</span>
+                </div>
+            </a>
+<!--            <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_discovery" class="bg-dark list-group-item list-group-item-action">-->
+<!--                <div class="d-flex w-100 justify-content-start align-items-center">-->
+<!--                    <span class="fa fa-cc-discover fa-fw mr-3"></span>-->
+<!--                    <span class="menu-collapsed">Discovery</span>-->
+<!--                </div>-->
+<!--            </a>-->
+<!--            Menu with submenu -->
+            <a href="#submenu1" data-toggle="collapse" aria-expanded="false" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-start align-items-center">
+                    <span class="fa fa-building fa-fw mr-3"></span>
+                    <span class="menu-collapsed">Asset Management</span>
+                    <span class="submenu-icon ml-auto"></span>
+                </div>
+            </a>
+<!--            Submenu content -->
+            <div id='submenu1' class="collapse sidebar-submenu">
+                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_discovery" class="list-group-item list-group-item-action bg-dark text-white">
+                    <span class="menu-collapsed">Discovery</span>
+                </a>
+                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_Asset_hardware" class="list-group-item list-group-item-action bg-dark text-white">
+                    <span class="menu-collapsed">IT Asset</span>
+                </a>
+                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_Asset_hardware_non_it" class="list-group-item list-group-item-action bg-dark text-white">
+                    <span class="menu-collapsed">Non-IT Assets</span>
+                </a>
+                <a href="#" class="list-group-item list-group-item-action bg-dark text-white">
+                    <span class="menu-collapsed">Services</span>
+                </a>
+                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_Asset_software" class="list-group-item list-group-item-action bg-dark text-white">
+                    <span class="menu-collapsed">Software</span>
+                </a>
+                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_Asset_License_Type" class="list-group-item list-group-item-action bg-dark text-white">
+                    <span class="menu-collapsed">Software License</span>
+                </a>
+            </div>
+            <a href="#submenu2" data-toggle="collapse" aria-expanded="false" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-start align-items-center">
+                    <span class="fa fa-address-card fa-fw mr-3"></span>
+                    <span class="menu-collapsed">Organisation Details</span>
+                </div>
+            </a>
+            <!--            Submenu content -->
+            <div id='submenu2' class="collapse sidebar-submenu">
+                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_organisation_structure" class="list-group-item list-group-item-action bg-dark text-white">
+                    <span class="menu-collapsed">Structure</span>
+                </a>
+                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_organisation_process" class="list-group-item list-group-item-action bg-dark text-white">
+                    <span class="menu-collapsed">Business services</span>
+                </a>
+            </div>
+
+            <a href="#submenu3" data-toggle="collapse" aria-expanded="false" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-start align-items-center">
+                    <span class="fa fa-link fa-fw mr-3"></span>
+                    <span class="menu-collapsed">Configuration Details</span>
+                    <span class="submenu-icon ml-auto"></span>
+                </div>
+            </a>
+<!--            Submenu content -->
+            <div id='submenu3' class="collapse sidebar-submenu">
+                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_configuration_relationship" class="list-group-item list-group-item-action bg-dark text-white">
+                    <span class="menu-collapsed">Relationship</span>
+                </a>
+                <a href="#" class="list-group-item list-group-item-action bg-dark text-white">
+                    <span class="menu-collapsed">Impact</span>
+                </a>
+            </div>
+
+<!--             Separator with title -->
+            <li class="list-group-item sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
+                <small>OPTIONS</small>
+            </li>
+<!--             /END Separator -->
+            <a href="#submenu4" data-toggle="collapse" aria-expanded="false" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-start align-items-center">
+                    <span class="fa fa-cogs fa-fw mr-3"></span>
+                    <span class="menu-collapsed">Settings</span>
+                    <span class="submenu-icon ml-auto"></span>
+                </div>
+            </a>
+            <!--            Submenu content -->
+            <div id='submenu4' class="collapse sidebar-submenu">
+                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_Asset_hardware_type" class="list-group-item list-group-item-action bg-dark text-white">
+                    <span class="menu-collapsed">IT Asset Type</span>
+                </a>
+                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_Asset_usage_type" class="list-group-item list-group-item-action bg-dark text-white">
+                    <span class="menu-collapsed">IT Asset Usage Type</span>
+                </a>
+                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_Asset_hardware_classification" class="list-group-item list-group-item-action bg-dark text-white">
+                    <span class="menu-collapsed">IT Asset Classification</span>
+                </a>
+                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_Asset_software_type" class="list-group-item list-group-item-action bg-dark text-white">
+                    <span class="menu-collapsed">Software Type</span>
+                </a>
+            </div>
+            <a href="#" class="bg-dark list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-start align-items-center">
+                    <span class="fa fa-envelope-o fa-fw mr-3"></span>
+                    <span class="menu-collapsed">Messages <span class="badge badge-pill badge-primary ml-2">5</span></span>
+                </div>
+            </a>
+<!--             Separator without title -->
+            <li class="list-group-item sidebar-separator menu-collapsed"></li>
+<!--            /END Separator -->
+            <a href="#" class="bg-dark list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-start align-items-center">
+                    <span class="fa fa-question fa-fw mr-3"></span>
+                    <span class="menu-collapsed">Help</span>
+                </div>
+            </a>
+            <a href="#" data-toggle="sidebar-colapse" class="bg-dark list-group-item list-group-item-action d-flex align-items-center">
+                <div class="d-flex w-100 justify-content-start align-items-center">
+                    <span id="collapse-icon" class="fa fa-2x mr-3"></span>
+                    <span id="collapse-text" class="menu-collapsed">Collapse</span>
+                </div>
+            </a>
+
+        </ul><!-- List Group END-->
+    </div><!-- sidebar-container END -->
+
+
+<!--    MAIN -->
+<div class="col-9">
+    {% block content %}
+
+    {% endblock %}
+</div><!-- Main Col END -->
+
+</div><!-- body-row END -->
+
+
+</div><!-- container -->
+
+{% block script %}
+<script src="{{url_for('static', filename='sidebar.js')}}"></script>
+
+{% endblock %}

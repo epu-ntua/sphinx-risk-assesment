@@ -5,3 +5,4 @@
 
 FLASK_APP = RiskAssessmentFlask.py
 FLASK_DEBUG = 1
+FLASK_RUN_PORT=5001
