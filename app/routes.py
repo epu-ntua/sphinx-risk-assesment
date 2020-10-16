@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template, request, redirect
+from flask import render_template, request, redirect, jsonify
 import flask
 from app.utils import *
 from app.globals import *
@@ -347,3 +347,9 @@ def asset_Asset_hardware_classification():
 @app.route('/asset_configuration_relationship')
 def asset_configuration_relationship():
     return render_template('asset_configuration_relationship.html')
+
+
+
+
+
+#    return jsonify(hello='world') # Returns HTTP Response with {"hello": "world"}
