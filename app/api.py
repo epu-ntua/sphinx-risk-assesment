@@ -1,9 +1,7 @@
 import requests
 from flask import Flask, jsonify
 
-from app import api
 from flask_restful import Resource
-
 
 
 class RCRAgetFCDEversion(Resource):
@@ -48,5 +46,3 @@ class RCRAgetversion(Resource):
             return jsonify({'name': 'RCRA', 'Version': "No Authorisation"})
 
 
-api.add_resource(RCRAgetFCDEversion, '/RCRAgetFCDEversion')
-api.add_resource(RCRAgetversion, '/RCRAgetversion')
