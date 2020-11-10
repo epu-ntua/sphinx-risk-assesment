@@ -1,9 +1,9 @@
 from app import app
-from flask import render_template, request, redirect, jsonify
+from flask import render_template, request, redirect, jsonify, Response
 import flask
 from app.utils import *
 from app.globals import *
-
+from pykafka import KafkaClient
 
 @app.context_processor
 def serverInfo():
@@ -274,9 +274,60 @@ def general_dashboard_tree_view(threat):
         return render_template('general_dashboard_tree_view.html', threat=threat, assets=assetsArray)
 
 
-@app.route('/test_gd')
-def test_gd():
-    return render_template('test_gd.html')
+@app.route('/RCRAgetFCDEversion')
+def RCRAgetFCDEversion():
+    url = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/Authentication"
+    payload = {
+        'username': 'testR1',
+        'password': 'testR1123!@'
+        }
+    response = requests.request("POST", url, data=payload)
+    selectedticket = response.json()
+    requestedTicket = selectedticket["data"]
+    # # this step was omitted in D6.2
+    # url1 = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/ServiceInfo"
+    # params = {
+    #     'reqservicename': 'DEMOCOMPONENT2'
+    # }
+    # response2 = requests.request("GET", url1, params=params)
+    # selected_service = response2.json()
+    # serviceid =selected_service['service']['aaainfo']['id'][0]
+
+# This is called in FCDEgetversion
+    # urlx = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/Authorization"
+    # params = {
+    #     'requestedservice': 'DEMOCOMPONENT2',
+    #     'requestedTicket': requestedTicket
+    #     }
+    # responsex = requests.request("GET", urlx, params=params)
+    # reqdata = response.json()
+    #
+    url2 = "http://127.0.0.1:5003/FCDEgetversion"
+    params = {
+        'requestedservice': "FCDEgetversion",
+        'requestedTicket': requestedTicket
+    }
+    response3 = requests.request("GET", url2, params=params)
+    reqdata = response3.json()
+
+    return reqdata
+
+@app.route('/RCRAgetversion/')
+def RCRAgetversion():
+    requestedservice=request.args.get('requestedservice', None)
+    authTicket=request.args.get('authTicket', None)
+
+    url = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/Authorization"
+    headers = {
+        'requestedservice': requestedservice,
+        'requestedTicket': authTicket
+        }
+    response = requests.request("GET", url, headers=headers)
+    if response == 200:
+        return jsonify({'name': 'RCRA', 'Version': '2020.2.3'})
+    else:
+        return jsonify({'name': 'RCRA', 'Version': "No Authorisation"})
+
 
 @app.route('/hardwareassets/', defaults={"hardwareasset": -1})
 @app.route('/hardwareassets/<hardwareasset>/', methods=['GET', 'POST'])
@@ -350,6 +401,14 @@ def asset_configuration_relationship():
 
 
 
+#Kafka Consumer API
+def get_kafka_client():
+    return KafkaClient(hosts='127.0.0.1:9092')
 
-
-#    return jsonify(hello='world') # Returns HTTP Response with {"hello": "world"}
+@app.route('/topic/<topicname>')
+def get_messages(topicname):
+    client = get_kafka_client()
+    def events():
+        for i in client.topics[topicname].get_simple_consumer():
+            yield 'data:{0}\n\n'.format(i.value.decode())
+    return Response(events(), mimetype="text/event-stream")
