@@ -7,7 +7,7 @@ from flask_migrate import Migrate
 from app.api import *
 app = Flask(__name__)
 app.config.from_object(Config)
-api = Api(app)
+# api = Api(app)
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -16,7 +16,7 @@ migrate = Migrate(app, db)
 from app import routes
 from app import models
 from app import errors
-from app import api
-
-api.add_resource(RCRAgetFCDEversion, '/RCRAgetFCDEversion')
-api.add_resource(RCRAgetversion, '/RCRAgetversion')
+# from app import api
+#
+# api.add_resource(RCRAgetFCDEversion, '/RCRAgetFCDEversion')
+# api.add_resource(RCRAgetversion, '/RCRAgetversion')
