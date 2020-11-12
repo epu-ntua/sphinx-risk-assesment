@@ -38,3 +38,4 @@ In fresh installs always recreate database
 * From commnd line
 * Move to folder docker
 * Run `kompose convert`
+* Pre produced yaml can be found in docker file
