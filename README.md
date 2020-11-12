@@ -24,3 +24,17 @@ In fresh installs always recreate database
 `flask db migrate` (Shouldn't be needed)
 `flask db upgrade` (Necessary to recreate db)
 `flask run`
+
+#Running with docker compose
+*  Install docker-compose ("https://docs.docker.com/compose/install/"). If on windows and got docker desktop it is already installed
+*  From command line:
+*  Move to folder "docker"
+*  Run `docker-compose up -d --build`
+*  To stop it: `docker-compose down`
+
+#To produce kubernetes yaml automatically.
+* Install Kompose ("https://kompose.io/")
+* If on windows simply download executable, rename to kompose and move it to system32 folder or add to path
+* From commnd line
+* Move to folder docker
+* Run `kompose convert`
