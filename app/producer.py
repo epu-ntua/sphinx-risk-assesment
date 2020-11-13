@@ -1,42 +1,38 @@
-from pykafka import KafkaClient, SslConfig
+from kafka import KafkaProducer
 import json
 from datetime import datetime
+from time import sleep
+from json import dumps
+
 import uuid
 import time
 
-def get_kafka_client():
-    return KafkaClient(hosts='127.0.0.1:9092')
-    # We are going to use something like this
-    # config = SslConfig(cafile='/your/ca.cert',
-    #                     certfile='/your/client.cert',  # optional
-    #                     keyfile='/your/client.key',  # optional
-    #                     password='unlock my client key please')  # optional
-    # client = KafkaClient(hosts="127.0.0.1:<ssl-port>,...",
-    #                       ssl_config=config)
+producer = KafkaProducer(bootstrap_servers=['localhost:9092'],
+                         value_serializer=lambda x:
+                         dumps(x).encode('utf-8'))
 
-
-
-#KAFKA PRODUCER
-client = get_kafka_client()
-# client = KafkaClient(hosts="localhost:9092")
-topic = client.topics['RCRAsample']
-producer = topic.get_sync_producer()
-
-# CONSTRUCT MESSAGE AND SEND IT TO KAFKA
 data = {}
-data['testline'] = '00001'
+# data['testline'] = '00001'
 # GENERATE UUID
 def generate_uuid():
     return uuid.uuid4()
 
+# def generate_checkpoint(steps):
+#     i = 0
+#     while i < steps:
+#         data['key'] = data['testline'] + '_' + str(generate_uuid())
+#         data['timestamp'] = str(datetime.utcnow())
+#         message = json.dumps(data)
+#         # yield message
+#         producer.produce(message.encode('ascii'))
+#         time.sleep(1)
+#         i=i+1
 def generate_checkpoint(steps):
-    i = 0
-    while i < steps:
-        data['key'] = data['testline'] + '_' + str(generate_uuid())
+    for e in range(steps):
+        data['number'] = str(e)
+        data['key'] = str(generate_uuid())
         data['timestamp'] = str(datetime.utcnow())
-        message = json.dumps(data)
-        # yield message
-        producer.produce(message.encode('ascii'))
-        time.sleep(1)
-        i=i+1
-
+        producer.send('RCRAsample', value=data)
+        # # flush the message buffer to force message delivery to broker on each iteration
+        # producer.flush()
+        sleep(5)
