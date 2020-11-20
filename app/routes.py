@@ -1,12 +1,7 @@
-import time
-import uuid
-
 from app import app
 from flask import render_template, request, redirect, jsonify, Response
-import flask
 from app.utils import *
 from app.globals import *
-from pykafka import KafkaClient
 from app.producer import generate_checkpoint
 
 @app.context_processor
@@ -298,21 +293,21 @@ def RCRAgetFCDEversion():
     # serviceid =selected_service['service']['aaainfo']['id'][0]
 
 # This is called in FCDEgetversion
-    # urlx = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/Authorization"
-    # params = {
-    #     'requestedservice': 'DEMOCOMPONENT2',
-    #     'requestedTicket': requestedTicket
-    #     }
-    # responsex = requests.request("GET", urlx, params=params)
-    # reqdata = response.json()
-    #
-    url2 = "http://127.0.0.1:5003/FCDEgetversion"
+    urlx = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/FCDEgetversion"
     params = {
-        'requestedservice': "FCDEgetversion",
+        'requestedservice': 'FCDEgetversion',
         'requestedTicket': requestedTicket
-    }
-    response3 = requests.request("GET", url2, params=params)
-    reqdata = response3.json()
+        }
+    responsex = requests.request("GET", urlx, params=params)
+    reqdata = responsex.json()
+    #
+    # url2 = "http://127.0.0.1:5003/FCDEgetversion"
+    # params = {
+    #     'requestedservice': "FCDEgetversion",
+    #     'requestedTicket': requestedTicket
+    # }
+    # response3 = requests.request("GET", url2, params=params)
+    # reqdata = response3.json()
 
     return reqdata
 
@@ -405,9 +400,6 @@ def asset_configuration_relationship():
 
 
 
-#Kafka Consumer API
-def get_kafka_client():
-    return KafkaClient(hosts='127.0.0.1:9092')
 
 
 @app.route('/write_topic')
@@ -415,12 +407,12 @@ def write_topic_to_kafka():
     generate_checkpoint(5)
     return Response('Done'+ str(datetime.utcnow()), mimetype="text/event-stream")
 
-@app.route('/topic/<topicname>')
-def get_messages(topicname):
-    client = get_kafka_client()
-    def events():
-        for i in client.topics[topicname].get_simple_consumer():
-            yield 'data:{0}\n\n'.format(i.value.decode())
-    return Response(events(), mimetype="text/event-stream")
+# @app.route('/topic/<topicname>')
+# def get_messages(topicname):
+#     client = get_kafka_client()
+#     def events():
+#         for i in client.topics[topicname].get_simple_consumer():
+#             yield 'data:{0}\n\n'.format(i.value.decode())
+#     return Response(events(), mimetype="text/event-stream")
 
 
