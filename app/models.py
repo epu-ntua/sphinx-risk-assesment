@@ -234,17 +234,16 @@ class RiskVulnerabilityThreat(db.Model):
 
 # # region Many to Many Supportive Tables
 
-gira_threat_materialisation_instance_gira_instance_table = db.Table('association',
-                               db.Column('gira_instance_id', db.Integer, db.ForeignKey('gira_instance.id'), primary_key=True),
+#missing backrefs!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+gira_threat_materialisation_instance_gira_threat_materialisation_instance_entry_table = db.Table('gira_threat_materialisation_instance_gira_threat_materialisation_instance_entry_table',
+                               db.Column('gira_threat_materialisation_instance_entry_id', db.Integer, db.ForeignKey('gira_threat_materialisation_instance_entry.id'), primary_key=True),
                                db.Column('gira_threat_materialisation_instance_id', db.Integer, db.ForeignKey('gira_threat_materialisation_instance.id'), primary_key=True)
                                )
 
-#missing backrefs!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-gira_threat_materialisation_instance_gira_incident_response_table = db.Table('association',
+gira_threat_materialisation_instance_gira_incident_response_table = db.Table('gira_threat_materialisation_instance_gira_incident_response_table',
                                db.Column('gira_incident_response_id', db.Integer, db.ForeignKey('gira_incident_response.id'), primary_key=True),
                                db.Column('gira_threat_materialisation_instance_id', db.Integer, db.ForeignKey('gira_threat_materialisation_instance.id'), primary_key=True)
                                )
-
 # instance_responses_table = db.Table('association',
 #                                db.Column('instance_id', db.Integer, db.ForeignKey('gira_instance.id'), primary_key=True),
 #                                db.Column('responses_id', db.Integer, db.ForeignKey('gira_incident_responses_instance.id'), primary_key=True)
@@ -266,14 +265,17 @@ class GiraIncidentResponse(db.Model):
     name = db.Column(db.String, nullable=False)
     description = db.Column(db.String, nullable=True)
     default_effect = db.Column()
+    materialisation_entries = db.relationship( "GiraThreatMaterialisationInstanceEntry", back_populates = "responses")
+
 
 
 class GiraThreatMaterialisation(db.Model):
-    __tablename__ = 'gira_threat_exposure'
+    __tablename__ = 'gira_threat_materialisation'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, nullable=False)
     probability = db.Column(db.Float)  #Probability that this materialisationappears
     description = db.Column(db.String, nullable=True)
+    materialisation_entries = db.relationship( "GiraThreatMaterialisationInstanceEntry", back_populates = "materialisations")
 
 # # High level Gira assets describing business logic or high level assets like doctors or patients(not network assets)
 # class GiraAsset(db.Model):
@@ -341,7 +343,7 @@ class GiraInstance(db.Model):
     __tablename__ = 'gira_instance'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     threat = db.Column(db.Integer, db.ForeignKey('gira_threat_exposure.id'))
-    materialisations = db.relationship( "GiraThreatsMaterialisationInstance", secondary= gira_threat_materialisation_instance_gira_instance_table, back_populates="instance")
+    materialisations = db.relationship( "GiraThreatsMaterialisationInstance",uselist = False ,back_populates="instance")
     # responses = db.Column(db.Integer, db.ForeignKey('gira_incident_responses_instance.id'))
     # materialisations = db.Column(db.Integer, db.ForeignKey('gira_threats_materialisation_instance.id'))
     # consequences = db.Column(db.Integer, db.ForeignKey('gira_consequences_instance.id'))
@@ -353,25 +355,36 @@ class GiraInstance(db.Model):
 # class GiraIncidentResponsesInstance(db.Model):
 #     __tablename__ = 'gira_incident_responses_instance'
 #     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-
-
 class GiraThreatMaterialisationInstance(db.Model):
     __tablename__ = 'gira_threat_materialisation_instance'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    instance = db.relationship( "GiraInstance", secondary= gira_threat_materialisation_instance_gira_instance_table, back_populates="materialisations")
+    instance_id = db.Column(db.Integer, db.ForeignKey('gira_instance.id'))
+    instance = db.relationship( "GiraInstance", back_populates="materialisations")
+
+    incident_responses = db.relationship( "GiraIncidentResponse", secondary = gira_threat_materialisation_instance_gira_incident_response_table)
+
 
 class GiraThreatMaterialisationInstanceEntry(db.Model):
     __tablename__ = "gira_threat_materialisation_instance_entry"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    threat =
-    response =
-    materialiasation =
+    table = db.relationship( "GiraThreatMaterialisationInstance", secondary = gira_threat_materialisation_instance_gira_threat_materialisation_instance_entry_table )
+    #Specific threat exposure exists in gira instance
 
-    prob1 =
-    prob2 =
-    prob3 =
-    prob4 =
-    computed_probability =
+    # Specific response in table
+    responses_id = db.Column(db.Integer, db.ForeignKey('gira_incident_response.id'))
+    responses = db.relationship( "GiraIncidentResponse", back_populates = "materialisation_entries")
+
+    # Specific response in table
+    materialisations_id = db.Column(db.Integer, db.ForeignKey('gira_threat_materialisation.id'))
+    materialisations = db.relationship( "GiraThreatMaterialisation", back_populates = "materialisation_entries")
+
+
+    prob_threat_materialising = db.Column(db.Integer, nullable=False)
+    # Also needs reverse
+
+    prob_likelihood = db.Column(db.Integer, nullable=False)
+    prob_likelihood_other = db.Column(db.Integer, nullable=False)
+    prob_posterior = db.Column(db.Integer, nullable=False)
 
 # # endregion
 #
