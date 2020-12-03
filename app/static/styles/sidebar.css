@@ -61,3 +61,10 @@
     a.bg-dark {
         background-color: #132644 !important;
     }
+
+    .btn-table-percentage{
+        width: auto;
+        background-color: white;
+        color: #4f4f4f;
+        border-color: #4f4f4f;
+    }

@@ -260,12 +260,14 @@ def get_assets():
         return []
     # db.session.query(your_table.column1.distinct()).filter_by(column2 = 'some_column2_value').all()
 
+
 def get_assetsfromrepository():
     if db.session.query().distinct(HardwareAsset.id).count() > 0:
         list_of_assets = db.session.query(HardwareAsset).distinct(HardwareAsset.id)
         return list_of_assets
     else:
         return -1
+
 
 # region get Recommended CVEs for an asset
 def get_cve_recommendations(asset_id):
@@ -322,10 +324,11 @@ def get_capec_recommendations(selected_cve_id):
 
 # One impact at a time saved
 # scopes is an array
+# NEEDS TO BE REACTIVATED, IT WORKS
 def save_capec_consequence(scopes, impact, notes):
     scope_instances = []
     for scope in scopes:
-        stored_scope = db.session.query(GiraScope).filter_by(name = scope).first()
+        stored_scope = db.session.query(GiraScope).filter_by(name=scope).first()
         if stored_scope is None:
             new_scope = GiraScope(name=scope)
             scope_instances.append(new_scope)
@@ -333,11 +336,9 @@ def save_capec_consequence(scopes, impact, notes):
         else:
             scope_instances.append(stored_scope)
 
-
-
     db.session.commit()
-    impact = impact[:-1] #To be removed if bug that leaves ':' in the end of the asset is fixed
-    if db.session.query(GiraImpact).filter_by(name = impact).first() is None:
+    impact = impact[:-1]  # To be removed if bug that leaves ':' in the end of the asset is fixed
+    if db.session.query(GiraImpact).filter_by(name=impact).first() is None:
         new_impact = GiraImpact(name=impact, note=notes)
         for scope_instance in scope_instances:
             new_impact.scopes.append(scope_instance)
@@ -383,6 +384,7 @@ def get_capec_consequences():
             else:
                 temp_scope.append(temp_it)
 
+
 def get_hardwareassets():
     if db.session.query(HardwareAsset).distinct(
             HardwareAsset.id).count() > 0:
@@ -391,10 +393,6 @@ def get_hardwareassets():
         return list_of_hardwareassets
     else:
         return []
-
-
-
-
 
 # endregion
 

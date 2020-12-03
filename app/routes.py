@@ -2,8 +2,9 @@ from app import app
 from flask import render_template, request, redirect, jsonify, Response
 from app.utils import *
 from app.globals import *
-#from app.producer import generate_checkpoint
+# from app.producer import generate_checkpoint
 from app.producer import KafkaInitialiser, generate_checkpoint
+
 
 @app.context_processor
 def serverInfo():
@@ -42,8 +43,8 @@ def assets(asset):
         # for tempAsset in assetsArray:
         # othersCVEArray.append()
 
-        assetsArray = [{"VReport_assetID": "85"}, {"VReport_assetID": "80"} ]
-        proposedCVEArray = ["2020-13720" , "2020-13730"]
+        assetsArray = [{"VReport_assetID": "85"}, {"VReport_assetID": "80"}]
+        proposedCVEArray = ["2020-13720", "2020-13730"]
         othersCVEArray = ["2020-12350"]
 
         return render_template('assets.html', asset=asset, assets=assetsArray, proposedCVEArray=proposedCVEArray,
@@ -61,7 +62,7 @@ def vulnerabilities(asset, vulnerability):
         # assetsArray = get_assets()
         # print(assetsArray[0].VReport_assetID)
 
-        assetsArray = [{"VReport_assetID": "85"}, {"VReport_assetID": "80"} ]
+        assetsArray = [{"VReport_assetID": "85"}, {"VReport_assetID": "80"}]
 
         return render_template('vulnerabilities.html', asset=asset, vulnerability=vulnerability, assets=assetsArray)
 
@@ -76,77 +77,78 @@ def threats(asset, vulnerability, threat):
         # assetsArray = get_assets()
         # print(assetsArray[0].VReport_assetID)
 
-        assetsArray = [{"VReport_assetID": "85"}, {"VReport_assetID": "80"} ]
+        assetsArray = [{"VReport_assetID": "85"}, {"VReport_assetID": "80"}]
 
         return render_template('threats.html', asset=asset, vulnerability=vulnerability, threat=threat,
                                assets=assetsArray)
 
 
-@app.route('/gira_assess/' , methods=['GET', 'POST'])
+@app.route('/gira_assess/', methods=['GET', 'POST'])
 def gira_assess():
     if request.method == 'POST':
         return redirect("/gira_assess/")
     else:
-        return render_template('gira_assess.html' )
+        return render_template('gira_assess.html')
 
 
-
-@app.route('/gira_assess/gira_assess_exposure/' , methods=['GET', 'POST'])
+@app.route('/gira_assess/gira_assess_exposure/', methods=['GET', 'POST'])
 def gira_assess_exposure():
     if request.method == 'POST':
-        return redirect("/gira_assess_exposure/")
+        return render_template('gira_assess_exposure.html')
     else:
-        return render_template('gira_assess_exposure.html' )
+        threat_instances = GiraThreatExposure.query.all()
+        return render_template('gira_assess_exposure.html')
 
-@app.route('/gira_assess/gira_assess_response/' , methods=['GET', 'POST'])
+
+@app.route('/gira_assess/gira_assess_response/', methods=['GET', 'POST'])
 def gira_assess_response():
     if request.method == 'POST':
         return redirect("/gira_assess/gira_assess_response/")
     else:
-        return render_template('gira_assess_response.html' )
+        return render_template('gira_assess_response.html')
 
-@app.route('/gira_assess/gira_assess_materialisation/' , methods=['GET', 'POST'])
+
+@app.route('/gira_assess/gira_assess_materialisation/', methods=['GET', 'POST'])
 def gira_assess_materialisation():
     if request.method == 'POST':
         return redirect("/gira_assess/gira_assess_materialisation/")
     else:
-        return render_template('gira_assess_materialisation.html' )
+        return render_template('gira_assess_materialisation.html')
 
 
-
-@app.route('/gira_assess/gira_assess_consequence/' , methods=['GET', 'POST'])
+@app.route('/gira_assess/gira_assess_consequence/', methods=['GET', 'POST'])
 def gira_assess_consequence():
     if request.method == 'POST':
         return redirect("/gira_assess/gira_assess_consequence/")
     else:
-        return render_template('gira_assess_consequence.html' )
+        return render_template('gira_assess_consequence.html')
 
 
-
-@app.route('/gira_assess/gira_assess_asset_status/' , methods=['GET', 'POST'])
+@app.route('/gira_assess/gira_assess_asset_status/', methods=['GET', 'POST'])
 def gira_assess_asset_status():
     if request.method == 'POST':
         return redirect("/gira_assess/gira_assess_asset_status/")
     else:
-        return render_template('gira_assess_asset_status.html' )
+        return render_template('gira_assess_asset_status.html')
 
-@app.route('/gira_assess/gira_assess_asset_impact/' , methods=['GET', 'POST'])
+
+@app.route('/gira_assess/gira_assess_asset_impact/', methods=['GET', 'POST'])
 def gira_assess_asset_impact():
     if request.method == 'POST':
         return redirect("/gira_assess/gira_assess_asset_impact/")
     else:
-        return render_template('gira_assess_asset_impact.html' )
+        return render_template('gira_assess_asset_impact.html')
 
-@app.route('/gira_assess/gira_assess_objective/' , methods=['GET', 'POST'])
+
+@app.route('/gira_assess/gira_assess_objective/', methods=['GET', 'POST'])
 def gira_assess_objective():
     if request.method == 'POST':
         return redirect("/gira_assess/gira_assess_objective/")
     else:
-        return render_template('gira_assess_objective.html' )
+        return render_template('gira_assess_objective.html')
 
 
-
-@app.route('/gira_overview/' , methods=['GET', 'POST'])
+@app.route('/gira_overview/', methods=['GET', 'POST'])
 def gira_overview():
     if request.method == 'POST':
         return redirect("/gira_overview/")
@@ -157,25 +159,83 @@ def gira_overview():
 @app.route('/gira_overview/gira_threat_exposure/', methods=['GET', 'POST'])
 def gira_threat_exposure():
     if request.method == 'POST':
-        return redirect("/gira_overview/")
-    else:
+
+        # Add new Threat Exposure
+        to_add_exposure = GiraThreatExposure(name=request.form['name'], description=request.form['description'],
+                                    probability=int(request.form['probability']))
+        db.session.add(to_add_exposure)
+        db.session.flush()
+
+        # print(to_add_exposure.id)
+
+        # Add new Instance of Gira
+        to_add_instance = GiraInstance(threat=to_add_exposure.id)
+        db.session.add(to_add_instance)
+        db.session.flush()
+
+
+        # Add a new Threat Materialistion Instance
+        to_add_materialisation_instance = GiraThreatMaterialisationInstance(instance_id=to_add_instance.id)
+
+
+        to_add_materialisations_instance_id = request.form['materialisationsToAdd']
+        to_add_materialisations_instance_id = json.loads(to_add_materialisations_instance_id)
+        print(to_add_materialisations_instance_id)
+
+        # Helper tanble to temporary store all the instances of materialisations
+        to_add_materialisations_list = []
+
+        # Query database for each instance of the Gira Materialisations we want
+        for materialisation_id in to_add_materialisations_instance_id:
+            print("Query")
+            print(GiraThreatMaterialisation.query.filter_by(id=materialisation_id[0]).first())
+            to_add_materialisations_list.append(GiraThreatMaterialisation.query.filter_by(id=materialisation_id[0]).first())
+
+        print("TASTS")
+        print(to_add_materialisations_list)
+        # Append each gire materialisation to the materialisation instance
+        for materialisation in to_add_materialisations_list:
+            print("test")
+            print(materialisation)
+            to_add_materialisation_instance.materialisations.append(materialisation)
+
+        db.session.add(to_add_materialisation_instance)
+        db.session.commit()
+
         return render_template('gira_threat_exposure.html')
+    else:
+        threats = GiraThreatExposure.query.all()
+        materialisations = GiraThreatMaterialisation.query.all()
+
+        return render_template('gira_threat_exposure.html', threats=threats, materialisations=materialisations)
 
 
 @app.route('/gira_overview/gira_threat_response/', methods=['GET', 'POST'])
 def gira_threat_response():
     if request.method == 'POST':
-        return redirect("/gira_overview/")
-    else:
+        to_add = GiraIncidentResponse(name=request.form['name'], description=request.form['description'],
+                                      default_effect=int(request.form['default_effect']))
+        db.session.add(to_add)
+        db.session.commit()
+
         return render_template('gira_threat_response.html')
+    else:
+        responses = GiraIncidentResponse.query.all()
+        return render_template('gira_threat_response.html', responses=responses)
 
 
 @app.route('/gira_overview/gira_threat_materialisation/', methods=['GET', 'POST'])
 def gira_threat_materialisation():
     if request.method == 'POST':
-        return redirect("/gira_overview/")
-    else:
+        to_add = GiraThreatMaterialisation(name=request.form['name'], description=request.form['description'],
+                                           probability=int(request.form['probability']))
+        db.session.add(to_add)
+        db.session.commit()
+
         return render_template('gira_threat_materialisation.html')
+    else:
+        materialisations = GiraThreatMaterialisation.query.all()
+        return render_template('gira_threat_materialisation.html', materialisations=materialisations)
 
 
 @app.route('/gira_overview/gira_consequence/', methods=['GET', 'POST'])
@@ -259,6 +319,7 @@ def general_dashboard_threat_view(threat):
         assetsArray = []
         return render_template('general_dashboard_threat_view.html', threat=threat, assets=assetsArray)
 
+
 @app.route('/general_dashboard/tree_view/', defaults={"threat": -1})
 @app.route('/general_dashboard/tree_view/<threat>/', methods=['GET', 'POST'])
 def general_dashboard_tree_view(threat):
@@ -280,7 +341,7 @@ def RCRAgetFCDEversion():
     payload = {
         'username': 'testR1',
         'password': 'testR1123!@'
-        }
+    }
     response = requests.request("POST", url, data=payload)
     selectedticket = response.json()
     requestedTicket = selectedticket["data"]
@@ -293,12 +354,12 @@ def RCRAgetFCDEversion():
     # selected_service = response2.json()
     # serviceid =selected_service['service']['aaainfo']['id'][0]
 
-# This is called in FCDEgetversion
+    # This is called in FCDEgetversion
     urlx = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/FCDEgetversion"
     params = {
         'requestedservice': 'FCDEgetversion',
         'requestedTicket': requestedTicket
-        }
+    }
     responsex = requests.request("GET", urlx, params=params)
     reqdata = responsex.json()
     #
@@ -312,16 +373,17 @@ def RCRAgetFCDEversion():
 
     return reqdata
 
+
 @app.route('/RCRAgetversion/')
 def RCRAgetversion():
-    requestedservice=request.args.get('requestedservice', None)
-    authTicket=request.args.get('authTicket', None)
+    requestedservice = request.args.get('requestedservice', None)
+    authTicket = request.args.get('authTicket', None)
 
     url = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/Authorization"
     headers = {
         'requestedservice': requestedservice,
         'requestedTicket': authTicket
-        }
+    }
     response = requests.request("GET", url, headers=headers)
     if response == 200:
         return jsonify({'name': 'RCRA', 'Version': '2020.2.3'})
@@ -383,24 +445,25 @@ def asset_organisation_structure():
 def asset_organisation_process():
     return render_template('asset_organisation_process.html')
 
+
 @app.route('/asset_Asset_usage_type')
 def asset_Asset_usage_type():
     return render_template('asset_Asset_usage_type.html')
+
 
 @app.route('/asset_Asset_hardware_non_it')
 def asset_Asset_hardware_non_it():
     return render_template('asset_Asset_hardware_non_it.html')
 
+
 @app.route('/asset_Asset_hardware_classification')
 def asset_Asset_hardware_classification():
     return render_template('asset_Asset_hardware_classification.html')
 
+
 @app.route('/asset_configuration_relationship')
 def asset_configuration_relationship():
     return render_template('asset_configuration_relationship.html')
-
-
-
 
 
 @app.route('/write_topic')
@@ -408,7 +471,7 @@ def write_topic_to_kafka():
     kafka = KafkaInitialiser()
     generate_checkpoint(5, kafka)
     # kafka_connect(5)
-    return Response('Done'+ str(datetime.utcnow()), mimetype="text/event-stream")
+    return Response('Done' + str(datetime.utcnow()), mimetype="text/event-stream")
 
 # @app.route('/topic/<topicname>')
 # def get_messages(topicname):
@@ -417,5 +480,3 @@ def write_topic_to_kafka():
 #         for i in client.topics[topicname].get_simple_consumer():
 #             yield 'data:{0}\n\n'.format(i.value.decode())
 #     return Response(events(), mimetype="text/event-stream")
-
-

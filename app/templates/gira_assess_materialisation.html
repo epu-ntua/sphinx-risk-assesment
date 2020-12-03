@@ -54,13 +54,13 @@
                     <h5> Objective</h5>
                 </a>
             </div>
-{#            <div class="col-1 gira-bar-nav ">#}
-                {#                <img id="gira-background-conclusion" src={{  url_for('static', filename='/images/gira_menu_conclusion.jpg') }}#}
-                {#                     class="gira-menu-background">#}
-{#                <a class="gira-bar-nav-link custom-white-color" href="/gira_assess/gira_assess_result">#}
-{#                    <h5> Result </h5>#}
-{#                </a>#}
-{#            </div>#}
+            {#            <div class="col-1 gira-bar-nav ">#}
+            {#                <img id="gira-background-conclusion" src={{  url_for('static', filename='/images/gira_menu_conclusion.jpg') }}#}
+            {#                     class="gira-menu-background">#}
+            {#                <a class="gira-bar-nav-link custom-white-color" href="/gira_assess/gira_assess_result">#}
+            {#                    <h5> Result </h5>#}
+            {#                </a>#}
+            {#            </div>#}
         </div>
         <div class="row">
             <div class="col-2 custom-select-column">
@@ -105,17 +105,57 @@
                     <tbody>
                     <tr>
                         <th scope="row">Incident 1# Confidentiality</th>
-                        <td> xx%</td>
-                        <td> yy%</td>
-                        <td> xx%</td>
-                        <td> yy%</td>
+                        <td>
+                            <button type="button" class="btn btn-primary btn-table-percentage" data-toggle="modal"
+                                    data-target="#exampleModalCenter">
+                                xx%
+                            </button>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-primary btn-table-percentage" data-toggle="modal"
+                                    data-target="#exampleModalCenter">
+                                xx%
+                            </button>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-primary btn-table-percentage" data-toggle="modal"
+                                    data-target="#exampleModalCenter">
+                                xx%
+                            </button>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-primary btn-table-percentage" data-toggle="modal"
+                                    data-target="#exampleModalCenter">
+                                xx%
+                            </button>
+                        </td>
                     </tr>
                     <tr>
                         <th scope="row">Incident 2# Integrity</th>
-                        <td> xx%</td>
-                        <td> yy%</td>
-                        <td> xx%</td>
-                        <td> yy%</td>
+                        <td>
+                            <button type="button" class="btn btn-primary btn-table-percentage" data-toggle="modal"
+                                    data-target="#exampleModalCenter">
+                                xx%
+                            </button>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-primary btn-table-percentage" data-toggle="modal"
+                                    data-target="#exampleModalCenter">
+                                xx%
+                            </button>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-primary btn-table-percentage" data-toggle="modal"
+                                    data-target="#exampleModalCenter">
+                                xx%
+                            </button>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-primary btn-table-percentage" data-toggle="modal"
+                                    data-target="#exampleModalCenter">
+                                xx%
+                            </button>
+                        </td>
                     </tr>
                     <tr>
                         <th scope="row">Incident 3# Authentication</th>
@@ -138,5 +178,25 @@
         </div>
     </form>
 
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}

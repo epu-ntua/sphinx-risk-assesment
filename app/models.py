@@ -127,8 +127,7 @@ class VulnerabilitiesWeaknessLink(db.Model):
     date = db.Column(db.DateTime)
 
     def __repr__(self):
-        return '<cVecWe {}>'.format(self.Id)
-
+        return '<cVecWe {}>'.format(self.id)
 
 
 class HardwareAsset(db.Model):
@@ -154,36 +153,44 @@ class HardwareAsset(db.Model):
     assetAssignedTo = db.Column(db.String())
     assetManagedBy = db.Column(db.String())
     assetOwner = db.Column(db.String())
-    assetUsageType = db.Column(db.String()) #--add hoc or permanent
+    assetUsageType = db.Column(db.String())  # --add hoc or permanent
     assetLocation = db.Column(db.String())
     assetClassification = db.Column(db.Integer, db.ForeignKey('asset_classification.AssetClassificationID'))
-    assetInformationProcessed = db.Column(db.String()) #--Personal or Business
+    assetInformationProcessed = db.Column(db.String())  # --Personal or Business
+
     def __repr__(self):
         return '<HardwareAsset {}>'.format(self.id)
+
 
 class AssetHardwareStatus(db.Model):
     __tablename__ = 'asset_hardware_status'
     AssetHardwareStatusID = db.Column(db.Integer, primary_key=True, autoincrement=True)
     AssetHardwareStatusDescr = db.Column(db.String())
     AssetHardwareStatusInsertedDate = db.Column(db.DateTime)
+
     def __repr__(self):
         return '<AssetHardwareStatus {}>'.format(self.AssetHardwareStatusID)
+
 
 class AssetHardwareType(db.Model):
     __tablename__ = 'asset_hardware_type'
     AssetHardwareTypeID = db.Column(db.Integer, primary_key=True, autoincrement=True)
     AssetHardwareTypeDescr = db.Column(db.String())
     AssetHardwareTypeInsertedDate = db.Column(db.DateTime)
+
     def __repr__(self):
         return '<AssetHardwareType {}>'.format(self.AssetHardwareTypeID)
+
 
 class AssetClassification(db.Model):
     __tablename__ = 'asset_classification'
     AssetClassificationID = db.Column(db.Integer, primary_key=True, autoincrement=True)
     AssetClassificationDescr = db.Column(db.String())
     AssetClassificationInsertedDate = db.Column(db.DateTime)
+
     def __repr__(self):
         return '<AssetClassification {}>'.format(self.AssetClassificationID)
+
 
 class SoftwareAsset(db.Model):
     __tablename__ = 'software_asset'
@@ -194,8 +201,10 @@ class SoftwareAsset(db.Model):
     softwareType = db.Column(db.Integer, db.ForeignKey('asset_software_type.AssetSoftwareTypeID'))
     softwarePurchaseDate = db.Column(db.DateTime)
     softwareInstalled = db.Column(db.String())
+
     def __repr__(self):
         return '<SoftwareAsset {}>'.format(self.id)
+
 
 class AssetSoftwareType(db.Model):
     __tablename__ = 'asset_software_type'
@@ -203,8 +212,10 @@ class AssetSoftwareType(db.Model):
     AssetSoftwareTypeshortDescr = db.Column(db.String())
     AssetSoftwareTypeDescr = db.Column(db.String())
     AssetSoftwareTypeInsertedDate = db.Column(db.DateTime)
+
     def __repr__(self):
         return '<AssetSoftwareType {}>'.format(self.AssetSoftwareTypeID)
+
 
 class RiskAssessment(db.Model):
     __tablename__ = 'risk_assessment'
@@ -213,18 +224,20 @@ class RiskAssessment(db.Model):
     date = db.Column(db.DateTime)
 
     def __repr__(self):
-        return '<Risk_Assessment {}>'.format(self.Id)
+        return '<Risk_Assessment {}>'.format(self.id)
+
 
 class RiskVulnerabilityThreat(db.Model):
     __tablename__ = 'risk_vulnerability_threat'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     risk_id = db.Column(db.Integer, db.ForeignKey('risk_assessment.id'), nullable=False)
     CVE_id = db.Column(db.Integer, db.ForeignKey('common_vulnerabilities_and_exposures.id'), nullable=False)
-    CAPEC_id = db.Column(db.Integer, db.ForeignKey('common_attack_pattern_enumeration_classification.id'), nullable=False)
+    CAPEC_id = db.Column(db.Integer, db.ForeignKey('common_attack_pattern_enumeration_classification.id'),
+                         nullable=False)
     date = db.Column(db.DateTime)
 
     def __repr__(self):
-        return '<Risk_Vulnerability_Threat {}>'.format(self.Id)
+        return '<Risk_Vulnerability_Threat {}>'.format(self.id)
 
 
 # region Static Gira Models
@@ -234,16 +247,23 @@ class RiskVulnerabilityThreat(db.Model):
 
 # # region Many to Many Supportive Tables
 
-#missing backrefs!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-gira_threat_materialisation_instance_gira_threat_materialisation_instance_entry_table = db.Table('gira_threat_materialisation_instance_gira_threat_materialisation_instance_entry_table',
-                               db.Column('gira_threat_materialisation_instance_entry_id', db.Integer, db.ForeignKey('gira_threat_materialisation_instance_entry.id'), primary_key=True),
-                               db.Column('gira_threat_materialisation_instance_id', db.Integer, db.ForeignKey('gira_threat_materialisation_instance.id'), primary_key=True)
-                               )
+# missing backrefs!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+association_gira_threat_materialisation_instance_gira_incident_response_table = db.Table(
+    'association_gira_threat_materialisation_instance_gira_incident_response_table', db.Model.metadata,
+    db.Column('gira_incident_response_id', db.Integer, db.ForeignKey('gira_incident_response.id'), primary_key=True),
+    db.Column('gira_threat_materialisation_instance_id', db.Integer,
+              db.ForeignKey('gira_threat_materialisation_instance.id'), primary_key=True)
+)
 
-gira_threat_materialisation_instance_gira_incident_response_table = db.Table('gira_threat_materialisation_instance_gira_incident_response_table',
-                               db.Column('gira_incident_response_id', db.Integer, db.ForeignKey('gira_incident_response.id'), primary_key=True),
-                               db.Column('gira_threat_materialisation_instance_id', db.Integer, db.ForeignKey('gira_threat_materialisation_instance.id'), primary_key=True)
-                               )
+association_gira_threat_materialisation_instance_gira_threat_materialisation = db.Table(
+    'association_gira_threat_materialisation_instance_gira_threat_materialisation', db.Model.metadata,
+    db.Column('gira_threat_materialisation_id', db.Integer, db.ForeignKey('gira_threat_materialisation.id'),
+              primary_key=True),
+    db.Column('gira_threat_materialisation_instance_id', db.Integer,
+              db.ForeignKey('gira_threat_materialisation_instance.id'), primary_key=True)
+)
+
+
 # instance_responses_table = db.Table('association',
 #                                db.Column('instance_id', db.Integer, db.ForeignKey('gira_instance.id'), primary_key=True),
 #                                db.Column('responses_id', db.Integer, db.ForeignKey('gira_incident_responses_instance.id'), primary_key=True)
@@ -255,7 +275,7 @@ class GiraThreatExposure(db.Model):
     __tablename__ = 'gira_threat_exposure'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, nullable=False)
-    probability = db.Column(db.Float)  #Probability that this thread appears
+    probability = db.Column(db.Integer, nullable=False)  # Probability that this thread appears
     description = db.Column(db.String, nullable=True)
 
 
@@ -264,18 +284,25 @@ class GiraIncidentResponse(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, nullable=False)
     description = db.Column(db.String, nullable=True)
-    default_effect = db.Column()
-    materialisation_entries = db.relationship( "GiraThreatMaterialisationInstanceEntry", back_populates = "responses")
-
-
+    default_effect = db.Column(db.Integer, nullable=True)
+    materialisation_entries = db.relationship("GiraThreatMaterialisationInstanceEntry", back_populates="responses")
+    materialisation_instance = db.relationship("GiraThreatMaterialisationInstance",
+                                          secondary=association_gira_threat_materialisation_instance_gira_incident_response_table,
+                                         back_populates="incident_responses")
 
 class GiraThreatMaterialisation(db.Model):
     __tablename__ = 'gira_threat_materialisation'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, nullable=False)
-    probability = db.Column(db.Float)  #Probability that this materialisationappears
+    probability = db.Column(db.Integer)  # Probability that this materialisationappears
     description = db.Column(db.String, nullable=True)
-    materialisation_entries = db.relationship( "GiraThreatMaterialisationInstanceEntry", back_populates = "materialisations")
+    materialisation_entries = db.relationship("GiraThreatMaterialisationInstanceEntry",
+                                              back_populates="materialisations")
+
+    materialisation_instance = db.relationship("GiraThreatMaterialisationInstance",
+                                               secondary=association_gira_threat_materialisation_instance_gira_threat_materialisation,
+                                               backref =db.backref("materialisations", lazy = "dynamic"))
+
 
 # # High level Gira assets describing business logic or high level assets like doctors or patients(not network assets)
 # class GiraAsset(db.Model):
@@ -314,7 +341,8 @@ class GiraThreatMaterialisation(db.Model):
 #     __tablename__ = 'gira_scope'
 #     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 #     name = db.Column(db.String, nullable=False)
-#
+
+
 #
 #
 # class GiraObjective(db.Model):
@@ -343,13 +371,14 @@ class GiraInstance(db.Model):
     __tablename__ = 'gira_instance'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     threat = db.Column(db.Integer, db.ForeignKey('gira_threat_exposure.id'))
-    materialisations = db.relationship( "GiraThreatsMaterialisationInstance",uselist = False ,back_populates="instance")
+    materialisations = db.relationship("GiraThreatMaterialisationInstance", uselist=False, back_populates="instance")
     # responses = db.Column(db.Integer, db.ForeignKey('gira_incident_responses_instance.id'))
     # materialisations = db.Column(db.Integer, db.ForeignKey('gira_threats_materialisation_instance.id'))
     # consequences = db.Column(db.Integer, db.ForeignKey('gira_consequences_instance.id'))
     # assets = db.Column(db.Integer, db.ForeignKey('gira_assets_instance'))
     # impacts = db.Column(db.Integer, db.ForeignKey('gira_impacts_instance'))
     # objectives = db.Column(db.Integer, db.ForeignKey('gira_objectives_instance'))
+
 
 #
 # class GiraIncidentResponsesInstance(db.Model):
@@ -358,26 +387,38 @@ class GiraInstance(db.Model):
 class GiraThreatMaterialisationInstance(db.Model):
     __tablename__ = 'gira_threat_materialisation_instance'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    instance_id = db.Column(db.Integer, db.ForeignKey('gira_instance.id'))
-    instance = db.relationship( "GiraInstance", back_populates="materialisations")
 
-    incident_responses = db.relationship( "GiraIncidentResponse", secondary = gira_threat_materialisation_instance_gira_incident_response_table)
+    # Instance this table belongs to
+    instance_id = db.Column(db.Integer, db.ForeignKey('gira_instance.id'))
+    instance = db.relationship("GiraInstance", back_populates="materialisations")
+
+    # Foreign key for related materialisation to this specific threat
+    # materialisations = db.relationship('GiraThreatMaterialisation',
+    #                                    secondary=association_gira_threat_materialisation_instance_gira_threat_materialisation,
+    #                                    back_populates="materialisation_instance")
+
+    table_entries = db.relationship("GiraThreatMaterialisationInstanceEntry", back_populates= "table")
+
+    incident_responses = db.relationship("GiraIncidentResponse",
+                                          secondary=association_gira_threat_materialisation_instance_gira_incident_response_table,
+                                         back_populates="materialisation_instance")
 
 
 class GiraThreatMaterialisationInstanceEntry(db.Model):
     __tablename__ = "gira_threat_materialisation_instance_entry"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    table = db.relationship( "GiraThreatMaterialisationInstance", secondary = gira_threat_materialisation_instance_gira_threat_materialisation_instance_entry_table )
-    #Specific threat exposure exists in gira instance
+
+    table_id = db.Column(db.Integer, db.ForeignKey('gira_threat_materialisation_instance.id'))
+    table = db.relationship("GiraThreatMaterialisationInstance", back_populates= "table_entries")
+    # Specific threat exposure exists in gira instance
 
     # Specific response in table
     responses_id = db.Column(db.Integer, db.ForeignKey('gira_incident_response.id'))
-    responses = db.relationship( "GiraIncidentResponse", back_populates = "materialisation_entries")
+    responses = db.relationship("GiraIncidentResponse", back_populates="materialisation_entries")
 
-    # Specific response in table
+    # Specific materialisation in table
     materialisations_id = db.Column(db.Integer, db.ForeignKey('gira_threat_materialisation.id'))
-    materialisations = db.relationship( "GiraThreatMaterialisation", back_populates = "materialisation_entries")
-
+    materialisations = db.relationship("GiraThreatMaterialisation", back_populates="materialisation_entries")
 
     prob_threat_materialising = db.Column(db.Integer, nullable=False)
     # Also needs reverse
@@ -388,4 +429,3 @@ class GiraThreatMaterialisationInstanceEntry(db.Model):
 
 # # endregion
 #
-
