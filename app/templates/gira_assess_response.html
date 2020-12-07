@@ -67,95 +67,49 @@
                 <h3> Selected Threat</h3>
                 <hr>
                 <ul class="list-group list-group-flush">
-                    <a href="" class="list-group-item">CAPEC - ####
+                    <a href="" class="list-group-item"> {{ selected_exposure.name }}
                     </a>
                 </ul>
             </div>
             <div class="col-9 d-flex flex-wrap align-content-start custom-select-column">
+                {% for response in all_responses %}
                 <div class="card bg-light mb-3 custom-card" style="max-width: 18rem;">
-                    <div class="card-header"> Response #1:
-                        Do nothing
+                    <div class="card-header"> Response #{{ response.id }}:
+                        {{ response.name }}
                     </div>
                     <div class="card-body">
                         <h4 class="card-title">Description</h4>
-                        <p class="card-text"> Lorem Ipsum --- </p>
-                        <h4 class="card-title">Probability Effect (Negative)</h4>
-                        <select class="form-control"
-                                name=""
-                                onchange="">
-                            <option>Major Impact(Recomended)</option>
-                            <option>High Impact</option>
-                            <option>Normal Impact</option>
-                            <option>Low Impact</option>
-                            <option>No Impact</option>
-                        </select>
+                        <p class="card-text"> {{ response.description}} </p>
+{#                        <h4 class="card-title">Probability Effect (Negative)</h4>#}
+{#                        <select class="form-control"#}
+{#                                name=""#}
+{#                                onchange="">#}
+{#                            <option>Major Impact(Recomended)</option>#}
+{#                            <option>High Impact</option>#}
+{#                            <option>Normal Impact</option>#}
+{#                            <option>Low Impact</option>#}
+{#                            <option>No Impact</option>#}
+{#                        </select>#}
 
                         <label class="form-check-label">
-                            <input class="form-check-input" type="checkbox" name="" value="Y">Add
+                            <input class="form-check-input" type="checkbox" name="{{ response.id }}" value="Y">Add
                             as Response
                         </label>
                     </div>
                 </div>
+                {% endfor %}
 
-                <div class="card bg-light mb-3 custom-card" style="max-width: 18rem;">
-                    <div class="card-header"> Response #2:
-                        Added Security Software xxx
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title">Description</h4>
-                        <p class="card-text"> Lorem Ipsum --- </p>
-                        <h4 class="card-title">Incident Probability Effect (Positive)</h4>
-                        <select class="form-control"
-                                name=""
-                                onchange="">
-                            <option>Major Impact</option>
-                            <option>High Impact</option>
-                            <option selected="selected">Normal Impact(Recomended)</option>
-                            <option>Low Impact</option>
-                            <option>No Impact</option>
-                        </select>
-
-                        <label class="form-check-label">
-                            <input class="form-check-input" type="checkbox" name="" value="Y">Add
-                            as Response
-                        </label>
-                    </div>
-                </div>
-
-                <div class="card bg-light mb-3 custom-card" style="max-width: 18rem;">
-                    <div class="card-header"> Response #3:
-                        ----
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title">Description</h4>
-                        <p class="card-text"> Lorem Ipsum --- </p>
-                        <h4 class="card-title">Incident Probability Effect (Positive)</h4>
-                        <select class="form-control"
-                                name=""
-                                onchange="">
-                            <option>Major Impact</option>
-                            <option>High Impact</option>
-                            <option selected="selected">Normal Impact(Recomended)</option>
-                            <option>Low Impact</option>
-                            <option>No Impact</option>
-                        </select>
-
-                        <label class="form-check-label">
-                            <input class="form-check-input" type="checkbox" name="" value="Y">Add
-                            as Response
-                        </label>
-                    </div>
-                </div>
             </div>
 
 
             <div class="col-1 custom-select-column">
-                <button type="submit" name="new_group_flow_form" class="btn btn-primary">Proceed with these responses >
+                <button type="submit" class="btn btn-primary">Proceed with these responses >
                 </button>
             </div>
         </div>
 
         </div>
+        <input type="hidden" id="exposureIdToSend" name="exposureIdToSend" value="{{ selected_exposure.id }}">
     </form>
 
 

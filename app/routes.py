@@ -94,24 +94,60 @@ def gira_assess():
 @app.route('/gira_assess/gira_assess_exposure/', methods=['GET', 'POST'])
 def gira_assess_exposure():
     if request.method == 'POST':
-        return render_template('gira_assess_exposure.html')
+        id_of_exposure = request.form['selected_exposure_id']
+
+        return redirect('/gira_assess/gira_assess_response/' + id_of_exposure + '/')
     else:
-        threat_instances = GiraThreatExposure.query.all()
-        return render_template('gira_assess_exposure.html')
+        exposure_instances = GiraThreatExposure.query.all()
+        return render_template('gira_assess_exposure.html', exposure_instances=exposure_instances)
 
 
 @app.route('/gira_assess/gira_assess_response/', methods=['GET', 'POST'])
 def gira_assess_response():
     if request.method == 'POST':
-        return redirect("/gira_assess/gira_assess_response/")
+        id_of_exposure = request.form['exposureIdToSend']
+
+        print(json.loads(id_of_exposure))
+        selected_exposure = GiraThreatExposure.query.filter_by(id=int(json.loads(id_of_exposure))).first()
+
+        all_responses = GiraIncidentResponse.query.all()
+
+        print(all_responses)
+        print(selected_exposure)
+        return render_template('gira_assess_response.html', selected_exposure=selected_exposure,
+                               all_responses=all_responses)
     else:
-        return render_template('gira_assess_response.html')
+        responses = GiraIncidentResponse.query.all()
+        return render_template('gira_assess_response.html', responses=responses)
 
 
 @app.route('/gira_assess/gira_assess_materialisation/', methods=['GET', 'POST'])
 def gira_assess_materialisation():
     if request.method == 'POST':
-        return redirect("/gira_assess/gira_assess_materialisation/")
+        print(request.form)
+
+        id_of_exposure = request.form['exposureIdToSend']
+        selected_exposure = GiraThreatExposure.query.filter_by(id=int(id_of_exposure)).first()
+
+        materialisation_instance = GiraThreatMaterialisationInstance.query.filter_by(instance_id=id_of_exposure).first()
+
+        for sent in request.form:
+            if sent == "exposureIdToSend":
+                continue
+            toAddResponse = GiraIncidentResponse.query.filter_by(id=sent).first()
+            materialisation_instance.incident_responses.append(toAddResponse)
+            db.session.commit()
+
+        instance_responses = GiraIncidentResponse.query.filter(
+            GiraIncidentResponse.materialisation_instance.any(id=id_of_exposure)).all()
+
+        instance_materialisations = GiraThreatMaterialisation.query.filter(
+            GiraThreatMaterialisation.materialisation_instance.any(id=id_of_exposure)).all()
+        # print(instance_materialisations)
+
+        return render_template("gira_assess_materialisation.html", selected_exposure=selected_exposure,
+                               instance_materialisations=instance_materialisations,
+                               instance_responses=instance_responses)
     else:
         return render_template('gira_assess_materialisation.html')
 
@@ -162,7 +198,7 @@ def gira_threat_exposure():
 
         # Add new Threat Exposure
         to_add_exposure = GiraThreatExposure(name=request.form['name'], description=request.form['description'],
-                                    probability=int(request.form['probability']))
+                                             probability=int(request.form['probability']))
         db.session.add(to_add_exposure)
         db.session.flush()
 
@@ -173,10 +209,8 @@ def gira_threat_exposure():
         db.session.add(to_add_instance)
         db.session.flush()
 
-
         # Add a new Threat Materialistion Instance
         to_add_materialisation_instance = GiraThreatMaterialisationInstance(instance_id=to_add_instance.id)
-
 
         to_add_materialisations_instance_id = request.form['materialisationsToAdd']
         to_add_materialisations_instance_id = json.loads(to_add_materialisations_instance_id)
@@ -189,7 +223,8 @@ def gira_threat_exposure():
         for materialisation_id in to_add_materialisations_instance_id:
             print("Query")
             print(GiraThreatMaterialisation.query.filter_by(id=materialisation_id[0]).first())
-            to_add_materialisations_list.append(GiraThreatMaterialisation.query.filter_by(id=materialisation_id[0]).first())
+            to_add_materialisations_list.append(
+                GiraThreatMaterialisation.query.filter_by(id=materialisation_id[0]).first())
 
         print("TASTS")
         print(to_add_materialisations_list)

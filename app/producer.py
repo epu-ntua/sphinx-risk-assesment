@@ -1,5 +1,10 @@
 import requests
+import os
+import requests
+import json
 from kafka import KafkaProducer
+from kafka.oauth import AbstractTokenProvider
+
 from datetime import datetime
 from time import sleep
 from json import dumps
@@ -8,6 +13,52 @@ import uuid
 
 #check this too : https://pypi.org/project/javaproperties/
 
+SM_IP                    = os.environ.get('SM_IP')
+KAFKA_USERNAME           = os.environ.get('KAFKA_USERNAME')
+KAFKA_PASSWORD           = os.environ.get('KAFKA_PASSWORD')
+OAUTH_CLIENT_ID          = os.environ.get('OAUTH_CLIENT_ID')
+OAUTH_TOKEN_ENDPOINT_URI = os.environ.get('OAUTH_TOKEN_ENDPOINT_URI')
+BOOTSTRAP_SERVERS        = os.environ.get('BOOTSTRAP_SERVERS')
+KAFKA_CERT               = os.environ.get('KAFKA_CERT')#FULL PATH OF THE CERTIFICATE LOCATION
+
+
+
+# class TokenProvider(AbstractTokenProvider):
+#
+# 	def __init__(self):
+#         self.kafka_ticket = json.loads(requests.post(f'{SM_IP}/KafkaAuthentication',data={'username': KAFKA_USERNAME,'password': KAFKA_PASSWORD}).text)['data']
+#
+#     def token(self):
+#         kafka_token = json.loads(requests.get(OAUTH_TOKEN_ENDPOINT_URI, auth=(OAUTH_CLIENT_ID, self.kafka_ticket)).text)['access_token']
+#
+#         return kafka_token
+#
+# #KAFKA CLIENT PRODUCER
+# producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
+#                         security_protocol='SASL_SSL',
+#                         sasl_mechanism='OAUTHBEARER',
+#                         sasl_oauth_token_provider=TokenProvider(),
+#                         ssl_cafile=KAFKA_CERT,
+#                         value_serializer=lambda value: value.encode())
+#
+#
+# producer.send('python-topic', json.dumps({'data': {'some_key': 'some_value'}}))
+#
+# producer.flush()
+#
+# #KAFKA CLIENT CONSUMER
+#
+# consumer = KafkaConsumer(bootstrap_servers=BOOTSTRAP_SERVERS,
+#                         security_protocol='SASL_SSL',
+#                         sasl_mechanism='OAUTHBEARER',
+#                         sasl_oauth_token_provider=TokenProvider(),
+#                         ssl_cafile=KAFKA_CERT)
+#
+# consumer.subscribe(['python-topic'])
+#
+# for msg in consumer:
+#     print(json.loads(msg.value.decode()))
+#
 
 class KafkaInitialiser:
     def __init__(self):

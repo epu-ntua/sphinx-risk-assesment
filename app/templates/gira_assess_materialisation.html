@@ -67,7 +67,7 @@
                 <h3> Selected Threat</h3>
                 <hr>
                 <ul class="list-group list-group-flush">
-                    <div href="" class="list-group-item">CAPEC - ####
+                    <div class="list-group-item"> Threat: {{ selected_exposure.name }}
                     </div>
                 </ul>
                 <br>
@@ -77,93 +77,59 @@
                 <hr>
                 <h3> Selected Responses</h3>
                 <ul class="list-group list-group-flush">
-                    <div href="" class="list-group-item">Response 1 - Do nothing
-                    </div>
-                    <div href="" class="list-group-item">Response 2 - Add software
-                    </div>
+                    {% for response in instance_responses %}
+                        <div href="" class="list-group-item">Response {{ response.id }} - {{ response.name }}
+                        </div>
+                    {% endfor %}
                 </ul>
             </div>
             <div class="col-9 d-flex flex-wrap align-content-start custom-select-column">
                 <table class="table  table-bordered">
                     <thead>
                     <tr>
-                        <th scope="col" class="custom-table-header"> Threat Realisation</th>
-                        <th scope="col" class="custom-table-header" colspan="2"> Occurs</th>
-                        <th scope="col" class="custom-table-header" colspan="2"> Averted</th>
+                        <th scope="col" class="custom-table-header"> Threat Realisation | {{ selected_exposure }}</th>
+                        <th scope="col" class="custom-table-header" colspan="{{ instance_responses|length }}"> Occurs
+                        </th>
+                        <th scope="col" class="custom-table-header" colspan="{{ instance_responses|length }}"> Averted
+                        </th>
 
                     </tr>
                     </thead>
                     <thead class="thead-light">
                     <tr>
                         <th scope="col" class="custom-table-header"> Response</th>
-                        <th scope="col" class="custom-table-header"> 1#</th>
-                        <th scope="col" class="custom-table-header"> 2#</th>
-                        <th scope="col" class="custom-table-header"> 1#</th>
-                        <th scope="col" class="custom-table-header"> 2#</th>
+                        {% for response in instance_responses %}
+                            <th scope="col" class="custom-table-header"> {{ response.name }}</th>
+                        {% endfor %}
+                        {% for response in instance_responses %}
+                            <th scope="col" class="custom-table-header"> {{ response.name }}</th>
+                        {% endfor %}
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <th scope="row">Incident 1# Confidentiality</th>
-                        <td>
-                            <button type="button" class="btn btn-primary btn-table-percentage" data-toggle="modal"
-                                    data-target="#exampleModalCenter">
-                                xx%
-                            </button>
-                        </td>
-                        <td>
-                            <button type="button" class="btn btn-primary btn-table-percentage" data-toggle="modal"
-                                    data-target="#exampleModalCenter">
-                                xx%
-                            </button>
-                        </td>
-                        <td>
-                            <button type="button" class="btn btn-primary btn-table-percentage" data-toggle="modal"
-                                    data-target="#exampleModalCenter">
-                                xx%
-                            </button>
-                        </td>
-                        <td>
-                            <button type="button" class="btn btn-primary btn-table-percentage" data-toggle="modal"
-                                    data-target="#exampleModalCenter">
-                                xx%
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Incident 2# Integrity</th>
-                        <td>
-                            <button type="button" class="btn btn-primary btn-table-percentage" data-toggle="modal"
-                                    data-target="#exampleModalCenter">
-                                xx%
-                            </button>
-                        </td>
-                        <td>
-                            <button type="button" class="btn btn-primary btn-table-percentage" data-toggle="modal"
-                                    data-target="#exampleModalCenter">
-                                xx%
-                            </button>
-                        </td>
-                        <td>
-                            <button type="button" class="btn btn-primary btn-table-percentage" data-toggle="modal"
-                                    data-target="#exampleModalCenter">
-                                xx%
-                            </button>
-                        </td>
-                        <td>
-                            <button type="button" class="btn btn-primary btn-table-percentage" data-toggle="modal"
-                                    data-target="#exampleModalCenter">
-                                xx%
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Incident 3# Authentication</th>
-                        <td> xx%</td>
-                        <td> xx%</td>
-                        <td> xx%</td>
-                        <td> yy%</td>
-                    </tr>
+                    {% for materialisation in instance_materialisations %}
+                        <tr>
+                            <th scope="row">Incident 1# {{ materialisation.name }}</th>
+                            {% for response in instance_responses %}
+                                <td>
+                                    <button type="button" class="btn btn-primary btn-table-percentage"
+                                            data-toggle="modal"
+                                            data-target="#exampleModalCenter">
+                                        xx%
+                                    </button>
+                                </td>
+                            {% endfor %}
+                            {% for response in instance_responses %}
+                                <td>
+                                    <button type="button" class="btn btn-primary btn-table-percentage"
+                                            data-toggle="modal"
+                                            data-target="#exampleModalCenter">
+                                        xx%
+                                    </button>
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
                     </tbody>
                 </table>
             </div>
