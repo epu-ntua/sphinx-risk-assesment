@@ -12,6 +12,14 @@ import configparser
 import uuid
 
 #check this too : https://pypi.org/project/javaproperties/
+os.environ["SM_IP"] = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/KafkaAuthentication"
+os.environ["KAFKA_USERNAME"] = "testR1"
+os.environ["KAFKA_PASSWORD"] = "testR1123!@"
+os.environ["OAUTH_CLIENT_ID"] = ""
+os.environ["OAUTH_TOKEN_ENDPOINT_URI"] = ""
+os.environ["BOOTSTRAP_SERVERS"] = "kafka-1:19092"
+os.environ["KAFKA_CERT"] = "1"
+
 
 SM_IP                    = os.environ.get('SM_IP')
 KAFKA_USERNAME           = os.environ.get('KAFKA_USERNAME')
@@ -23,28 +31,28 @@ KAFKA_CERT               = os.environ.get('KAFKA_CERT')#FULL PATH OF THE CERTIFI
 
 
 
-# class TokenProvider(AbstractTokenProvider):
-#
-# 	def __init__(self):
-#         self.kafka_ticket = json.loads(requests.post(f'{SM_IP}/KafkaAuthentication',data={'username': KAFKA_USERNAME,'password': KAFKA_PASSWORD}).text)['data']
-#
-#     def token(self):
-#         kafka_token = json.loads(requests.get(OAUTH_TOKEN_ENDPOINT_URI, auth=(OAUTH_CLIENT_ID, self.kafka_ticket)).text)['access_token']
-#
-#         return kafka_token
-#
-# #KAFKA CLIENT PRODUCER
-# producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
-#                         security_protocol='SASL_SSL',
-#                         sasl_mechanism='OAUTHBEARER',
-#                         sasl_oauth_token_provider=TokenProvider(),
-#                         ssl_cafile=KAFKA_CERT,
-#                         value_serializer=lambda value: value.encode())
-#
-#
-# producer.send('python-topic', json.dumps({'data': {'some_key': 'some_value'}}))
-#
-# producer.flush()
+class TokenProvider(AbstractTokenProvider):
+
+    def __init__(self):
+        self.kafka_ticket = json.loads(requests.post(f'{SM_IP}/KafkaAuthentication',data={'username': KAFKA_USERNAME,'password': KAFKA_PASSWORD}).text)['data']
+
+    def token(self):
+        kafka_token = json.loads(requests.get(OAUTH_TOKEN_ENDPOINT_URI, auth=(OAUTH_CLIENT_ID, self.kafka_ticket)).text)['access_token']
+
+        return kafka_token
+
+#KAFKA CLIENT PRODUCER
+producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
+                        security_protocol='SASL_SSL',
+                        sasl_mechanism='OAUTHBEARER',
+                        sasl_oauth_token_provider=TokenProvider(),
+                        ssl_cafile=KAFKA_CERT,
+                        value_serializer=lambda value: value.encode())
+
+
+producer.send('python-topic', json.dumps({'data': {'some_key': 'some_value'}}))
+
+producer.flush()
 #
 # #KAFKA CLIENT CONSUMER
 #
@@ -68,7 +76,9 @@ class KafkaInitialiser:
             'password': 'testR1123!@'
         }
         response = requests.request("POST", url, data=payload)
+
         selectedticket = response.json()
+        print(selectedticket)
         KAFKA_TICKET = selectedticket["data"]
 
         servers = "localhost:9092,kafka-1:19092,kafka-2:29092,kafka-3:39092"
