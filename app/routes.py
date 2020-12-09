@@ -137,12 +137,21 @@ def gira_assess_response(exposure_id):
 @app.route('/gira_assess/<exposure_id>/gira_assess_materialisation/', methods=['GET', 'POST'])
 def gira_assess_materialisation(exposure_id):
     if request.method == 'POST':
-        existing_entry = GiraThreatMaterialisationInstanceEntry.query.filter_by(table_id=request.form["table_id"],
-                                                                      responses_id=request.form["responses_id"],
-                                                                      materialisations_id=request.form[
-                                                                          "materialisations_id"],
-                                                                      is_threat_materialising=request.form[
-                                                                          "is_threat_materialising"]
+        if request.form["is_threat_materialising"] == "false":
+            is_threat_materialising_bool = False
+            # print("false")
+        elif request.form["is_threat_materialising"] == "true":
+            is_threat_materialising_bool = True
+            # print("true")
+        else:
+            return Response(401)
+
+
+        existing_entry = GiraThreatMaterialisationInstanceEntry.query.filter_by(table_id=int(request.form["table_id"]),
+                                                                      responses_id=int(request.form["responses_id"]),
+                                                                      materialisations_id=int(request.form[
+                                                                          "materialisations_id"]),
+                                                                      is_threat_materialising=is_threat_materialising_bool
                                                                       ).first()
         if existing_entry:
             existing_entry.prob_threat_materialising = request.form["prob_threat_materialising"]
@@ -152,20 +161,12 @@ def gira_assess_materialisation(exposure_id):
         else:
             # Process each new entry of the table
             # is_threat_materialising_bool = request.form["is_threat_materialising"]
-            if request.form["is_threat_materialising"] == "false":
-                is_threat_materialising_bool = False
-                print("false")
-            elif request.form["is_threat_materialising"] == "true":
-                is_threat_materialising_bool = True
-                print("true")
-            else:
-                return Response(401)
 
-            print("Data")
-            for entry in request.form.items():
-                print(entry)
+            # print("Data")
+            # for entry in request.form.items():
+            #     print(entry)
 
-            print(is_threat_materialising_bool)
+            # print(is_threat_materialising_bool)
             to_add_entry = GiraThreatMaterialisationInstanceEntry(table_id= int(request.form["table_id"]),
                                                                   responses_id=int(request.form["responses_id"]),
                                                                   materialisations_id=int(request.form[
@@ -177,15 +178,8 @@ def gira_assess_materialisation(exposure_id):
                                                                       "prob_likelihood_other"]),
                                                                   prob_posterior=int(request.form["prob_posterior"]),
                                                                   is_threat_materialising=is_threat_materialising_bool)
-            # if request.form["is_threat_materialising"] == "false":
-            #     print("HEYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY")
-            # else:
-            #     print("NOOOOO")
-            #     print(request.form["is_threat_materialising"])
 
-            print(to_add_entry)
-            # for u in to_add_entry:
-            #     print(u)
+
             db.session.add(to_add_entry)
         db.session.commit()
         return Response(status=201)
@@ -204,8 +198,7 @@ def gira_assess_materialisation(exposure_id):
         # print(instance_materialisations)
 
         instance_materialisations_entries = GiraThreatMaterialisationInstanceEntry.query.filter_by(table_id=exposure_id).all()
-        print(instance_materialisations_entries)
-        print("hEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY")
+
         return render_template('gira_assess_materialisation.html', selected_exposure=selected_exposure,
                                instance_materialisations=instance_materialisations,
                                instance_responses=instance_responses,
