@@ -247,7 +247,6 @@ class RiskVulnerabilityThreat(db.Model):
 
 # # region Many to Many Supportive Tables
 
-# missing backrefs!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 association_gira_threat_materialisation_instance_gira_incident_response_table = db.Table(
     'association_gira_threat_materialisation_instance_gira_incident_response_table', db.Model.metadata,
     db.Column('gira_incident_response_id', db.Integer, db.ForeignKey('gira_incident_response.id'), primary_key=True),
@@ -420,12 +419,15 @@ class GiraThreatMaterialisationInstanceEntry(db.Model):
     materialisations_id = db.Column(db.Integer, db.ForeignKey('gira_threat_materialisation.id'))
     materialisations = db.relationship("GiraThreatMaterialisation", back_populates="materialisation_entries")
 
+    # Positive if threat materialisation is occurring in this entry
+    is_threat_materialising = db.Column(db.Boolean, nullable=False)
     prob_threat_materialising = db.Column(db.Integer, nullable=False)
     # Also needs reverse
 
     prob_likelihood = db.Column(db.Integer, nullable=False)
     prob_likelihood_other = db.Column(db.Integer, nullable=False)
     prob_posterior = db.Column(db.Integer, nullable=False)
+
 
 # # endregion
 #

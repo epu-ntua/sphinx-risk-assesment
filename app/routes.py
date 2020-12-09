@@ -91,65 +91,125 @@ def gira_assess():
         return render_template('gira_assess.html')
 
 
-@app.route('/gira_assess/gira_assess_exposure/', methods=['GET', 'POST'])
+@app.route('/gira_assess/gira_assess_exposure/', methods=['GET'])
 def gira_assess_exposure():
+    exposure_instances = GiraThreatExposure.query.all()
+    return render_template('gira_assess_exposure.html', exposure_instances=exposure_instances)
+
+
+@app.route('/gira_assess/<exposure_id>/gira_assess_response/', methods=['GET', 'POST'])
+def gira_assess_response(exposure_id):
     if request.method == 'POST':
-        id_of_exposure = request.form['selected_exposure_id']
-
-        return redirect('/gira_assess/gira_assess_response/' + id_of_exposure + '/')
-    else:
-        exposure_instances = GiraThreatExposure.query.all()
-        return render_template('gira_assess_exposure.html', exposure_instances=exposure_instances)
-
-
-@app.route('/gira_assess/gira_assess_response/', methods=['GET', 'POST'])
-def gira_assess_response():
-    if request.method == 'POST':
-        id_of_exposure = request.form['exposureIdToSend']
-
-        print(json.loads(id_of_exposure))
-        selected_exposure = GiraThreatExposure.query.filter_by(id=int(json.loads(id_of_exposure))).first()
-
-        all_responses = GiraIncidentResponse.query.all()
-
-        print(all_responses)
-        print(selected_exposure)
-        return render_template('gira_assess_response.html', selected_exposure=selected_exposure,
-                               all_responses=all_responses)
-    else:
-        responses = GiraIncidentResponse.query.all()
-        return render_template('gira_assess_response.html', responses=responses)
-
-
-@app.route('/gira_assess/gira_assess_materialisation/', methods=['GET', 'POST'])
-def gira_assess_materialisation():
-    if request.method == 'POST':
-        print(request.form)
-
-        id_of_exposure = request.form['exposureIdToSend']
-        selected_exposure = GiraThreatExposure.query.filter_by(id=int(id_of_exposure)).first()
-
-        materialisation_instance = GiraThreatMaterialisationInstance.query.filter_by(instance_id=id_of_exposure).first()
-
-        for sent in request.form:
-            if sent == "exposureIdToSend":
-                continue
-            toAddResponse = GiraIncidentResponse.query.filter_by(id=sent).first()
-            materialisation_instance.incident_responses.append(toAddResponse)
-            db.session.commit()
+        materialisation_instance = GiraThreatMaterialisationInstance.query.filter_by(instance_id=exposure_id).first()
 
         instance_responses = GiraIncidentResponse.query.filter(
-            GiraIncidentResponse.materialisation_instance.any(id=id_of_exposure)).all()
+            GiraIncidentResponse.materialisation_instance.any(id=exposure_id)).all()
+        # Sent Data are a dict with one entry containing the exposureIdToSend and the rest contain
+        # The ids of the responses to be added to the keys and values dictate what to do [nothing, delete, add]
+        for sent in request.form:
+            # Skip exposureId
+            if sent == "exposureIdToSend":
+                continue
+
+            if request.form[sent] == "nothing":
+                continue
+            elif request.form[sent] == "add":
+                to_add_response = GiraIncidentResponse.query.filter_by(id=sent).first()
+                materialisation_instance.incident_responses.append(to_add_response)
+            elif request.form[sent] == "delete":
+                to_remove_response = GiraIncidentResponse.query.filter_by(id=sent).first()
+                materialisation_instance.incident_responses.remove(to_remove_response)
+
+        db.session.commit()
+
+        return redirect('/gira_assess/' + exposure_id + '/gira_assess_materialisation/')
+    else:
+        selected_exposure = GiraThreatExposure.query.filter_by(id=exposure_id).first()
+        all_responses = GiraIncidentResponse.query.all()
+
+        instance_responses = GiraIncidentResponse.query.filter(
+            GiraIncidentResponse.materialisation_instance.any(id=exposure_id)).all()
+
+        return render_template('gira_assess_response.html', all_responses=all_responses,
+                               selected_exposure=selected_exposure, instance_responses=instance_responses)
+
+
+@app.route('/gira_assess/<exposure_id>/gira_assess_materialisation/', methods=['GET', 'POST'])
+def gira_assess_materialisation(exposure_id):
+    if request.method == 'POST':
+        existing_entry = GiraThreatMaterialisationInstanceEntry.query.filter_by(table_id=request.form["table_id"],
+                                                                      responses_id=request.form["responses_id"],
+                                                                      materialisations_id=request.form[
+                                                                          "materialisations_id"],
+                                                                      is_threat_materialising=request.form[
+                                                                          "is_threat_materialising"]
+                                                                      ).first()
+        if existing_entry:
+            existing_entry.prob_threat_materialising = request.form["prob_threat_materialising"]
+            existing_entry.prob_likelihood = request.form["prob_likelihood"]
+            existing_entry.prob_likelihood_other = request.form["prob_likelihood_other"]
+            existing_entry.prob_posterior = request.form["prob_posterior"]
+        else:
+            # Process each new entry of the table
+            # is_threat_materialising_bool = request.form["is_threat_materialising"]
+            if request.form["is_threat_materialising"] == "false":
+                is_threat_materialising_bool = False
+                print("false")
+            elif request.form["is_threat_materialising"] == "true":
+                is_threat_materialising_bool = True
+                print("true")
+            else:
+                return Response(401)
+
+            print("Data")
+            for entry in request.form.items():
+                print(entry)
+
+            print(is_threat_materialising_bool)
+            to_add_entry = GiraThreatMaterialisationInstanceEntry(table_id= int(request.form["table_id"]),
+                                                                  responses_id=int(request.form["responses_id"]),
+                                                                  materialisations_id=int(request.form[
+                                                                      "materialisations_id"]),
+                                                                  prob_threat_materialising=int(request.form[
+                                                                      "prob_threat_materialising"]),
+                                                                  prob_likelihood=int(request.form["prob_likelihood"]),
+                                                                  prob_likelihood_other=int(request.form[
+                                                                      "prob_likelihood_other"]),
+                                                                  prob_posterior=int(request.form["prob_posterior"]),
+                                                                  is_threat_materialising=is_threat_materialising_bool)
+            # if request.form["is_threat_materialising"] == "false":
+            #     print("HEYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY")
+            # else:
+            #     print("NOOOOO")
+            #     print(request.form["is_threat_materialising"])
+
+            print(to_add_entry)
+            # for u in to_add_entry:
+            #     print(u)
+            db.session.add(to_add_entry)
+        db.session.commit()
+        return Response(status=201)
+    else:
+        # NOT USING THE CORRECT KEYS TO SEARCH FOR THE RESPONSES AND SUCH
+
+        selected_exposure = GiraThreatExposure.query.filter_by(id=exposure_id).first()
+
+        # materialisation_instance = GiraThreatMaterialisationInstance.query.filter_by(instance_id=id_of_exposure).first()
+
+        instance_responses = GiraIncidentResponse.query.filter(
+            GiraIncidentResponse.materialisation_instance.any(id=exposure_id)).all()
 
         instance_materialisations = GiraThreatMaterialisation.query.filter(
-            GiraThreatMaterialisation.materialisation_instance.any(id=id_of_exposure)).all()
+            GiraThreatMaterialisation.materialisation_instance.any(id=exposure_id)).all()
         # print(instance_materialisations)
 
-        return render_template("gira_assess_materialisation.html", selected_exposure=selected_exposure,
+        instance_materialisations_entries = GiraThreatMaterialisationInstanceEntry.query.filter_by(table_id=exposure_id).all()
+        print(instance_materialisations_entries)
+        print("hEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY")
+        return render_template('gira_assess_materialisation.html', selected_exposure=selected_exposure,
                                instance_materialisations=instance_materialisations,
-                               instance_responses=instance_responses)
-    else:
-        return render_template('gira_assess_materialisation.html')
+                               instance_responses=instance_responses,
+                               instance_materialisations_entries=instance_materialisations_entries)
 
 
 @app.route('/gira_assess/gira_assess_consequence/', methods=['GET', 'POST'])
@@ -237,7 +297,7 @@ def gira_threat_exposure():
         db.session.add(to_add_materialisation_instance)
         db.session.commit()
 
-        return render_template('gira_threat_exposure.html')
+        return redirect('/gira_overview/gira_threat_exposure/')
     else:
         threats = GiraThreatExposure.query.all()
         materialisations = GiraThreatMaterialisation.query.all()
@@ -253,7 +313,7 @@ def gira_threat_response():
         db.session.add(to_add)
         db.session.commit()
 
-        return render_template('gira_threat_response.html')
+        return redirect('/gira_overview/gira_threat_response/')
     else:
         responses = GiraIncidentResponse.query.all()
         return render_template('gira_threat_response.html', responses=responses)
@@ -267,7 +327,7 @@ def gira_threat_materialisation():
         db.session.add(to_add)
         db.session.commit()
 
-        return render_template('gira_threat_materialisation.html')
+        return redirect('/gira_overview/gira_threat_materialisation/')
     else:
         materialisations = GiraThreatMaterialisation.query.all()
         return render_template('gira_threat_materialisation.html', materialisations=materialisations)

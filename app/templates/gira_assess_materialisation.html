@@ -1,6 +1,85 @@
 {#{% extends "base.html" %}#}
 {% extends "sidebar_static_information.html" %}
 
+{% block script %}
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js">
+    </script>
+    <script>
+        function sentEntry(table_id, responses_id, materialisations_id, prob_threat_materialising,
+                           prob_likelihood, prob_likelihood_other, prob_posterior, is_threat_materialising) {
+
+            var is_threat_materialising_bool = false;
+            if (is_threat_materialising == "occurs") {
+                is_threat_materialising_bool = true;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: "/gira_assess/" + {{ selected_exposure.id }} +"/gira_assess_materialisation/",
+                data: {
+                    table_id: table_id,
+                    responses_id: responses_id,
+                    materialisations_id: materialisations_id,
+                    prob_threat_materialising: prob_threat_materialising,
+                    prob_likelihood: prob_likelihood,
+                    prob_likelihood_other: prob_likelihood_other,
+                    prob_posterior: prob_posterior,
+                    is_threat_materialising: is_threat_materialising_bool
+                },
+                dataType: "text",
+                success: function () {
+                    alert("Successfully Added Entry");
+                }
+            });
+        }
+
+        function saveEntry() {
+            // Form Validation
+            prob_threat_materialising = document.getElementById("prob-threat-materialising-field").value;
+            if (isNaN(prob_threat_materialising)) {
+                alert("Threat Materialisation Error : This shouldn't happen ")
+            }
+            prob_likelihood = document.getElementById("prob-likelihood-field").value;
+            if (isNaN(prob_likelihood)) {
+                alert("PLease fill Probability likelihood field with a positive number between 0 -100 ")
+            }
+            prob_likelihood_other = document.getElementById("prob-likelihood-other-field").value;
+            {#prob_posterior = document.getElementById("prob-posterior-field").value;#}
+
+            responses_id = document.getElementById("responseIdToSend").value;
+            materialisations_id = document.getElementById("materialisationIdToSend").value;
+
+            isOccured = document.getElementById("isOccured").value;
+
+            prob_threat_materialising_inverse = 100 - parseInt(prob_threat_materialising)
+
+            //Compute the value
+            computedValue = (parseInt(prob_likelihood) * parseInt(prob_threat_materialising)) / (parseInt(prob_likelihood) * parseInt(prob_threat_materialising) + parseInt(prob_likelihood_other) * prob_threat_materialising_inverse)
+
+            // Convert to integer
+            computedValue = Math.round(computedValue * 100)
+            console.log(computedValue)
+
+            //Visual update
+            document.getElementById(responses_id + "-" + materialisations_id + "-" + isOccured).innerText = computedValue + "%";
+            sentEntry("{{ selected_exposure.id }}", responses_id, materialisations_id, prob_threat_materialising,
+                prob_likelihood, prob_likelihood_other, computedValue, isOccured);
+        }
+
+        function addModalInformation(responseIdToSend, materialisationIdToSend, isOccured, prob_likelihood = 0, prob_likelihood_other = 0) {
+            document.getElementById("responseIdToSend").value = responseIdToSend;
+            document.getElementById("materialisationIdToSend").value = materialisationIdToSend;
+            document.getElementById("isOccured").value = isOccured;
+
+            {#document.getElementById("prob-threat-materialising-field")#}
+            document.getElementById("prob-likelihood-field").value = prob_likelihood
+            document.getElementById("prob-likelihood-other-field").value = prob_likelihood_other
+            {#document.getElementById("prob-posterior-field").value = ""#}
+
+        }
+
+    </script>
+{% endblock %}
 
 {% block content %}
     <form action="/gira_assess/gira_assess_consequence/" , method="post">
@@ -15,42 +94,44 @@
             <div class="col-1 gira-bar-nav ">
                 {#                <img id="gira-background-response" src={{  url_for('static', filename='/images/gira_menu_response.jpg') }}#}
                 {#                     class="gira-menu-background">#}
-                <a class="gira-bar-nav-link  custom-white-color" href="/gira_assess/gira_assess_response">
+                <a class="gira-bar-nav-link  custom-white-color"
+                   href="/gira_assess/{{ selected_exposure.id }}/gira_assess_response">
                     <h5> Response </h5>
                 </a>
             </div>
             <div class="col-2 gira-bar-nav custom-border-finished">
                 {#                <img id="gira-background-materialisation" src={{  url_for('static', filename='/images/gira_menu_materialisation.jpg') }}#}
                 {#                     class="gira-menu-background">#}
-                <a class="gira-bar-nav-link custom-white-color" href="/gira_assess/gira_assess_materialisation">
+                <a class="gira-bar-nav-link custom-white-color"
+                   href="/gira_assess/{{ selected_exposure.id }}/gira_assess_materialisation">
                     <h5> Materialisation </h5>
                 </a>
             </div>
-            <div class="col-2 gira-bar-nav ">
+            <div class="col-2 gira-bar-nav gira-bar-nav-disabled">
                 {#                <img id="gira-background-consequence" src={{  url_for('static', filename='/images/gira_menu_consequences.jpg') }}#}
                 {#                     class="gira-menu-background">#}
-                <a class="gira-bar-nav-link   custom-white-color" href="/gira_assess/gira_assess_consequence">
+                <a class="gira-bar-nav-link   custom-white-color">
                     <h5> Consequence </h5>
                 </a>
             </div>
-            <div class="col-2 gira-bar-nav ">
+            <div class="col-2 gira-bar-nav gira-bar-nav-disabled">
                 {#                <img id="gira-background-asset" src={{  url_for('static', filename='/images/gira_menu_asset.jpg') }}#}
                 {#                     class="gira-menu-background">#}
-                <a class="gira-bar-nav-link   custom-white-color" href="/gira_assess/gira_assess_asset_status">
+                <a class="gira-bar-nav-link   custom-white-color">
                     <h5> Asset Status</h5>
                 </a>
             </div>
-            <div class="col-1 gira-bar-nav ">
+            <div class="col-1 gira-bar-nav gira-bar-nav-disabled">
                 {#                <img id="gira-background-impact" src={{  url_for('static', filename='/images/gira_menu_impact.jpg') }}#}
                 {#                     class="gira-menu-background">#}
-                <a class="gira-bar-nav-link   custom-white-color" href="/gira_assess/gira_assess_asset_impact">
+                <a class="gira-bar-nav-link   custom-white-color">
                     <h5>Impact</h5>
                 </a>
             </div>
-            <div class="col-2 gira-bar-nav  ">
+            <div class="col-2 gira-bar-nav  gira-bar-nav-disabled">
                 {#                <img id="gira-background-objective" src={{  url_for('static', filename='/images/gira_menu_objective.jpg') }}#}
                 {#                     class="gira-menu-background">#}
-                <a class="gira-bar-nav-link   custom-white-color" href="/gira_assess/gira_assess_objective">
+                <a class="gira-bar-nav-link   custom-white-color">
                     <h5> Objective</h5>
                 </a>
             </div>
@@ -87,7 +168,8 @@
                 <table class="table  table-bordered">
                     <thead>
                     <tr>
-                        <th scope="col" class="custom-table-header"> Threat Realisation | {{ selected_exposure }}</th>
+                        <th scope="col" class="custom-table-header"> Threat Realisation
+                            | {{ selected_exposure.name }}</th>
                         <th scope="col" class="custom-table-header" colspan="{{ instance_responses|length }}"> Occurs
                         </th>
                         <th scope="col" class="custom-table-header" colspan="{{ instance_responses|length }}"> Averted
@@ -112,19 +194,63 @@
                             <th scope="row">Incident 1# {{ materialisation.name }}</th>
                             {% for response in instance_responses %}
                                 <td>
-                                    <button type="button" class="btn btn-primary btn-table-percentage"
+                                    <button type="button" id="{{ response.id }}-{{ materialisation.id }}-occurs"
+                                            class="btn btn-primary btn-table-percentage"
                                             data-toggle="modal"
+                                            onclick="addModalInformation( {{ response.id }}, {{ materialisation.id }} , 'occurs'
+                                                    {% for entry in instance_materialisations_entries %}
+                                                        {% if entry.responses_id == response.id %}
+                                                            {% if entry.materialisations_id == materialisation.id %}
+                                                                {% if entry.is_threat_materialising == true %}
+                                                                    , {{ entry.prob_likelihood }}, {{ entry.prob_likelihood_other }}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    )"
                                             data-target="#exampleModalCenter">
-                                        xx%
+                                        {% for entry in instance_materialisations_entries %}
+                                            {% if entry.responses_id == response.id %}
+                                                {% if entry.materialisations_id == materialisation.id %}
+                                                    {% if entry.is_threat_materialising == true %}
+                                                        {{ entry.prob_posterior }} %
+                                                    {% else %}
+                                                        xx%
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
                                     </button>
                                 </td>
                             {% endfor %}
                             {% for response in instance_responses %}
                                 <td>
-                                    <button type="button" class="btn btn-primary btn-table-percentage"
+                                    <button type="button" id="{{ response.id }}-{{ materialisation.id }}-averted"
+                                            class="btn btn-primary btn-table-percentage"
                                             data-toggle="modal"
+                                            onclick="addModalInformation( {{ response.id }}, {{ materialisation.id }}, 'averted'
+                                                    {% for entry in instance_materialisations_entries %}
+                                                        {% if entry.responses_id == response.id %}
+                                                            {% if entry.materialisations_id == materialisation.id %}
+                                                                {% if entry.is_threat_materialising == false %}
+                                                                    , {{ entry.prob_likelihood }}, {{ entry.prob_likelihood_other }}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    )"
                                             data-target="#exampleModalCenter">
-                                        xx%
+                                        {% for entry in instance_materialisations_entries %}
+                                            {% if entry.responses_id == response.id %}
+                                                {% if entry.materialisations_id == materialisation.id %}
+                                                    {% if entry.is_threat_materialising == false %}
+                                                        {{ entry.prob_posterior }}%
+                                                    {% else %}
+                                                        xx%
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
                                     </button>
                                 </td>
                             {% endfor %}
@@ -155,11 +281,36 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    ...
+                    <div class="form-group row">
+                        <label for="name">Probability of Threat Materialising</label>
+                        <input type="text" class="form-control" name="prob-threat-materialising-field"
+                               id="prob-threat-materialising-field" value="{{ selected_exposure.probability }}"
+                               disabled>
+                    </div>
+                    <div class="form-group row">
+                        <label for="name">Probability of Likelihood</label>
+                        <input type="text" class="form-control" name="prob-likelihood-field" id="prob-likelihood-field"
+                               placeholder="Likelihood">
+                    </div>
+                    <div class="form-group row">
+                        <label for="name">Probability of Reverse Likelihood </label>
+                        <input type="text" class="form-control" name="prob-likelihood-other-field"
+                               id="prob-likelihood-other-field" placeholder="Reverse Likelihood">
+                    </div>
+                    {#                    <div class="form-group row">#}
+                    {#                        <label for="name">Probability of Posterior Probability</label>#}
+                    {#                        <input type="text" class="form-control" name="prob-posterior-field" id="prob-posterior-field"#}
+                    {#                               placeholder="Posterior Probability">#}
+                    {#                    </div>#}
+                    <input type="hidden" id="responseIdToSend" name="responseIdToSend" value="">
+                    <input type="hidden" id="materialisationIdToSend" name="materialisationIdToSend" value="">
+                    <input type="hidden" id="isOccured" name="isOccured" value="">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="saveEntry()">Save
+                        changes
+                    </button>
                 </div>
             </div>
         </div>
