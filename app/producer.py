@@ -80,9 +80,9 @@ class KafkaInitialiser:
             'password': 'testR1123!@'
         }
         response = requests.request("POST", url, data=payload)
-
+        print(response, flush=True)
         selectedticket = response.json()
-        print(selectedticket)
+
         KAFKA_TICKET = selectedticket["data"]
 
         servers = "localhost:9092,kafka-1:19092,kafka-2:29092,kafka-3:39092"
