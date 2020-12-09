@@ -34,25 +34,29 @@ KAFKA_CERT               = os.environ.get('KAFKA_CERT')#FULL PATH OF THE CERTIFI
 class TokenProvider(AbstractTokenProvider):
 
     def __init__(self):
+        print("Start Init")
         self.kafka_ticket = json.loads(requests.post(f'{SM_IP}/KafkaAuthentication',data={'username': KAFKA_USERNAME,'password': KAFKA_PASSWORD}).text)['data']
-
+        print(self.kafka_ticket)
     def token(self):
         kafka_token = json.loads(requests.get(OAUTH_TOKEN_ENDPOINT_URI, auth=(OAUTH_CLIENT_ID, self.kafka_ticket)).text)['access_token']
 
         return kafka_token
 
+def CreateToken():
+    print("Heyyyyyyy")
+    TokenProvider()
 #KAFKA CLIENT PRODUCER
-producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
-                        security_protocol='SASL_SSL',
-                        sasl_mechanism='OAUTHBEARER',
-                        sasl_oauth_token_provider=TokenProvider(),
-                        ssl_cafile=KAFKA_CERT,
-                        value_serializer=lambda value: value.encode())
-
-
-producer.send('python-topic', json.dumps({'data': {'some_key': 'some_value'}}))
-
-producer.flush()
+# producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
+#                         security_protocol='SASL_SSL',
+#                         sasl_mechanism='OAUTHBEARER',
+#                         sasl_oauth_token_provider=TokenProvider(),
+#                         ssl_cafile=KAFKA_CERT,
+#                         value_serializer=lambda value: value.encode())
+#
+#
+# producer.send('python-topic', json.dumps({'data': {'some_key': 'some_value'}}))
+#
+# producer.flush()
 #
 # #KAFKA CLIENT CONSUMER
 #

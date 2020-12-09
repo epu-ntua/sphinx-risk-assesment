@@ -3,7 +3,7 @@ from flask import render_template, request, redirect, jsonify, Response
 from app.utils import *
 from app.globals import *
 # from app.producer import generate_checkpoint
-from app.producer import KafkaInitialiser, generate_checkpoint
+from app.producer import *
 
 
 @app.context_processor
@@ -556,9 +556,10 @@ def asset_configuration_relationship():
 
 @app.route('/write_topic')
 def write_topic_to_kafka():
-    kafka = KafkaInitialiser()
-    generate_checkpoint(5, kafka)
+    # kafka = KafkaInitialiser()
+    # generate_checkpoint(5, kafka)
     # kafka_connect(5)
+    CreateToken()
     return Response('Done' + str(datetime.utcnow()), mimetype="text/event-stream")
 
 # @app.route('/topic/<topicname>')
