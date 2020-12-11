@@ -443,7 +443,7 @@ def RCRAgetFCDEversion():
     # serviceid =selected_service['service']['aaainfo']['id'][0]
 
     # This is called in FCDEgetversion
-    urlx = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/FCDEgetversion"
+    urlx = "http://sphinx-kubernetes.intracom-telecom.com/forensic-engine:5003/"
     params = {
         'requestedservice': 'FCDEgetversion',
         'requestedTicket': requestedTicket
@@ -468,11 +468,11 @@ def RCRAgetversion():
     authTicket = request.args.get('authTicket', None)
 
     url = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/Authorization"
-    headers = {
+    params = {
         'requestedservice': requestedservice,
         'requestedTicket': authTicket
     }
-    response = requests.request("GET", url, headers=headers)
+    response = requests.request("GET", url, params=params)
     if response == 200:
         return jsonify({'name': 'RCRA', 'Version': '2020.2.3'})
     else:
@@ -556,10 +556,10 @@ def asset_configuration_relationship():
 
 @app.route('/write_topic')
 def write_topic_to_kafka():
-    # kafka = KafkaInitialiser()
+    SendKafkaReport("positive")
     # generate_checkpoint(5, kafka)
     # kafka_connect(5)
-    CreateToken()
+    # CreateToken()
     return Response('Done' + str(datetime.utcnow()), mimetype="text/event-stream")
 
 # @app.route('/topic/<topicname>')
