@@ -14,7 +14,7 @@ import uuid
 
 #check this too : https://pypi.org/project/javaproperties/
 # 8080
-path_to_kafka_cert = os.path.join(app.instance_path, 'auth_files', 'service-manager.crt')
+path_to_kafka_cert = os.path.join(os.path.abspath(os.getcwd()),'..', 'auth_files', 'service-manager.crt')
 
 os.environ["SM_IP"] = "http://sphinx-kubernetes.intracom-telecom.com/SMPlatform/manager/rst/"
 os.environ["KAFKA_USERNAME"] = "kafkauser"
@@ -38,7 +38,7 @@ KAFKA_CERT               = os.environ.get('KAFKA_CERT')#FULL PATH OF THE CERTIFI
 class TokenProvider(AbstractTokenProvider):
 
     def __init__(self):
-        self.kafka_ticket = json.loads(requests.post(f'{SM_IP}/KafkaAuthentication',data={'username': KAFKA_USERNAME,'password': KAFKA_PASSWORD}).text)['data']
+        self.kafka_ticket = json.loads(requests.post(f'http://sphinx-kubernetes.intracom-telecom.com/SMPlatform/manager/rst/KafkaAuthentication',data={'username': KAFKA_USERNAME,'password': KAFKA_PASSWORD}).text)['data']
     def token(self):
         kafka_token = json.loads(requests.get(OAUTH_TOKEN_ENDPOINT_URI, auth=(OAUTH_CLIENT_ID, self.kafka_ticket)).text)['access_token']
 
@@ -46,17 +46,17 @@ class TokenProvider(AbstractTokenProvider):
 
 def SendKafkaReport(report):
 #KAFKA CLIENT PRODUCER
+    print(path_to_kafka_cert, flush = True)
     producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
                             security_protocol='SASL_SSL',
                             sasl_mechanism='OAUTHBEARER',
                             sasl_oauth_token_provider=TokenProvider(),
-                            ssl_cafile=KAFKA_CERT,
+                            ssl_cafile= "/app/auth_files/for_clients.crt",
                             value_serializer=lambda value: value.encode())
 
 
     producer.send('python-topic', json.dumps({'data': {'report': report}}))
-
-    return producer.flush()
+    
 #
 # #KAFKA CLIENT CONSUMER
 #     consumer = KafkaConsumer(bootstrap_servers=BOOTSTRAP_SERVERS,

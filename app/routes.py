@@ -443,9 +443,9 @@ def RCRAgetFCDEversion():
     # serviceid =selected_service['service']['aaainfo']['id'][0]
 
     # This is called in FCDEgetversion
-    urlx = "http://sphinx-kubernetes.intracom-telecom.com/forensic-engine:5003/"
+    urlx = "http://forensic-engine:5003/FCDEgetversion"
     params = {
-        'requestedservice': 'FCDEgetversion',
+        'requestedservice': 'FDCE',
         'requestedTicket': requestedTicket
     }
     responsex = requests.request("GET", urlx, params=params)
