@@ -433,6 +433,11 @@ def RCRAgetFCDEversion():
     response = requests.request("POST", url, data=payload)
     selectedticket = response.json()
     requestedTicket = selectedticket["data"]
+
+    print("---------------------------------------",flush=True)
+    print( "Login ticket is: " ,requestedTicket, flush=True)
+    print("---------------------------------------",flush=True)
+
     # # this step was omitted in D6.2
     # url1 = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/ServiceInfo"
     # params = {
@@ -450,6 +455,11 @@ def RCRAgetFCDEversion():
     }
     responsex = requests.request("GET", urlx, params=params)
     reqdata = responsex.json()
+
+    print("---------------------------------------", flush=True)
+    print("FDCE response is: ", reqdata, flush=True)
+    print("---------------------------------------", flush=True)
+
     #
     # url2 = "http://127.0.0.1:5003/FCDEgetversion"
     # params = {
