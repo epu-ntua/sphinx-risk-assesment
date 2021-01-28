@@ -325,25 +325,25 @@ def get_capec_recommendations(selected_cve_id):
 # One impact at a time saved
 # scopes is an array
 # NEEDS TO BE REACTIVATED, IT WORKS
-def save_capec_consequence(scopes, impact, notes):
-    scope_instances = []
-    for scope in scopes:
-        stored_scope = db.session.query(GiraScope).filter_by(name=scope).first()
-        if stored_scope is None:
-            new_scope = GiraScope(name=scope)
-            scope_instances.append(new_scope)
-            db.session.add(new_scope)
-        else:
-            scope_instances.append(stored_scope)
-
-    db.session.commit()
-    impact = impact[:-1]  # To be removed if bug that leaves ':' in the end of the asset is fixed
-    if db.session.query(GiraImpact).filter_by(name=impact).first() is None:
-        new_impact = GiraImpact(name=impact, note=notes)
-        for scope_instance in scope_instances:
-            new_impact.scopes.append(scope_instance)
-
-    db.session.commit()
+# def save_capec_consequence(scopes, impact, notes):
+#     scope_instances = []
+#     for scope in scopes:
+#         stored_scope = db.session.query(GiraScope).filter_by(name=scope).first()
+#         if stored_scope is None:
+#             new_scope = GiraScope(name=scope)
+#             scope_instances.append(new_scope)
+#             db.session.add(new_scope)
+#         else:
+#             scope_instances.append(stored_scope)
+#
+#     db.session.commit()
+#     impact = impact[:-1]  # To be removed if bug that leaves ':' in the end of the asset is fixed
+#     if db.session.query(GiraImpact).filter_by(name=impact).first() is None:
+#         new_impact = GiraImpact(name=impact, note=notes)
+#         for scope_instance in scope_instances:
+#             new_impact.scopes.append(scope_instance)
+#
+#     db.session.commit()
 
 
 def get_capec_consequences():

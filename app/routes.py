@@ -12,7 +12,7 @@ def serverInfo():
 
 
 @app.route('/')
-@app.route('/home')
+@app.route('/home/')
 def entry_page():
     return render_template('entry_page.html')
 
@@ -134,6 +134,8 @@ def gira_assess_response(exposure_id):
                                selected_exposure=selected_exposure, instance_responses=instance_responses)
 
 
+# For xx% to appear in template need to create all entries at the same time at the start and then change values instead
+# of creating when clicking.
 @app.route('/gira_assess/<exposure_id>/gira_assess_materialisation/', methods=['GET', 'POST'])
 def gira_assess_materialisation(exposure_id):
     if request.method == 'POST':
@@ -203,6 +205,31 @@ def gira_assess_materialisation(exposure_id):
                                instance_materialisations=instance_materialisations,
                                instance_responses=instance_responses,
                                instance_materialisations_entries=instance_materialisations_entries)
+
+@app.route('/gira_assess/<exposure_id>/gira_assess_materialisation/check_table/', methods=['POST'])
+def gira_assess_materialisation_check_table(exposure_id):
+    if request.method == 'POST':
+        table_id = request.form["tableId"]
+        # table_to_check = GiraThreatMaterialisationInstance.query.filter_by(id = table_id)
+
+        instance_responses_count = GiraIncidentResponse.query.filter(
+            GiraIncidentResponse.materialisation_instance.any(id=table_id)).count()
+
+
+        instance_materialisations_count = GiraThreatMaterialisation.query.filter(
+            GiraThreatMaterialisation.materialisation_instance.any(id=table_id)).count()
+
+        target_entries_count = instance_materialisations_count * instance_responses_count * 2
+        current_entries_count = GiraThreatMaterialisationInstanceEntry.query.filter_by(table_id=table_id).count()
+
+        # This could check for the presence of the number itself in each entry but it shouldnt be normally needed
+        if target_entries_count == current_entries_count:
+            return redirect(Response(status=201)) #change to next page when ready /gira_assess/gira_assess_consequences
+        else:
+            return redirect(request.url)
+
+        print(target_entries_count)
+        print(current_entries_count)
 
 
 @app.route('/gira_assess/gira_assess_consequence/', methods=['GET', 'POST'])
@@ -579,3 +606,10 @@ def write_topic_to_kafka():
 #         for i in client.topics[topicname].get_simple_consumer():
 #             yield 'data:{0}\n\n'.format(i.value.decode())
 #     return Response(events(), mimetype="text/event-stream")
+
+@app.route('/siem_event_alert', methods = ['POST'])
+def siem_event_alert():
+    if request.method == 'POST':
+        # Validate the input is correct
+        # Currently not certain about what the input will be
+        return Response(status=200)

@@ -82,7 +82,7 @@
 {% endblock %}
 
 {% block content %}
-    <form action="/gira_assess/gira_assess_consequence/" , method="post">
+    <form action="/gira_assess/{{ selected_exposure.id }}/gira_assess_materialisation/check_table/" , method="post">
         <div id="gira-bar" class="row d-flex flex-grow-1 gira-bar">
             <div class="col-2 gira-bar-nav ">
                 {#                <img id="gira-background-assessment" src={{ url_for('static', filename='/images/gira_menu_assessment.jpg') }}#}
@@ -145,7 +145,7 @@
         </div>
         <div class="row">
             <div class="col-2 custom-select-column">
-                <h3> Selected Threat</h3>
+                <h3> Selected Threat2</h3>
                 <hr>
                 <ul class="list-group list-group-flush">
                     <div class="list-group-item"> Threat: {{ selected_exposure.name }}
@@ -213,9 +213,11 @@
                                             {% if entry.responses_id == response.id %}
                                                 {% if entry.materialisations_id == materialisation.id %}
                                                     {% if entry.is_threat_materialising == true %}
-                                                        {{ entry.prob_posterior }} %
-                                                    {% else %}
-                                                        xx%
+                                                        {% if entry.prob_posterior != none %}
+                                                            {{ entry.prob_posterior }} %
+                                                        {% else %}
+                                                            xx%
+                                                        {% endif %}
                                                     {% endif %}
                                                 {% endif %}
                                             {% endif %}
@@ -244,9 +246,11 @@
                                             {% if entry.responses_id == response.id %}
                                                 {% if entry.materialisations_id == materialisation.id %}
                                                     {% if entry.is_threat_materialising == false %}
-                                                        {{ entry.prob_posterior }}%
-                                                    {% else %}
-                                                        xx%
+                                                        {% if entry.prob_posterior != "" %}
+                                                            {{ entry.prob_posterior }}%
+                                                        {% else %}
+                                                            xx%
+                                                        {% endif %}
                                                     {% endif %}
                                                 {% endif %}
                                             {% endif %}
@@ -268,6 +272,7 @@
         </div>
 
         </div>
+        <input type="hidden" id="tableId" name="tableId" value="{{ selected_exposure.id }}">
     </form>
 
     <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"

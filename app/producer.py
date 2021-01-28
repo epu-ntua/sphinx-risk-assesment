@@ -57,25 +57,12 @@ def SendKafkaReport(report):
 
     producer.send('python-topic', json.dumps({'data': {'report': report}}))
     
-#
-# #KAFKA CLIENT CONSUMER
-#     consumer = KafkaConsumer(bootstrap_servers=BOOTSTRAP_SERVERS,
-#                             security_protocol='SASL_SSL',
-#                             sasl_mechanism='OAUTHBEARER',
-#                             sasl_oauth_token_provider=TokenProvider(),
-#                             ssl_cafile=KAFKA_CERT)
-#
-#     consumer.subscribe(['python-topic'])
-#
-#     for msg in consumer:
-#         print(json.loads(msg.value.decode()))
-#
 
 # GENERATE UUID
 def generate_uuid():
     return uuid.uuid4()
 
-# def generate_checkpoint(steps):
+# def generate_checkpoint(steps):++
 #     i = 0
 #     while i < steps:
 #         data['key'] = data['testline'] + '_' + str(generate_uuid())
