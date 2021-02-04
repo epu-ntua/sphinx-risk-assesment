@@ -23,6 +23,13 @@
 {% block content %}
     <form action="/assets/{{ asset }}/" , method="post">
         <div id="gira-bar" class="row d-flex flex-grow-1 gira-bar">
+            <div class="col-2 gira-bar-nav">
+                {#                <img id="gira-background-response" src={{  url_for('static', filename='/images/gira_menu_response.jpg') }}#}
+                {#                     class="gira-menu-background">#}
+                <a class="gira-bar-nav-link  custom-white-color" href="/gira_overview/gira_threat_exposure">
+                    <h5> Threat Exposure </h5>
+                </a>
+            </div>
             <div class="col-1 gira-bar-nav ">
                 {#                <img id="gira-background-response" src={{  url_for('static', filename='/images/gira_menu_response.jpg') }}#}
                 {#                     class="gira-menu-background">#}

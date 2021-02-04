@@ -83,3 +83,17 @@ def generate_checkpoint(steps , kafkaInitialiser):
         # # flush the message buffer to force message delivery to broker on each iteration
         # producer.flush()
         sleep(5)
+
+
+def get_kafka_data(kafka_topic):
+# #KAFKA CLIENT CONSUMER
+    consumer = KafkaConsumer(bootstrap_servers=BOOTSTRAP_SERVERS,
+                            security_protocol='SASL_SSL',
+                            sasl_mechanism='OAUTHBEARER',
+                            sasl_oauth_token_provider=TokenProvider(),
+                            ssl_cafile=KAFKA_CERT)
+    # 'python-topic' default kafka topic
+    consumer.subscribe([kafka_topic])
+
+    for msg in consumer:
+        print(json.loads(msg.value.decode()))

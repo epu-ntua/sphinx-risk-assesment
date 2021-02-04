@@ -350,15 +350,23 @@ def gira_threat_materialisation():
         return redirect('/gira_overview/gira_threat_materialisation/')
     else:
         materialisations = GiraThreatMaterialisation.query.all()
-        return render_template('gira_threat_materialisation.html', materialisations=materialisations)
+        consequences = GiraConsequence.query.all()
+
+        return render_template('gira_threat_materialisation.html', materialisations=materialisations, consequences = consequences)
 
 
 @app.route('/gira_overview/gira_consequence/', methods=['GET', 'POST'])
 def gira_consequence():
     if request.method == 'POST':
-        return redirect("/gira_overview/")
+        to_add = GiraConsequence(name=request.form['name'], description=request.form['description'],)
+        db.session.add(to_add)
+        db.session.commit()
+
+        return redirect('/gira_overview/gira_consequence/')
     else:
-        return render_template('gira_consequences.html')
+        consequences = GiraConsequence.query.all()
+
+        return render_template('gira_consequences.html', consequences = consequences)
 
 
 @app.route('/gira_overview/gira_asset_status/', methods=['GET', 'POST'])
@@ -604,12 +612,107 @@ def write_topic_to_kafka():
 #     client = get_kafka_client()
 #     def events():
 #         for i in client.topics[topicname].get_simple_consumer():
-#             yield 'data:{0}\n\n'.format(i.value.decode())
+#             yield 'data:{0}\n\n'.format(i.value.decode())+
 #     return Response(events(), mimetype="text/event-stream")
 
 @app.route('/siem_event_alert', methods = ['POST'])
 def siem_event_alert():
     if request.method == 'POST':
+        requestedservice = request.args.get('requestedservice', None)
+        requestedTicket = request.args.get('requestedTicket', None)
+
+        url = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/Authorization"
+        params = {
+            'requestedservice': requestedservice,
+            'requestedTicket': requestedTicket
+        }
+        response = requests.request("GET", url, params=params)
+        print("---------------------------------------", flush=True)
+        print("Authorisation result is: ", response.status_code, flush=True)
+
+        if response.status_code == 200:
         # Validate the input is correct
         # Currently not certain about what the input will be
+            return Response(status=200)
+        else:
+            return Response(status=400)
+
+
+@app.route('/ID_visualisation_data')
+def ID_visualisation_data():
+    requestedservice = request.args.get('requestedservice', None)
+    requestedTicket = request.args.get('requestedTicket', None)
+
+    url = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/Authorization"
+    params = {
+        'requestedservice': requestedservice,
+        'requestedTicket': requestedTicket
+    }
+    response = requests.request("GET", url, params=params)
+    print("---------------------------------------", flush=True)
+    print("Authorisation result is: ", response.status_code, flush=True)
+
+    if response.status_code == 200:
+        print("Authorisation is accepted", flush=True)
+        print("---------------------------------------", flush=True)
+        return jsonify({'Visualisation1': [
+            {"ver_low_threats": "1", "low_threats": "3", "medium_threats": "3",
+             "high": "4", "very_high_threats": "1", "critical_threats" : "2"}
+            ],
+        })
+    else:
+        print("Authorisation is declined", flush=True)
+        print("---------------------------------------", flush=True)
+        return Response(status=400)
+
+
+@app.route('/dss_alert')
+def dss_alert():
+    status = sendDSSAlert()
+    if status == 0:
         return Response(status=200)
+    else:
+        return  Response(status=500)
+
+
+@app.route('/get_kafka_information_test/<topic>/')
+def get_kafka_information_test(topic):
+    # kafka = KafkaInitialiser()
+    result = get_kafka_data(topic)
+    print(result)
+    return Response(result, mimetype="text/event-stream")
+
+@app.route('/kb_cve_test')
+def kb_cve_test():
+    url = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/Authentication"
+    payload = {
+        'username': 'testR1',
+        'password': 'testR1123!@'
+    }
+    response = requests.request("POST", url, data=payload)
+    selectedticket = response.json()
+    requestedTicket = selectedticket["data"]
+
+    print("---------------------------------------",flush=True)
+    print( "Login ticket is: " ,requestedTicket, flush=True)
+    print("---------------------------------------",flush=True)
+
+
+    # Need knowledge base url
+    # id
+    # name
+    # keywords
+    # This search the STYX objects for the id/name/keyword for example this searches for CVE-2018-4998
+    url = "http://:4000/api/v1/objects/id/CVE-2018-4998"
+    params = {
+        'requestedservice': 'KB',
+        'requestedTicket': requestedTicket
+    }
+    response = requests.request("GET", url, params=params)
+    reqdata = response.json()
+
+    print("---------------------------------------", flush=True)
+    print("KB response is: ", reqdata, flush=True)
+    print("---------------------------------------", flush=True)
+
+    return reqdata

@@ -3,20 +3,27 @@
 
 {% block script %}
     <script>
-        times = 1
+        addedConsequences = 1
 
-        function addState() {
-            var newState = '<div class="form-group row">\n' +
-                '                        <label for="description">Scope </label>\n' +
-                '                        <input type="text" class="form-control" name="description" id="description"\n' +
-                '                               placeholder="Scope name">\n' +
-                '                    </div>'
-            var div = document.createElement("div");
-            div.innerHTML = newState;
-            document.getElementById('new_states').appendChild(div);
+          function addConsequenceOptions() {
+            var newObject = $.parseHTML('<div class="form-group row" id="new-consequences">\n' +
+                '                    <label>Consequences of Materialisations (If one of the consequences doesn\'t\n' +
+                '                        appear here, add it to its page)</label>\n' +
+                '                    <select name="consequence'+ addedConsequences+ '" id="consequence'+ addedConsequences+ '">\n' +
+                '                        {% for tempConsequence in consequences %}\n'+
+                    '                        <option value="{{ tempConsequence.id }}">{{ tempConsequence.name }} </option>\n'
+                    +
+                    '                        {% endfor %}\n' +
+                '                    </select>\n' +
+                '                </div>')
+
+            document.getElementById('new_consequences').appendChild(newObject);
         }
 
+
     </script>
+
+
 {% endblock %}
 
 
@@ -30,7 +37,14 @@
                     <h5> Threat Exposure </h5>
                 </a>
             </div>
-            <div class="col-1 gira-bar-nav custom-border-finished">
+            <div class="col-2 gira-bar-nav custom-border-finished">
+                {#                <img id="gira-background-response" src={{  url_for('static', filename='/images/gira_menu_response.jpg') }}#}
+                {#                     class="gira-menu-background">#}
+                <a class="gira-bar-nav-link  custom-white-color" href="/gira_overview/gira_threat_materialisation">
+                    <h5> Threat Materialisations </h5>
+                </a>
+            </div>
+            <div class="col-1 gira-bar-nav ">
                 {#                <img id="gira-background-response" src={{  url_for('static', filename='/images/gira_menu_response.jpg') }}#}
                 {#                     class="gira-menu-background">#}
                 <a class="gira-bar-nav-link  custom-white-color" href="/gira_overview/gira_threat_response">
@@ -84,14 +98,22 @@
                     <input type="text" class="form-control" name="probability" id="probability"
                            placeholder="Default Effect of Response in percentage">
                 </div>
-
+                <div class="form-group row" id="new_consequences">
+                    <label>Consequences of Materialisations (If one of the consequences doesn't
+                        appear here, add it to its page)</label>
+                    <select name="consequence0" id="consequence0">
+                        {% for tempConsequence in consequences %}
+                        <option value="{{ tempConsequence.id }}">{{ tempConsequence.name }} </option>
+                        {% endfor %}
+                    </select>
+                </div>
                 <hr/>
                 <button type="submit" name="new_group_flow_form" class="btn btn-primary">Submit ></button>
             </div>
             <div class="col-10 d-flex flex-wrap align-content-start custom-select-column">
                  {% for tempMaterialisation in materialisations %}
                 <div class="card bg-light mb-3 custom-card" style="max-width: 18rem;">
-                    <div class="card-header"> Response #{{ tempMaterialisation.id }}:
+                    <div class="card-header"> Materialisation #{{ tempMaterialisation.id }}:
                         {{ tempMaterialisation.name }}
                     </div>
                     <div class="card-body">

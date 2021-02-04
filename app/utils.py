@@ -1,3 +1,4 @@
+from flask import jsonify
 from sqlalchemy.exc import SQLAlchemyError
 from app import db
 from app.models import *
@@ -346,43 +347,43 @@ def get_capec_recommendations(selected_cve_id):
 #     db.session.commit()
 
 
-def get_capec_consequences():
-    capec_list = CommonAttackPatternEnumerationClassification.query.all()
-    for capec_entry in capec_list:
-        capec_consequence = capec_entry.consequences
-        if capec_consequence is None:
-            continue
-
-        temp_capec = capec_consequence[1:]
-        temp_capec = temp_capec[:-1]
-
-        temp_consequence_list = temp_capec.split(':SCOPE:')
-
-        # temp_scope contains scope that are linked to the next impact
-        temp_scope = []
-        for temp_it in temp_consequence_list:
-            if "TECHNICAL IMPACT:" in temp_it:
-                temp_impact = temp_it
-                temp_description = ""
-                if "NOTE:" in temp_it:
-                    temp_impact_and_note = temp_it.split('NOTE:')
-                    temp_impact = temp_impact_and_note[0]
-                    temp_description = temp_impact_and_note[1]
-
-                temp_scope_and_impact = temp_impact.split('TECHNICAL IMPACT:')
-                temp_scope.append(temp_scope_and_impact[0])
-
-                save_capec_consequence(temp_scope, temp_scope_and_impact[1], temp_description)
-                print(temp_scope)
-                print(temp_scope_and_impact[1])
-                print(temp_description)
-                print("-------------------")
-                temp_scope = []
-
-            elif temp_it == "":
-                continue
-            else:
-                temp_scope.append(temp_it)
+# def get_capec_consequences():
+#     capec_list = CommonAttackPatternEnumerationClassification.query.all()
+#     for capec_entry in capec_list:
+#         capec_consequence = capec_entry.consequences
+#         if capec_consequence is None:
+#             continue
+#
+#         temp_capec = capec_consequence[1:]
+#         temp_capec = temp_capec[:-1]
+#
+#         temp_consequence_list = temp_capec.split(':SCOPE:')
+#
+#         # temp_scope contains scope that are linked to the next impact
+#         temp_scope = []
+#         for temp_it in temp_consequence_list:
+#             if "TECHNICAL IMPACT:" in temp_it:
+#                 temp_impact = temp_it
+#                 temp_description = ""
+#                 if "NOTE:" in temp_it:
+#                     temp_impact_and_note = temp_it.split('NOTE:')
+#                     temp_impact = temp_impact_and_note[0]
+#                     temp_description = temp_impact_and_note[1]
+#
+#                 temp_scope_and_impact = temp_impact.split('TECHNICAL IMPACT:')
+#                 temp_scope.append(temp_scope_and_impact[0])
+#
+#                 save_capec_consequence(temp_scope, temp_scope_and_impact[1], temp_description)
+#                 print(temp_scope)
+#                 print(temp_scope_and_impact[1])
+#                 print(temp_description)
+#                 print("-------------------")
+#                 temp_scope = []
+#
+#             elif temp_it == "":
+#                 continue
+#             else:
+#                 temp_scope.append(temp_it)
 
 
 def get_hardwareassets():
@@ -395,6 +396,44 @@ def get_hardwareassets():
         return []
 
 # endregion
+
+# region Communication Functions
+def sendDSSAlert():
+    url = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/Authentication"
+    payload = {
+        'username': 'testR1',
+        'password': 'testR1123!@'
+    }
+    response = requests.request("POST", url, data=payload)
+    selectedticket = response.json()
+    requestedTicket = selectedticket["data"]
+
+    print("---------------------------------------", flush=True)
+    print("Login ticket is: ", requestedTicket, flush=True)
+    print("---------------------------------------", flush=True)
+
+    # Need endpoint of dss
+    url = "http://sphinx-dss-service:5000/-"
+    params = {
+        'requestedservice': 'DSS',
+        'requestedTicket': requestedTicket
+    }
+
+    data = jsonify({'alert-1': [
+        {"asset": "server 1", "threat-level": "high", "date-time": "-", "type": "--"}
+    ],
+    })
+    response = requests.request("POST", url, params=params, data=data)
+
+    if response.status_code != 200:
+        return 1
+    else:
+        return 0
+
+
+
+# endregion
+
 
 # region Test area
 # db.create_all()
