@@ -675,15 +675,15 @@ def dss_alert():
         return  Response(status=500)
 
 
-@app.route('/get_kafka_information_test/<topic>/')
-def get_kafka_information_test(topic):
+@app.route('/get_kafka_information/<topic>/')
+def get_kafka_information(topic):
     # kafka = KafkaInitialiser()
     result = get_kafka_data(topic)
     print(result)
     return Response(result, mimetype="text/event-stream")
 
-@app.route('/kb_cve_test')
-def kb_cve_test():
+@app.route('/kb_cve')
+def kb_cve():
     url = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/Authentication"
     payload = {
         'username': 'testR1',
