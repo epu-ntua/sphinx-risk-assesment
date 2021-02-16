@@ -8,9 +8,11 @@ import openpyxl
 import json
 import requests
 
-
 # region Insert information from Excel files
 # region Insert all CAPEC records from Excel
+from app.producer import SendKafkaReport
+
+
 def CAPEC_excel_insertData(capecexcelpath):
     theFile = openpyxl.load_workbook(capecexcelpath)
     currentSheet = theFile.active
@@ -395,42 +397,61 @@ def get_hardwareassets():
     else:
         return []
 
+
 # endregion
 
 # region Communication Functions
 def sendDSSAlert():
-    url = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/Authentication"
-    payload = {
-        'username': 'testR1',
-        'password': 'testR1123!@'
+    report = {
+        "type": "bundle",
+        "id": "bundle--5d0092c5-5f74-4287-9642-33f4c354e56d",
+        "objects": [
+            {
+                "type": "x-RCRA-current-threats",
+                "id": "x-RCRA-current-threats--4527e5de-8572-446a-a57a-706f15467461",
+                "created": "2016-08-01T00:00:00.000Z",
+                "x_RCRA_threats":
+                    {
+                        "low_impact": "1",
+                        "medium_impact": "2",
+                        "high_impact": "2",
+                        "critical_impact": "1",
+                    }
+            }
+        ]
     }
-    response = requests.request("POST", url, data=payload)
-    selectedticket = response.json()
-    requestedTicket = selectedticket["data"]
-
-    print("---------------------------------------", flush=True)
-    print("Login ticket is: ", requestedTicket, flush=True)
-    print("---------------------------------------", flush=True)
-
-    # Need endpoint of dss
-    url = "http://sphinx-dss-service:5000/-"
-    params = {
-        'requestedservice': 'DSS',
-        'requestedTicket': requestedTicket
-    }
-
-    data = jsonify({'alert-1': [
-        {"asset": "server 1", "threat-level": "high", "date-time": "-", "type": "--"}
-    ],
-    })
-    response = requests.request("POST", url, params=params, data=data)
-
-    if response.status_code != 200:
-        return 1
-    else:
-        return 0
-
-
+    SendKafkaReport(report)
+    return 0
+    # url = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/Authentication"
+    # payload = {
+    #     'username': 'testR1',
+    #     'password': 'testR1123!@'
+    # }
+    # response = requests.request("POST", url, data=payload)
+    # selectedticket = response.json()
+    # requestedTicket = selectedticket["data"]
+    #
+    # print("---------------------------------------", flush=True)
+    # print("Login ticket is: ", requestedTicket, flush=True)
+    # print("---------------------------------------", flush=True)
+    #
+    # # Need endpoint of dss
+    # url = "http://sphinx-dss-service:5000/-"
+    # params = {
+    #     'requestedservice': 'DSS',
+    #     'requestedTicket': requestedTicket
+    # }
+    #
+    # data = jsonify({'alert-1': [
+    #     {"asset": "server 1", "threat-level": "high", "date-time": "-", "type": "--"}
+    # ],
+    # })
+    # response = requests.request("POST", url, params=params, data=data)
+    #
+    # if response.status_code != 200:
+    #     return 1
+    # else:
+    #     return 0
 
 # endregion
 

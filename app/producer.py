@@ -55,7 +55,7 @@ def SendKafkaReport(report):
                             value_serializer=lambda value: value.encode())
 
 
-    producer.send('python-topic', json.dumps({'data': {'report': report}}))
+    producer.send('python-topic', json.dumps(report))
     
 
 # GENERATE UUID

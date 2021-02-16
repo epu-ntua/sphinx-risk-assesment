@@ -148,13 +148,13 @@ def gira_assess_materialisation(exposure_id):
         else:
             return Response(401)
 
-
         existing_entry = GiraThreatMaterialisationInstanceEntry.query.filter_by(table_id=int(request.form["table_id"]),
-                                                                      responses_id=int(request.form["responses_id"]),
-                                                                      materialisations_id=int(request.form[
-                                                                          "materialisations_id"]),
-                                                                      is_threat_materialising=is_threat_materialising_bool
-                                                                      ).first()
+                                                                                responses_id=int(
+                                                                                    request.form["responses_id"]),
+                                                                                materialisations_id=int(request.form[
+                                                                                                            "materialisations_id"]),
+                                                                                is_threat_materialising=is_threat_materialising_bool
+                                                                                ).first()
         if existing_entry:
             existing_entry.prob_threat_materialising = request.form["prob_threat_materialising"]
             existing_entry.prob_likelihood = request.form["prob_likelihood"]
@@ -169,18 +169,17 @@ def gira_assess_materialisation(exposure_id):
             #     print(entry)
 
             # print(is_threat_materialising_bool)
-            to_add_entry = GiraThreatMaterialisationInstanceEntry(table_id= int(request.form["table_id"]),
+            to_add_entry = GiraThreatMaterialisationInstanceEntry(table_id=int(request.form["table_id"]),
                                                                   responses_id=int(request.form["responses_id"]),
                                                                   materialisations_id=int(request.form[
-                                                                      "materialisations_id"]),
+                                                                                              "materialisations_id"]),
                                                                   prob_threat_materialising=int(request.form[
-                                                                      "prob_threat_materialising"]),
+                                                                                                    "prob_threat_materialising"]),
                                                                   prob_likelihood=int(request.form["prob_likelihood"]),
                                                                   prob_likelihood_other=int(request.form[
-                                                                      "prob_likelihood_other"]),
+                                                                                                "prob_likelihood_other"]),
                                                                   prob_posterior=int(request.form["prob_posterior"]),
                                                                   is_threat_materialising=is_threat_materialising_bool)
-
 
             db.session.add(to_add_entry)
         db.session.commit()
@@ -199,12 +198,14 @@ def gira_assess_materialisation(exposure_id):
             GiraThreatMaterialisation.materialisation_instance.any(id=exposure_id)).all()
         # print(instance_materialisations)
 
-        instance_materialisations_entries = GiraThreatMaterialisationInstanceEntry.query.filter_by(table_id=exposure_id).all()
+        instance_materialisations_entries = GiraThreatMaterialisationInstanceEntry.query.filter_by(
+            table_id=exposure_id).all()
 
         return render_template('gira_assess_materialisation.html', selected_exposure=selected_exposure,
                                instance_materialisations=instance_materialisations,
                                instance_responses=instance_responses,
                                instance_materialisations_entries=instance_materialisations_entries)
+
 
 @app.route('/gira_assess/<exposure_id>/gira_assess_materialisation/check_table/', methods=['POST'])
 def gira_assess_materialisation_check_table(exposure_id):
@@ -215,7 +216,6 @@ def gira_assess_materialisation_check_table(exposure_id):
         instance_responses_count = GiraIncidentResponse.query.filter(
             GiraIncidentResponse.materialisation_instance.any(id=table_id)).count()
 
-
         instance_materialisations_count = GiraThreatMaterialisation.query.filter(
             GiraThreatMaterialisation.materialisation_instance.any(id=table_id)).count()
 
@@ -224,7 +224,8 @@ def gira_assess_materialisation_check_table(exposure_id):
 
         # This could check for the presence of the number itself in each entry but it shouldnt be normally needed
         if target_entries_count == current_entries_count:
-            return redirect(Response(status=201)) #change to next page when ready /gira_assess/gira_assess_consequences
+            return redirect(
+                Response(status=201))  # change to next page when ready /gira_assess/gira_assess_consequences
         else:
             return redirect(request.url)
 
@@ -352,13 +353,14 @@ def gira_threat_materialisation():
         materialisations = GiraThreatMaterialisation.query.all()
         consequences = GiraConsequence.query.all()
 
-        return render_template('gira_threat_materialisation.html', materialisations=materialisations, consequences = consequences)
+        return render_template('gira_threat_materialisation.html', materialisations=materialisations,
+                               consequences=consequences)
 
 
 @app.route('/gira_overview/gira_consequence/', methods=['GET', 'POST'])
 def gira_consequence():
     if request.method == 'POST':
-        to_add = GiraConsequence(name=request.form['name'], description=request.form['description'],)
+        to_add = GiraConsequence(name=request.form['name'], description=request.form['description'], )
         db.session.add(to_add)
         db.session.commit()
 
@@ -366,7 +368,7 @@ def gira_consequence():
     else:
         consequences = GiraConsequence.query.all()
 
-        return render_template('gira_consequences.html', consequences = consequences)
+        return render_template('gira_consequences.html', consequences=consequences)
 
 
 @app.route('/gira_overview/gira_asset_status/', methods=['GET', 'POST'])
@@ -469,9 +471,9 @@ def RCRAgetFCDEversion():
     selectedticket = response.json()
     requestedTicket = selectedticket["data"]
 
-    print("---------------------------------------",flush=True)
-    print( "Login ticket is: " ,requestedTicket, flush=True)
-    print("---------------------------------------",flush=True)
+    print("---------------------------------------", flush=True)
+    print("Login ticket is: ", requestedTicket, flush=True)
+    print("---------------------------------------", flush=True)
 
     # # this step was omitted in D6.2
     # url1 = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/ServiceInfo"
@@ -607,6 +609,7 @@ def write_topic_to_kafka():
     # CreateToken()
     return Response('Done' + str(datetime.utcnow()), mimetype="text/event-stream")
 
+
 # @app.route('/topic/<topicname>')
 # def get_messages(topicname):
 #     client = get_kafka_client()
@@ -615,7 +618,7 @@ def write_topic_to_kafka():
 #             yield 'data:{0}\n\n'.format(i.value.decode())+
 #     return Response(events(), mimetype="text/event-stream")
 
-@app.route('/siem_event_alert', methods = ['POST'])
+@app.route('/siem_event_alert', methods=['POST'])
 def siem_event_alert():
     if request.method == 'POST':
         requestedservice = request.args.get('requestedservice', None)
@@ -631,8 +634,8 @@ def siem_event_alert():
         print("Authorisation result is: ", response.status_code, flush=True)
 
         if response.status_code == 200:
-        # Validate the input is correct
-        # Currently not certain about what the input will be
+            # Validate the input is correct
+            # Currently not certain about what the input will be
             return Response(status=200)
         else:
             return Response(status=400)
@@ -655,10 +658,23 @@ def ID_visualisation_data():
     if response.status_code == 200:
         print("Authorisation is accepted", flush=True)
         print("---------------------------------------", flush=True)
-        return jsonify({'Visualisation1': [
-            {"ver_low_threats": "1", "low_threats": "3", "medium_threats": "3",
-             "high": "4", "very_high_threats": "1", "critical_threats" : "2"}
-            ],
+        return jsonify({
+            "type": "bundle",
+            "id": "bundle--5d0092c5-5f74-4287-9642-33f4c354e56d",
+            "objects": [
+                {
+                    "type": "x-RCRA-current-threats",
+                    "id": "x-RCRA-current-threats--4527e5de-8572-446a-a57a-706f15467461",
+                    "created": "2016-08-01T00:00:00.000Z",
+                    "x_RCRA_threats":
+                        {
+                            "low_impact": "1",
+                            "medium_impact": "2",
+                            "high_impact": "2",
+                            "critical_impact": "1",
+                        }
+                }
+            ]
         })
     else:
         print("Authorisation is declined", flush=True)
@@ -672,7 +688,16 @@ def dss_alert():
     if status == 0:
         return Response(status=200)
     else:
-        return  Response(status=500)
+        return Response(status=500)
+
+
+@app.route('/save_report')
+def dss_alert():
+    status = sendDSSAlert()
+    if status == 0:
+        return Response(status=200)
+    else:
+        return Response(status=500)
 
 
 @app.route('/get_kafka_information/<topic>/')
@@ -681,6 +706,7 @@ def get_kafka_information(topic):
     result = get_kafka_data(topic)
     print(result)
     return Response(result, mimetype="text/event-stream")
+
 
 @app.route('/kb_cve')
 def kb_cve():
@@ -693,10 +719,9 @@ def kb_cve():
     selectedticket = response.json()
     requestedTicket = selectedticket["data"]
 
-    print("---------------------------------------",flush=True)
-    print( "Login ticket is: " ,requestedTicket, flush=True)
-    print("---------------------------------------",flush=True)
-
+    print("---------------------------------------", flush=True)
+    print("Login ticket is: ", requestedTicket, flush=True)
+    print("---------------------------------------", flush=True)
 
     # Need knowledge base url
     # id
