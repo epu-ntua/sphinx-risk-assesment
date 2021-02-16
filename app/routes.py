@@ -691,13 +691,13 @@ def dss_alert():
         return Response(status=500)
 
 
-@app.route('/save_report')
-def dss_alert():
-    status = sendDSSAlert()
-    if status == 0:
-        return Response(status=200)
-    else:
-        return Response(status=500)
+# @app.route('/save_report')
+# def dss_alert():
+#     status = sendDSSAlert()
+#     if status == 0:
+#         return Response(status=200)
+#     else:
+#         return Response(status=500)
 
 
 @app.route('/get_kafka_information/<topic>/')
