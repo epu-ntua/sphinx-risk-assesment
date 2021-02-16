@@ -643,10 +643,14 @@ def siem_event_alert():
 
 @app.route('/ID_visualisation_data')
 def ID_visualisation_data():
-    requestedservice = request.args.get('requestedservice', None)
-    requestedTicket = request.args.get('requestedTicket', None)
+    requestedservice = "RCRA"
+    # requestedTicket = request.args.get('requestedTicket', None)
+    requestedTicket = request.headers.get('Authorization')
+    requestedTicket = requestedTicket[7:]
+    serviceManagerUrl = request.args.get('serviceUrl', None)
 
-    url = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/Authorization"
+    # url = "http://sphinx-kubernetes.intracom-telecom.com:80/SMPlatform/manager/rst/Authorization"
+    url = serviceManagerUrl
     params = {
         'requestedservice': requestedservice,
         'requestedTicket': requestedTicket
