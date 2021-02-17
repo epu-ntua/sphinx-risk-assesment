@@ -33,12 +33,12 @@ OAUTH_TOKEN_ENDPOINT_URI = os.environ.get('OAUTH_TOKEN_ENDPOINT_URI')
 BOOTSTRAP_SERVERS        = os.environ.get('BOOTSTRAP_SERVERS')
 KAFKA_CERT               = os.environ.get('KAFKA_CERT')#FULL PATH OF THE CERTIFICATE LOCATION
 
-
+print(SM_IP)
 
 class TokenProvider(AbstractTokenProvider):
 
     def __init__(self):
-        self.kafka_ticket = json.loads(requests.post(f'http://sphinx-kubernetes.intracom-telecom.com/SMPlatform/manager/rst/KafkaAuthentication',data={'username': KAFKA_USERNAME,'password': KAFKA_PASSWORD}).text)['data']
+        self.kafka_ticket = json.loads(requests.post(os.environ.get('SM_IP') + '/KafkaAuthentication',data={'username': KAFKA_USERNAME,'password': KAFKA_PASSWORD}).text)['data']
     def token(self):
         kafka_token = json.loads(requests.get(OAUTH_TOKEN_ENDPOINT_URI, auth=(OAUTH_CLIENT_ID, self.kafka_ticket)).text)['access_token']
 

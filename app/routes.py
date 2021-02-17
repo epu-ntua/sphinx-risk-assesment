@@ -647,10 +647,10 @@ def ID_visualisation_data():
     # requestedTicket = request.args.get('requestedTicket', None)
     requestedTicket = request.headers.get('Authorization')
     requestedTicket = requestedTicket[7:]
-    serviceManagerUrl = request.args.get('serviceUrl', None)
+    # serviceManagerUrl = request.args.get('serviceUrl', None)
 
     # url = "http://sphinx-kubernetes.intracom-telecom.com:80/SMPlatform/manager/rst/Authorization"
-    url = serviceManagerUrl
+    url = os.environ.get('SM_IP') + "/Authorization"
     params = {
         'requestedservice': requestedservice,
         'requestedTicket': requestedTicket
