@@ -7,6 +7,7 @@ from datetime import date, datetime
 import openpyxl
 import json
 import requests
+import stix2
 
 # region Insert information from Excel files
 # region Insert all CAPEC records from Excel
@@ -453,7 +454,11 @@ def sendDSSAlert():
     }
     SendKafkaReport(report)
     return 0
-    # url = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/Authentication"
+
+# def validate_stix_2():
+#
+
+# url = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/Authentication"
     # payload = {
     #     'username': 'testR1',
     #     'password': 'testR1123!@'

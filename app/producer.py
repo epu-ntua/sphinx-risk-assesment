@@ -25,29 +25,32 @@ path_to_kafka_cert = os.path.join(os.path.abspath(os.getcwd()),'..', 'auth_files
 os.environ["KAFKA_CERT"] = path_to_kafka_cert
 
 
-SM_IP                    = os.environ.get('SM_IP')
-KAFKA_USERNAME           = os.environ.get('KAFKA_USERNAME')
-KAFKA_PASSWORD           = os.environ.get('KAFKA_PASSWORD')
-OAUTH_CLIENT_ID          = os.environ.get('OAUTH_CLIENT_ID')
-OAUTH_TOKEN_ENDPOINT_URI = os.environ.get('OAUTH_TOKEN_ENDPOINT_URI')
-BOOTSTRAP_SERVERS        = os.environ.get('BOOTSTRAP_SERVERS')
+# SM_IP                    = os.environ.get('SM_IP')
+# KAFKA_USERNAME           = os.environ.get('KAFKA_USERNAME')
+# KAFKA_PASSWORD           = os.environ.get('KAFKA_PASSWORD')
+# OAUTH_CLIENT_ID          = os.environ.get('OAUTH_CLIENT_ID')
+# OAUTH_TOKEN_ENDPOINT_URI = os.environ.get('OAUTH_TOKEN_ENDPOINT_URI')
+# BOOTSTRAP_SERVERS        = os.environ.get('BOOTSTRAP_SERVERS')
 KAFKA_CERT               = os.environ.get('KAFKA_CERT')#FULL PATH OF THE CERTIFICATE LOCATION
 
-print(SM_IP)
+# print(SM_IP)
 
 class TokenProvider(AbstractTokenProvider):
 
     def __init__(self):
-        self.kafka_ticket = json.loads(requests.post(os.environ.get('SM_IP') + '/KafkaAuthentication',data={'username': KAFKA_USERNAME,'password': KAFKA_PASSWORD}).text)['data']
+        self.kafka_ticket = json.loads(requests.post(os.environ.get('SM_IP') + '/KafkaAuthentication',data={'username': os.environ.get('KAFKA_USERNAME'),'password': os.environ.get('KAFKA_PASSWORD')}).text)['data']
     def token(self):
-        kafka_token = json.loads(requests.get(OAUTH_TOKEN_ENDPOINT_URI, auth=(OAUTH_CLIENT_ID, self.kafka_ticket)).text)['access_token']
+        kafka_token = json.loads(requests.get(os.environ.get('OAUTH_TOKEN_ENDPOINT_URI'), auth=(os.environ.get('OAUTH_CLIENT_ID'), self.kafka_ticket)).text)['access_token']
 
         return kafka_token
 
 def SendKafkaReport(report):
 #KAFKA CLIENT PRODUCER
+    print("----------------------------")
     print(path_to_kafka_cert, flush = True)
-    producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
+    # print(BOOTSTRAP_SERVERS)
+    print(os.environ.get('BOOTSTRAP_SERVERS'))
+    producer = KafkaProducer(bootstrap_servers=os.environ.get('BOOTSTRAP_SERVERS'),
                             security_protocol='SASL_SSL',
                             sasl_mechanism='OAUTHBEARER',
                             sasl_oauth_token_provider=TokenProvider(),
@@ -87,7 +90,7 @@ def generate_checkpoint(steps , kafkaInitialiser):
 
 def get_kafka_data(kafka_topic):
 # #KAFKA CLIENT CONSUMER
-    consumer = KafkaConsumer(bootstrap_servers=BOOTSTRAP_SERVERS,
+    consumer = KafkaConsumer(bootstrap_servers=os.environ.get('BOOTSTRAP_SERVERS'),
                             security_protocol='SASL_SSL',
                             sasl_mechanism='OAUTHBEARER',
                             sasl_oauth_token_provider=TokenProvider(),
