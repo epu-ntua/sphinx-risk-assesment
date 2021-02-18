@@ -655,6 +655,8 @@ def ID_visualisation_data():
         'requestedservice': requestedservice,
         'requestedTicket': requestedTicket
     }
+    print("---------------------------------------", flush=True)
+    print(url)
     response = requests.request("GET", url, params=params)
     print("---------------------------------------", flush=True)
     print("Authorisation result is: ", response.status_code, flush=True)
@@ -686,8 +688,8 @@ def ID_visualisation_data():
         return Response(status=400)
 
 
-@app.route('/dss_alert')
-def dss_alert():
+@app.route('/save_report')
+def save_report():
     status = sendDSSAlert()
     if status == 0:
         return Response(status=200)

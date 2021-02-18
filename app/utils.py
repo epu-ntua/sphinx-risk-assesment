@@ -407,15 +407,46 @@ def sendDSSAlert():
         "id": "bundle--5d0092c5-5f74-4287-9642-33f4c354e56d",
         "objects": [
             {
-                "type": "x-RCRA-current-threats",
-                "id": "x-RCRA-current-threats--4527e5de-8572-446a-a57a-706f15467461",
-                "created": "2016-08-01T00:00:00.000Z",
-                "x_RCRA_threats":
+                "type": "ipv4-addr",
+                "spec_version": "2.1",
+                "id": "ipv4-addr--",
+                "value": "10.0.255.106"
+            },
+            {
+                "type": "attack-pattern",
+                "spec_version": "2.1",
+                "id": "attack-pattern--7e33a43e-e34b-40ec-89da-36c9bb2cacd5",
+                "created": "2016-05-12T08:17:27.000Z",
+                "modified": "2016-05-12T08:17:27.000Z",
+                "name": "Spear Phishing as Practiced by Adversary X",
+                "description": "A particular form of spear phishing where the attacker claims that the target had won a contest, including personal details, to get them to click on a link.",
+                "external_references": [
                     {
-                        "low_impact": "1",
-                        "medium_impact": "2",
-                        "high_impact": "2",
-                        "critical_impact": "1",
+                        "source_name": "capec",
+                        "external_id": "CAPEC-163"
+                    }
+                ]
+            },
+            {
+                "type": "relationship",
+                "spec_version": "2.1",
+                "id": "relationship--57b56a43-b8b0-4cba-9deb-34e3e1faed9e",
+                "created": "2016-05-12T08:17:27.000Z",
+                "modified": "2016-05-12T08:17:27.000Z",
+                "relationship_type": "targets",
+                "source_ref": "x-RCRA-objectives--4527e5de-8572-446a-a57a-706f15467461",
+                "target_ref": "attack-pattern--7e33a43e-e34b-40ec-89da-36c9bb2cacd5"
+            },
+            {
+                "type": "x-RCRA-objectives",
+                "id": "x-RCRA-objectives--4527e5de-8572-446a-a57a-706f15467461",
+                "created": "2016-08-01T00:00:00.000Z",
+                "modified": "2016-08-01T00:00:00.000Z",
+                "x_RCRA_scoring":
+                    {
+                        "score": "1",
+                        "impact": "high",
+                        "probability": "low"
                     }
             }
         ]

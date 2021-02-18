@@ -16,12 +16,12 @@ import uuid
 # 8080
 path_to_kafka_cert = os.path.join(os.path.abspath(os.getcwd()),'..', 'auth_files', 'service-manager.crt')
 
-os.environ["SM_IP"] = "http://sphinx-kubernetes.intracom-telecom.com/SMPlatform/manager/rst/"
-os.environ["KAFKA_USERNAME"] = "kafkauser"
-os.environ["KAFKA_PASSWORD"] = "kafkauser123"
-os.environ["OAUTH_CLIENT_ID"] = "SIEM"
-os.environ["OAUTH_TOKEN_ENDPOINT_URI"] = "http://sphinx-kubernetes.intracom-telecom.com/SMPlatform/manager/rst/getKafkaToken"
-os.environ["BOOTSTRAP_SERVERS"] = "bootstrap.146.124.106.170.nip.io:443"
+# os.environ["SM_IP"] = "http://sphinx-kubernetes.intracom-telecom.com/SMPlatform/manager/rst"
+# os.environ["KAFKA_USERNAME"] = "kafkauser"
+# os.environ["KAFKA_PASSWORD"] = "kafkauser123"
+# os.environ["OAUTH_CLIENT_ID"] = "SIEM"
+# os.environ["OAUTH_TOKEN_ENDPOINT_URI"] = "http://sphinx-kubernetes.intracom-telecom.com/SMPlatform/manager/rst/getKafkaToken"
+# os.environ["BOOTSTRAP_SERVERS"] = "bootstrap.146.124.106.170.nip.io:443"
 os.environ["KAFKA_CERT"] = path_to_kafka_cert
 
 
