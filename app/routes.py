@@ -699,7 +699,7 @@ def save_report():
 
 @app.route('/activate_test')
 def activate_test():
-    status = ()
+    status = rcra_1()
     if status == 0:
         return Response(status=200)
     else:

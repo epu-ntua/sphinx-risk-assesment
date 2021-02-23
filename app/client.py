@@ -5,7 +5,7 @@ from kafka import KafkaConsumer, KafkaProducer
 from kafka.oauth import AbstractTokenProvider
 from stix2validator import validate_file, print_results,validate_string,validate_instance
 from stix2validator import ValidationOptions
-
+from app.producer import *
 path_to_kafka_cert = os.path.join(os.path.abspath(os.getcwd()),'app' ,'auth_files', 'for_clients.crt')
 
 
@@ -28,7 +28,7 @@ class TokenProvider(AbstractTokenProvider):
 
 USER    = os.environ.get('USER', default = 'users_usernameN')
 PASSWORD    = os.environ.get('PASSWORD',default = 'users_passwordnameN')
-RCRA_ADDRESS = os.environ.get('RCRA_ADDRESS', default = '127.0.0.1:5002')
+RCRA_ADDRESS = os.environ.get('RCRA_ADDRESS', default = '0.0.0.0:5002')
 
 #risk-assessment:5002/save_report
 
@@ -38,7 +38,7 @@ def token():
 
 def rcra_1_a(ticket):
 	#response = requests.get(f'{RCRA_ADDRESS}/save_report', headers={'Authorization': f'Bearer {ticket}'})
-	response = requests.get(f'{RCRA_ADDRESS}/save_report')
+	SendKafkaReport("Test")
 	# The request was successful
 	if (response.status_code == 200):
 		print(True)
@@ -57,7 +57,6 @@ def rcra_1():
 	print('a')
 	rcra_1_a(ticket)
 
-rcra_1()
 
 consumer = KafkaConsumer(bootstrap_servers=BOOTSTRAP_SERVERS,auto_offset_reset='earliest', security_protocol='SASL_SSL', sasl_mechanism='OAUTHBEARER', sasl_oauth_token_provider=TokenProvider(), ssl_cafile=KAFKA_CERT)
 consumer.subscribe(['rcra-report-topic'])
