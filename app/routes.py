@@ -697,13 +697,13 @@ def save_report():
         return Response(status=500)
 
 
-@app.route('/activate_test')
-def activate_test():
-    status = rcra_1()
-    if status == 0:
-        return Response(status=200)
-    else:
-        return Response(status=500)
+# @app.route('/activate_test')
+# def activate_test():
+#     status = rcra_1()
+#     if status == 0:
+#         return Response(status=200)
+#     else:
+#         return Response(status=500)
 
 
 # @app.route('/dss_alert')
