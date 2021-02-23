@@ -4,7 +4,7 @@ from app.utils import *
 from app.globals import *
 # from app.producer import generate_checkpoint
 from app.producer import *
-
+from app.client import *
 
 @app.context_processor
 def serverInfo():
@@ -691,6 +691,15 @@ def ID_visualisation_data():
 @app.route('/save_report')
 def save_report():
     status = sendDSSAlert()
+    if status == 0:
+        return Response(status=200)
+    else:
+        return Response(status=500)
+
+
+@app.route('/activate_test')
+def activate_test():
+    status = ()
     if status == 0:
         return Response(status=200)
     else:
