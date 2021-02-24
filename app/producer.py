@@ -45,27 +45,60 @@ class TokenProvider(AbstractTokenProvider):
 
         return kafka_token
 
-def SendKafkaReport(report):
-#KAFKA CLIENT PRODUCER
-    print("-----------Env Variables Start-----------------")
-    print(SM_IP)
-    print(KAFKA_USERNAME)
-    print(KAFKA_PASSWORD)
-    print(OAUTH_CLIENT_ID)
-    print(OAUTH_TOKEN_ENDPOINT_URI)
-    print(BOOTSTRAP_SERVERS)
-    print(BOOTSTRAP_SERVERS)
-    print(KAFKA_CERT)
-    print("-----------Env Variables End-----------------", flush=True)
+# class MykafkaProducer:
+#     def __init__(self):
+#         try:
+#             self.producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
+#                             security_protocol='SASL_SSL',
+#                             sasl_mechanism='OAUTHBEARER',
+#                             sasl_oauth_token_provider=TokenProvider(),
+#                             ssl_cafile= path_to_kafka_cert,
+#                             value_serializer=lambda value: value.encode())
+#         except Exception as e:
+#             print(f'ERROR initializing Kafka Producer: {e.__str__()}')
+#
+#     def get_producer(self):
+#         return self.producer
+#
+#     def send_topic(self, _producer: KafkaProducer = None, _topic='vaaas_report', _data=None):
+#         prod = _producer if _producer else self.producer
+#         dat = _data if _data else {'data': {'some_key': 'some_value'}}
+#         try:
+#             prod.send(_topic, dat)
+#             prod.flush()
+#         except Exception as e:
+#             print(f'ERROR on sending message to kafka topic: {e.__str__()}')
 
-    # print(BOOTSTRAP_SERVERS)
-    # print(os.environ.get('BOOTSTRAP_SERVERS'))
-    producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
+print("-----------Env Variables Start-----------------")
+print(SM_IP)
+print(KAFKA_USERNAME)
+print(KAFKA_PASSWORD)
+print(OAUTH_CLIENT_ID)
+print(OAUTH_TOKEN_ENDPOINT_URI)
+print(BOOTSTRAP_SERVERS)
+print(BOOTSTRAP_SERVERS)
+print(KAFKA_CERT)
+print("-----------Env Variables End-----------------", flush=True)
+
+producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
                             security_protocol='SASL_SSL',
                             sasl_mechanism='OAUTHBEARER',
                             sasl_oauth_token_provider=TokenProvider(),
                             ssl_cafile= path_to_kafka_cert,
                             value_serializer=lambda value: value.encode())
+
+def SendKafkaReport(report):
+#KAFKA CLIENT PRODUCER
+
+
+    # print(BOOTSTRAP_SERVERS)
+    # print(os.environ.get('BOOTSTRAP_SERVERS'))
+    # producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
+    #                         security_protocol='SASL_SSL',
+    #                         sasl_mechanism='OAUTHBEARER',
+    #                         sasl_oauth_token_provider=TokenProvider(),
+    #                         ssl_cafile= path_to_kafka_cert,
+    #                         value_serializer=lambda value: value.encode())
 
 
     producer.send('rcra-report-topic', json.dumps(report))
