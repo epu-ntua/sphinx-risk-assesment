@@ -8,7 +8,7 @@ import openpyxl
 import json
 import requests
 import stix2
-
+import app.stix2_custom as stix2_custom
 # region Insert information from Excel files
 # region Insert all CAPEC records from Excel
 from app.producer import SendKafkaReport
@@ -402,92 +402,120 @@ def get_hardwareassets():
 # endregion
 
 # region Communication Functions
-def sendDSSAlert():
-    report = {
-        "type": "bundle",
-        "id": "bundle--5d0092c5-5f74-4287-9642-33f4c354e56d",
-        "objects": [
-            {
-                "type": "ipv4-addr",
-                "spec_version": "2.1",
-                "id": "ipv4-addr--",
-                "value": "10.0.255.106"
-            },
-            {
-                "type": "attack-pattern",
-                "spec_version": "2.1",
-                "id": "attack-pattern--7e33a43e-e34b-40ec-89da-36c9bb2cacd5",
-                "created": "2016-05-12T08:17:27.000Z",
-                "modified": "2016-05-12T08:17:27.000Z",
-                "name": "Spear Phishing as Practiced by Adversary X",
-                "description": "A particular form of spear phishing where the attacker claims that the target had won a contest, including personal details, to get them to click on a link.",
-                "external_references": [
-                    {
-                        "source_name": "capec",
-                        "external_id": "CAPEC-163"
-                    }
-                ]
-            },
-            {
-                "type": "relationship",
-                "spec_version": "2.1",
-                "id": "relationship--57b56a43-b8b0-4cba-9deb-34e3e1faed9e",
-                "created": "2016-05-12T08:17:27.000Z",
-                "modified": "2016-05-12T08:17:27.000Z",
-                "relationship_type": "targets",
-                "source_ref": "x-RCRA-objectives--4527e5de-8572-446a-a57a-706f15467461",
-                "target_ref": "attack-pattern--7e33a43e-e34b-40ec-89da-36c9bb2cacd5"
-            },
-            {
-                "type": "x-RCRA-objectives",
-                "id": "x-RCRA-objectives--4527e5de-8572-446a-a57a-706f15467461",
-                "created": "2016-08-01T00:00:00.000Z",
-                "modified": "2016-08-01T00:00:00.000Z",
-                "x_RCRA_scoring":
-                    {
-                        "score": "1",
-                        "impact": "high",
-                        "probability": "low"
-                    }
-            }
-        ]
+def sendDSSScore():
+    asset = stix2.IPv4Address(
+        # type="ipv4-addr",
+        value="10.0.255.106"
+    )
+    attack = stix2.AttackPattern(
+        # type="attack-pattern",
+        name="Spear Phishing as Practiced by Adversary X",
+        description="A particular form of spear phishing where the attacker claims that the target had won a contest, including personal details, to get them to click on a link.",
+    )
+
+    relationship = stix2.Relationship(
+        # type="relationship",
+        relationship_type="targets",
+        source_ref=attack.id,
+        target_ref=asset.id
+    )
+
+    scoring = {
+        "score": "1",
+        "impact": "high",
+        "probability": "low"
     }
-    SendKafkaReport(report)
+    rcra = stix2_custom.RCRAObjective(
+        x_rcra_scoring=json.dumps(scoring)
+
+    )
+
+    bundle = stix2.Bundle(asset, attack, relationship, rcra)
+    print(bundle, flush=True)
+    SendKafkaReport(str(bundle))
+
     return 0
 
+def sendDSSAlert():
+    asset = stix2.IPv4Address(
+        # type="ipv4-addr",
+        value="10.0.255.106"
+    )
+    attack = stix2.AttackPattern(
+        # type="attack-pattern",
+        name="Spear Phishing as Practiced by Adversary X",
+        description="A particular form of spear phishing where the attacker claims that the target had won a contest, including personal details, to get them to click on a link.",
+    )
+
+    relationship = stix2.Relationship(
+        # type="relationship",
+        relationship_type="targets",
+        source_ref=attack.id,
+        target_ref=asset.id
+    )
+
+    # scoring = {
+    #     "score": "1",
+    #     "impact": "high",
+    #     "probability": "low"
+    # }
+    # rcra = stix2_custom.RCRAObjective(
+    #     x_rcra_scoring=json.dumps(scoring)
+    #
+    # )
+
+    bundle = stix2.Bundle(asset, attack, relationship)
+    print(bundle, flush=True)
+    # SendKafkaReport(str(bundle))
+    return str(bundle)
+
+def make_visualisation():
+    score = {
+        "low_impact": "1",
+        "medium_impact": "2",
+        "high_impact": "2",
+        "critical_impact": "1",
+    }
+
+    vis_1 = stix2_custom.RCRACurrentThreatsVis(
+        x_rcra_threats = score
+    )
+    bundle = stix2.Bundle(vis_1)
+    print(bundle, flush=True)
+    return bundle
 # def validate_stix_2():
 #
 
 # url = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/Authentication"
-    # payload = {
-    #     'username': 'testR1',
-    #     'password': 'testR1123!@'
-    # }
-    # response = requests.request("POST", url, data=payload)
-    # selectedticket = response.json()
-    # requestedTicket = selectedticket["data"]
-    #
-    # print("---------------------------------------", flush=True)
-    # print("Login ticket is: ", requestedTicket, flush=True)
-    # print("---------------------------------------", flush=True)
-    #
-    # # Need endpoint of dss
-    # url = "http://sphinx-dss-service:5000/-"
-    # params = {
-    #     'requestedservice': 'DSS',
-    #     'requestedTicket': requestedTicket
-    # }
-    #
-    # data = jsonify({'alert-1': [
-    #     {"asset": "server 1", "threat-level": "high", "date-time": "-", "type": "--"}
-    # ],
-    # })
-    # response = requests.request("POST", url, params=params, data=data)
-    #
-    # if response.status_code != 200:
-    #     return 1
-    # else:
-    #     return 0
+# payload = {
+#     'username': 'testR1',
+#     'password': 'testR1123!@'
+# }
+# response = requests.request("POST", url, data=payload)
+# selectedticket = response.json()
+# requestedTicket = selectedticket["data"]
+#
+# print("---------------------------------------", flush=True)
+# print("Login ticket is: ", requestedTicket, flush=True)
+# print("---------------------------------------", flush=True)
+#
+# # Need endpoint of dss
+# url = "http://sphinx-dss-service:5000/-"
+# params = {
+#     'requestedservice': 'DSS',
+#     'requestedTicket': requestedTicket
+# }
+#
+# data = jsonify({'alert-1': [
+#     {"asset": "server 1", "threat-level": "high", "date-time": "-", "type": "--"}
+# ],
+# })
+# response = requests.request("POST", url, params=params, data=data)
+#
+# if response.status_code != 200:
+#     return 1
+# else:
+#     return 0
 
 # endregion
 

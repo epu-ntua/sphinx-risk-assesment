@@ -664,37 +664,30 @@ def ID_visualisation_data():
     if response.status_code == 200:
         print("Authorisation is accepted", flush=True)
         print("---------------------------------------", flush=True)
-        return jsonify({
-            "type": "bundle",
-            "id": "bundle--5d0092c5-5f74-4287-9642-33f4c354e56d",
-            "objects": [
-                {
-                    "type": "x-RCRA-current-threats",
-                    "id": "x-RCRA-current-threats--4527e5de-8572-446a-a57a-706f15467461",
-                    "created": "2016-08-01T00:00:00.000Z",
-                    "x_RCRA_threats":
-                        {
-                            "low_impact": "1",
-                            "medium_impact": "2",
-                            "high_impact": "2",
-                            "critical_impact": "1",
-                        }
-                }
-            ]
-        })
+
+        to_send = make_visualisation()
+        print(to_send, flush=True)
+        return to_send
+
     else:
         print("Authorisation is declined", flush=True)
         print("---------------------------------------", flush=True)
         return Response(status=400)
 
 
+@app.route('/dss_alert_test')
+def dss_alert_test():
+    alert = sendDSSAlert()
+    return alert
+
 @app.route('/save_report')
 def save_report():
-    status = sendDSSAlert()
+    status = sendDSSScore()
     if status == 0:
         return Response(status=200)
     else:
         return Response(status=500)
+
 
 
 # @app.route('/activate_test')
@@ -706,9 +699,7 @@ def save_report():
 #         return Response(status=500)
 
 
-# @app.route('/dss_alert')
-# def dss_alert():
-    # Need to send information to DSS.
+
 
 
 @app.route('/get_kafka_information/<topic>/')
