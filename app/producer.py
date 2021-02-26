@@ -85,7 +85,8 @@ producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
                             sasl_mechanism='OAUTHBEARER',
                             sasl_oauth_token_provider=TokenProvider(),
                             ssl_cafile= path_to_kafka_cert,
-                            value_serializer=lambda value: value.encode())
+                            value_serializer=lambda value: value.encode(),
+                            api_version = (2,5,0))
 
 def SendKafkaReport(report):
 #KAFKA CLIENT PRODUCER
