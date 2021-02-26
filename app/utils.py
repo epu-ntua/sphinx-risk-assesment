@@ -8,6 +8,7 @@ import openpyxl
 import json
 import requests
 import stix2
+import stix2validator
 import app.stix2_custom as stix2_custom
 # region Insert information from Excel files
 # region Insert all CAPEC records from Excel
@@ -432,6 +433,7 @@ def sendDSSScore():
 
     bundle = stix2.Bundle(asset, attack, relationship, rcra)
     print(bundle, flush=True)
+    stix2validator.validate_instance(bundle)
     SendKafkaReport(str(bundle))
 
     return 0
@@ -466,6 +468,7 @@ def sendDSSAlert():
 
     bundle = stix2.Bundle(asset, attack, relationship)
     print(bundle, flush=True)
+    stix2validator.validate_instance(bundle)
     # SendKafkaReport(str(bundle))
     return str(bundle)
 
@@ -481,8 +484,10 @@ def make_visualisation():
         x_rcra_threats = score
     )
     bundle = stix2.Bundle(vis_1)
+    stix2validator.validate_instance(bundle)
+
     print(bundle, flush=True)
-    return bundle
+    return str(bundle)
 # def validate_stix_2():
 #
 
