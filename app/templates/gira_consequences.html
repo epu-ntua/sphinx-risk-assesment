@@ -23,6 +23,20 @@
 {% block content %}
     <form action="/assets/{{ asset }}/" , method="post">
         <div id="gira-bar" class="row d-flex flex-grow-1 gira-bar">
+            <div class="col-2 gira-bar-nav">
+                {#                <img id="gira-background-response" src={{  url_for('static', filename='/images/gira_menu_response.jpg') }}#}
+                {#                     class="gira-menu-background">#}
+                <a class="gira-bar-nav-link  custom-white-color" href="/gira_overview/gira_threat_exposure">
+                    <h5> Threat Exposure </h5>
+                </a>
+            </div>
+            <div class="col-2 gira-bar-nav ">
+                {#                <img id="gira-background-response" src={{  url_for('static', filename='/images/gira_menu_response.jpg') }}#}
+                {#                     class="gira-menu-background">#}
+                <a class="gira-bar-nav-link  custom-white-color" href="/gira_overview/gira_threat_materialisation">
+                    <h5> Threat Materialisations </h5>
+                </a>
+            </div>
             <div class="col-1 gira-bar-nav ">
                 {#                <img id="gira-background-response" src={{  url_for('static', filename='/images/gira_menu_response.jpg') }}#}
                 {#                     class="gira-menu-background">#}
@@ -72,59 +86,29 @@
                     <input type="text" class="form-control" name="description" id="description"
                            placeholder="Description">
                 </div>
-                <div id="new_states">
+{#                 <div class="form-group row">#}
+{#                    <label for="default_effect">Default Effect of Consequence in percentage</label>#}
+{#                    <input type="text" class="form-control" name="default_effect" id="default_effect"#}
+{#                           placeholder="Default Effect of Response in percentage">#}
+{#                </div>#}
 
-                </div>
                 <hr/>
-                <button type="button" class="btn btn-primary" onclick="addState()"> Add new scope +></button>
-                <br/>
                 <button type="submit" name="new_group_flow_form" class="btn btn-primary">Submit ></button>
             </div>
             <div class="col-10 d-flex flex-wrap align-content-start custom-select-column">
+                {% for tempConsequence in consequences %}
                 <div class="card bg-light mb-3 custom-card" style="max-width: 18rem;">
-                    <div class="card-header">Modify Data</div>
+                    <div class="card-header"> Response #{{ tempResponse.id }}:
+                        {{ tempResponse.name }}
+                    </div>
                     <div class="card-body">
-                        <h4 class="card-title">Scope</h4>
-                        <p class="card-text"> Integrity</p>
-                        <a href="#" class="card-link"> Remove</a>
-                        <a href="#" class="card-link"> Edit</a>
+                        <h4 class="card-title">Description</h4>
+                        <p class="card-text"> {{ tempResponse.description }} </p>
+                        <h4 class="card-title">Probability Effect</h4>
+                        <p class="card-text"> {{ tempResponse.default_effect }} </p>
                     </div>
                 </div>
-
-                <div class="card bg-light mb-3 custom-card" style="max-width: 18rem;">
-                    <div class="card-header">Gain Privileges</div>
-                    <div class="card-body">
-                        <h4 class="card-title">Scope</h4>
-                        <p class="card-text">Confidentiality </p>
-                        <p class="card-text"> Integrity </p>
-                        <p class="card-text"> Authentication </p>
-                        <p class="card-text"> Access Control </p>
-                        <a href="#" class="card-link"> Remove</a>
-                        <a href="#" class="card-link"> Edit</a>
-                    </div>
-                </div>
-
-                <div class="card bg-light mb-3 custom-card" style="max-width: 18rem;">
-                    <div class="card-header"> Execute Unauthorized Commands</div>
-                    <div class="card-body">
-                        <h4 class="card-title">Scope</h4>
-                        <p class="card-text"> Authorisation </p>
-                        <a href="#" class="card-link"> Remove</a>
-                        <a href="#" class="card-link"> Edit</a>
-                    </div>
-                </div>
-
-                <div class="card bg-light mb-3 custom-card" style="max-width: 18rem;">
-                    <div class="card-header"> Generic Impact for CAPEC-173: Action Spoofing </div>
-                    <div class="card-body">
-                        <h4 class="card-title">Scope</h4>
-                        <p class="card-text"> Confidentiality </p>
-                        <p class="card-text"> Integrity </p>
-                        <p class="card-text"> Availability </p>
-                        <a href="#" class="card-link"> Remove</a>
-                        <a href="#" class="card-link"> Edit</a>
-                    </div>
-                </div>
+                {% endfor %}
 
             </div>
         </div>

@@ -1,3 +1,4 @@
+from flask import jsonify
 from sqlalchemy.exc import SQLAlchemyError
 from app import db
 from app.models import *
@@ -6,10 +7,14 @@ from datetime import date, datetime
 import openpyxl
 import json
 import requests
-
-
+import stix2
+import stix2validator
+import app.stix2_custom as stix2_custom
 # region Insert information from Excel files
 # region Insert all CAPEC records from Excel
+from app.producer import SendKafkaReport
+
+
 def CAPEC_excel_insertData(capecexcelpath):
     theFile = openpyxl.load_workbook(capecexcelpath)
     currentSheet = theFile.active
@@ -260,12 +265,14 @@ def get_assets():
         return []
     # db.session.query(your_table.column1.distinct()).filter_by(column2 = 'some_column2_value').all()
 
+
 def get_assetsfromrepository():
     if db.session.query().distinct(HardwareAsset.id).count() > 0:
         list_of_assets = db.session.query(HardwareAsset).distinct(HardwareAsset.id)
         return list_of_assets
     else:
         return -1
+
 
 # region get Recommended CVEs for an asset
 def get_cve_recommendations(asset_id):
@@ -322,66 +329,66 @@ def get_capec_recommendations(selected_cve_id):
 
 # One impact at a time saved
 # scopes is an array
-def save_capec_consequence(scopes, impact, notes):
-    scope_instances = []
-    for scope in scopes:
-        stored_scope = db.session.query(GiraScope).filter_by(name = scope).first()
-        if stored_scope is None:
-            new_scope = GiraScope(name=scope)
-            scope_instances.append(new_scope)
-            db.session.add(new_scope)
-        else:
-            scope_instances.append(stored_scope)
+# NEEDS TO BE REACTIVATED, IT WORKS
+# def save_capec_consequence(scopes, impact, notes):
+#     scope_instances = []
+#     for scope in scopes:
+#         stored_scope = db.session.query(GiraScope).filter_by(name=scope).first()
+#         if stored_scope is None:
+#             new_scope = GiraScope(name=scope)
+#             scope_instances.append(new_scope)
+#             db.session.add(new_scope)
+#         else:
+#             scope_instances.append(stored_scope)
+#
+#     db.session.commit()
+#     impact = impact[:-1]  # To be removed if bug that leaves ':' in the end of the asset is fixed
+#     if db.session.query(GiraImpact).filter_by(name=impact).first() is None:
+#         new_impact = GiraImpact(name=impact, note=notes)
+#         for scope_instance in scope_instances:
+#             new_impact.scopes.append(scope_instance)
+#
+#     db.session.commit()
 
 
+# def get_capec_consequences():
+#     capec_list = CommonAttackPatternEnumerationClassification.query.all()
+#     for capec_entry in capec_list:
+#         capec_consequence = capec_entry.consequences
+#         if capec_consequence is None:
+#             continue
+#
+#         temp_capec = capec_consequence[1:]
+#         temp_capec = temp_capec[:-1]
+#
+#         temp_consequence_list = temp_capec.split(':SCOPE:')
+#
+#         # temp_scope contains scope that are linked to the next impact
+#         temp_scope = []
+#         for temp_it in temp_consequence_list:
+#             if "TECHNICAL IMPACT:" in temp_it:
+#                 temp_impact = temp_it
+#                 temp_description = ""
+#                 if "NOTE:" in temp_it:
+#                     temp_impact_and_note = temp_it.split('NOTE:')
+#                     temp_impact = temp_impact_and_note[0]
+#                     temp_description = temp_impact_and_note[1]
+#
+#                 temp_scope_and_impact = temp_impact.split('TECHNICAL IMPACT:')
+#                 temp_scope.append(temp_scope_and_impact[0])
+#
+#                 save_capec_consequence(temp_scope, temp_scope_and_impact[1], temp_description)
+#                 print(temp_scope)
+#                 print(temp_scope_and_impact[1])
+#                 print(temp_description)
+#                 print("-------------------")
+#                 temp_scope = []
+#
+#             elif temp_it == "":
+#                 continue
+#             else:
+#                 temp_scope.append(temp_it)
 
-    db.session.commit()
-    impact = impact[:-1] #To be removed if bug that leaves ':' in the end of the asset is fixed
-    if db.session.query(GiraImpact).filter_by(name = impact).first() is None:
-        new_impact = GiraImpact(name=impact, note=notes)
-        for scope_instance in scope_instances:
-            new_impact.scopes.append(scope_instance)
-
-    db.session.commit()
-
-
-def get_capec_consequences():
-    capec_list = CommonAttackPatternEnumerationClassification.query.all()
-    for capec_entry in capec_list:
-        capec_consequence = capec_entry.consequences
-        if capec_consequence is None:
-            continue
-
-        temp_capec = capec_consequence[1:]
-        temp_capec = temp_capec[:-1]
-
-        temp_consequence_list = temp_capec.split(':SCOPE:')
-
-        # temp_scope contains scope that are linked to the next impact
-        temp_scope = []
-        for temp_it in temp_consequence_list:
-            if "TECHNICAL IMPACT:" in temp_it:
-                temp_impact = temp_it
-                temp_description = ""
-                if "NOTE:" in temp_it:
-                    temp_impact_and_note = temp_it.split('NOTE:')
-                    temp_impact = temp_impact_and_note[0]
-                    temp_description = temp_impact_and_note[1]
-
-                temp_scope_and_impact = temp_impact.split('TECHNICAL IMPACT:')
-                temp_scope.append(temp_scope_and_impact[0])
-
-                save_capec_consequence(temp_scope, temp_scope_and_impact[1], temp_description)
-                print(temp_scope)
-                print(temp_scope_and_impact[1])
-                print(temp_description)
-                print("-------------------")
-                temp_scope = []
-
-            elif temp_it == "":
-                continue
-            else:
-                temp_scope.append(temp_it)
 
 def get_hardwareassets():
     if db.session.query(HardwareAsset).distinct(
@@ -393,10 +400,130 @@ def get_hardwareassets():
         return []
 
 
+# endregion
 
+# region Communication Functions
+def sendDSSScore():
+    asset = stix2.IPv4Address(
+        # type="ipv4-addr",
+        value="10.0.255.106"
+    )
+    attack = stix2.AttackPattern(
+        # type="attack-pattern",
+        name="Spear Phishing as Practiced by Adversary X",
+        description="A particular form of spear phishing where the attacker claims that the target had won a contest, including personal details, to get them to click on a link.",
+    )
 
+    relationship = stix2.Relationship(
+        # type="relationship",
+        relationship_type="targets",
+        source_ref=attack.id,
+        target_ref=asset.id
+    )
+
+    scoring = {
+        "score": "1",
+        "impact": "high",
+        "probability": "low"
+    }
+    rcra = stix2_custom.RCRAObjective(
+        x_rcra_scoring=json.dumps(scoring)
+
+    )
+
+    bundle = stix2.Bundle(asset, attack, relationship, rcra)
+    print(bundle, flush=True)
+    stix2validator.validate_instance(bundle)
+    SendKafkaReport(str(bundle))
+
+    return 0
+
+def sendDSSAlert():
+    asset = stix2.IPv4Address(
+        # type="ipv4-addr",
+        value="10.0.255.106"
+    )
+    attack = stix2.AttackPattern(
+        # type="attack-pattern",
+        name="Spear Phishing as Practiced by Adversary X",
+        description="A particular form of spear phishing where the attacker claims that the target had won a contest, including personal details, to get them to click on a link.",
+    )
+
+    relationship = stix2.Relationship(
+        # type="relationship",
+        relationship_type="targets",
+        source_ref=attack.id,
+        target_ref=asset.id
+    )
+
+    # scoring = {
+    #     "score": "1",
+    #     "impact": "high",
+    #     "probability": "low"
+    # }
+    # rcra = stix2_custom.RCRAObjective(
+    #     x_rcra_scoring=json.dumps(scoring)
+    #
+    # )
+
+    bundle = stix2.Bundle(asset, attack, relationship)
+    print(bundle, flush=True)
+    stix2validator.validate_instance(bundle)
+    # SendKafkaReport(str(bundle))
+    return str(bundle)
+
+def make_visualisation():
+    score = {
+        "low_impact": "1",
+        "medium_impact": "2",
+        "high_impact": "2",
+        "critical_impact": "1",
+    }
+
+    vis_1 = stix2_custom.RCRACurrentThreatsVis(
+        x_rcra_threats = score
+    )
+    bundle = stix2.Bundle(vis_1)
+    stix2validator.validate_instance(bundle)
+
+    print(bundle, flush=True)
+    return str(bundle)
+# def validate_stix_2():
+#
+
+# url = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/Authentication"
+# payload = {
+#     'username': 'testR1',
+#     'password': 'testR1123!@'
+# }
+# response = requests.request("POST", url, data=payload)
+# selectedticket = response.json()
+# requestedTicket = selectedticket["data"]
+#
+# print("---------------------------------------", flush=True)
+# print("Login ticket is: ", requestedTicket, flush=True)
+# print("---------------------------------------", flush=True)
+#
+# # Need endpoint of dss
+# url = "http://sphinx-dss-service:5000/-"
+# params = {
+#     'requestedservice': 'DSS',
+#     'requestedTicket': requestedTicket
+# }
+#
+# data = jsonify({'alert-1': [
+#     {"asset": "server 1", "threat-level": "high", "date-time": "-", "type": "--"}
+# ],
+# })
+# response = requests.request("POST", url, params=params, data=data)
+#
+# if response.status_code != 200:
+#     return 1
+# else:
+#     return 0
 
 # endregion
+
 
 # region Test area
 # db.create_all()

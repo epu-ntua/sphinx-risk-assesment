@@ -137,6 +137,10 @@ html, body {
     overflow: hidden;
 }
 
+.gira-bar-nav-disabled {
+    background-color: #999999;
+}
+
 .gira-bar-nav-link {
     z-index: 1;
     position: relative;
