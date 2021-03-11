@@ -393,6 +393,9 @@ def get_hardwareassets():
         return []
 
 
+
+
+
 # endregion
 
 # region Test area
