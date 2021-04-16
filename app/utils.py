@@ -266,12 +266,13 @@ def get_assets():
     # db.session.query(your_table.column1.distinct()).filter_by(column2 = 'some_column2_value').all()
 
 
-def get_assetsfromrepository():
-    if db.session.query().distinct(HardwareAsset.id).count() > 0:
-        list_of_assets = db.session.query(HardwareAsset).distinct(HardwareAsset.id)
-        return list_of_assets
-    else:
-        return -1
+#
+# def get_assetsfromrepository():
+#     if db.session.query().distinct(HardwareAsset.id).count() > 0:
+#         list_of_assets = db.session.query(HardwareAsset).distinct(HardwareAsset.id)
+#         return list_of_assets
+#     else:
+#         return -1
 
 
 # region get Recommended CVEs for an asset
@@ -390,14 +391,14 @@ def get_capec_recommendations(selected_cve_id):
 #                 temp_scope.append(temp_it)
 
 
-def get_hardwareassets():
-    if db.session.query(HardwareAsset).distinct(
-            HardwareAsset.id).count() > 0:
-        list_of_hardwareassets = db.session.query(HardwareAsset).distinct(
-            HardwareAsset.id)
-        return list_of_hardwareassets
-    else:
-        return []
+# def get_hardwareassets():
+#     if db.session.query(HardwareAsset).distinct(
+#             HardwareAsset.id).count() > 0:
+#         list_of_hardwareassets = db.session.query(HardwareAsset).distinct(
+#             HardwareAsset.id)
+#         return list_of_hardwareassets
+#     else:
+#         return []
 
 
 # endregion
@@ -438,7 +439,8 @@ def sendDSSScore():
 
     return 0
 
-def sendDSSAlert():
+
+def send_dss_alert():
     asset = stix2.IPv4Address(
         # type="ipv4-addr",
         value="10.0.255.106"
@@ -472,6 +474,7 @@ def sendDSSAlert():
     # SendKafkaReport(str(bundle))
     return str(bundle)
 
+
 def make_visualisation():
     score = {
         "low_impact": "1",
@@ -481,15 +484,43 @@ def make_visualisation():
     }
 
     vis_1 = stix2_custom.RCRACurrentThreatsVis(
-        x_rcra_threats = score
+        x_rcra_threats=score
     )
     bundle = stix2.Bundle(vis_1)
     stix2validator.validate_instance(bundle)
 
-    print(bundle, flush=True)
+    # print(bundle, flush=True)
     return str(bundle)
-# def validate_stix_2():
-#
+
+
+def send_asset_id_alert():
+
+    return 1
+
+
+def convert_database_items_to_json_table(items):
+    if items:
+        columns = items[0].__table__.columns._data.keys()
+        json_ready = []
+        temp_json = {}
+        # print(columns, flush=True)
+        for item in items:
+            # print(item)
+            for column in columns:
+                temp_json[column] = getattr(item, column)
+            json_ready.append(temp_json.copy())
+            # print(json_ready)
+
+        return json_ready
+    else:
+        return []
+
+
+# def repo_check_dtm_asset_exits_and_add(dtm_object, assets):
+#     """This function uses a single object of the DTM and the retrieved database assets
+#     as input and will check if the described asset exists in the database"""
+#     if dtm_object in assets:
+
 
 # url = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/Authentication"
 # payload = {

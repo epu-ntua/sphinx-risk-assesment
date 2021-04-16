@@ -80,31 +80,32 @@ print(BOOTSTRAP_SERVERS)
 print(KAFKA_CERT)
 print("-----------Env Variables End-----------------", flush=True)
 
-producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
-                            security_protocol='SASL_SSL',
-                            sasl_mechanism='OAUTHBEARER',
-                            sasl_oauth_token_provider=TokenProvider(),
-                            ssl_cafile= path_to_kafka_cert,
-                            value_serializer=lambda value: value.encode(),
-                            api_version = (2,5,0))
+# producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
+#                             security_protocol='SASL_SSL',
+#                             sasl_mechanism='OAUTHBEARER',
+#                             sasl_oauth_token_provider=TokenProvider(),
+#                             ssl_cafile= path_to_kafka_cert,
+#                             value_serializer=lambda value: value.encode(),
+#                             api_version = (2,5,0))
 
 def SendKafkaReport(report):
+    return ;
 #KAFKA CLIENT PRODUCER
 
 
     # print(BOOTSTRAP_SERVERS)
     # print(os.environ.get('BOOTSTRAP_SERVERS'))
-    # producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
-    #                         security_protocol='SASL_SSL',
-    #                         sasl_mechanism='OAUTHBEARER',
-    #                         sasl_oauth_token_provider=TokenProvider(),
-    #                         ssl_cafile= path_to_kafka_cert,
-    #                         value_serializer=lambda value: value.encode())
-
-
-    producer.send('rcra-report-topic', json.dumps(report))
-    result = producer.flush()
-    print(result, flush =True)
+    # # producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
+    # #                         security_protocol='SASL_SSL',
+    # #                         sasl_mechanism='OAUTHBEARER',
+    # #                         sasl_oauth_token_provider=TokenProvider(),
+    # #                         ssl_cafile= path_to_kafka_cert,
+    # #                         value_serializer=lambda value: value.encode())
+    #
+    #
+    # producer.send('rcra-report-topic', json.dumps(report))
+    # result = producer.flush()
+    # print(result, flush =True)
 
 # GENERATE UUID
 def generate_uuid():

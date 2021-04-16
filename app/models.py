@@ -1,5 +1,5 @@
 from app import db
-
+# from app.mixins import ModelMixin
 
 class VulnerabilityReport(db.Model):
     __tablename__ = 'vulnerability_report'
@@ -119,6 +119,7 @@ class CommonAttackPatternEnumerationClassification(db.Model):
         return '<CAPEC {}>'.format(self.capecId)
 
 
+# ---------------------------------------------------------------------------------------------------------------------
 class VulnerabilitiesWeaknessLink(db.Model):
     __tablename__ = 'vulnerabilities_weakness_link'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -130,163 +131,180 @@ class VulnerabilitiesWeaknessLink(db.Model):
         return '<cVecWe {}>'.format(self.id)
 
 
-class HardwareAsset(db.Model):
-    __tablename__ = 'hardware_asset'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    assetID = db.Column(db.String())
-    assetIp = db.Column(db.String())
-    date = db.Column(db.DateTime)
-    assetName = db.Column(db.String())
-    assetModel = db.Column(db.String())
-    assetSerialNumber = db.Column(db.String())
-    assetRecoveryKey = db.Column(db.String())
-    assetVendor = db.Column(db.String())
-    assetDomain = db.Column(db.String())
-    assetWarranty = db.Column(db.String())
-    assetWarrantyExpDate = db.Column(db.DateTime())
-    assetStatus = db.Column(db.Integer, db.ForeignKey('asset_hardware_status.AssetHardwareStatusID'))
-    assetType = db.Column(db.Integer, db.ForeignKey('asset_hardware_type.AssetHardwareTypeID'))
-    assetPurchasePrice = db.Column(db.Float())
-    assetPurchaseDate = db.Column(db.DateTime)
-    assetCreatedBy = db.Column(db.String())
-    assetCreatedDate = db.Column(db.DateTime)
-    assetAssignedTo = db.Column(db.String())
-    assetManagedBy = db.Column(db.String())
-    assetOwner = db.Column(db.String())
-    assetUsageType = db.Column(db.String())  # --add hoc or permanent
-    assetLocation = db.Column(db.String())
-    assetClassification = db.Column(db.Integer, db.ForeignKey('asset_classification.AssetClassificationID'))
-    assetInformationProcessed = db.Column(db.String())  # --Personal or Business
-
-    def __repr__(self):
-        return '<HardwareAsset {}>'.format(self.id)
-
-
-class AssetHardwareStatus(db.Model):
-    __tablename__ = 'asset_hardware_status'
-    AssetHardwareStatusID = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    AssetHardwareStatusDescr = db.Column(db.String())
-    AssetHardwareStatusInsertedDate = db.Column(db.DateTime)
-
-    def __repr__(self):
-        return '<AssetHardwareStatus {}>'.format(self.AssetHardwareStatusID)
-
-
-class AssetHardwareType(db.Model):
-    __tablename__ = 'asset_hardware_type'
-    AssetHardwareTypeID = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    AssetHardwareTypeDescr = db.Column(db.String())
-    AssetHardwareTypeInsertedDate = db.Column(db.DateTime)
-
-    def __repr__(self):
-        return '<AssetHardwareType {}>'.format(self.AssetHardwareTypeID)
-
-
-class AssetClassification(db.Model):
-    __tablename__ = 'asset_classification'
-    AssetClassificationID = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    AssetClassificationDescr = db.Column(db.String())
-    AssetClassificationInsertedDate = db.Column(db.DateTime)
-
-    def __repr__(self):
-        return '<AssetClassification {}>'.format(self.AssetClassificationID)
-
-
-class SoftwareAsset(db.Model):
-    __tablename__ = 'software_asset'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    softwareName = db.Column(db.String())
-    softwareManufacturer = db.Column(db.String())
-    softwareCategory = db.Column(db.String())
-    softwareType = db.Column(db.Integer, db.ForeignKey('asset_software_type.AssetSoftwareTypeID'))
-    softwarePurchaseDate = db.Column(db.DateTime)
-    softwareInstalled = db.Column(db.String())
-
-    def __repr__(self):
-        return '<SoftwareAsset {}>'.format(self.id)
-
-
-class AssetSoftwareType(db.Model):
-    __tablename__ = 'asset_software_type'
-    AssetSoftwareTypeID = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    AssetSoftwareTypeshortDescr = db.Column(db.String())
-    AssetSoftwareTypeDescr = db.Column(db.String())
-    AssetSoftwareTypeInsertedDate = db.Column(db.DateTime)
-
-    def __repr__(self):
-        return '<AssetSoftwareType {}>'.format(self.AssetSoftwareTypeID)
-
-
-class RiskAssessment(db.Model):
-    __tablename__ = 'risk_assessment'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    asset_id = db.Column(db.Integer, db.ForeignKey('hardware_asset.id'), nullable=False)
-    date = db.Column(db.DateTime)
-
-    def __repr__(self):
-        return '<Risk_Assessment {}>'.format(self.id)
-
-
-class RiskVulnerabilityThreat(db.Model):
-    __tablename__ = 'risk_vulnerability_threat'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    risk_id = db.Column(db.Integer, db.ForeignKey('risk_assessment.id'), nullable=False)
-    CVE_id = db.Column(db.Integer, db.ForeignKey('common_vulnerabilities_and_exposures.id'), nullable=False)
-    CAPEC_id = db.Column(db.Integer, db.ForeignKey('common_attack_pattern_enumeration_classification.id'),
-                         nullable=False)
-    date = db.Column(db.DateTime)
-
-    def __repr__(self):
-        return '<Risk_Vulnerability_Threat {}>'.format(self.id)
-
-
-# region Static model Models
-
-# Model for Threat Exposure Node
-
-
-# region Many to Many Supportive Tables
+# class HardwareAsset(db.Model):
+#     __tablename__ = 'hardware_asset'
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     assetID = db.Column(db.String())
+#     assetIp = db.Column(db.String())
+#     date = db.Column(db.DateTime)
+#     assetName = db.Column(db.String())
+#     assetModel = db.Column(db.String())
+#     assetSerialNumber = db.Column(db.String())
+#     assetRecoveryKey = db.Column(db.String())
+#     assetVendor = db.Column(db.String())
+#     assetDomain = db.Column(db.String())
+#     assetWarranty = db.Column(db.String())
+#     assetWarrantyExpDate = db.Column(db.DateTime())
+#     assetStatus = db.Column(db.Integer, db.ForeignKey('asset_hardware_status.AssetHardwareStatusID'))
+#     assetType = db.Column(db.Integer, db.ForeignKey('asset_hardware_type.AssetHardwareTypeID'))
+#     assetPurchasePrice = db.Column(db.Float())
+#     assetPurchaseDate = db.Column(db.DateTime)
+#     assetCreatedBy = db.Column(db.String())
+#     assetCreatedDate = db.Column(db.DateTime)
+#     assetAssignedTo = db.Column(db.String())
+#     assetManagedBy = db.Column(db.String())
+#     assetOwner = db.Column(db.String())
+#     assetUsageType = db.Column(db.String())  # --add hoc or permanent
+#     assetLocation = db.Column(db.String())
+#     assetClassification = db.Column(db.Integer, db.ForeignKey('asset_classification.AssetClassificationID'))
+#     assetInformationProcessed = db.Column(db.String())  # --Personal or Business
 #
-# association_model_threat_materialisation_instance_model_incident_response_table = db.Table(
-#     'association_model_threat_materialisation_instance_model_incident_response_table', db.Model.metadata,
-#     db.Column('model_incident_response_id', db.Integer, db.ForeignKey('model_incident_response.id'), primary_key=True),
-#     db.Column('model_threat_materialisation_instance_id', db.Integer,
-#               db.ForeignKey('model_threat_materialisation_instance.id'), primary_key=True)
-# )
-
-# association_model_consequence_instance_model_incident_response_table = db.Table(
-#     'association_model_consequence_instance_model_incident_response_table', db.Model.metadata,
-#     db.Column('model_incident_response_id', db.Integer, db.ForeignKey('model_incident_response.id'), primary_key=True),
-#     db.Column('model_consequence_instance_id', db.Integer,
-#               db.ForeignKey('model_consequence_instance.id'), primary_key=True)
-# )
+#     def __repr__(self):
+#         return '<HardwareAsset {}>'.format(self.id)
 #
-# association_model_threat_materialisation_instance_model_threat_materialisation = db.Table(
-#     'association_model_threat_materialisation_instance_model_threat_materialisation', db.Model.metadata,
-#     db.Column('model_threat_materialisation_id', db.Integer, db.ForeignKey('model_threat_materialisation.id'),
-#               primary_key=True),
-#     db.Column('model_threat_materialisation_instance_id', db.Integer,
-#               db.ForeignKey('model_threat_materialisation_instance.id'), primary_key=True)
-# )
-
-# association_model_consequence_instance_model_threat_materialisation = db.Table(
-#     'association_model_consequence_instance_model_threat_materialisation', db.Model.metadata,
-#     db.Column('model_threat_materialisation_id', db.Integer, db.ForeignKey('model_threat_materialisation.id'),
-#               primary_key=True),
-#     db.Column('model_consequence_instance_id', db.Integer,
-#               db.ForeignKey('model_consequence_instance.id'), primary_key=True)
-# )
 #
-# association_model_threat_materialisation_model_consequence = db.Table(
-#     'association_model_threat_materialisation_model_consequence', db.Model.metadata,
-#     db.Column('model_threat_materialisation_id', db.Integer, db.ForeignKey('model_threat_materialisation.id'),
-#               primary_key=True),
-#     db.Column('model_consequence_id', db.Integer,
-#               db.ForeignKey('model_consequence.id'), primary_key=True)
-# )
+# class AssetHardwareStatus(db.Model):
+#     __tablename__ = 'asset_hardware_status'
+#     AssetHardwareStatusID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     AssetHardwareStatusDescr = db.Column(db.String())
+#     AssetHardwareStatusInsertedDate = db.Column(db.DateTime)
+#
+#     def __repr__(self):
+#         return '<AssetHardwareStatus {}>'.format(self.AssetHardwareStatusID)
+#
+#
+# class AssetHardwareType(db.Model):
+#     __tablename__ = 'asset_hardware_type'
+#     AssetHardwareTypeID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     AssetHardwareTypeDescr = db.Column(db.String())
+#     AssetHardwareTypeInsertedDate = db.Column(db.DateTime)
+#
+#     def __repr__(self):
+#         return '<AssetHardwareType {}>'.format(self.AssetHardwareTypeID)
+#
+#
+# class AssetClassification(db.Model):
+#     __tablename__ = 'asset_classification'
+#     AssetClassificationID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     AssetClassificationDescr = db.Column(db.String())
+#     AssetClassificationInsertedDate = db.Column(db.DateTime)
+#
+#     def __repr__(self):
+#         return '<AssetClassification {}>'.format(self.AssetClassificationID)
+#
+#
+# class SoftwareAsset(db.Model):
+#     __tablename__ = 'software_asset'
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     softwareName = db.Column(db.String())
+#     softwareManufacturer = db.Column(db.String())
+#     softwareCategory = db.Column(db.String())
+#     softwareType = db.Column(db.Integer, db.ForeignKey('asset_software_type.AssetSoftwareTypeID'))
+#     softwarePurchaseDate = db.Column(db.DateTime)
+#     softwareInstalled = db.Column(db.String())
+#
+#     def __repr__(self):
+#         return '<SoftwareAsset {}>'.format(self.id)
+#
+#
+# class AssetSoftwareType(db.Model):
+#     __tablename__ = 'asset_software_type'
+#     AssetSoftwareTypeID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     AssetSoftwareTypeshortDescr = db.Column(db.String())
+#     AssetSoftwareTypeDescr = db.Column(db.String())
+#     AssetSoftwareTypeInsertedDate = db.Column(db.DateTime)
+#
+#     def __repr__(self):
+#         return '<AssetSoftwareType {}>'.format(self.AssetSoftwareTypeID)
+
+# ---------------------------------------------------------------------------------------------------------------------
 
 
-# endregion
+# class RiskAssessment(db.Model):
+#     __tablename__ = 'risk_assessment'
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     # asset_id = db.Column(db.Integer, db.ForeignKey('hardware_asset.id'), nullable=False)
+#     date = db.Column(db.DateTime)
+#
+#     def __repr__(self):
+#         return '<Risk_Assessment {}>'.format(self.id)
+
+
+# class RiskVulnerabilityThreat(db.Model):
+#     __tablename__ = 'risk_vulnerability_threat'
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     risk_id = db.Column(db.Integer, db.ForeignKey('risk_assessment.id'), nullable=False)
+#     CVE_id = db.Column(db.Integer, db.ForeignKey('common_vulnerabilities_and_exposures.id'), nullable=False)
+#     CAPEC_id = db.Column(db.Integer, db.ForeignKey('common_attack_pattern_enumeration_classification.id'),
+#                          nullable=False)
+#     date = db.Column(db.DateTime)
+#
+#     def __repr__(self):
+#         return '<Risk_Vulnerability_Threat {}>'.format(self.id)
+
+
+class RepoThreat(db.Model):
+    __tablename__ = 'repo_threat'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String)
+    CAPEC_id = db.Column(db.Integer, db.ForeignKey('common_attack_pattern_enumeration_classification.id'))
+
+
+class RepoVulnerability(db.Model):
+    __tablename__ = 'repo_vulnerability'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String)
+    CVE_id = db.Column(db.Integer, db.ForeignKey('common_vulnerabilities_and_exposures.id'))
+
+
+class RepoAsset(db.Model):
+    __tablename__ = 'repo_asset'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String)
+    description = db.Column(db.String)
+    owner = db.Column(db.Integer, db.ForeignKey('repo_actor.id'))
+    location = db.Column(db.String)
+    verified = db.Column(db.Boolean)
+    verified_by = db.Column(db.Integer, db.ForeignKey('repo_actor.id'))
+    mac_address = db.Column(db.String)
+    has_static_ip = db.Column(db.Boolean)
+    ip = db.Column(db.String)
+    net_group_fk = db.Column(db.Integer, db.ForeignKey('repo_net_group.id'))
+    value = db.Column(db.Integer)
+    loss_of_revenue = db.Column(db.Integer)
+    additional_expenses = db.Column(db.Integer)
+    regulatory_legal = db.Column(db.Integer)
+    customer_service = db.Column(db.Integer)
+    goodwill = db.Column(db.Integer)
+    last_touch_date = db.Column(db.DateTime)
+    type_fk = db.Column(db.Integer, db.ForeignKey('repo_assets_type.id'))
+
+
+class RepoAssetsType(db.Model):
+    __tablename__ = 'repo_assets_type'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String)
+
+
+class RepoActor(db.Model):
+    __tablename__ = 'repo_actor'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String)
+
+    # def keys(self):
+    #     return super().keys()
+
+
+class RepoNetGroup(db.Model):
+    __tablename__ = 'repo_net_group'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String)
+
+
+class RepoService(db.Model):
+    __tablename__ = 'repo_service'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String)
 
 
 class ModelThreatExposure(db.Model):
@@ -306,7 +324,7 @@ class ModelIncidentResponse(db.Model):
     description = db.Column(db.String, nullable=True)
     default_effect = db.Column(db.Integer, nullable=True)
 
-    instances = db.relationship("ModelThreatMaterialisationAssociation", back_populates="incident_response")
+    instances = db.relationship("ModelIncidentResponseAssociation", back_populates="incident_response")
 
 
 class ModelThreatMaterialisation(db.Model):
@@ -325,7 +343,7 @@ class ModelConsequence(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, nullable=False)
     description = db.Column(db.String, nullable=True)
-    instances = db.relationship("ModelImpactAssociation", back_populates="impact")
+    instances = db.relationship("ModelConsequenceAssociation", back_populates="consequence")
 
     # TO be enabled when asset repository is finished
     # asset = db.Column(db.Integer, db.ForeignKey())
@@ -367,7 +385,7 @@ class ModelImpact(db.Model):
     __tablename__ = 'model_impact'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, nullable=False)
-    instances = db.relationship("ModelConsequenceAssociation", back_populates="consequence")
+    instances = db.relationship("ModelImpactAssociation", back_populates="impact")
 
 
 class ModelImpactStatus(db.Model):
@@ -415,10 +433,12 @@ class ModelInstance(db.Model):
     impacts = db.relationship("ModelImpactAssociation", back_populates="instance")
     objectives = db.relationship("ModelObjectiveAssociation", back_populates="instance")
 
+
 class ModelThreatMaterialisationAssociation(db.Model):
     __tablename__ = "model_threat_materialisation_association"
     instance_id = db.Column(db.Integer, db.ForeignKey('model_instance.id'), primary_key=True)
-    threat_materialisation_id = db.Column(db.Integer, db.ForeignKey('model_threat_materialisation.id'), primary_key=True)
+    threat_materialisation_id = db.Column(db.Integer, db.ForeignKey('model_threat_materialisation.id'),
+                                          primary_key=True)
     instance = db.relationship("ModelInstance", back_populates="threat_materialisations")
     threat_materialisation = db.relationship("ModelThreatMaterialisation", back_populates="instances")
 
@@ -443,7 +463,7 @@ class ModelImpactAssociation(db.Model):
     __tablename__ = "model_impact_association"
     instance_id = db.Column(db.Integer, db.ForeignKey('model_instance.id'), primary_key=True)
     impact_id = db.Column(db.Integer, db.ForeignKey('model_impact.id'), primary_key=True)
-    instance = db.relationship("ModelInstance", back_populates="consequences")
+    instance = db.relationship("ModelInstance", back_populates="impacts")
     impact = db.relationship("ModelImpact", back_populates="instances")
 
 
@@ -453,6 +473,7 @@ class ModelObjectiveAssociation(db.Model):
     objective_id = db.Column(db.Integer, db.ForeignKey('model_objective.id'), primary_key=True)
     instance = db.relationship("ModelInstance", back_populates="objectives")
     objective = db.relationship("ModelObjective", back_populates="instances")
+
 
 class ModelThreatMaterialisationInstanceEntry(db.Model):
     __tablename__ = "model_threat_materialisation_instance_entry"
@@ -522,6 +543,7 @@ class ModelConsequenceInstanceEntry(db.Model):
     prob_likelihood_other = db.Column(db.Integer, nullable=False)
     prob_posterior = db.Column(db.Integer, nullable=False)
 
+
 class ModelImpactInstanceEntry(db.Model):
     __tablename__ = "model_impact_instance_entry"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -540,7 +562,7 @@ class ModelImpactInstanceEntry(db.Model):
     # Specific consequence (option) in table
     consequence_status = db.Column(db.Integer, db.ForeignKey('model_consequence_status.id'), nullable=False)
 
-    #Specific impact
+    # Specific impact
     impact = db.Column(db.Integer)
 
     # Specific impact (option) in table
@@ -560,10 +582,11 @@ class ModelImpactInstanceEntry(db.Model):
                                                ModelImpactAssociation.impact_id])
                       , {})
 
-
     prob_likelihood = db.Column(db.Integer, nullable=False)
     prob_likelihood_other = db.Column(db.Integer, nullable=False)
     prob_posterior = db.Column(db.Integer, nullable=False)
+
+
 # endregion
 
 class ModelObjectiveInstanceEntry(db.Model):

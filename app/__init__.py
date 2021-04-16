@@ -5,7 +5,10 @@ from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from app.api import *
+from flask_bootstrap import Bootstrap
 app = Flask(__name__)
+Bootstrap(app)
+
 app.config.from_object(Config)
 # api = Api(app)
 

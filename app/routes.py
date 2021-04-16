@@ -1,10 +1,13 @@
 from app import app
-from flask import render_template, request, redirect, jsonify, Response
+from flask import render_template, request, redirect, jsonify, Response, flash
 from app.utils import *
 from app.globals import *
 # from app.producer import generate_checkpoint
 from app.producer import *
 from app.client import *
+import json
+from app.forms import *
+
 
 @app.context_processor
 def serverInfo():
@@ -93,17 +96,17 @@ def gira_assess():
 
 @app.route('/gira_assess/gira_assess_exposure/', methods=['GET'])
 def gira_assess_exposure():
-    exposure_instances = GiraThreatExposure.query.all()
+    exposure_instances = ModelThreatExposure.query.all()
     return render_template('gira_assess_exposure.html', exposure_instances=exposure_instances)
 
 
 @app.route('/gira_assess/<exposure_id>/gira_assess_response/', methods=['GET', 'POST'])
 def gira_assess_response(exposure_id):
     if request.method == 'POST':
-        materialisation_instance = GiraThreatMaterialisationInstance.query.filter_by(instance_id=exposure_id).first()
+        materialisation_instance = ModelThreatMaterialisation.query.filter_by(instance_id=exposure_id).first()
 
-        instance_responses = GiraIncidentResponse.query.filter(
-            GiraIncidentResponse.materialisation_instance.any(id=exposure_id)).all()
+        instance_responses = ModelIncidentResponse.query.filter(
+            ModelIncidentResponse.materialisation_instance.any(id=exposure_id)).all()
         # Sent Data are a dict with one entry containing the exposureIdToSend and the rest contain
         # The ids of the responses to be added to the keys and values dictate what to do [nothing, delete, add]
         for sent in request.form:
@@ -114,21 +117,21 @@ def gira_assess_response(exposure_id):
             if request.form[sent] == "nothing":
                 continue
             elif request.form[sent] == "add":
-                to_add_response = GiraIncidentResponse.query.filter_by(id=sent).first()
+                to_add_response = ModelIncidentResponse.query.filter_by(id=sent).first()
                 materialisation_instance.incident_responses.append(to_add_response)
             elif request.form[sent] == "delete":
-                to_remove_response = GiraIncidentResponse.query.filter_by(id=sent).first()
+                to_remove_response = ModelIncidentResponse.query.filter_by(id=sent).first()
                 materialisation_instance.incident_responses.remove(to_remove_response)
 
         db.session.commit()
 
         return redirect('/gira_assess/' + exposure_id + '/gira_assess_materialisation/')
     else:
-        selected_exposure = GiraThreatExposure.query.filter_by(id=exposure_id).first()
-        all_responses = GiraIncidentResponse.query.all()
+        selected_exposure = ModelThreatExposure.query.filter_by(id=exposure_id).first()
+        all_responses = ModelIncidentResponse.query.all()
 
-        instance_responses = GiraIncidentResponse.query.filter(
-            GiraIncidentResponse.materialisation_instance.any(id=exposure_id)).all()
+        instance_responses = ModelIncidentResponse.query.filter(
+            ModelIncidentResponse.materialisation_instance.any(id=exposure_id)).all()
 
         return render_template('gira_assess_response.html', all_responses=all_responses,
                                selected_exposure=selected_exposure, instance_responses=instance_responses)
@@ -148,13 +151,13 @@ def gira_assess_materialisation(exposure_id):
         else:
             return Response(401)
 
-        existing_entry = GiraThreatMaterialisationInstanceEntry.query.filter_by(table_id=int(request.form["table_id"]),
-                                                                                responses_id=int(
-                                                                                    request.form["responses_id"]),
-                                                                                materialisations_id=int(request.form[
-                                                                                                            "materialisations_id"]),
-                                                                                is_threat_materialising=is_threat_materialising_bool
-                                                                                ).first()
+        existing_entry = ModelThreatMaterialisationInstanceEntry.query.filter_by(table_id=int(request.form["table_id"]),
+                                                                                 responses_id=int(
+                                                                                     request.form["responses_id"]),
+                                                                                 materialisations_id=int(request.form[
+                                                                                                             "materialisations_id"]),
+                                                                                 is_threat_materialising=is_threat_materialising_bool
+                                                                                 ).first()
         if existing_entry:
             existing_entry.prob_threat_materialising = request.form["prob_threat_materialising"]
             existing_entry.prob_likelihood = request.form["prob_likelihood"]
@@ -169,17 +172,17 @@ def gira_assess_materialisation(exposure_id):
             #     print(entry)
 
             # print(is_threat_materialising_bool)
-            to_add_entry = GiraThreatMaterialisationInstanceEntry(table_id=int(request.form["table_id"]),
-                                                                  responses_id=int(request.form["responses_id"]),
-                                                                  materialisations_id=int(request.form[
-                                                                                              "materialisations_id"]),
-                                                                  prob_threat_materialising=int(request.form[
-                                                                                                    "prob_threat_materialising"]),
-                                                                  prob_likelihood=int(request.form["prob_likelihood"]),
-                                                                  prob_likelihood_other=int(request.form[
-                                                                                                "prob_likelihood_other"]),
-                                                                  prob_posterior=int(request.form["prob_posterior"]),
-                                                                  is_threat_materialising=is_threat_materialising_bool)
+            to_add_entry = ModelThreatMaterialisationInstanceEntry(table_id=int(request.form["table_id"]),
+                                                                   responses_id=int(request.form["responses_id"]),
+                                                                   materialisations_id=int(request.form[
+                                                                                               "materialisations_id"]),
+                                                                   prob_threat_materialising=int(request.form[
+                                                                                                     "prob_threat_materialising"]),
+                                                                   prob_likelihood=int(request.form["prob_likelihood"]),
+                                                                   prob_likelihood_other=int(request.form[
+                                                                                                 "prob_likelihood_other"]),
+                                                                   prob_posterior=int(request.form["prob_posterior"]),
+                                                                   is_threat_materialising=is_threat_materialising_bool)
 
             db.session.add(to_add_entry)
         db.session.commit()
@@ -187,18 +190,18 @@ def gira_assess_materialisation(exposure_id):
     else:
         # NOT USING THE CORRECT KEYS TO SEARCH FOR THE RESPONSES AND SUCH
 
-        selected_exposure = GiraThreatExposure.query.filter_by(id=exposure_id).first()
+        selected_exposure = ModelThreatExposure.query.filter_by(id=exposure_id).first()
 
         # materialisation_instance = GiraThreatMaterialisationInstance.query.filter_by(instance_id=id_of_exposure).first()
 
-        instance_responses = GiraIncidentResponse.query.filter(
-            GiraIncidentResponse.materialisation_instance.any(id=exposure_id)).all()
+        instance_responses = ModelIncidentResponse.query.filter(
+            ModelIncidentResponse.materialisation_instance.any(id=exposure_id)).all()
 
-        instance_materialisations = GiraThreatMaterialisation.query.filter(
-            GiraThreatMaterialisation.materialisation_instance.any(id=exposure_id)).all()
+        instance_materialisations = ModelThreatMaterialisation.query.filter(
+            ModelThreatMaterialisation.materialisation_instance.any(id=exposure_id)).all()
         # print(instance_materialisations)
 
-        instance_materialisations_entries = GiraThreatMaterialisationInstanceEntry.query.filter_by(
+        instance_materialisations_entries = ModelThreatMaterialisationInstanceEntry.query.filter_by(
             table_id=exposure_id).all()
 
         return render_template('gira_assess_materialisation.html', selected_exposure=selected_exposure,
@@ -213,14 +216,14 @@ def gira_assess_materialisation_check_table(exposure_id):
         table_id = request.form["tableId"]
         # table_to_check = GiraThreatMaterialisationInstance.query.filter_by(id = table_id)
 
-        instance_responses_count = GiraIncidentResponse.query.filter(
-            GiraIncidentResponse.materialisation_instance.any(id=table_id)).count()
+        instance_responses_count = ModelIncidentResponse.query.filter(
+            ModelIncidentResponse.materialisation_instance.any(id=table_id)).count()
 
-        instance_materialisations_count = GiraThreatMaterialisation.query.filter(
-            GiraThreatMaterialisation.materialisation_instance.any(id=table_id)).count()
+        instance_materialisations_count = ModelThreatMaterialisation.query.filter(
+            ModelThreatMaterialisation.materialisation_instance.any(id=table_id)).count()
 
         target_entries_count = instance_materialisations_count * instance_responses_count * 2
-        current_entries_count = GiraThreatMaterialisationInstanceEntry.query.filter_by(table_id=table_id).count()
+        current_entries_count = ModelThreatMaterialisationInstanceEntry.query.filter_by(table_id=table_id).count()
 
         # This could check for the presence of the number itself in each entry but it shouldnt be normally needed
         if target_entries_count == current_entries_count:
@@ -278,20 +281,20 @@ def gira_threat_exposure():
     if request.method == 'POST':
 
         # Add new Threat Exposure
-        to_add_exposure = GiraThreatExposure(name=request.form['name'], description=request.form['description'],
-                                             probability=int(request.form['probability']))
+        to_add_exposure = ModelThreatExposure(name=request.form['name'], description=request.form['description'],
+                                              probability=int(request.form['probability']))
         db.session.add(to_add_exposure)
         db.session.flush()
 
         # print(to_add_exposure.id)
 
         # Add new Instance of Gira
-        to_add_instance = GiraInstance(threat=to_add_exposure.id)
+        to_add_instance = ModelInstance(threat=to_add_exposure.id)
         db.session.add(to_add_instance)
         db.session.flush()
 
         # Add a new Threat Materialistion Instance
-        to_add_materialisation_instance = GiraThreatMaterialisationInstance(instance_id=to_add_instance.id)
+        to_add_materialisation_instance = ModelThreatMaterialisation(instance_id=to_add_instance.id)
 
         to_add_materialisations_instance_id = request.form['materialisationsToAdd']
         to_add_materialisations_instance_id = json.loads(to_add_materialisations_instance_id)
@@ -303,9 +306,9 @@ def gira_threat_exposure():
         # Query database for each instance of the Gira Materialisations we want
         for materialisation_id in to_add_materialisations_instance_id:
             print("Query")
-            print(GiraThreatMaterialisation.query.filter_by(id=materialisation_id[0]).first())
+            print(ModelThreatMaterialisation.query.filter_by(id=materialisation_id[0]).first())
             to_add_materialisations_list.append(
-                GiraThreatMaterialisation.query.filter_by(id=materialisation_id[0]).first())
+                ModelThreatMaterialisation.query.filter_by(id=materialisation_id[0]).first())
 
         print("TASTS")
         print(to_add_materialisations_list)
@@ -320,8 +323,8 @@ def gira_threat_exposure():
 
         return redirect('/gira_overview/gira_threat_exposure/')
     else:
-        threats = GiraThreatExposure.query.all()
-        materialisations = GiraThreatMaterialisation.query.all()
+        threats = ModelThreatExposure.query.all()
+        materialisations = ModelThreatMaterialisation.query.all()
 
         return render_template('gira_threat_exposure.html', threats=threats, materialisations=materialisations)
 
@@ -329,29 +332,29 @@ def gira_threat_exposure():
 @app.route('/gira_overview/gira_threat_response/', methods=['GET', 'POST'])
 def gira_threat_response():
     if request.method == 'POST':
-        to_add = GiraIncidentResponse(name=request.form['name'], description=request.form['description'],
-                                      default_effect=int(request.form['default_effect']))
+        to_add = ModelIncidentResponse(name=request.form['name'], description=request.form['description'],
+                                       default_effect=int(request.form['default_effect']))
         db.session.add(to_add)
         db.session.commit()
 
         return redirect('/gira_overview/gira_threat_response/')
     else:
-        responses = GiraIncidentResponse.query.all()
+        responses = ModelIncidentResponse.query.all()
         return render_template('gira_threat_response.html', responses=responses)
 
 
 @app.route('/gira_overview/gira_threat_materialisation/', methods=['GET', 'POST'])
 def gira_threat_materialisation():
     if request.method == 'POST':
-        to_add = GiraThreatMaterialisation(name=request.form['name'], description=request.form['description'],
-                                           probability=int(request.form['probability']))
+        to_add = ModelThreatMaterialisation(name=request.form['name'], description=request.form['description'],
+                                            probability=int(request.form['probability']))
         db.session.add(to_add)
         db.session.commit()
 
         return redirect('/gira_overview/gira_threat_materialisation/')
     else:
-        materialisations = GiraThreatMaterialisation.query.all()
-        consequences = GiraConsequence.query.all()
+        materialisations = ModelThreatMaterialisation.query.all()
+        consequences = ModelConsequence.query.all()
 
         return render_template('gira_threat_materialisation.html', materialisations=materialisations,
                                consequences=consequences)
@@ -360,13 +363,13 @@ def gira_threat_materialisation():
 @app.route('/gira_overview/gira_consequence/', methods=['GET', 'POST'])
 def gira_consequence():
     if request.method == 'POST':
-        to_add = GiraConsequence(name=request.form['name'], description=request.form['description'], )
+        to_add = ModelConsequence(name=request.form['name'], description=request.form['description'], )
         db.session.add(to_add)
         db.session.commit()
 
         return redirect('/gira_overview/gira_consequence/')
     else:
-        consequences = GiraConsequence.query.all()
+        consequences = ModelConsequence.query.all()
 
         return render_template('gira_consequences.html', consequences=consequences)
 
@@ -537,8 +540,8 @@ def hardwareassets(hardwareasset):
         else:
             return redirect("/hardwareassets/")
     else:
-        hardwareassetsArray = get_hardwareassets()
-        return render_template('assets.html', asset=hardwareasset, assets=hardwareassetsArray)
+        # hardwareassetsArray = get_hardwareassets()
+        return render_template('assets.html', asset=hardwareasset)
 
 
 @app.route('/asset_discovery')
@@ -677,8 +680,9 @@ def ID_visualisation_data():
 
 @app.route('/dss_alert_test')
 def dss_alert_test():
-    alert = sendDSSAlert()
+    alert = send_dss_alert()
     return alert
+
 
 @app.route('/save_report')
 def save_report():
@@ -689,7 +693,6 @@ def save_report():
         return Response(status=500)
 
 
-
 # @app.route('/activate_test')
 # def activate_test():
 #     status = rcra_1()
@@ -697,9 +700,6 @@ def save_report():
 #         return Response(status=200)
 #     else:
 #         return Response(status=500)
-
-
-
 
 
 @app.route('/get_kafka_information/<topic>/')
@@ -730,7 +730,7 @@ def kb_cve():
     # name
     # keywords
     # This search the STYX objects for the id/name/keyword for example this searches for CVE-2018-4998
-    url = "http://:4000/api/v1/objects/id/CVE-2018-4998"
+    url = "http://:re4000/api/v1/objects/id/CVE-2018-4998"
     params = {
         'requestedservice': 'KB',
         'requestedTicket': requestedTicket
@@ -743,3 +743,287 @@ def kb_cve():
     print("---------------------------------------", flush=True)
 
     return reqdata
+
+
+@app.route('/repo/assets/', methods=['GET', 'POST'])
+def view_repo_assets():
+    if request.method == 'POST':
+        new_asset_form = FormAddRepoAsset()
+        print(new_asset_form.errors)
+        print(new_asset_form.validate_on_submit())
+        if not new_asset_form.validate_on_submit():
+            # print(new_service_form.name.data, flush=True)
+            print("2")
+            owner_id = None
+            verified_by_id = None
+            net_group_fk_id = None
+            type_fk_id = None
+
+            if new_asset_form.owner.data:
+                owner_id = new_asset_form.owner.data.id
+
+            if new_asset_form.type_fk.data:
+                type_fk_id = new_asset_form.type_fk.data.id
+
+            if new_asset_form.verified_by.data:
+                verified_by_id = new_asset_form.verified_by.data.id
+
+            if new_asset_form.net_group_fk.data:
+                net_group_fk_id = new_asset_form.net_group_fk.id
+
+            to_add_asset = RepoAsset(name=new_asset_form.name.data,
+                                     description=new_asset_form.description.data,
+                                     owner=owner_id,
+                                     location=new_asset_form.location.data,
+                                     verified=new_asset_form.verified.data,
+                                     verified_by=verified_by_id,
+                                     mac_address=new_asset_form.mac_address.data,
+                                     has_static_ip=new_asset_form.has_static_ip.data,
+                                     ip=new_asset_form.ip.data,
+                                     net_group_fk=net_group_fk_id,
+                                     value=new_asset_form.value.data,
+                                     loss_of_revenue=new_asset_form.loss_of_revenue.data,
+                                     additional_expenses=new_asset_form.additional_expenses.data,
+                                     regulatory_legal=new_asset_form.regulatory_legal.data,
+                                     customer_service=new_asset_form.customer_service.data,
+                                     goodwill=new_asset_form.goodwill.data,
+                                     last_touch_date=new_asset_form.last_touch_date.data,
+                                     type_fk=type_fk_id)
+            db.session.add(to_add_asset)
+            db.session.commit()
+
+            flash('Service "{}" Added Succesfully'.format(new_asset_form.name.data))
+            return redirect("/repo/assets/")
+
+        return redirect("/repo/assets/")
+    else:
+        try:
+            repo_assets = RepoAsset.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        json_assets = convert_database_items_to_json_table(repo_assets)
+        json_assets = json.dumps(json_assets)
+
+        new_asset_form = FormAddRepoAsset()
+
+        print(json_assets)
+        return render_template("view_repo_assets.html", repo_assets=json_assets,
+                               new_asset_form=new_asset_form)
+
+
+@app.route('/repo/actors/', methods=['GET', 'POST', 'PUT'])
+def view_repo_actors():
+    if request.method == 'POST':
+        new_actor_form = FormAddRepoActor()
+
+        if new_actor_form.validate_on_submit():
+            if new_actor_form.id.data:
+                print("PUT ACTOR", "|",new_actor_form.id.data, "|", flush=True)
+
+                try:
+                    to_edit_actor = RepoActor.query.filter_by(id=new_actor_form.id.data).first()
+                except SQLAlchemyError:
+                    return Response("SQLAlchemyError when editing records", 500)
+
+                # print("---------------------")
+                # print(to_edit_actor.id.data)
+                # print(to_edit_actor.name.data)
+                to_edit_actor.name = new_actor_form.name.data
+                db.session.commit()
+                return redirect("/repo/actors/")
+            else:
+                print("POST ACTOR", flush=True)
+                # print(new_actor_form.name.data, flush=True)
+                to_add_actor = RepoActor(name=new_actor_form.name.data)
+                db.session.add(to_add_actor)
+                db.session.commit()
+
+                flash('Actor "{}" Added Succesfully'.format(new_actor_form.name.data))
+                return redirect("/repo/actors/")
+        else:
+            print(new_actor_form.errors)
+            flash('Error: Validation Error - Couldn\'t add actor, ')
+            return redirect("/repo/actors/")
+
+    else:
+        try:
+            repo_actors = RepoActor.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+        # print("------------------------------")
+        # print(repo_actors, flush=True)
+        #
+        # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
+
+        json_actors = convert_database_items_to_json_table(repo_actors)
+        json_actors = json.dumps(json_actors)
+        # print("ACTORS ARE --------")
+        # print(json_actors)
+        new_actor_form = FormAddRepoActor()
+        return render_template("view_repo_actors.html", repo_actors=json_actors, new_actor_form=new_actor_form)
+
+
+@app.route('/repo/services/', methods=['GET', 'POST'])
+def view_repo_services():
+    if request.method == 'POST':
+        new_service_form = FormAddRepoService()
+
+        if new_service_form.validate_on_submit():
+            # print(new_service_form.name.data, flush=True)
+
+            to_add_service = RepoService(name=new_service_form.name.data)
+            db.session.add(to_add_service)
+            db.session.commit()
+
+            flash('Service "{}" Added Succesfully'.format(new_service_form.name.data))
+            return redirect("/repo/services/")
+        else:
+            flash('Error: Validation Error - Couldn\'t add service, ')
+            return redirect("/repo/services/")
+    else:
+        try:
+            repo_services = RepoService.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+        # print("------------------------------")
+        # print(repo_actors, flush=True)
+        #
+        # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
+
+        json_services = convert_database_items_to_json_table(repo_services)
+        json_services = json.dumps(json_services)
+        print("ACTORS ARE --------")
+        print(json_services)
+        new_service_form = FormAddRepoService()
+        return render_template("view_repo_services.html", repo_services=json_services,
+                               new_service_form=new_service_form)
+
+
+@app.route('/repo/net_groups/', methods=['GET', 'POST'])
+def view_repo_net_groups():
+    if request.method == 'POST':
+        new_net_group_form = FormAddRepoNetGroup()
+
+        if new_net_group_form.validate_on_submit():
+            # print(new_service_form.name.data, flush=True)
+
+            to_add_net_group = RepoNetGroup(name=new_net_group_form.name.data)
+            db.session.add(to_add_net_group)
+            db.session.commit()
+
+            flash('Net Group "{}" Added Succesfully'.format(new_net_group_form.name.data))
+            return redirect("/repo/net_groups/")
+        else:
+            flash('Error: Validation Error - Couldn\'t add net group ')
+            return redirect("/repo/net_groups/")
+    else:
+        try:
+            repo_net_groups = RepoNetGroup.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+        # print("------------------------------")
+        # print(repo_actors, flush=True)
+        #
+        # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
+
+        json_net_groups = convert_database_items_to_json_table(repo_net_groups)
+        json_net_groups = json.dumps(json_net_groups)
+        # print("ACTORS ARE --------")
+        # print(json_actors)
+        new_net_group_form = FormAddRepoNetGroup()
+        return render_template("view_repo_net_group.html", repo_net_groups=json_net_groups,
+                               new_net_group_form=new_net_group_form)
+
+
+@app.route('/repo/vulnerabilities/', methods=['GET', 'POST'])
+def view_repo_vulnerabilities():
+    if request.method == 'POST':
+        new_vulnerability_form = FormAddRepoVulnerability()
+
+        if new_vulnerability_form.validate_on_submit():
+            # print(new_service_form.name.data, flush=True)
+
+            to_add_vulnerability = RepoVulnerability(name=new_vulnerability_form.name.data)
+            db.session.add(to_add_vulnerability)
+            db.session.commit()
+
+            flash('Vulnerability "{}" Added Succesfully'.format(new_vulnerability_form.name.data))
+            return redirect("/repo/services/")
+        else:
+            flash('Error: Validation Error - Couldn\'t add vulnerabilities, ')
+            return redirect("/repo/services/")
+    else:
+        try:
+            repo_services = RepoVulnerability.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+        # print("------------------------------")
+        # print(repo_actors, flush=True)
+        #
+        # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
+
+        json_vulnerabilities = convert_database_items_to_json_table(repo_services)
+        json_vulnerabilities = json.dumps(json_vulnerabilities)
+        # print("ACTORS ARE --------")
+        # print(json_actors)
+        new_vulnerability_form = FormAddRepoVulnerability()
+        return render_template("view_repo_vulnerabilities.html", repo_vulnerabilities=json_vulnerabilities,
+                               new_vulnerability_form=new_vulnerability_form)
+
+
+@app.route('/repo/threats/', methods=['GET', 'POST'])
+def view_repo_threats():
+    if request.method == 'POST':
+        new_threat_form = FormAddRepoThreat()
+
+        if new_threat_form.validate_on_submit():
+            # print(new_service_form.name.data, flush=True)
+
+            to_add_threat = RepoThreat(name=new_threat_form.name.data)
+            db.session.add(to_add_threat)
+            db.session.commit()
+
+            flash('Threat "{}" Added Succesfully'.format(new_threat_form.name.data))
+            return redirect("/repo/services/")
+        else:
+            flash('Error: Validation Error - Couldn\'t add threat, ')
+            return redirect("/repo/services/")
+    else:
+        try:
+            repo_threats = RepoThreat.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+        # print("------------------------------")
+        # print(repo_actors, flush=True)
+        #
+        # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
+
+        json_threats = convert_database_items_to_json_table(repo_threats)
+        json_threats = json.dumps(json_threats)
+        print("Threats ARE --------")
+        print(json_threats)
+        new_threat_form = FormAddRepoThreat()
+        return render_template("view_repo_threats.html", repo_threats=json_threats,
+                               new_threat_form=new_threat_form)
+
+
+@app.route('/test_repo/dtm/', methods=['GET', 'POST'])
+def test_repo():
+    if request.method == "POST":
+        return redirect("/test_repo/dtm/")
+    else:
+        found_flag = 0
+        repo_assets = RepoAsset.query.all()
+        for repo_asset in repo_assets:
+            if (repo_asset == "1"):
+                found_flag = 1
+                repo_asset.last_touch_date = ""
+                if (repo_asset.verified == False):
+                    send_asset_id_alert(repo_asset)
+
+        if found_flag == 0:
+            new_asset = RepoAsset(name="", last_touch_date="")
+            db.session.add(new_asset)
+
+        db.session.commit()

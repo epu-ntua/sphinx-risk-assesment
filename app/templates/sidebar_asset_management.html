@@ -4,8 +4,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css"
           crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/repo.css') }}">
+
 <!-- load the d3.js library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+<script src="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.css">
     {% block head %}
     {% endblock %}
 </head>
@@ -46,24 +51,36 @@
             </a>
 <!--            Submenu content -->
             <div id='submenu1' class="collapse sidebar-submenu">
-                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_discovery" class="list-group-item list-group-item-action bg-dark text-white">
-                    <span class="menu-collapsed">Discovery</span>
+                <a href="http://{{ serverAddress }}:{{ serverPort }}/repo/assets/" class="list-group-item list-group-item-action bg-dark text-white">
+                    <span class="menu-collapsed">Assets</span>
                 </a>
-                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_Asset_hardware" class="list-group-item list-group-item-action bg-dark text-white">
-                    <span class="menu-collapsed">IT Asset</span>
+                <a href="http://{{ serverAddress }}:{{ serverPort }}/repo/net_groups/" class="list-group-item list-group-item-action bg-dark text-white">
+                    <span class="menu-collapsed">Network Groups</span>
                 </a>
-                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_Asset_hardware_non_it" class="list-group-item list-group-item-action bg-dark text-white">
-                    <span class="menu-collapsed">Non-IT Assets</span>
+                <a href="http://{{ serverAddress }}:{{ serverPort }}/repo/threats/" class="list-group-item list-group-item-action bg-dark text-white">
+                    <span class="menu-collapsed">Threats</span>
                 </a>
-                <a href="#" class="list-group-item list-group-item-action bg-dark text-white">
-                    <span class="menu-collapsed">Services</span>
+                v<a href="http://{{ serverAddress }}:{{ serverPort }}/repo/vulnerabilities/" class="list-group-item list-group-item-action bg-dark text-white">
+                    <span class="menu-collapsed">Vulnerabilities</span>
                 </a>
-                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_Asset_software" class="list-group-item list-group-item-action bg-dark text-white">
-                    <span class="menu-collapsed">Software</span>
-                </a>
-                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_Asset_License_Type" class="list-group-item list-group-item-action bg-dark text-white">
-                    <span class="menu-collapsed">Software License</span>
-                </a>
+{#                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_discovery" class="list-group-item list-group-item-action bg-dark text-white">#}
+{#                    <span class="menu-collapsed">Discovery</span>#}
+{#                </a>#}
+{#                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_Asset_hardware" class="list-group-item list-group-item-action bg-dark text-white">#}
+{#                    <span class="menu-collapsed">IT Asset</span>#}
+{#                </a>#}
+{#                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_Asset_hardware_non_it" class="list-group-item list-group-item-action bg-dark text-white">#}
+{#                    <span class="menu-collapsed">Non-IT Assets</span>#}
+{#                </a>#}
+{#                <a href="#" class="list-group-item list-group-item-action bg-dark text-white">#}
+{#                    <span class="menu-collapsed">Services</span>#}
+{#                </a>#}
+{#                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_Asset_software" class="list-group-item list-group-item-action bg-dark text-white">#}
+{#                    <span class="menu-collapsed">Software</span>#}
+{#                </a>#}
+{#                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_Asset_License_Type" class="list-group-item list-group-item-action bg-dark text-white">#}
+{#                    <span class="menu-collapsed">Software License</span>#}
+{#                </a>#}
             </div>
             <a href="#submenu2" data-toggle="collapse" aria-expanded="false" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
                 <div class="d-flex w-100 justify-content-start align-items-center">
@@ -73,12 +90,18 @@
             </a>
             <!--            Submenu content -->
             <div id='submenu2' class="collapse sidebar-submenu">
-                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_organisation_structure" class="list-group-item list-group-item-action bg-dark text-white">
-                    <span class="menu-collapsed">Structure</span>
+                <a href="http://{{ serverAddress }}:{{ serverPort }}/repo/actors/" class="list-group-item list-group-item-action bg-dark text-white">
+                    <span class="menu-collapsed">Business Actors</span>
                 </a>
-                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_organisation_process" class="list-group-item list-group-item-action bg-dark text-white">
+                <a href="http://{{ serverAddress }}:{{ serverPort }}/repo/services/" class="list-group-item list-group-item-action bg-dark text-white">
                     <span class="menu-collapsed">Business services</span>
                 </a>
+{#                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_organisation_structure" class="list-group-item list-group-item-action bg-dark text-white">#}
+{#                    <span class="menu-collapsed">Structure</span>#}
+{#                </a>#}
+{#                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_organisation_process" class="list-group-item list-group-item-action bg-dark text-white">#}
+{#                    <span class="menu-collapsed">Business services</span>#}
+{#                </a>#}
             </div>
 
             <a href="#submenu3" data-toggle="collapse" aria-expanded="false" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
@@ -90,12 +113,12 @@
             </a>
 <!--            Submenu content -->
             <div id='submenu3' class="collapse sidebar-submenu">
-                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_configuration_relationship" class="list-group-item list-group-item-action bg-dark text-white">
-                    <span class="menu-collapsed">Relationship</span>
-                </a>
-                <a href="#" class="list-group-item list-group-item-action bg-dark text-white">
-                    <span class="menu-collapsed">Impact</span>
-                </a>
+{#                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_configuration_relationship" class="list-group-item list-group-item-action bg-dark text-white">#}
+{#                    <span class="menu-collapsed">Relationship</span>#}
+{#                </a>#}
+{#                <a href="#" class="list-group-item list-group-item-action bg-dark text-white">#}
+{#                    <span class="menu-collapsed">Impact</span>#}
+{#                </a>#}
             </div>
 
 <!--             Separator with title -->
@@ -112,25 +135,25 @@
             </a>
             <!--            Submenu content -->
             <div id='submenu4' class="collapse sidebar-submenu">
-                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_Asset_hardware_type" class="list-group-item list-group-item-action bg-dark text-white">
-                    <span class="menu-collapsed">IT Asset Type</span>
-                </a>
-                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_Asset_usage_type" class="list-group-item list-group-item-action bg-dark text-white">
-                    <span class="menu-collapsed">IT Asset Usage Type</span>
-                </a>
-                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_Asset_hardware_classification" class="list-group-item list-group-item-action bg-dark text-white">
-                    <span class="menu-collapsed">IT Asset Classification</span>
-                </a>
-                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_Asset_software_type" class="list-group-item list-group-item-action bg-dark text-white">
-                    <span class="menu-collapsed">Software Type</span>
-                </a>
+{#                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_Asset_hardware_type" class="list-group-item list-group-item-action bg-dark text-white">#}
+{#                    <span class="menu-collapsed">IT Asset Type</span>#}
+{#                </a>#}
+{#                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_Asset_usage_type" class="list-group-item list-group-item-action bg-dark text-white">#}
+{#                    <span class="menu-collapsed">IT Asset Usage Type</span>#}
+{#                </a>#}
+{#                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_Asset_hardware_classification" class="list-group-item list-group-item-action bg-dark text-white">#}
+{#                    <span class="menu-collapsed">IT Asset Classification</span>#}
+{#                </a>#}
+{#                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_Asset_software_type" class="list-group-item list-group-item-action bg-dark text-white">#}
+{#                    <span class="menu-collapsed">Software Type</span>#}
+{#                </a>#}
             </div>
-            <a href="#" class="bg-dark list-group-item list-group-item-action">
-                <div class="d-flex w-100 justify-content-start align-items-center">
-                    <span class="fa fa-envelope-o fa-fw mr-3"></span>
-                    <span class="menu-collapsed">Messages <span class="badge badge-pill badge-primary ml-2">5</span></span>
-                </div>
-            </a>
+{#            <a href="#" class="bg-dark list-group-item list-group-item-action">#}
+{#                <div class="d-flex w-100 justify-content-start align-items-center">#}
+{#                    <span class="fa fa-envelope-o fa-fw mr-3"></span>#}
+{#                    <span class="menu-collapsed">Messages <span class="badge badge-pill badge-primary ml-2">5</span></span>#}
+{#                </div>#}
+{#            </a>#}
 <!--             Separator without title -->
             <li class="list-group-item sidebar-separator menu-collapsed"></li>
 <!--            /END Separator -->
@@ -153,6 +176,12 @@
 
 <!--    MAIN -->
 <div class="col-9">
+{% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+{% endfor %}
     {% block content %}
 
     {% endblock %}
@@ -165,5 +194,4 @@
 
 {% block script %}
 <script src="{{url_for('static', filename='sidebar.js')}}"></script>
-
 {% endblock %}
