@@ -749,29 +749,76 @@ def kb_cve():
 def view_repo_assets():
     if request.method == 'POST':
         new_asset_form = FormAddRepoAsset()
-        print(new_asset_form.errors)
-        print(new_asset_form.validate_on_submit())
-        if not new_asset_form.validate_on_submit():
-            # print(new_service_form.name.data, flush=True)
-            print("2")
-            owner_id = None
-            verified_by_id = None
-            net_group_fk_id = None
-            type_fk_id = None
 
-            if new_asset_form.owner.data:
-                owner_id = new_asset_form.owner.data.id
+        if new_asset_form.validate_on_submit():
+            if new_asset_form.id.data:
+                print("PUT ACTOR", "|", new_asset_form.id.data, "|", flush=True)
 
-            if new_asset_form.type_fk.data:
-                type_fk_id = new_asset_form.type_fk.data.id
+                try:
+                    to_edit_asset = RepoAsset.query.filter_by(id=new_asset_form.id.data).first()
+                except SQLAlchemyError:
+                    return Response("SQLAlchemyError when editing records", 500)
 
-            if new_asset_form.verified_by.data:
-                verified_by_id = new_asset_form.verified_by.data.id
+                owner_id = None
+                verified_by_id = None
+                net_group_fk_id = None
+                type_fk_id = None
 
-            if new_asset_form.net_group_fk.data:
-                net_group_fk_id = new_asset_form.net_group_fk.id
+                if new_asset_form.owner.data:
+                    owner_id = new_asset_form.owner.data.id
 
-            to_add_asset = RepoAsset(name=new_asset_form.name.data,
+                if new_asset_form.type_fk.data:
+                    type_fk_id = new_asset_form.type_fk.data.id
+
+                if new_asset_form.verified_by.data:
+                    verified_by_id = new_asset_form.verified_by.data.id
+
+                if new_asset_form.net_group_fk.data:
+                    net_group_fk_id = new_asset_form.net_group_fk.id
+
+                to_edit_asset.name = new_asset_form.name.data
+                to_edit_asset.description = new_asset_form.description.data
+                to_edit_asset.owner = owner_id
+                to_edit_asset.location = new_asset_form.location.data
+                to_edit_asset.verified = new_asset_form.verified.data
+                to_edit_asset.verified_by = verified_by_id
+                to_edit_asset.mac_address = new_asset_form.mac_address.data
+                to_edit_asset.has_static_ip = new_asset_form.has_static_ip.data
+                to_edit_asset.ip = new_asset_form.ip.data
+                to_edit_asset.net_group_fk = net_group_fk_id
+                to_edit_asset.value = new_asset_form.value.data
+                to_edit_asset.loss_of_revenue = new_asset_form.loss_of_revenue.data
+                to_edit_asset.additional_expenses = new_asset_form.additional_expenses.data
+                to_edit_asset.regulatory_legal = new_asset_form.regulatory_legal.data
+                to_edit_asset.customer_service = new_asset_form.customer_service.data
+                to_edit_asset.goodwill = new_asset_form.goodwill.data
+                to_edit_asset.last_touch_date = new_asset_form.last_touch_date.data
+                to_edit_asset.type_fk = type_fk_id
+
+
+                db.session.commit()
+                return redirect("/repo/assets/")
+            else:
+                print("POST ACTOR", flush=True)
+                owner_id = None
+                verified_by_id = None
+                net_group_fk_id = None
+                type_fk_id = None
+
+                if new_asset_form.owner.data:
+                    owner_id = new_asset_form.owner.data.id
+
+                if new_asset_form.type_fk.data:
+                    type_fk_id = new_asset_form.type_fk.data.id
+
+                if new_asset_form.verified_by.data:
+                    verified_by_id = new_asset_form.verified_by.data.id
+
+                if new_asset_form.net_group_fk.data:
+                    net_group_fk_id = new_asset_form.net_group_fk.id
+
+                # print(new_actor_form.name.data, flush=True)
+                to_add_asset =  RepoAsset(name=new_asset_form.name.data,
                                      description=new_asset_form.description.data,
                                      owner=owner_id,
                                      location=new_asset_form.location.data,
@@ -789,11 +836,67 @@ def view_repo_assets():
                                      goodwill=new_asset_form.goodwill.data,
                                      last_touch_date=new_asset_form.last_touch_date.data,
                                      type_fk=type_fk_id)
-            db.session.add(to_add_asset)
-            db.session.commit()
+                db.session.add(to_add_asset)
+                db.session.commit()
 
-            flash('Service "{}" Added Succesfully'.format(new_asset_form.name.data))
+                flash('Actor "{}" Added Succesfully'.format(new_asset_form.name.data))
+                return redirect("/repo/assets/")
+        else:
+            print(new_asset_form.errors)
+            flash('Error: Validation Error - Couldn\'t add asset, ')
             return redirect("/repo/assets/")
+
+
+
+
+
+
+        # new_asset_form = FormAddRepoAsset()
+        # print(new_asset_form.errors)
+        # print(new_asset_form.validate_on_submit())
+        # if not new_asset_form.validate_on_submit():
+        #     # print(new_service_form.name.data, flush=True)
+        #     print("2")
+        #     owner_id = None
+        #     verified_by_id = None
+        #     net_group_fk_id = None
+        #     type_fk_id = None
+        #
+        #     if new_asset_form.owner.data:
+        #         owner_id = new_asset_form.owner.data.id
+        #
+        #     if new_asset_form.type_fk.data:
+        #         type_fk_id = new_asset_form.type_fk.data.id
+        #
+        #     if new_asset_form.verified_by.data:
+        #         verified_by_id = new_asset_form.verified_by.data.id
+        #
+        #     if new_asset_form.net_group_fk.data:
+        #         net_group_fk_id = new_asset_form.net_group_fk.id
+        #
+        #     to_add_asset = RepoAsset(name=new_asset_form.name.data,
+        #                              description=new_asset_form.description.data,
+        #                              owner=owner_id,
+        #                              location=new_asset_form.location.data,
+        #                              verified=new_asset_form.verified.data,
+        #                              verified_by=verified_by_id,
+        #                              mac_address=new_asset_form.mac_address.data,
+        #                              has_static_ip=new_asset_form.has_static_ip.data,
+        #                              ip=new_asset_form.ip.data,
+        #                              net_group_fk=net_group_fk_id,
+        #                              value=new_asset_form.value.data,
+        #                              loss_of_revenue=new_asset_form.loss_of_revenue.data,
+        #                              additional_expenses=new_asset_form.additional_expenses.data,
+        #                              regulatory_legal=new_asset_form.regulatory_legal.data,
+        #                              customer_service=new_asset_form.customer_service.data,
+        #                              goodwill=new_asset_form.goodwill.data,
+        #                              last_touch_date=new_asset_form.last_touch_date.data,
+        #                              type_fk=type_fk_id)
+        #     db.session.add(to_add_asset)
+        #     db.session.commit()
+        #
+        #     flash('Service "{}" Added Succesfully'.format(new_asset_form.name.data))
+        #     return redirect("/repo/assets/")
 
         return redirect("/repo/assets/")
     else:
@@ -870,17 +973,29 @@ def view_repo_services():
         new_service_form = FormAddRepoService()
 
         if new_service_form.validate_on_submit():
-            # print(new_service_form.name.data, flush=True)
+            if new_service_form.id.data:
+                # print("PUT ACTOR", "|", new_vulnerability_form.id.data, "|", flush=True)
 
-            to_add_service = RepoService(name=new_service_form.name.data)
-            db.session.add(to_add_service)
-            db.session.commit()
+                try:
+                    to_add_service = RepoService.query.filter_by(id=new_service_form.id.data).first()
+                except SQLAlchemyError:
+                    return Response("SQLAlchemyError when editing records", 500)
 
-            flash('Service "{}" Added Succesfully'.format(new_service_form.name.data))
-            return redirect("/repo/services/")
-        else:
-            flash('Error: Validation Error - Couldn\'t add service, ')
-            return redirect("/repo/services/")
+                # print("---------------------")
+                # print(to_edit_actor.id.data)
+                # print(to_edit_actor.name.data)
+                to_add_service.name = new_service_form.name.data
+                db.session.commit()
+                return redirect("/repo/services/")
+            else:
+                # print("POST ACTOR", flush=True)
+                # print(new_actor_form.name.data, flush=True)
+                to_add_service = RepoService(name=new_service_form.name.data)
+                db.session.add(to_add_service)
+                db.session.commit()
+
+                flash('Service "{}" Added Succesfully'.format(new_service_form.name.data))
+                return redirect("/repo/services/")
     else:
         try:
             repo_services = RepoService.query.all()
@@ -906,17 +1021,29 @@ def view_repo_net_groups():
         new_net_group_form = FormAddRepoNetGroup()
 
         if new_net_group_form.validate_on_submit():
-            # print(new_service_form.name.data, flush=True)
+            if new_net_group_form.id.data:
+                print("PUT ACTOR", "|", new_net_group_form.id.data, "|", flush=True)
 
-            to_add_net_group = RepoNetGroup(name=new_net_group_form.name.data)
-            db.session.add(to_add_net_group)
-            db.session.commit()
+                try:
+                    to_add_net_group = RepoNetGroup.query.filter_by(id=new_net_group_form.id.data).first()
+                except SQLAlchemyError:
+                    return Response("SQLAlchemyError when editing records", 500)
 
-            flash('Net Group "{}" Added Succesfully'.format(new_net_group_form.name.data))
-            return redirect("/repo/net_groups/")
-        else:
-            flash('Error: Validation Error - Couldn\'t add net group ')
-            return redirect("/repo/net_groups/")
+                # print("---------------------")
+                # print(to_edit_actor.id.data)
+                # print(to_edit_actor.name.data)
+                to_add_net_group.name = new_net_group_form.name.data
+                db.session.commit()
+                return redirect("/repo/net_groups/")
+            else:
+                print("POST ACTOR", flush=True)
+                # print(new_actor_form.name.data, flush=True)
+                to_add_net_group = RepoNetGroup(name=new_net_group_form.name.data)
+                db.session.add(to_add_net_group)
+                db.session.commit()
+
+                flash('Net Group "{}" Added Succesfully'.format(new_net_group_form.name.data))
+                return redirect("/repo/net_groups/")
     else:
         try:
             repo_net_groups = RepoNetGroup.query.all()
@@ -942,17 +1069,29 @@ def view_repo_vulnerabilities():
         new_vulnerability_form = FormAddRepoVulnerability()
 
         if new_vulnerability_form.validate_on_submit():
-            # print(new_service_form.name.data, flush=True)
+            if new_vulnerability_form.id.data:
+                # print("PUT ACTOR", "|", new_vulnerability_form.id.data, "|", flush=True)
 
-            to_add_vulnerability = RepoVulnerability(name=new_vulnerability_form.name.data)
-            db.session.add(to_add_vulnerability)
-            db.session.commit()
+                try:
+                    to_add_vulnerability = RepoVulnerability.query.filter_by(id=new_vulnerability_form.id.data).first()
+                except SQLAlchemyError:
+                    return Response("SQLAlchemyError when editing records", 500)
 
-            flash('Vulnerability "{}" Added Succesfully'.format(new_vulnerability_form.name.data))
-            return redirect("/repo/services/")
-        else:
-            flash('Error: Validation Error - Couldn\'t add vulnerabilities, ')
-            return redirect("/repo/services/")
+                # print("---------------------")
+                # print(to_edit_actor.id.data)
+                # print(to_edit_actor.name.data)
+                to_add_vulnerability.name = new_vulnerability_form.name.data
+                db.session.commit()
+                return redirect("/repo/vulnerabilities/")
+            else:
+                print("POST ACTOR", flush=True)
+                # print(new_actor_form.name.data, flush=True)
+                to_add_vulnerability = RepoVulnerability(name=new_vulnerability_form.name.data)
+                db.session.add(to_add_vulnerability)
+                db.session.commit()
+
+                flash('Vulnerability "{}" Added Succesfully'.format(new_vulnerability_form.name.data))
+                return redirect("/repo/vulnerabilities/")
     else:
         try:
             repo_services = RepoVulnerability.query.all()
@@ -978,17 +1117,29 @@ def view_repo_threats():
         new_threat_form = FormAddRepoThreat()
 
         if new_threat_form.validate_on_submit():
-            # print(new_service_form.name.data, flush=True)
+            if new_threat_form.id.data:
+                # print("PUT ACTOR", "|", new_vulnerability_form.id.data, "|", flush=True)
 
-            to_add_threat = RepoThreat(name=new_threat_form.name.data)
-            db.session.add(to_add_threat)
-            db.session.commit()
+                try:
+                    to_add_threat = RepoThreat.query.filter_by(id=new_threat_form.id.data).first()
+                except SQLAlchemyError:
+                    return Response("SQLAlchemyError when editing records", 500)
 
-            flash('Threat "{}" Added Succesfully'.format(new_threat_form.name.data))
-            return redirect("/repo/services/")
-        else:
-            flash('Error: Validation Error - Couldn\'t add threat, ')
-            return redirect("/repo/services/")
+                # print("---------------------")
+                # print(to_edit_actor.id.data)
+                # print(to_edit_actor.name.data)
+                to_add_threat.name = new_threat_form.name.data
+                db.session.commit()
+                return redirect("/repo/threats/")
+            else:
+                print("POST ACTOR", flush=True)
+                # print(new_actor_form.name.data, flush=True)
+                to_add_threat = RepoThreat(name=new_threat_form.name.data)
+                db.session.add(to_add_threat)
+                db.session.commit()
+
+                flash('Threat "{}" Added Succesfully'.format(new_threat_form.name.data))
+                return redirect("/repo/threats/")
     else:
         try:
             repo_threats = RepoThreat.query.all()
