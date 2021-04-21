@@ -146,7 +146,7 @@ def generate_checkpoint(steps , kafkaInitialiser):
 def get_kafka_data(kafka_topic):
 # #KAFKA CLIENT CONSUMER
     try:
-        consumer = KafkaConsumer(bootstrap_servers=os.environ.get('BOOTSTRAP_SERVERS'),
+        consumer = KafkaConsumer(kafka_topic, bootstrap_servers=os.environ.get('BOOTSTRAP_SERVERS'),
                             security_protocol='SASL_SSL',
                             sasl_mechanism='OAUTHBEARER',
                             sasl_oauth_token_provider=TokenProvider(),
@@ -154,7 +154,9 @@ def get_kafka_data(kafka_topic):
     # 'python-topic' default kafka topic
     except KafkaError:
         print("KafkaConsumer error when initialising")
-    consumer.subscribe([kafka_topic])
+        return "Encountered Error"
+
+    # consumer.subscribe([kafka_topic])
 
     for msg in consumer:
         print("Kafka output:", json.loads(msg.value.decode()))
