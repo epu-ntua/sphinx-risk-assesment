@@ -5,6 +5,8 @@ import json
 import sys
 from kafka import KafkaProducer , KafkaConsumer
 from kafka.oauth import AbstractTokenProvider
+from kafka.errors import KafkaError
+
 from app import app
 
 from datetime import datetime
@@ -80,16 +82,19 @@ print(BOOTSTRAP_SERVERS)
 print(KAFKA_CERT)
 print("-----------Env Variables End-----------------", flush=True)
 
-# producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
-#                             security_protocol='SASL_SSL',
-#                             sasl_mechanism='OAUTHBEARER',
-#                             sasl_oauth_token_provider=TokenProvider(),
-#                             ssl_cafile= path_to_kafka_cert,
-#                             value_serializer=lambda value: value.encode(),
-#                             api_version = (2,5,0))
+try:
+    producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
+                            security_protocol='SASL_SSL',
+                            sasl_mechanism='OAUTHBEARER',
+                            sasl_oauth_token_provider=TokenProvider(),
+                            ssl_cafile= path_to_kafka_cert,
+                            value_serializer=lambda value: value.encode(),
+                        api_version = (2,5,0))
+except KafkaError:
+    print("Kafka producer initialisation encountered an error")
 
 def SendKafkaReport(report):
-    return ;
+    # return ;
 #KAFKA CLIENT PRODUCER
 
 
@@ -103,9 +108,13 @@ def SendKafkaReport(report):
     # #                         value_serializer=lambda value: value.encode())
     #
     #
-    # producer.send('rcra-report-topic', json.dumps(report))
-    # result = producer.flush()
-    # print(result, flush =True)
+    try:
+        producer.send('rcra-report-topic', json.dumps(report))
+    except KafkaError:
+        print("Kafka producing sending data encountered an error")
+
+    result = producer.flush()
+    print(result, flush =True)
 
 # GENERATE UUID
 def generate_uuid():
@@ -136,13 +145,16 @@ def generate_checkpoint(steps , kafkaInitialiser):
 
 def get_kafka_data(kafka_topic):
 # #KAFKA CLIENT CONSUMER
-    consumer = KafkaConsumer(bootstrap_servers=os.environ.get('BOOTSTRAP_SERVERS'),
+    try:
+        consumer = KafkaConsumer(bootstrap_servers=os.environ.get('BOOTSTRAP_SERVERS'),
                             security_protocol='SASL_SSL',
                             sasl_mechanism='OAUTHBEARER',
                             sasl_oauth_token_provider=TokenProvider(),
                             ssl_cafile=KAFKA_CERT)
     # 'python-topic' default kafka topic
+    except KafkaError:
+        print("KafkaConsumer error when initialising")
     consumer.subscribe([kafka_topic])
 
     for msg in consumer:
-        print(json.loads(msg.value.decode()))
+        print("Kafka output:", json.loads(msg.value.decode()))
