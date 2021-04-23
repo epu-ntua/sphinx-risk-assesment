@@ -476,6 +476,7 @@ def send_dss_alert():
 
 
 def make_visualisation():
+    """ Constructs example visualisation for Current Threats by impact level"""
     score = {
         "low_impact": "1",
         "medium_impact": "2",
@@ -492,13 +493,23 @@ def make_visualisation():
     # print(bundle, flush=True)
     return str(bundle)
 
+def make_visualisation_current_assets(assets):
+    """ Constructs Visualisation for ID new-unverified asset alert """
+    vis_1 = stix2_custom.RCRACurrentAssets(
+        x_rcra_assets=assets
+    )
+    bundle = stix2.Bundle(vis_1)
+    stix2validator.validate_instance(bundle)
+
+    return str(bundle)
 
 def send_asset_id_alert():
-
+    """' Function Recieves New Detected Assets and Send new visualisation data to ID (all or uknown-unverified only?)"""
     return 1
 
 
 def convert_database_items_to_json_table(items):
+    """ Converts sqlalchemy entries to json"""
     if items:
         columns = items[0].__table__.columns._data.keys()
         json_ready = []

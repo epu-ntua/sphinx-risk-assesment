@@ -15,3 +15,11 @@ class RCRAObjective(object):
 class RCRACurrentThreatsVis(object):
     def __init__(self, x_rcra_threats, **kwargs):
         return
+
+
+@CustomObject('x-rcra-current-assets', [
+    ('x_rcra_assets', properties.StringProperty(required=True))
+])
+class RCRACurrentAssets(object):
+    def __init__(self, x_rcra_assets, **kwargs):
+        return
