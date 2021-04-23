@@ -176,11 +176,12 @@ def get_kafka_data(kafka_topic):
     for msg in consumer:
         if msg:
             dat = {
-                'msg_value': msg.value(),  # This is the actual content of the message
-                'msg_headers': msg.headers(),  # Headers of the message
-                'msg_key': msg.key(),  # Message Key
-                'msg_partition': msg.partition(),  # Partition id from which the message was extracted
-                'msg_topic': msg.topic(),  # Topic in which Producer posted the message to
+                "msg" : msg
+                #'msg_value': msg.value(),  # This is the actual content of the message
+                #'msg_headers': msg.headers(),  # Headers of the message
+                #'msg_key': msg.key(),  # Message Key
+                #'msg_partition': msg.partition(),  # Partition id from which the message was extracted
+                #'msg_topic': msg.topic(),  # Topic in which Producer posted the message to
             }
             print(dat)
             # print("Kafka output:", json.loads(msg.value.decode()))
