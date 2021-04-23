@@ -187,3 +187,38 @@ def get_kafka_data(kafka_topic):
             # print("Kafka output:", json.loads(msg.value.decode()))
 
     consumer.close()
+
+def get_kafka_data_print_test(kafka_topic):
+    # #KAFKA CLIENT CONSUMER
+    #   try:
+    print("Trying Consume")
+    consumer = KafkaConsumer(bootstrap_servers=BOOTSTRAP_SERVERS,
+                             auto_offset_reset='earliest',
+                             security_protocol='SASL_SSL',
+                             sasl_mechanism='OAUTHBEARER',
+                             sasl_oauth_token_provider=TokenProvider(),
+                             ssl_cafile=path_to_kafka_cert,
+                             api_version=(2, 5, 0)
+                             )
+    # 'python-topic' default kafka topic
+    consumer.subscribe([kafka_topic])
+    # except KafkaError:
+    #   print("KafkaConsumer error when initialising")
+    #  return "Encountered Error"
+
+    for msg in consumer:
+        if msg:
+            dat = {
+                "msg" : msg
+                #'msg_value': msg.value(),  # This is the actual content of the message
+                #'msg_headers': msg.headers(),  # Headers of the message
+                #'msg_key': msg.key(),  # Message Key
+                #'msg_partition': msg.partition(),  # Partition id from which the message was extracted
+                #'msg_topic': msg.topic(),  # Topic in which Producer posted the message to
+            }
+            print(dat)
+            # print("Kafka output:", json.loads(msg.value.decode()))
+
+    # consumer.close()
+
+get_kafka_data_print_test("rcra-report-topic")
