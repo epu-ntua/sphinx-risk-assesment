@@ -82,16 +82,16 @@ print(BOOTSTRAP_SERVERS)
 print(KAFKA_CERT)
 print("-----------Env Variables End-----------------", flush=True)
 
-try:
-    producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
+#try:
+producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
                             security_protocol='SASL_SSL',
                             sasl_mechanism='OAUTHBEARER',
                             sasl_oauth_token_provider=TokenProvider(),
                             ssl_cafile= path_to_kafka_cert,
                             value_serializer=lambda value: value.encode(),
                         api_version = (2,5,0))
-except KafkaError:
-    print("Kafka producer initialisation encountered an error")
+#except KafkaError:
+#    print("Kafka producer initialisation encountered an error")
 
 def SendKafkaReport(report):
     # return ;
@@ -145,18 +145,22 @@ def generate_checkpoint(steps , kafkaInitialiser):
 
 def get_kafka_data(kafka_topic):
 # #KAFKA CLIENT CONSUMER
-    try:
-        consumer = KafkaConsumer(kafka_topic, bootstrap_servers=os.environ.get('BOOTSTRAP_SERVERS'),
+ #   try:
+    print("Trying Consume")
+    consumer = KafkaConsumer(kafka_topic, auto_offset_reset='earliest', consumer_timeout_ms=1000, bootstrap_servers=os.environ.get('BOOTSTRAP_SERVERS'),
                             security_protocol='SASL_SSL',
                             sasl_mechanism='OAUTHBEARER',
                             sasl_oauth_token_provider=TokenProvider(),
-                            ssl_cafile=KAFKA_CERT)
+                            ssl_cafile=path_to_kafka_cert,
+                            api_version = (2,5,0) 
+                            )
     # 'python-topic' default kafka topic
-    except KafkaError:
-        print("KafkaConsumer error when initialising")
-        return "Encountered Error"
+    #except KafkaError:
+     #   print("KafkaConsumer error when initialising")
+      #  return "Encountered Error"
 
-    # consumer.subscribe([kafka_topic])
 
     for msg in consumer:
         print("Kafka output:", json.loads(msg.value.decode()))
+
+    consumer.close()
