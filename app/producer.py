@@ -219,6 +219,6 @@ def get_kafka_data_print_test(kafka_topic):
             print(dat)
             # print("Kafka output:", json.loads(msg.value.decode()))
 
-    # consumer.close()
+    consumer.close()
 
-get_kafka_data_print_test("rcra-report-topic")
+# get_kafka_data_print_test("rcra-report-topic")
