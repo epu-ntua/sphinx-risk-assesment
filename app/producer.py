@@ -170,7 +170,7 @@ def get_kafka_data(kafka_topic):
     #   try:
     print("Trying Consume")
     consumer = KafkaConsumer(bootstrap_servers=BOOTSTRAP_SERVERS,
-                             auto_offset_reset='earliest',
+                             #auto_offset_reset='earliest',
                              security_protocol='SASL_SSL',
                              sasl_mechanism='OAUTHBEARER',
                              sasl_oauth_token_provider=TokenProvider(),
@@ -201,9 +201,13 @@ def get_kafka_data(kafka_topic):
 def get_kafka_data_print_test(kafka_topic):
     # #KAFKA CLIENT CONSUMER
     #   try:
-    print("Trying Consume")
+    print("Trying Consume: ", kafka_topic, flush = True)
+    print(BOOTSTRAP_SERVERS)
+    print(path_to_kafka_cert)
+    print(TokenProvider())
+    print("----------Consume Info End ", kafka_topic ,"--------------------------------")
     consumer = KafkaConsumer(bootstrap_servers=BOOTSTRAP_SERVERS,
-                             auto_offset_reset='earliest',
+                             #auto_offset_reset='earliest',
                              security_protocol='SASL_SSL',
                              sasl_mechanism='OAUTHBEARER',
                              sasl_oauth_token_provider=TokenProvider(),
@@ -232,15 +236,15 @@ def get_kafka_data_print_test(kafka_topic):
     if kafka_topic == "rcra-report-topic":
         print("--------------Kafka Received: rcra-report-topic -------------------------")
         print(dat)
-        print("-------------------------------------------------------------------------")
+        print("-------------------------------------------------------------------------", flush = True)
     elif kafka_topic == "dtm-alert":
         print("--------------Kafka Received: dtm-alert -------------------------")
         print(dat)
-        print("-------------------------------------------------------------------------")
+        print("-------------------------------------------------------------------------", flush = True)
     else:
         print("--------------Kafka Received: other topic -------------------------")
         print(dat)
-        print("-------------------------------------------------------------------------")
+        print("-------------------------------------------------------------------------", flush = True)
     # consumer.close()
 
 # get_kafka_data_print_test("rcra-report-topic")

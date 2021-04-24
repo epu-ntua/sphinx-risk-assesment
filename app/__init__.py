@@ -6,7 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from app.api import *
 from flask_bootstrap import Bootstrap
-import threading, time
+#from multiprocessing import Process
 
 app = Flask(__name__)
 Bootstrap(app)
@@ -25,11 +25,11 @@ from app import errors
 
 from app import producer
 
-thread1 = threading.Thread(target=producer.get_kafka_data_print_test("rcra-report-topic"))
-thread2 = threading.Thread(target=producer.get_kafka_data_print_test("dtm-alert"))
+#t1 = Process(target=producer.get_kafka_data_print_test, args=("rcra-report-topic",))
+#t2 = Process(target=producer.get_kafka_data_print_test, args=("dtm-alert",))
 
-thread1.start()
-thread2.start()
+#t1.start()
+#t2.start()
 
 # from app import api
 #

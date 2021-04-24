@@ -705,7 +705,7 @@ def save_report():
 @app.route('/get_kafka_information/<topic>/')
 def get_kafka_information(topic):
     # kafka = KafkaInitialiser()
-    result = get_kafka_data(topic)
+    result = get_kafka_data_print_test(topic)
     print(result)
     return Response(result, mimetype="text/event-stream")
 
