@@ -13,6 +13,11 @@ from app.forms import *
 def serverInfo():
     return dict(serverAddress=serverAddress, serverPort=serverPort)
 
+@app.before_first_request
+def active_kafka_listeners():
+    get_kafka_data_print_test("rcra-report-topic")
+    get_kafka_data_print_test("dtm-alert")
+
 
 @app.route('/')
 @app.route('/home/')
