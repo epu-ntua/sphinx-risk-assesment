@@ -108,6 +108,7 @@ print("-----------Env Variables End-----------------", flush=True)
 def SendKafkaReport(report):
     # return ;
     # KAFKA CLIENT PRODUCER
+    print("Initialising Kafka Producer")
     producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
                              security_protocol='SASL_SSL',
                              sasl_mechanism='OAUTHBEARER',
@@ -125,6 +126,7 @@ def SendKafkaReport(report):
     # #                         value_serializer=lambda value: value.encode())
     #
     #
+    print("Trying to send with Kafka Producer")
     try:
         producer.send('rcra-report-topic', json.dumps(report))
     except KafkaError:
@@ -201,7 +203,7 @@ def get_kafka_data_print_test(kafka_topic):
     #   try:
     print("Trying Consume")
     consumer = KafkaConsumer(bootstrap_servers=BOOTSTRAP_SERVERS,
-                             # auto_offset_reset='earliest',
+                             auto_offset_reset='earliest',
                              security_protocol='SASL_SSL',
                              sasl_mechanism='OAUTHBEARER',
                              sasl_oauth_token_provider=TokenProvider(),
