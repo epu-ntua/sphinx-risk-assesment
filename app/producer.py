@@ -14,6 +14,7 @@ from time import sleep
 from json import dumps
 import configparser
 import uuid
+import threading, time
 
 # check this too : https://pypi.org/project/javaproperties/
 # 8080
@@ -92,13 +93,13 @@ print(KAFKA_CERT)
 print("-----------Env Variables End-----------------", flush=True)
 
 # try:
-producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
-                         security_protocol='SASL_SSL',
-                         sasl_mechanism='OAUTHBEARER',
-                         sasl_oauth_token_provider=TokenProvider(),
-                         ssl_cafile=path_to_kafka_cert,
-                         value_serializer=lambda value: value.encode(),
-                         api_version=(2, 5, 0))
+# producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
+#                          security_protocol='SASL_SSL',
+#                          sasl_mechanism='OAUTHBEARER',
+#                          sasl_oauth_token_provider=TokenProvider(),
+#                          ssl_cafile=path_to_kafka_cert,
+#                          value_serializer=lambda value: value.encode(),
+#                          api_version=(2, 5, 0))
 
 
 # except KafkaError:
@@ -107,7 +108,13 @@ producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
 def SendKafkaReport(report):
     # return ;
     # KAFKA CLIENT PRODUCER
-
+    producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
+                             security_protocol='SASL_SSL',
+                             sasl_mechanism='OAUTHBEARER',
+                             sasl_oauth_token_provider=TokenProvider(),
+                             ssl_cafile=path_to_kafka_cert,
+                             value_serializer=lambda value: value.encode(),
+                             api_version=(2, 5, 0))
     # print(BOOTSTRAP_SERVERS)
     # print(os.environ.get('BOOTSTRAP_SERVERS'))
     # # producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
@@ -125,6 +132,7 @@ def SendKafkaReport(report):
 
     result = producer.flush()
     print(result, flush=True)
+    producer.close()
 
 
 # GENERATE UUID
@@ -193,7 +201,7 @@ def get_kafka_data_print_test(kafka_topic):
     #   try:
     print("Trying Consume")
     consumer = KafkaConsumer(bootstrap_servers=BOOTSTRAP_SERVERS,
-                             auto_offset_reset='earliest',
+                             # auto_offset_reset='earliest',
                              security_protocol='SASL_SSL',
                              sasl_mechanism='OAUTHBEARER',
                              sasl_oauth_token_provider=TokenProvider(),
@@ -216,9 +224,21 @@ def get_kafka_data_print_test(kafka_topic):
                 #'msg_partition': msg.partition(),  # Partition id from which the message was extracted
                 #'msg_topic': msg.topic(),  # Topic in which Producer posted the message to
             }
-            print(dat)
+            # print(dat)
             # print("Kafka output:", json.loads(msg.value.decode()))
 
-    consumer.close()
+    if kafka_topic == "rcra-report-topic":
+        print("--------------Kafka Received: rcra-report-topic -------------------------")
+        print(dat)
+        print("-------------------------------------------------------------------------")
+    elif kafka_topic == "dtm-alert":
+        print("--------------Kafka Received: dtm-alert -------------------------")
+        print(dat)
+        print("-------------------------------------------------------------------------")
+    else:
+        print("--------------Kafka Received: other topic -------------------------")
+        print(dat)
+        print("-------------------------------------------------------------------------")
+    # consumer.close()
 
 # get_kafka_data_print_test("rcra-report-topic")
