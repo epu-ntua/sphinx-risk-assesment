@@ -7,7 +7,7 @@ from app.producer import *
 from app.client import *
 import json
 from app.forms import *
-
+from multiprocessing import Process
 
 @app.context_processor
 def serverInfo():
@@ -15,8 +15,11 @@ def serverInfo():
 
 @app.before_first_request
 def active_kafka_listeners():
-    get_kafka_data_print_test("rcra-report-topic")
-    get_kafka_data_print_test("dtm-alert")
+    print("---- Before Request Run ----", flush = True)
+    t1 = Process(target=get_kafka_data_print_test, args=("rcra-report-topic",))
+    t2 = Process(target=get_kafka_data_print_test, args=("dtm-alert",))
+    t1.start()
+    t2.start()
 
 
 @app.route('/')
