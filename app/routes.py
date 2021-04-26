@@ -17,9 +17,9 @@ def serverInfo():
 def active_kafka_listeners():
     print("---- Before Request Run ----", flush = True)
     t1 = Process(target=get_kafka_data_print_test, args=("rcra-report-topic",))
-    t2 = Process(target=get_kafka_data_print_test, args=("dtm-alert",))
+    # t2 = Process(target=get_kafka_data_print_test, args=("dtm-alert",))
     t1.start()
-    t2.start()
+    # t2.start()
 
 
 @app.route('/')

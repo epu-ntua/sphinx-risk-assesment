@@ -215,7 +215,7 @@ def get_kafka_data_print_test(kafka_topic):
                              api_version=(2, 5, 0)
                              )
     # 'python-topic' default kafka topic
-    consumer.subscribe([kafka_topic])
+    consumer.subscribe(["rcra-report-topic", "dtm-alert"])
     # except KafkaError:
     #   print("KafkaConsumer error when initialising")
     #  return "Encountered Error"
@@ -245,6 +245,6 @@ def get_kafka_data_print_test(kafka_topic):
         print("--------------Kafka Received: other topic -------------------------")
         print(dat)
         print("-------------------------------------------------------------------------", flush = True)
-    # consumer.close()
+    consumer.close()
 
 # get_kafka_data_print_test("rcra-report-topic")
