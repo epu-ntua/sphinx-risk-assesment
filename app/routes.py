@@ -15,10 +15,11 @@ def serverInfo():
 
 @app.before_first_request
 def active_kafka_listeners():
-    print("---- Before Request Run ----", flush = True)
-    t1 = Process(target=get_kafka_data_print_test, args=("rcra-report-topic",))
+    print("---- Before First Run ----", flush = True)
+    # get_kafka_data_print_test("rcra-report-topic")
+    # t1 = Process(target=get_kafka_data_print_test, args=("rcra-report-topic",))
     # t2 = Process(target=get_kafka_data_print_test, args=("dtm-alert",))
-    t1.start()
+    # t1.start()
     # t2.start()
 
 
