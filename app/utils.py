@@ -435,9 +435,46 @@ def sendDSSScore():
     bundle = stix2.Bundle(asset, attack, relationship, rcra)
     print(bundle, flush=True)
     stix2validator.validate_instance(bundle)
-    SendKafkaReport(str(bundle))
+    SendKafkaReport(str(bundle), "rcra-report-topic")
 
     return 0
+
+
+def sendDSSScoreTest():
+    asset = stix2.IPv4Address(
+        # type="ipv4-addr",
+        value="10.0.255.106"
+    )
+    attack = stix2.AttackPattern(
+        # type="attack-pattern",
+        name="Spear Phishing as Practiced by Adversary X",
+        description="A particular form of spear phishing where the attacker claims that the target had won a contest, including personal details, to get them to click on a link.",
+    )
+
+    relationship = stix2.Relationship(
+        # type="relationship",
+        relationship_type="targets",
+        source_ref=attack.id,
+        target_ref=asset.id
+    )
+
+    scoring = {
+        "score": "20",
+        "impact": "high",
+        "probability": "low"
+    }
+    rcra = stix2_custom.RCRAObjective(
+        x_rcra_scoring=json.dumps(scoring)
+
+    )
+
+    bundle = stix2.Bundle(asset, attack, relationship, rcra)
+    print(bundle, flush=True)
+    stix2validator.validate_instance(bundle)
+    SendKafkaReport(str(bundle), "rcra-report-topic-test")
+
+    return 0
+
 
 
 def send_dss_alert():

@@ -105,7 +105,7 @@ print("-----------Env Variables End-----------------", flush=True)
 # except KafkaError:
 #    print("Kafka producer initialisation encountered an error")
 
-def SendKafkaReport(report):
+def SendKafkaReport(report, topic_to_write):
     # return ;
     # KAFKA CLIENT PRODUCER
     print("Initialising Kafka Producer")
@@ -128,7 +128,7 @@ def SendKafkaReport(report):
     #
     print("Trying to send with Kafka Producer")
     try:
-        producer.send('rcra-report-topic', json.dumps(report))
+        producer.send(topic_to_write, json.dumps(report))
     except KafkaError:
         print("Kafka producing sending data encountered an error")
 
@@ -207,7 +207,7 @@ def get_kafka_data_print_test(kafka_topic):
     print(TokenProvider())
     print("----------Consume Info End ", kafka_topic ,"--------------------------------")
     consumer = KafkaConsumer(bootstrap_servers=BOOTSTRAP_SERVERS,
-                             auto_offset_reset='earliest',
+                             #auto_offset_reset='earliest',
                              security_protocol='SASL_SSL',
                              sasl_mechanism='OAUTHBEARER',
                              sasl_oauth_token_provider=TokenProvider(),
@@ -215,7 +215,7 @@ def get_kafka_data_print_test(kafka_topic):
                              api_version=(2, 5, 0)
                              )
     # 'python-topic' default kafka topic
-    consumer.subscribe(["rcra-report-topic"])
+    consumer.subscribe(["rcra-report-topic", "rcra-report-topic-test", "dtm-alert"])
     # except KafkaError:
     #   print("KafkaConsumer error when initialising")
     #  return "Encountered Error"
@@ -230,21 +230,34 @@ def get_kafka_data_print_test(kafka_topic):
                 #'msg_partition': msg.partition(),  # Partition id from which the message was extracted
                 #'msg_topic': msg.topic(),  # Topic in which Producer posted the message to
             }
-            # print(dat)
+            print(dat)
+            if msg.topic == "rcra-report-topic":
+                print("--------------Kafka Received: rcra-report-topic -------------------------")
+                #print(dat)
+                print("-------------------------------------------------------------------------", flush = True)
+            elif msg.topic == "dtm-alert":
+                print("--------------Kafka Received: dtm-alert -------------------------")
+                #print(dat)
+                print("-------------------------------------------------------------------------", flush = True)
+            else:
+                print("--------------Kafka Received: other topic -------------------------")
+                #print(dat)
+                print("-------------------------------------------------------------------------", flush = True)
+
             # print("Kafka output:", json.loads(msg.value.decode()))
 
-    if kafka_topic == "rcra-report-topic":
-        print("--------------Kafka Received: rcra-report-topic -------------------------")
-        print(dat)
-        print("-------------------------------------------------------------------------", flush = True)
-    elif kafka_topic == "dtm-alert":
-        print("--------------Kafka Received: dtm-alert -------------------------")
-        print(dat)
-        print("-------------------------------------------------------------------------", flush = True)
-    else:
-        print("--------------Kafka Received: other topic -------------------------")
-        print(dat)
-        print("-------------------------------------------------------------------------", flush = True)
+    #if kafka_topic == "rcra-report-topic":
+    #    print("--------------Kafka Received: rcra-report-topic -------------------------")
+    #    print(dat)
+    #    print("-------------------------------------------------------------------------", flush = True)
+    #elif kafka_topic == "dtm-alert":
+    #    print("--------------Kafka Received: dtm-alert -------------------------")
+    #    print(dat)
+    #    print("-------------------------------------------------------------------------", flush = True)
+    #else:
+    #    print("--------------Kafka Received: other topic -------------------------")
+    #    print(dat)
+    #    print("-------------------------------------------------------------------------", flush = True)
     # consumer.close()
     return "Kafka consume test "
 # get_kafka_data_print_test("rcra-report-topic")

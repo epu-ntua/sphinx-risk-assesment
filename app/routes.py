@@ -17,9 +17,9 @@ def serverInfo():
 def active_kafka_listeners():
     print("---- Before First Run ----", flush = True)
     # get_kafka_data_print_test("rcra-report-topic")
-    # t1 = Process(target=get_kafka_data_print_test, args=("rcra-report-topic",))
+    t1 = Process(target=get_kafka_data_print_test, args=("rcra-report-topic",))
     # t2 = Process(target=get_kafka_data_print_test, args=("dtm-alert",))
-    # t1.start()
+    t1.start()
     # t2.start()
 
 
@@ -621,6 +621,13 @@ def write_topic_to_kafka():
     # CreateToken()
     return Response('Done' + str(datetime.utcnow()), mimetype="text/event-stream")
 
+@app.route('/save_report_test')
+def save_report_test():
+    status = sendDSSScoreTest()
+    if status == 0:
+        return Response(status=200)
+    else:
+        return Response(status=500)
 
 # @app.route('/topic/<topicname>')
 # def get_messages(topicname):
