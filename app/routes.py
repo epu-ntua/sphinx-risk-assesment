@@ -415,16 +415,72 @@ def gira_result():
         return render_template('gira_result.html')
 
 
-@app.route('/asset_dashboard/', methods=['GET', 'POST'])
-def asset_dashboard():
+@app.route('/repo/dashboard/asset/', methods=['GET', 'POST'])
+def repo_dashboard_asset():
     if request.method == 'POST':
-        return redirect("/asset_dashboard/")
+        return redirect("/repo/dashboard/asset/")
     else:
         # assetsArray = get_assetsfromrepository()
         # if assetsArray != -1:
         #     return render_template('asset_dashboard.html', assets=assetsArray)
         # else:
-        return render_template('asset_dashboard.html')
+        repo_assets = [
+            {
+                "id" : "1",
+                "name": "1",
+                "location": "1",
+                "Verified": "1",
+                "mac_address": "1",
+                "ip": "1",
+                "last_touch_date": "1",
+            }
+        ]
+        print(repo_assets)
+        return render_template('repo_asset_dashboard.html', repo_assets= repo_assets)
+
+
+@app.route('/repo/dashboard/threat/', methods=['GET', 'POST'])
+def repo_dashboard_threat():
+    if request.method == 'POST':
+        return redirect("/repo/dashboard/threat/")
+    else:
+        # assetsArray = get_assetsfromrepository()
+        # if assetsArray != -1:
+        #     return render_template('asset_dashboard.html', assets=assetsArray)
+        # else:
+        repo_threats = [
+            {
+                "id" : "1",
+                "name": "1",
+                "capec": "1",
+                "cwe": "1"
+            }
+        ]
+        print(repo_threats)
+        return render_template('repo_threat_dashboard.html', repo_threats=repo_threats)
+
+@app.route('/repo/dashboard/vulnerability/', methods=['GET', 'POST'])
+def repo_dashboard_vulnerability():
+    if request.method == 'POST':
+        return redirect("/repo/dashboard/vulnerability/")
+    else:
+        # assetsArray = get_assetsfromrepository()
+        # if assetsArray != -1:
+        #     return render_template('asset_dashboard.html', assets=assetsArray)
+        # else:
+        repo_vulnerabilities = [
+            {
+                "id" : "1",
+                "name": "1",
+                "location": "1",
+                "Verified": "1",
+                "mac_address": "1",
+                "ip": "1",
+                "last_touch_date": "1",
+            }
+        ]
+        print(repo_vulnerabilities)
+        return render_template('repo_vulnerability_dashboard.html', repo_vulnerabilities=repo_vulnerabilities)
 
 
 @app.route('/general_dashboard/asset_view/', defaults={"asset": -1})
@@ -621,13 +677,6 @@ def write_topic_to_kafka():
     # CreateToken()
     return Response('Done' + str(datetime.utcnow()), mimetype="text/event-stream")
 
-@app.route('/save_report_test')
-def save_report_test():
-    status = sendDSSScoreTest()
-    if status == 0:
-        return Response(status=200)
-    else:
-        return Response(status=500)
 
 # @app.route('/topic/<topicname>')
 # def get_messages(topicname):
@@ -708,6 +757,14 @@ def save_report():
     else:
         return Response(status=500)
 
+
+@app.route('/save_report_test')
+def save_report_test():
+    status = sendDSSScoreTest()
+    if status == 0:
+        return Response(status=200)
+    else:
+        return Response(status=500)
 
 # @app.route('/activate_test')
 # def activate_test():
@@ -978,7 +1035,7 @@ def view_repo_actors():
         json_actors = convert_database_items_to_json_table(repo_actors)
         json_actors = json.dumps(json_actors)
         # print("ACTORS ARE --------")
-        # print(json_actors)
+        print(json_actors)
         new_actor_form = FormAddRepoActor()
         return render_template("view_repo_actors.html", repo_actors=json_actors, new_actor_form=new_actor_form)
 

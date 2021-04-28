@@ -25,7 +25,7 @@
             ].join('')
         }
 
-        function populateEditFields(row){
+        function populateEditFields(row) {
             $("#editForm").find("#id").val(row.id)
             $("#editForm").find("#name").val(row.name)
         }
@@ -46,7 +46,7 @@
                     console.log("Is false")
                     return {
                         css: {
-                            color: 'blue'
+                            color: 'green'
                         }
                     }
                 } else {
@@ -78,17 +78,6 @@
 
 {% block content %}
     <h1>Repo Asset</h1>
-    <hr/>
-    <form action="/repo/assets/" method="post" novalidate>
-        {#        {{ wtf.form_field(new_asset_form.name) }}#}
-        {#        {{ wtf.form_field(new_asset_form.description) }}#}
-        {#        {{ wtf.form_field(new_asset_form.owner) }}#}
-        {#        {{ wtf.form_field(new_asset_form.verified_by[0]) }}#}
-
-        {{ wtf.quick_form(new_asset_form) }}
-        {#        <p>{{ wtf.form_field(new_asset_form.submit()) }}</p>#}
-        </p>
-    </form>
     <hr/>
     <div id="toolbar">
         <button id="remove" class="btn btn-danger" disabled>
@@ -137,6 +126,18 @@
         </tr>
         </thead>
     </table>
+    <hr/>
+    <h2>Add New Asset</h2>
+    <form action="/repo/assets/" method="post" novalidate>
+        {#        {{ wtf.form_field(new_asset_form.name) }}#}
+        {#        {{ wtf.form_field(new_asset_form.description) }}#}
+        {#        {{ wtf.form_field(new_asset_form.owner) }}#}
+        {#        {{ wtf.form_field(new_asset_form.verified_by[0]) }}#}
+
+        {{ wtf.quick_form(new_asset_form) }}
+        {#        <p>{{ wtf.form_field(new_asset_form.submit()) }}</p>#}
+        </p>
+    </form>
 
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
          aria-hidden="true">
@@ -149,7 +150,8 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="editForm" action="/repo/assets/" method="post" class="form form-horizontal" method="post" role="form" novalidate>
+                    <form id="editForm" action="/repo/assets/" method="post" class="form form-horizontal" method="post"
+                          role="form" novalidate>
                         {{ new_asset_form.hidden_tag() }}
 
                         {{ wtf.form_field(new_asset_form.name) }}
@@ -171,13 +173,13 @@
                         {{ wtf.form_field(new_asset_form.last_touch_date) }}
                         {{ wtf.form_field(new_asset_form.type_fk) }}
 
-                        {{ wtf.form_field(new_asset_form.submit)}}
+                        {{ wtf.form_field(new_asset_form.submit) }}
                     </form>
-{#                    {{ wtf.quick_form(new_actor_form) }}#}
+                    {#                    {{ wtf.quick_form(new_actor_form) }}#}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-{#                    <button type="button" class="btn btn-primary">Save changes</button>#}
+                    {#                    <button type="button" class="btn btn-primary">Save changes</button>#}
                 </div>
             </div>
         </div>

@@ -50,12 +50,7 @@
 
 {% block content %}
     <h1>Business Services </h1>
-    <hr/>
-    <form action="/repo/services/" method="post" novalidate>
-     {{ wtf.quick_form(new_service_form) }}
-{#        <p>{{ wtf.form_field(new_actor_form.submit()) }}</p>#}
-    </p>
-    </form>
+
     <hr/>
     <div id="toolbar">
         <button id="remove" class="btn btn-danger" disabled>
@@ -86,6 +81,13 @@
         </tr>
         </thead>
     </table>
+    <hr/>
+    <h2>Add New Service</h2>
+    <form action="/repo/services/" method="post" novalidate>
+     {{ wtf.quick_form(new_service_form) }}
+{#        <p>{{ wtf.form_field(new_actor_form.submit()) }}</p>#}
+    </p>
+    </form>
 
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
          aria-hidden="true">

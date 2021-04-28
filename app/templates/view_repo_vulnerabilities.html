@@ -51,12 +51,6 @@
 {% block content %}
     <h1>Repo Vulnerabilities </h1>
     <hr/>
-    <form action="/repo/vulnerabilities/" method="post" novalidate>
-     {{ wtf.quick_form(new_vulnerability_form) }}
-{#        <p>{{ wtf.form_field(new_actor_form.submit()) }}</p>#}
-    </p>
-    </form>
-    <hr/>
     <div id="toolbar">
         <button id="remove" class="btn btn-danger" disabled>
             <i class="fa fa-trash"></i> Delete
@@ -87,6 +81,14 @@
         </tr>
         </thead>
     </table>
+    <hr/>
+    <h2>Add new Vulnerability</h2>
+    <form action="/repo/vulnerabilities/" method="post" novalidate>
+     {{ wtf.quick_form(new_vulnerability_form) }}
+{#        <p>{{ wtf.form_field(new_actor_form.submit()) }}</p>#}
+    </p>
+    </form>
+
 
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
          aria-hidden="true">

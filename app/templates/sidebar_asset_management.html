@@ -29,18 +29,47 @@
                 <small>MAIN MENU</small>
             </li>
 <!--            /END Separator -->
-            <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_dashboard" class="bg-dark list-group-item list-group-item-action">
-                <div class="d-flex w-100 justify-content-start align-items-center">
-                    <span class="fa fa-dashboard fa-fw mr-3"></span>
-                    <span class="menu-collapsed" >Dashboard</span>
-                </div>
-            </a>
+{#            <a href="http://{{ serverAddress }}:{{ serverPort }}/repo/dashboard/asset/" class="bg-dark list-group-item list-group-item-action">#}
+{#                <div class="d-flex w-100 justify-content-start align-items-center">#}
+{#                    <span class="fa fa-dashboard fa-fw mr-3"></span>#}
+{#                    <span class="menu-collapsed" >Dashboard</span>#}
+{#                </div>#}
+{#            </a>#}
 <!--            <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_discovery" class="bg-dark list-group-item list-group-item-action">-->
 <!--                <div class="d-flex w-100 justify-content-start align-items-center">-->
 <!--                    <span class="fa fa-cc-discover fa-fw mr-3"></span>-->
 <!--                    <span class="menu-collapsed">Discovery</span>-->
 <!--                </div>-->
 <!--            </a>-->
+
+
+            <!--            Menu with submenu -->
+            <a href="#submenu0" data-toggle="collapse" aria-expanded="false" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-start align-items-center">
+                    <span class="fa fa-dashboard fa-fw mr-3"></span>
+                    <span class="menu-collapsed">Dashboards</span>
+                    <span class="submenu-icon ml-auto"></span>
+                </div>
+            </a>
+<!--            Submenu content -->
+            <div id='submenu0' class="collapse sidebar-submenu">
+                <a href="http://{{ serverAddress }}:{{ serverPort }}/repo/dashboard/asset/" class="list-group-item list-group-item-action bg-dark text-white">
+                    <span class="menu-collapsed">Asset Dashboard</span>
+                </a>
+                <a href="http://{{ serverAddress }}:{{ serverPort }}/repo/dashboard/threat/" class="list-group-item list-group-item-action bg-dark text-white">
+                    <span class="menu-collapsed">Threat Dashboard</span>
+                </a>
+                <a href="http://{{ serverAddress }}:{{ serverPort }}/repo/dashboard/vulnerability/" class="list-group-item list-group-item-action bg-dark text-white">
+                    <span class="menu-collapsed">Vulnerabilities Dashboard</span>
+                </a>
+            </div>
+
+
+
+
+
+
+
 <!--            Menu with submenu -->
             <a href="#submenu1" data-toggle="collapse" aria-expanded="false" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
                 <div class="d-flex w-100 justify-content-start align-items-center">
@@ -60,7 +89,7 @@
                 <a href="http://{{ serverAddress }}:{{ serverPort }}/repo/threats/" class="list-group-item list-group-item-action bg-dark text-white">
                     <span class="menu-collapsed">Threats</span>
                 </a>
-                v<a href="http://{{ serverAddress }}:{{ serverPort }}/repo/vulnerabilities/" class="list-group-item list-group-item-action bg-dark text-white">
+                <a href="http://{{ serverAddress }}:{{ serverPort }}/repo/vulnerabilities/" class="list-group-item list-group-item-action bg-dark text-white">
                     <span class="menu-collapsed">Vulnerabilities</span>
                 </a>
 {#                <a href="http://{{ serverAddress }}:{{ serverPort }}/asset_discovery" class="list-group-item list-group-item-action bg-dark text-white">#}

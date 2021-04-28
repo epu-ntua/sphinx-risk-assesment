@@ -10,3 +10,14 @@
 .custom-font{
     font-family: SansSerif;
 }
+
+.dashboard-row{
+    /*border-bottom: 1px solid grey;*/
+    /*border-top: 1px solid grey;*/
+    padding-top: 1px;
+    padding-left: 1px;
+    padding-right: 1px;
+    padding-bottom: 20px;
+
+}
+
