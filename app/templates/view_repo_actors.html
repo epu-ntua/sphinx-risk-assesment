@@ -47,7 +47,7 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Business Actors </h1>
+    <h1>System Users </h1>
     <hr/>
     <div id="toolbar">
         <button id="remove" class="btn btn-danger" disabled>
@@ -80,7 +80,7 @@
     </table>
 
     <hr/>
-    <h2>Add New Actor</h2>
+    <h2>Add New User</h2>
     <form action="/repo/actors/" method="post" novalidate>
         {{ wtf.quick_form(new_actor_form) }}
 {#        <p>{{ wtf.form_field(new_actor_form.submit()) }}</p>#}
@@ -92,7 +92,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Edit Actor Entry</h5>
+                    <h5 class="modal-title" id="editModalLabel">Edit User Entry</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>

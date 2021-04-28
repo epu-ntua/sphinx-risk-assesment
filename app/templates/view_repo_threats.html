@@ -76,8 +76,8 @@
             <th data-field="id" data-sortable="true">ID</th>
             <th data-field="name" data-sortable="true">Name</th>
             <th data-field="CAPEC_id" data-sortable="true">CAPEC</th>
-            <th data-field="likelihood" data-sortable="true">Likelihood</th>
-            <th data-field="impact" data-sortable="true">Impact</th>
+{#            <th data-field="likelihood" data-sortable="true">Likelihood</th>#}
+{#            <th data-field="impact" data-sortable="true">Impact</th>#}
 
             <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents">Item Price</th>
         </tr>
@@ -107,32 +107,33 @@
 
         </div>
         <div class="col-6">
+            <form action="/repo/threats/" method="post" novalidate>
+                {{ wtf.quick_form(new_threat_form) }}
+                {#        <p>{{ wtf.form_field(new_actor_form.submit()) }}</p>#}
+                </p>
+            </form>
             {#            <div class="row flex-grow custom-select-column-header">#}
-            <h3> Impact &lt Medium 59% &gt </h3>
-            <h4> Technical Impact Factor</h4>
-            <label for="formControlRange">Loss of confidentiality</label>
-            <input type="range" class="form-control-range" id="formControlRange">
-            <label for="formControlRange">Loss of integrity</label>
-            <input type="range" class="form-control-range" id="formControlRange">
-            <label for="formControlRange">Loss of availability</label>
-            <input type="range" class="form-control-range" id="formControlRange">
-            <h4> Business Impact Factors</h4>
-            <label for="formControlRange">Financial Damage</label>
-            <input type="range" class="form-control-range" id="formControlRange">
-            <label for="formControlRange">Reputation Damage</label>
-            <input type="range" class="form-control-range" id="formControlRange">
-            <label for="formControlRange">Non-compliance</label>
-            <input type="range" class="form-control-range" id="formControlRange">
+            {#            <h3> Impact &lt Medium 59% &gt </h3>#}
+            {#            <h4> Technical Impact Factor</h4>#}
+            {#            <label for="formControlRange">Loss of confidentiality</label>#}
+            {#            <input type="range" class="form-control-range" id="formControlRange">#}
+            {#            <label for="formControlRange">Loss of integrity</label>#}
+            {#            <input type="range" class="form-control-range" id="formControlRange">#}
+            {#            <label for="formControlRange">Loss of availability</label>#}
+            {#            <input type="range" class="form-control-range" id="formControlRange">#}
+            {#            <h4> Business Impact Factors</h4>#}
+            {#            <label for="formControlRange">Financial Damage</label>#}
+            {#            <input type="range" class="form-control-range" id="formControlRange">#}
+            {#            <label for="formControlRange">Reputation Damage</label>#}
+            {#            <input type="range" class="form-control-range" id="formControlRange">#}
+            {#            <label for="formControlRange">Non-compliance</label>#}
+            {#            <input type="range" class="form-control-range" id="formControlRange">#}
             {#            </div>#}
 
         </div>
 
     </div>
-    <form action="/repo/threats/" method="post" novalidate>
-        {{ wtf.quick_form(new_threat_form) }}
-        {#        <p>{{ wtf.form_field(new_actor_form.submit()) }}</p>#}
-        </p>
-    </form>
+
 
 
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
@@ -168,35 +169,37 @@
 
                         </div>
                         <div class="col-6">
+                            <form id="editForm" action="/repo/threats/" method="post" class="form form-horizontal"
+                                  method="post"
+                                  role="form" novalidate>
+                                {{ new_threat_form.hidden_tag() }}
+
+                                {{ wtf.form_field(new_threat_form.name) }}
+                                {{ wtf.form_field(new_threat_form.capec) }}
+                                {{ wtf.form_field(new_threat_form.submit) }}
+                            </form>
                             {#            <div class="row flex-grow custom-select-column-header">#}
-                            <h3> Impact &lt Medium 59% &gt </h3>
-                            <h4> Technical Impact Factor</h4>
-                            <label for="formControlRange">Loss of confidentiality</label>
-                            <input type="range" class="form-control-range" id="formControlRange">
-                            <label for="formControlRange">Loss of integrity</label>
-                            <input type="range" class="form-control-range" id="formControlRange">
-                            <label for="formControlRange">Loss of availability</label>
-                            <input type="range" class="form-control-range" id="formControlRange">
-                            <h4> Business Impact Factors</h4>
-                            <label for="formControlRange">Financial Damage</label>
-                            <input type="range" class="form-control-range" id="formControlRange">
-                            <label for="formControlRange">Reputation Damage</label>
-                            <input type="range" class="form-control-range" id="formControlRange">
-                            <label for="formControlRange">Non-compliance</label>
-                            <input type="range" class="form-control-range" id="formControlRange">
+                            {#                            <h3> Impact &lt Medium 59% &gt </h3>#}
+                            {#                            <h4> Technical Impact Factor</h4>#}
+                            {#                            <label for="formControlRange">Loss of confidentiality</label>#}
+                            {#                            <input type="range" class="form-control-range" id="formControlRange">#}
+                            {#                            <label for="formControlRange">Loss of integrity</label>#}
+                            {#                            <input type="range" class="form-control-range" id="formControlRange">#}
+                            {#                            <label for="formControlRange">Loss of availability</label>#}
+                            {#                            <input type="range" class="form-control-range" id="formControlRange">#}
+                            {#                            <h4> Business Impact Factors</h4>#}
+                            {#                            <label for="formControlRange">Financial Damage</label>#}
+                            {#                            <input type="range" class="form-control-range" id="formControlRange">#}
+                            {#                            <label for="formControlRange">Reputation Damage</label>#}
+                            {#                            <input type="range" class="form-control-range" id="formControlRange">#}
+                            {#                            <label for="formControlRange">Non-compliance</label>#}
+                            {#                            <input type="range" class="form-control-range" id="formControlRange">#}
                             {#            </div>#}
 
                         </div>
 
                     </div>
-                    <form id="editForm" action="/repo/threats/" method="post" class="form form-horizontal" method="post"
-                          role="form" novalidate>
-                        {{ new_threat_form.hidden_tag() }}
 
-                        {{ wtf.form_field(new_threat_form.name) }}
-                        {{ wtf.form_field(new_threat_form.capec) }}
-                        {{ wtf.form_field(new_threat_form.submit) }}
-                    </form>
                     {#                    {{ wtf.quick_form(new_actor_form) }}#}
                 </div>
                 <div class="modal-footer">

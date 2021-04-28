@@ -21,7 +21,7 @@
 
 
 {% block content %}
-    <form action="/assets/{{ asset }}/" , method="post">
+    <form action="/gira_overview/gira_consequence/" , method="post">
         <div id="gira-bar" class="row d-flex flex-grow-1 gira-bar">
             <div class="col-2 gira-bar-nav">
                 {#                <img id="gira-background-response" src={{  url_for('static', filename='/images/gira_menu_response.jpg') }}#}
@@ -98,14 +98,14 @@
             <div class="col-10 d-flex flex-wrap align-content-start custom-select-column">
                 {% for tempConsequence in consequences %}
                 <div class="card bg-light mb-3 custom-card" style="max-width: 18rem;">
-                    <div class="card-header"> Response #{{ tempResponse.id }}:
-                        {{ tempResponse.name }}
+                    <div class="card-header"> Consequence #{{ tempConsequence.id }}:
+                        {{ tempConsequence.name }}
                     </div>
                     <div class="card-body">
                         <h4 class="card-title">Description</h4>
-                        <p class="card-text"> {{ tempResponse.description }} </p>
+                        <p class="card-text"> {{ tempConsequence.description }} </p>
                         <h4 class="card-title">Probability Effect</h4>
-                        <p class="card-text"> {{ tempResponse.default_effect }} </p>
+                        <p class="card-text"> {{ tempConsequence.default_effect }} </p>
                     </div>
                 </div>
                 {% endfor %}

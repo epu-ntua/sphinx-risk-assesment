@@ -5,6 +5,10 @@ html, body {
     color: white;
 }
 
+.card-body{
+        background-color: #132644;
+}
+
 hr{
     background-color: lightgray;
 }

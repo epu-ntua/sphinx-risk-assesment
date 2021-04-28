@@ -106,6 +106,7 @@ def gira_assess():
 @app.route('/gira_assess/gira_assess_exposure/', methods=['GET'])
 def gira_assess_exposure():
     exposure_instances = ModelThreatExposure.query.all()
+    print(exposure_instances)
     return render_template('gira_assess_exposure.html', exposure_instances=exposure_instances)
 
 
@@ -298,12 +299,13 @@ def gira_threat_exposure():
         # print(to_add_exposure.id)
 
         # Add new Instance of Gira
-        to_add_instance = ModelInstance(threat=to_add_exposure.id)
+        print("This adds new MOdel Instance, Exposure: ", to_add_exposure, ", ID", to_add_exposure.id)
+        to_add_instance = ModelInstance(threat_id=to_add_exposure.id)
         db.session.add(to_add_instance)
         db.session.flush()
 
         # Add a new Threat Materialistion Instance
-        to_add_materialisation_instance = ModelThreatMaterialisation(instance_id=to_add_instance.id)
+        to_add_materialisation_instance = ModelThreatMaterialisation(instances=to_add_instance.id)
 
         to_add_materialisations_instance_id = request.form['materialisationsToAdd']
         to_add_materialisations_instance_id = json.loads(to_add_materialisations_instance_id)
