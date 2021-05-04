@@ -1,0 +1,157 @@
+{% extends "sidebar_asset_management.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{#{% block header %}#}
+{#<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/repo.css') }}">#}
+{#{% endblock %}#}
+{#{% block head %}#}
+{##}
+{#{% endblock %}#}
+{% block script %}
+    <script>
+        var $table = $('#table')
+
+        $(function () {
+            var data = {{ repo_assets | safe }};
+            {#console.log(data)#}
+            $table.bootstrapTable({data: data});
+        })
+    </script>
+{% endblock %}
+
+{% block content %}
+    <h1>Selected Asset</h1>
+    <hr/>
+    <table
+            id="table"
+            {#            data-show-columns="true"#}
+            {#            data-show-columns-toggle-all="true"#}
+            {#            data-loading-template="loadingTemplate"#}
+            {#            data-pagination="true"#}
+            {#            data-page-list="[10, 25, 50, 100, all]"#}
+            {#            show-button-icons="true"#}
+            {#            data-row-style="rowStyle"#}
+    >
+        <thead>
+        <tr>
+            {#            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents"></th>#}
+            {#            <th data-field="operate" data-formatter="operateFormatter1" data-events="operateEvents1"></th>#}
+            <th data-field="id" data-sortable="true">ID</th>
+            <th data-field="name" data-sortable="true">Name</th>
+            <th data-field="description" data-sortable="true">Description</th>
+            <th data-field="owner" data-sortable="true">Owner</th>
+            <th data-field="location" data-sortable="true">Location</th>
+            <th data-field="Verified" data-sortable="true">Verified</th>
+            <th data-field="verified_by" data-sortable="true">Verified by</th>
+            <th data-field="mac_address" data-sortable="true">Mac_address</th>
+            <th data-field="has_static_ip" data-sortable="true">Has static IP</th>
+            <th data-field="ip">IP</th>
+            <th data-field="net_group_fk" data-sortable="true">Name</th>
+            <th data-field="value" data-sortable="true">Value</th>
+            <th data-field="loss_of_revenue" data-sortable="true">Loss of Revenue</th>
+            <th data-field="additional_expenses" data-sortable="true">Additional Expenses</th>
+            <th data-field="regulatory_legal" data-sortable="true">Regulatory Legal</th>
+            <th data-field="customer_service" data-sortable="true">Customer_service</th>
+            <th data-field="goodwill" data-sortable="true">Goodwill</th>
+            <th data-field="last_touch_date" data-sortable="true">Last Touch Date</th>
+            <th data-field="type_fk" data-sortable="true">Type</th>
+        </tr>
+        </thead>
+    </table>
+    <hr/>
+    <div class="progress">
+        <div class="progress-bar" role="progressbar" style="width: 75%" aria-valuenow="25" aria-valuemin="0"
+             aria-valuemax="100"></div>
+    </div>
+
+    <h2>Threats | Selected Threat: Ransomware</h2>
+    <div class="row dashboard-row">
+        <div class="col-2 custom-select-column">
+            <button type="button" class="btn btn-primary fa fa-edit" style="margin-bottom: 3px; background-color: #447e9b">
+                Ransomware
+            </button>
+            <button type="button" class="btn btn-primary fa fa-close" style="margin-bottom: 3px; background-color: #9C1A1C">
+                Hijacking
+            </button>
+            <button type="button" class="btn btn-primary fa fa-close" style="margin-bottom: 3px; background-color: #9C1A1C">
+                DoS/DDoS
+            </button>
+            <button type="button" class="btn btn-primary fa fa-close" style="margin-bottom: 3px; background-color: #9C1A1C">
+                SQL Injection
+            </button>
+            <button type="button" class="btn btn-primary fa fa-check" style="margin-bottom: 3px; background-color: #00cc00">
+                Data integrity violation
+            </button>
+            <button type="button" class="btn btn-primary fa fa-check" style="margin-bottom: 3px; background-color: #00cc00">
+                Bruteforce Attack
+            </button>
+        </div>
+        <div class="col-2 custom-select-column">
+            <button type="button" class="btn btn-primary fa fa-check" style="margin-bottom: 3px; background-color: #00cc00">
+                Unauthorized Remote Access
+            </button>
+            <button type="button" class="btn btn-primary fa fa-check" style="margin-bottom: 3px; background-color: #00cc00">
+                Unauthorized Device Connection
+            </button>
+            <button type="button" class="btn btn-primary fa fa-check" style="margin-bottom: 3px; background-color: #00cc00">
+                Port Scanning
+            </button>
+            <button type="button" class="btn btn-primary fa fa-check" style="margin-bottom: 3px; background-color: #00cc00">
+                Abnormal Network Activity
+            </button>
+            <button type="button" class="btn btn-primary fa fa-check" style="margin-bottom: 3px; background-color: #00cc00">
+                MiTM
+            </button>
+            <button type="button" class="btn btn-primary fa fa-check" style="margin-bottom: 3px; background-color: #00cc00">
+                Suspicious Human Action/Behavior
+            </button>
+        </div>
+        <div class="col-4">
+            <h3></h3>
+            {#            <div class="row flex-grow custom-select-column-header">#}
+            <h3> Likelihood &lt Medium 50% &gt </h3>
+            <h4> Threat Agent Factory </h4>
+            <label for="formControlRange">Skill Level</label>
+            <input type="range" class="form-control-range" id="formControlRange">
+            <label for="formControlRange">Motive</label>
+            <input type="range" class="form-control-range" id="formControlRange">
+            <label for="formControlRange">Opportunity</label>
+            <input type="range" class="form-control-range" id="formControlRange">
+            <h4> Vulnerability Factors</h4>
+            <label for="formControlRange">Ease of discovery</label>
+            <input type="range" class="form-control-range" id="formControlRange">
+            <label for="formControlRange">Ease of exploit</label>
+            <input type="range" class="form-control-range" id="formControlRange">
+            <label for="formControlRange">Awareness</label>
+            <input type="range" class="form-control-range" id="formControlRange">
+            {#            </div>#}
+
+        </div>
+{#        <div class="col-4">#}
+{#            <h3> Impact &lt Medium 59% &gt </h3>#}
+{#            <h4> Technical Impact Factor</h4>#}
+{#            <label for="formControlRange">Loss of confidentiality</label>#}
+{#            <input type="range" class="form-control-range" id="formControlRange">#}
+{#            <label for="formControlRange">Loss of integrity</label>#}
+{#            <input type="range" class="form-control-range" id="formControlRange">#}
+{#            <label for="formControlRange">Loss of availability</label>#}
+{#            <input type="range" class="form-control-range" id="formControlRange">#}
+{#            <h4> Business Impact Factors</h4>#}
+{#            <label for="formControlRange">Financial Damage</label>#}
+{#            <input type="range" class="form-control-range" id="formControlRange">#}
+{#            <label for="formControlRange">Reputation Damage</label>#}
+{#            <input type="range" class="form-control-range" id="formControlRange">#}
+{#            <label for="formControlRange">Non-compliance</label>#}
+{#            <input type="range" class="form-control-range" id="formControlRange">#}
+{#        </div>#}
+    </div>
+    <div class="row">
+        <div class="col-5">
+
+        </div>
+        <div class="col-1">
+            <button type="button" class="btn btn-primary fa fa-edit">
+                Save Threat Settings
+            </button>
+        </div>
+    </div>
+{% endblock %}

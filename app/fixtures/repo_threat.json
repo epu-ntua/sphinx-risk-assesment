@@ -1,0 +1,57 @@
+[
+    {
+        "id": "1",
+        "name": "Ransomware",
+        "CAPEC_id": ""
+    },
+    {
+        "id": "2",
+        "name": "Hijacking",
+        "CAPEC_id": ""
+    },
+    {
+        "id": "3",
+        "name": "Dos/DDoS",
+        "CAPEC_id": ""
+    },
+    {
+        "id": "4",
+        "name": "SQL Injection",
+        "CAPEC_id": ""
+    },
+    {
+        "id": "5",
+        "name": "Data integrity violation",
+        "CAPEC_id": ""
+    },
+    {
+        "id": "6",
+        "name": "Unothorized Remote Access",
+        "CAPEC_id": ""
+    },
+    {
+        "id": "7",
+        "name": "Unauthorized Device Connection",
+        "CAPEC_id": ""
+    },
+    {
+        "id": "8",
+        "name": "Port Scanning",
+        "CAPEC_id": ""
+    },
+    {
+        "id": "9",
+        "name": "Abnormal Network Activity",
+        "CAPEC_id": ""
+    },
+    {
+        "id": "10",
+        "name": "MiTM",
+        "CAPEC_id": ""
+    },
+    {
+        "id": "11",
+        "name": "Suspecious Human Action/Behavior",
+        "CAPEC_id": ""
+    }
+]

@@ -16,5 +16,9 @@ EXPOSE 5002
 
 ENTRYPOINT ["flask"]
 
-CMD ["run", "--host=0.0.0.0"]
+CMD ["db init"]
+CMD ["db migrate"]
+CMD ["db upgrade"]
+
+CMD ["run", "--host=0.0.0.0" , "--no-reload"]
 

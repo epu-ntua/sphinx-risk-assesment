@@ -30,6 +30,9 @@ def query_generic_repo_type():
     return RepoAssetsType.query
 
 
+# def query_generic_repo_type():
+#     return RepoAssetsType.query
+
 class FormAddRepoActor(FlaskForm):
     id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
     name = StringField('Name', validators=[DataRequired()])
@@ -53,6 +56,17 @@ class FormAddRepoVulnerability(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
     cve = QuerySelectField(query_factory=query_generic_cve, allow_blank=True, get_label='name')
     submit = SubmitField("Add new Vulnerability")
+
+
+class FormAddRepoObjective(FlaskForm):
+    id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
+    name = StringField('Name', validators=[DataRequired()])
+    description = StringField('Description')
+    num_of_states = IntegerField('Number of States')
+    state1 = StringField('State#1')
+    state2 = StringField('State#2')
+    state3 = StringField('State#3')
+    submit = SubmitField("Add new Threat")
 
 
 class FormAddRepoThreat(FlaskForm):

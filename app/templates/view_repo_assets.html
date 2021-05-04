@@ -20,8 +20,38 @@
                 {#'<i class="fa fa-edit"></i>',#}
                 {#'</a>  ',#}
                 '<button type="button" class="btn btn-primary fa fa-edit" data-toggle="modal" data-target="#editModal">\n' +
-                '<span class= "custom-font">Edit</span>' +
-                '</button>'
+                '<span class= "custom-font">Verification & Edit</span>' +
+                '</button>',
+
+            ].join('')
+        }
+
+        function operateFormatter1(value, row, index) {
+            {#random_test = Math.floor(Math.random() * 10);#}
+            if (random_test % 2 == 0) {
+                return [
+                    '<a href="" style="background-color: #ff1a1a; color: #ffffff" type="button" class="btn btn-primary fa fa-edit">\n' +
+                    '<span class= "custom-font">Setup New Threat Relations</span>' +
+                    '</a>'
+                ].join('')
+            } else {
+                return [
+                    '<a href="/repo/assets/threats-relations/1/" style="background-color: #00cc00; color: #ffffff" type="button" class="btn btn-primary fa fa-edit">\n' +
+                    '<span class= "custom-font">Edit Threat Relations</span>' +
+                    '</a>'
+                ].join('')
+            }
+        }
+
+
+        function operateFormatter2(value, row, index) {
+            return [
+                {#'<a class="edit" href="javascript:void(0)" title="Edit">',#}
+                {#'<i class="fa fa-edit"></i>',#}
+                {#'</a>  ',#}
+                '<a href="/repo/assets/services-relations/1/" style="background-color: #00cc00; color: #ffffff" type="button" class="btn btn-primary fa fa-edit">\n' +
+                '<span class= "custom-font">Edit Organisation Functions Relations</span>' +
+                '</a>'
             ].join('')
         }
 
@@ -32,6 +62,20 @@
 
 
         window.operateEvents = {
+            'click .fa-edit': function (e, value, row, index) {
+                populateEditFields(row)
+                {#alert('You click like action, row: ' + JSON.stringify(row))#}
+            }
+        }
+
+        window.operateEvents1 = {
+            'click .fa-edit': function (e, value, row, index) {
+                populateEditFields(row)
+                {#alert('You click like action, row: ' + JSON.stringify(row))#}
+            }
+        }
+
+        window.operateEvents2 = {
             'click .fa-edit': function (e, value, row, index) {
                 populateEditFields(row)
                 {#alert('You click like action, row: ' + JSON.stringify(row))#}
@@ -103,6 +147,9 @@
     >
         <thead>
         <tr>
+            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents"></th>
+            <th data-field="operate" data-formatter="operateFormatter1" data-events="operateEvents1"></th>
+            <th data-field="operate" data-formatter="operateFormatter2" data-events="operateEvents2"></th>
             <th data-field="id" data-sortable="true">ID</th>
             <th data-field="name" data-sortable="true">Name</th>
             <th data-field="description" data-sortable="true">Description</th>
@@ -122,7 +169,6 @@
             <th data-field="goodwill" data-sortable="true">Goodwill</th>
             <th data-field="last_touch_date" data-sortable="true">Last Touch Date</th>
             <th data-field="type_fk" data-sortable="true">Type</th>
-            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents">Item Price</th>
         </tr>
         </thead>
     </table>

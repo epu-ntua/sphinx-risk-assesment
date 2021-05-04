@@ -9,13 +9,15 @@ import json
 from app.forms import *
 from multiprocessing import Process
 
+
 @app.context_processor
 def serverInfo():
     return dict(serverAddress=serverAddress, serverPort=serverPort)
 
+
 @app.before_first_request
 def active_kafka_listeners():
-    print("---- Before First Run ----", flush = True)
+    print("---- Before First Run ----", flush=True)
     # get_kafka_data_print_test("rcra-report-topic")
     t1 = Process(target=get_kafka_data_print_test, args=("rcra-report-topic",))
     # t2 = Process(target=get_kafka_data_print_test, args=("dtm-alert",))
@@ -27,6 +29,12 @@ def active_kafka_listeners():
 @app.route('/home/')
 def entry_page():
     return render_template('entry_page.html')
+
+
+@app.route('/setup-database/', methods=['GET'])
+def setup_database():
+    rcra_db_init()
+    return Response(status=200)
 
 
 @app.route('/assets/', defaults={"asset": -1})
@@ -105,7 +113,9 @@ def gira_assess():
 
 @app.route('/gira_assess/gira_assess_exposure/', methods=['GET'])
 def gira_assess_exposure():
-    exposure_instances = ModelThreatExposure.query.all()
+    # ----------------------------------------------------------
+    # exposure_instances = ModelThreatExposure.query.all()
+    exposure_instances = [{'id': '1', 'name': 'Hurricane'}, {'id': '2', 'name': 'Firestorm'}]
     print(exposure_instances)
     return render_template('gira_assess_exposure.html', exposure_instances=exposure_instances)
 
@@ -137,19 +147,21 @@ def gira_assess_response(exposure_id):
 
         return redirect('/gira_assess/' + exposure_id + '/gira_assess_materialisation/')
     else:
-        selected_exposure = ModelThreatExposure.query.filter_by(id=exposure_id).first()
-        all_responses = ModelIncidentResponse.query.all()
-
-        instance_responses = ModelIncidentResponse.query.filter(
-            ModelIncidentResponse.materialisation_instance.any(id=exposure_id)).all()
-
+        # ---------------------------------
+        # selected_exposure = ModelThreatExposure.query.filter_by(id=exposure_id).first()
+        selected_exposure = []
+        # all_responses = ModelIncidentResponse.query.all()
+        all_responses = []
+        # instance_responses = ModelIncidentResponse.query.filter(
+        #     ModelIncidentResponse.materialisation_instance.any(id=exposure_id)).all()
+        instance_responses = []
         return render_template('gira_assess_response.html', all_responses=all_responses,
                                selected_exposure=selected_exposure, instance_responses=instance_responses)
 
 
 # For xx% to appear in template need to create all entries at the same time at the start and then change values instead
 # of creating when clicking.
-@app.route('/gira_assess/<exposure_id>/gira_assess_materialisation/', methods=['GET', 'POST'])
+@app.route('//gira_assess/<exposure_id>/gira_assess_materialisation', methods=['GET', 'POST'])
 def gira_assess_materialisation(exposure_id):
     if request.method == 'POST':
         if request.form["is_threat_materialising"] == "false":
@@ -200,19 +212,26 @@ def gira_assess_materialisation(exposure_id):
     else:
         # NOT USING THE CORRECT KEYS TO SEARCH FOR THE RESPONSES AND SUCH
 
-        selected_exposure = ModelThreatExposure.query.filter_by(id=exposure_id).first()
+        # selected_exposure = ModelThreatExposure.query.filter_by(id=exposure_id).first()
 
+        selected_exposure = []
         # materialisation_instance = GiraThreatMaterialisationInstance.query.filter_by(instance_id=id_of_exposure).first()
 
-        instance_responses = ModelIncidentResponse.query.filter(
-            ModelIncidentResponse.materialisation_instance.any(id=exposure_id)).all()
+        # instance_responses = ModelIncidentResponse.query.filter(
+        #     ModelIncidentResponse.materialisation_instance.any(id=exposure_id)).all()
 
-        instance_materialisations = ModelThreatMaterialisation.query.filter(
-            ModelThreatMaterialisation.materialisation_instance.any(id=exposure_id)).all()
+        instance_responses = []
+
+        # instance_materialisations = ModelThreatMaterialisation.query.filter(
+        #     ModelThreatMaterialisation.materialisation_instance.any(id=exposure_id)).all()
         # print(instance_materialisations)
 
-        instance_materialisations_entries = ModelThreatMaterialisationInstanceEntry.query.filter_by(
-            table_id=exposure_id).all()
+        instance_materialisations = []
+
+        # instance_materialisations_entries = ModelThreatMaterialisationInstanceEntry.query.filter_by(
+        # table_id=exposure_id).all()
+
+        instance_materialisations_entries = []
 
         return render_template('gira_assess_materialisation.html', selected_exposure=selected_exposure,
                                instance_materialisations=instance_materialisations,
@@ -428,17 +447,17 @@ def repo_dashboard_asset():
         # else:
         repo_assets = [
             {
-                "id" : "1",
-                "name": "1",
-                "location": "1",
-                "Verified": "1",
-                "mac_address": "1",
-                "ip": "1",
-                "last_touch_date": "1",
+                "id": "1",
+                "name": "Asset1",
+                "location": "Group1",
+                "Verified": "false",
+                "mac_address": "xx:xx:xx:xx",
+                "ip": "xxx.xxx.xxx.xxx",
+                "last_touch_date": "today",
             }
         ]
         print(repo_assets)
-        return render_template('repo_asset_dashboard.html', repo_assets= repo_assets)
+        return render_template('repo_asset_dashboard.html', repo_assets=repo_assets)
 
 
 @app.route('/repo/dashboard/threat/', methods=['GET', 'POST'])
@@ -452,7 +471,7 @@ def repo_dashboard_threat():
         # else:
         repo_threats = [
             {
-                "id" : "1",
+                "id": "1",
                 "name": "1",
                 "capec": "1",
                 "cwe": "1"
@@ -460,6 +479,62 @@ def repo_dashboard_threat():
         ]
         print(repo_threats)
         return render_template('repo_threat_dashboard.html', repo_threats=repo_threats)
+
+
+@app.route('/repo/dashboard/risk/objectives/', methods=['GET', 'POST'])
+def repo_dashboard_risk_objectives():
+    if request.method == 'POST':
+        return redirect("/repo/dashboard/risk/objectives/")
+    else:
+        # assetsArray = get_assetsfromrepository()
+        # if assetsArray != -1:
+        #     return render_template('asset_dashboard.html', assets=assetsArray)
+        # else:
+        repo_threats = [
+            {
+                "likelihood": "Certain",
+                "monetary": "x<1000€",
+                "confidentiality": "-",
+                "integrity": "-",
+                "availability": "-",
+                "safety": "-"
+            },
+            {
+                "likelihood": "Possible",
+                "monetary": "-",
+                "confidentiality": "-",
+                "integrity": "-",
+                "availability": "-",
+                "safety": "No Injuries"
+            },
+            {
+                "likelihood": "Rare",
+                "monetary": "-",
+                "confidentiality": "-",
+                "integrity": "-",
+                "availability": "-",
+                "safety": "Injuries"
+            },
+            {
+                "likelihood": "Rare than Rare",
+                "monetary": "1000€ < x < 10000€",
+                "confidentiality": "-",
+                "integrity": "-",
+                "availability": "-",
+                "safety": "-"
+            },
+            {
+                "likelihood": "Oddness 3 or higher",
+                "monetary": "x > 10000€",
+                "confidentiality": "-",
+                "integrity": "-",
+                "availability": "-",
+                "safety": "Fatalities"
+            }
+        ]
+        print(repo_threats)
+        return render_template('repo_risk_objectives_dashboard.html', repo_threats=repo_threats)
+
 
 @app.route('/repo/dashboard/vulnerability/', methods=['GET', 'POST'])
 def repo_dashboard_vulnerability():
@@ -472,7 +547,7 @@ def repo_dashboard_vulnerability():
         # else:
         repo_vulnerabilities = [
             {
-                "id" : "1",
+                "id": "1",
                 "name": "1",
                 "location": "1",
                 "Verified": "1",
@@ -768,6 +843,7 @@ def save_report_test():
     else:
         return Response(status=500)
 
+
 # @app.route('/activate_test')
 # def activate_test():
 #     status = rcra_1()
@@ -870,7 +946,6 @@ def view_repo_assets():
                 to_edit_asset.last_touch_date = new_asset_form.last_touch_date.data
                 to_edit_asset.type_fk = type_fk_id
 
-
                 db.session.commit()
                 return redirect("/repo/assets/")
             else:
@@ -893,24 +968,24 @@ def view_repo_assets():
                     net_group_fk_id = new_asset_form.net_group_fk.id
 
                 # print(new_actor_form.name.data, flush=True)
-                to_add_asset =  RepoAsset(name=new_asset_form.name.data,
-                                     description=new_asset_form.description.data,
-                                     owner=owner_id,
-                                     location=new_asset_form.location.data,
-                                     verified=new_asset_form.verified.data,
-                                     verified_by=verified_by_id,
-                                     mac_address=new_asset_form.mac_address.data,
-                                     has_static_ip=new_asset_form.has_static_ip.data,
-                                     ip=new_asset_form.ip.data,
-                                     net_group_fk=net_group_fk_id,
-                                     value=new_asset_form.value.data,
-                                     loss_of_revenue=new_asset_form.loss_of_revenue.data,
-                                     additional_expenses=new_asset_form.additional_expenses.data,
-                                     regulatory_legal=new_asset_form.regulatory_legal.data,
-                                     customer_service=new_asset_form.customer_service.data,
-                                     goodwill=new_asset_form.goodwill.data,
-                                     last_touch_date=new_asset_form.last_touch_date.data,
-                                     type_fk=type_fk_id)
+                to_add_asset = RepoAsset(name=new_asset_form.name.data,
+                                         description=new_asset_form.description.data,
+                                         owner=owner_id,
+                                         location=new_asset_form.location.data,
+                                         verified=new_asset_form.verified.data,
+                                         verified_by=verified_by_id,
+                                         mac_address=new_asset_form.mac_address.data,
+                                         has_static_ip=new_asset_form.has_static_ip.data,
+                                         ip=new_asset_form.ip.data,
+                                         net_group_fk=net_group_fk_id,
+                                         value=new_asset_form.value.data,
+                                         loss_of_revenue=new_asset_form.loss_of_revenue.data,
+                                         additional_expenses=new_asset_form.additional_expenses.data,
+                                         regulatory_legal=new_asset_form.regulatory_legal.data,
+                                         customer_service=new_asset_form.customer_service.data,
+                                         goodwill=new_asset_form.goodwill.data,
+                                         last_touch_date=new_asset_form.last_touch_date.data,
+                                         type_fk=type_fk_id)
                 db.session.add(to_add_asset)
                 db.session.commit()
 
@@ -920,11 +995,6 @@ def view_repo_assets():
             print(new_asset_form.errors)
             flash('Error: Validation Error - Couldn\'t add asset, ')
             return redirect("/repo/assets/")
-
-
-
-
-
 
         # new_asset_form = FormAddRepoAsset()
         # print(new_asset_form.errors)
@@ -990,6 +1060,38 @@ def view_repo_assets():
                                new_asset_form=new_asset_form)
 
 
+@app.route('/repo/objectives/', methods=['GET', 'POST', 'PUT'])
+def view_repo_objectives():
+    if request.method == 'POST':
+
+
+        return redirect('/repo/objectives/')
+    else:
+        try:
+            repo_objectives = RepoObjective.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        # print("------------------------------")
+        # print(repo_actors, flush=True)
+        #
+        # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
+
+        json_objectives = convert_database_items_to_json_table(repo_objectives)
+        json_objectives = json.dumps(json_objectives)
+        # print("ACTORS ARE --------")
+        print(json_objectives)
+        json_objectives = [{'id': '1', 'name': 'Monetary', 'states': 'x<1000 | 1000 < x < 10000 | x > 10000'},
+                           {'id': '2', 'name': 'Confidentiality', 'states': 'Low | Med | High'},
+                           {'id': '3', 'name': 'Integrity', 'states': 'Low | Med | High'},
+                           {'id': '4', 'name': 'Availability', 'states': 'Low | Med | High'},
+                           {'id': '5', 'name': 'Safety', 'states': 'No Injuries | Injuries | Fatalities'}
+                           ]
+        new_objective_form = FormAddRepoObjective()
+        return render_template("view_repo_objectives.html", repo_objectives=json_objectives,
+                               new_objective_form=new_objective_form)
+
+
 @app.route('/repo/actors/', methods=['GET', 'POST', 'PUT'])
 def view_repo_actors():
     if request.method == 'POST':
@@ -997,7 +1099,7 @@ def view_repo_actors():
 
         if new_actor_form.validate_on_submit():
             if new_actor_form.id.data:
-                print("PUT ACTOR", "|",new_actor_form.id.data, "|", flush=True)
+                print("PUT ACTOR", "|", new_actor_form.id.data, "|", flush=True)
 
                 try:
                     to_edit_actor = RepoActor.query.filter_by(id=new_actor_form.id.data).first()
@@ -1232,6 +1334,40 @@ def view_repo_threats():
         new_threat_form = FormAddRepoThreat()
         return render_template("view_repo_threats.html", repo_threats=json_threats,
                                new_threat_form=new_threat_form)
+
+
+@app.route('/repo/assets/threats-relations/<asset_id>/', methods=['GET', 'POST'])
+def view_repo_asset_threats_relation(asset_id):
+    if request.method == 'POST':
+
+        # flash('Threat "{}" Added Succesfully'.format(new_threat_form.name.data))
+        return redirect("/repo/assets/threats-relations/1/")
+    else:
+        try:
+            repo_threats = RepoThreat.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        # new_threat_form = FormAddRepoThreat()
+        repo_assets = [{'id': 1, 'name': "Asset 1"}]
+        return render_template("view_repo_assets_threats_relation.html", repo_assets=repo_assets)
+
+
+@app.route('/repo/assets/services-relations/<asset_id>/', methods=['GET', 'POST'])
+def view_repo_asset_services_relation(asset_id):
+    if request.method == 'POST':
+
+        # flash('Threat "{}" Added Succesfully'.format(new_threat_form.name.data))
+        return redirect("/repo/assets/threats-relations/1/")
+    else:
+        try:
+            repo_threats = RepoThreat.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        # new_threat_form = FormAddRepoThreat()
+        repo_assets = [{'id': 1, 'name': "Asset 1"}]
+        return render_template("view_repo_assets_services_relation.html", repo_assets=repo_assets)
 
 
 @app.route('/test_repo/dtm/', methods=['GET', 'POST'])

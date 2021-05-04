@@ -49,7 +49,7 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Business Services </h1>
+    <h1>Organisation Functions </h1>
 
     <hr/>
     <div id="toolbar">
@@ -82,7 +82,7 @@
         </thead>
     </table>
     <hr/>
-    <h2>Add New Service</h2>
+    <h2>Add New Organisation Function</h2>
     <form action="/repo/services/" method="post" novalidate>
      {{ wtf.quick_form(new_service_form) }}
 {#        <p>{{ wtf.form_field(new_actor_form.submit()) }}</p>#}

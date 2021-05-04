@@ -2,10 +2,12 @@ from flask import jsonify
 from sqlalchemy.exc import SQLAlchemyError
 from app import db
 from app.models import *
+# from app.csv_to_json_converter_util import *
 from sqlalchemy import exists
 from datetime import date, datetime
 import openpyxl
 import json
+import os
 import requests
 import stix2
 import stix2validator
@@ -563,6 +565,31 @@ def convert_database_items_to_json_table(items):
     else:
         return []
 
+def import_fixture_from_file(file_name):
+    '''Function to imports Json from app/fixtures'''
+    with open(os.path.join(os.getcwd(),"app", "fixtures",file_name+".json"),encoding='utf-8') as json_file:
+        return json.load(json_file)
+
+def rcra_db_init():
+    """Function is run in the _init_ file when server starts to initialise static table data"""
+    if RepoService.query.count is 0:
+        print(RepoService.query.count)
+        return "Already exists"
+
+    to_add_services = import_fixture_from_file("repo_service")
+
+    for service_json in to_add_services:
+        print(service_json)
+        to_add_service = RepoService(**service_json)
+        db.session.add(to_add_service)
+
+    to_add_threats = import_fixture_from_file("repo_threat")
+
+    for threat_json in to_add_threats:
+        to_add_threat = RepoThreat(**threat_json)
+        db.session.add(to_add_threat)
+
+    db.session.commit()
 
 # def repo_check_dtm_asset_exits_and_add(dtm_object, assets):
 #     """This function uses a single object of the DTM and the retrieved database assets

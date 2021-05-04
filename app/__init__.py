@@ -17,14 +17,17 @@ app.config.from_object(Config)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-
 from app import routes
 from app import models
 
 from app import errors
 
 from app import producer
+from app import utils
+db.create_all()
+db.session.commit()
 
+utils.rcra_db_init()
 #t1 = Process(target=producer.get_kafka_data_print_test, args=("rcra-report-topic",))
 #t2 = Process(target=producer.get_kafka_data_print_test, args=("dtm-alert",))
 
