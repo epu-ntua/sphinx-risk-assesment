@@ -1,17 +1,17 @@
-.btn{
+.btn {
     background-color: #00a79d;
     color: white;
 }
 
-.alert-asset{
+.alert-asset {
     background-color: #9C1A1C;
 }
 
-.custom-font{
+.custom-font {
     font-family: SansSerif;
 }
 
-.dashboard-row{
+.dashboard-row {
     /*border-bottom: 1px solid grey;*/
     /*border-top: 1px solid grey;*/
     padding-top: 1px;
@@ -21,3 +21,11 @@
 
 }
 
+.btn-objective-alert {
+    margin-bottom: 3px;
+    margin-right: 10px
+}
+
+.btn-objective-alert-selected {
+    background-color: #00cc00;
+}

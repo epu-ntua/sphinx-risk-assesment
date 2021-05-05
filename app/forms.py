@@ -1,6 +1,6 @@
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, IntegerField, DateTimeField, BooleanField, SubmitField, FieldList
-from wtforms.validators import DataRequired , Optional
+from flask_wtf import FlaskForm, Form
+from wtforms import StringField, PasswordField, IntegerField, DateTimeField, BooleanField, SubmitField, FieldList, FormField
+from wtforms.validators import DataRequired, Optional
 from wtforms.widgets import HiddenInput
 from wtforms_sqlalchemy.fields import QuerySelectField
 from app.models import *
@@ -58,15 +58,19 @@ class FormAddRepoVulnerability(FlaskForm):
     submit = SubmitField("Add new Vulnerability")
 
 
+class FormAddRepoObjectiveState(Form):
+    class Meta:
+        csrf = False
+    id = IntegerField("Id", widget=HiddenInput(), validators=[Optional()])
+    name = StringField('Name', validators=[DataRequired()])
+
+
 class FormAddRepoObjective(FlaskForm):
     id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
     name = StringField('Name', validators=[DataRequired()])
     description = StringField('Description')
-    num_of_states = IntegerField('Number of States')
-    state1 = StringField('State#1')
-    state2 = StringField('State#2')
-    state3 = StringField('State#3')
-    submit = SubmitField("Add new Threat")
+    states = FieldList(FormField(FormAddRepoObjectiveState), min_entries=4, max_entries=10)
+    submit = SubmitField("Add new Objective")
 
 
 class FormAddRepoThreat(FlaskForm):

@@ -8,6 +8,7 @@ from app.client import *
 import json
 from app.forms import *
 from multiprocessing import Process
+import ast
 
 
 @app.context_processor
@@ -1063,7 +1064,37 @@ def view_repo_assets():
 @app.route('/repo/objectives/', methods=['GET', 'POST', 'PUT'])
 def view_repo_objectives():
     if request.method == 'POST':
+        if 'objective_alert_form' in request.form:
+            print("ID ALRT CHANGE", request.form)
+            objective_states = RepoObjectivesOptions.query.filter_by(objective_fk=request.form["objectiveAlertId"]).all()
 
+            print(objective_states)
+            for objective_state in objective_states:
+                objective_state.alert_level = request.form[objective_state.name]
+
+            db.session.commit()
+        else:
+            new_objective_form = FormAddRepoObjective()
+
+            if new_objective_form.validate_on_submit():
+                new_objective = RepoObjective(name=new_objective_form.name.data)
+                db.session.add(new_objective)
+                db.session.flush()
+
+                for state in new_objective_form.states.data:
+                    # print("Repo Options:", stat
+                    new_objective_state = RepoObjectivesOptions(name=state["name"], objective_fk=new_objective.id)
+                    db.session.add(new_objective_state)
+                    db.session.flush()
+
+                db.session.commit()
+                flash('Objective "{}" Added Succesfully'.format(new_objective_form.name.data))
+                # add_new_objective = RepoObjective(name=new_objective_form.name.data)
+                return redirect('/repo/objectives/')
+            else:
+                print("Errors", new_objective_form.errors, flush=True)
+
+            flash('Objective "{}" Error on add'.format(new_objective_form.name.data))
 
         return redirect('/repo/objectives/')
     else:
@@ -1080,13 +1111,30 @@ def view_repo_objectives():
         json_objectives = convert_database_items_to_json_table(repo_objectives)
         json_objectives = json.dumps(json_objectives)
         # print("ACTORS ARE --------")
+        json_objectives = ast.literal_eval(json_objectives)
+        print("JSON OBJECTIVES LIST IS", json_objectives)
+
+        for it in json_objectives:
+            it["states"] = "|"
+            it["alerts"] = "|"
+            print(it)
+            try:
+                json_objective_current_state = RepoObjectivesOptions.query.filter_by(objective_fk=it["id"]).all()
+            except SQLAlchemyError:
+                return Response("SQLAlchemyError", 500)
+
+            for current_state in json_objective_current_state:
+                it["states"] = it["states"] + current_state.name + "|"
+                it["alerts"] = it["alerts"] + str(current_state.alert_level) + "|"
+
         print(json_objectives)
-        json_objectives = [{'id': '1', 'name': 'Monetary', 'states': 'x<1000 | 1000 < x < 10000 | x > 10000'},
-                           {'id': '2', 'name': 'Confidentiality', 'states': 'Low | Med | High'},
-                           {'id': '3', 'name': 'Integrity', 'states': 'Low | Med | High'},
-                           {'id': '4', 'name': 'Availability', 'states': 'Low | Med | High'},
-                           {'id': '5', 'name': 'Safety', 'states': 'No Injuries | Injuries | Fatalities'}
-                           ]
+        # it["states"] = json_objective_current_state
+        # json_objectives = [{'id': '1', 'name': 'Monetary', 'states': 'x<1000 | 1000 < x < 10000 | x > 10000'},
+        #                    {'id': '2', 'name': 'Confidentiality', 'states': 'Low | Med | High'},
+        #                    {'id': '3', 'name': 'Integrity', 'states': 'Low | Med | High'},
+        #                    {'id': '4', 'name': 'Availability', 'states': 'Low | Med | High'},
+        #                    {'id': '5', 'name': 'Safety', 'states': 'No Injuries | Injuries | Fatalities'}
+        #                    ]
         new_objective_form = FormAddRepoObjective()
         return render_template("view_repo_objectives.html", repo_objectives=json_objectives,
                                new_objective_form=new_objective_form)

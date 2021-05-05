@@ -259,7 +259,7 @@ class RepoVulnerability(db.Model):
     CVE_id = db.Column(db.Integer, db.ForeignKey('common_vulnerabilities_and_exposures.id'))
 
 
-repo_asset_repo_service_association_table = db.Table('repo_asset_repo_service_association_table',db.Model.metadata,
+repo_asset_repo_service_association_table = db.Table('repo_asset_repo_service_association_table', db.Model.metadata,
                                                      db.Column('repo_asset_id', db.Integer,
                                                                db.ForeignKey('repo_asset.id')),
                                                      db.Column('repo_service_id', db.Integer,
@@ -334,8 +334,8 @@ class RepoObjectivesOptions(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, nullable=False)
     objective_fk = db.Column(db.Integer, db.ForeignKey('model_objective.id'), nullable=False)
+    alert_level = db.Column(db.Integer, nullable=True, default=0) #0-No Alert #1-Oddness3> #2-RareThanRare #3-Rare #4-Possible #5-Certain
     prob_likelihood = db.Column(db.Integer, nullable=True)
-
 
 
 class ModelThreatExposure(db.Model):
