@@ -1065,10 +1065,10 @@ def view_repo_assets():
 def view_repo_objectives():
     if request.method == 'POST':
         if 'objective_alert_form' in request.form:
-            print("ID ALRT CHANGE", request.form)
+            # print("ID ALRT CHANGE", request.form)
             objective_states = RepoObjectivesOptions.query.filter_by(objective_fk=request.form["objectiveAlertId"]).all()
 
-            print(objective_states)
+            # print(objective_states)
             for objective_state in objective_states:
                 objective_state.alert_level = request.form[objective_state.name]
 
@@ -1112,12 +1112,12 @@ def view_repo_objectives():
         json_objectives = json.dumps(json_objectives)
         # print("ACTORS ARE --------")
         json_objectives = ast.literal_eval(json_objectives)
-        print("JSON OBJECTIVES LIST IS", json_objectives)
+        # print("JSON OBJECTIVES LIST IS", json_objectives)
 
         for it in json_objectives:
             it["states"] = "|"
             it["alerts"] = "|"
-            print(it)
+            # print(it)
             try:
                 json_objective_current_state = RepoObjectivesOptions.query.filter_by(objective_fk=it["id"]).all()
             except SQLAlchemyError:
@@ -1127,7 +1127,7 @@ def view_repo_objectives():
                 it["states"] = it["states"] + current_state.name + "|"
                 it["alerts"] = it["alerts"] + str(current_state.alert_level) + "|"
 
-        print(json_objectives)
+        # print(json_objectives)
         # it["states"] = json_objective_current_state
         # json_objectives = [{'id': '1', 'name': 'Monetary', 'states': 'x<1000 | 1000 < x < 10000 | x > 10000'},
         #                    {'id': '2', 'name': 'Confidentiality', 'states': 'Low | Med | High'},

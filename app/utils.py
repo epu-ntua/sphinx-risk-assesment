@@ -572,8 +572,9 @@ def import_fixture_from_file(file_name):
 
 def rcra_db_init():
     """Function is run in the _init_ file when server starts to initialise static table data"""
-    if RepoService.query.count is not 0:
-        print(RepoService.query.count)
+    print("Initiating Database", flush=True)
+    if RepoService.query.count() is not 0:
+        print(RepoService.query.count())
         return "Already exists"
 
     to_add_services = import_fixture_from_file("repo_service")
