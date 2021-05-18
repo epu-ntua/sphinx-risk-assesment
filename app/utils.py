@@ -548,8 +548,10 @@ def send_asset_id_alert():
 
 
 def convert_database_items_to_json_table(items):
-    """ Converts sqlalchemy entries to json"""
+    """ Converts sqlalchemy entries to json ,
+    Needs to be in an array to work"""
     if items:
+        # print(items)
         columns = items[0].__table__.columns._data.keys()
         json_ready = []
         temp_json = {}

@@ -1056,7 +1056,7 @@ def view_repo_assets():
 
         new_asset_form = FormAddRepoAsset()
 
-        print(json_assets)
+        print("REPO ASSETS", json_assets)
         return render_template("view_repo_assets.html", repo_assets=json_assets,
                                new_asset_form=new_asset_form)
 
@@ -1066,7 +1066,8 @@ def view_repo_objectives():
     if request.method == 'POST':
         if 'objective_alert_form' in request.form:
             # print("ID ALRT CHANGE", request.form)
-            objective_states = RepoObjectivesOptions.query.filter_by(objective_fk=request.form["objectiveAlertId"]).all()
+            objective_states = RepoObjectivesOptions.query.filter_by(
+                objective_fk=request.form["objectiveAlertId"]).all()
 
             # print(objective_states)
             for objective_state in objective_states:
@@ -1392,30 +1393,116 @@ def view_repo_asset_threats_relation(asset_id):
         return redirect("/repo/assets/threats-relations/1/")
     else:
         try:
-            repo_threats = RepoThreat.query.all()
+            repo_asset = RepoAsset.query.filter_by(id=int(asset_id)).all()
         except SQLAlchemyError:
             return Response("SQLAlchemyError", 500)
 
-        # new_threat_form = FormAddRepoThreat()
-        repo_assets = [{'id': 1, 'name': "Asset 1"}]
-        return render_template("view_repo_assets_threats_relation.html", repo_assets=repo_assets)
-
-
-@app.route('/repo/assets/services-relations/<asset_id>/', methods=['GET', 'POST'])
-def view_repo_asset_services_relation(asset_id):
-    if request.method == 'POST':
-
-        # flash('Threat "{}" Added Succesfully'.format(new_threat_form.name.data))
-        return redirect("/repo/assets/threats-relations/1/")
-    else:
         try:
             repo_threats = RepoThreat.query.all()
         except SQLAlchemyError:
             return Response("SQLAlchemyError", 500)
 
+        repo_asset = convert_database_items_to_json_table(repo_asset)
+        repo_asset = json.dumps(repo_asset)
         # new_threat_form = FormAddRepoThreat()
-        repo_assets = [{'id': 1, 'name': "Asset 1"}]
-        return render_template("view_repo_assets_services_relation.html", repo_assets=repo_assets)
+        return render_template("view_repo_assets_threats_relation.html", repo_assets=repo_asset,
+                               repo_threats=repo_threats)
+
+
+@app.route('/repo/assets/services-relations/<asset_id>/', methods=['GET', 'POST'])
+def view_repo_asset_services_relation(asset_id):
+    if request.method == 'POST':
+        try:
+            repo_asset = RepoAsset.query.filter_by(id=int(asset_id)).first()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        # Add new asset-services relations
+        try:
+            services = RepoService.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        try:
+            related_services = RepoService.query.filter(RepoService.assets.any(id=asset_id)).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        for service in services:
+            related_service = None
+            for potentialy_related in related_services:
+                if potentialy_related.id == service.id:
+                    related_service = potentialy_related
+                    break
+            else:
+                related_service = None
+            if request.form[str(service.id)] == "0":
+                print("NO RELATION", service.name)
+                # Find if service was prebiously related
+
+                if related_service is not None:
+                    # If it exists delete it
+                    print("NO RELATION DELETE", service.name, ":", repo_asset.services)
+                    repo_asset.services.remove(related_service)
+                else:
+                    print("NO RELATION NOTHING", service.name)
+                    # Otherwise do nothing
+                    continue
+            else:
+                print("RELATION", service.name)
+
+                if related_service is not None:
+                    # If it exists do nothing
+                    print("RELATION NOTHING", service.name)
+                    continue
+                else:
+                    print("RELATION ADD", service.name)
+                    # Otherwise add it
+                    repo_asset.services.append(service)
+
+        db.session.commit()
+        # for service in services:
+        #     to_add_asset.services.append(service)
+
+        # flash('Threat "{}" Added Succesfully'.format(new_threat_form.name.data))
+        return redirect("/repo/assets/services-relations/" + asset_id + "/")
+    else:
+        try:
+            repo_asset = RepoAsset.query.filter_by(id=int(asset_id)).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        try:
+            all_services = RepoService.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        try:
+            related_services = RepoService.query.filter(RepoService.assets.any(id=asset_id)).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        print("Start Related Services:", related_services)
+        repo_asset = convert_database_items_to_json_table(repo_asset)
+        repo_asset = json.dumps(repo_asset)
+
+        related_services = convert_database_items_to_json_table(related_services)
+
+        unrelated_services = convert_database_items_to_json_table(all_services)
+
+        for related_service in related_services:
+            unrelated_services.remove(related_service)
+
+        related_services = json.dumps(related_services)
+        unrelated_services = json.dumps(unrelated_services)
+        related_services = ast.literal_eval(related_services)
+        unrelated_services = ast.literal_eval(unrelated_services)
+
+        print("Related Services:", related_services)
+        print("Unrelated Services:", unrelated_services)
+        return render_template("view_repo_assets_services_relation.html", repo_assets=repo_asset,
+                               related_services=related_services, unrelated_services=unrelated_services,
+                               asset_id=asset_id)
 
 
 @app.route('/test_repo/dtm/', methods=['GET', 'POST'])

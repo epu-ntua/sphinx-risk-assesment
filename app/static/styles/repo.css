@@ -29,3 +29,13 @@
 .btn-objective-alert-selected {
     background-color: #00cc00;
 }
+
+.btn-asset-service-related {
+    margin-bottom: 3px;
+    background-color: #00cc00
+}
+
+.btn-asset-service-unrelated {
+    margin-bottom: 3px;
+    background-color: #9C1A1C;
+}

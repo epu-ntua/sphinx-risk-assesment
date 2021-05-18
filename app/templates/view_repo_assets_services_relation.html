@@ -8,6 +8,18 @@
 {#{% endblock %}#}
 {% block script %}
     <script>
+        function relateService(serviceId) {
+            $("#" + serviceId).val("1")
+            $("#related-btn-" + serviceId).show()
+            $("#unrelated-btn-" + serviceId).hide()
+        }
+
+        function unRelateService(serviceId) {
+            $("#" + serviceId).val("0")
+            $("#related-btn-" + serviceId).hide()
+            $("#unrelated-btn-" + serviceId).show()
+        }
+
         var $table = $('#table')
 
         $(function () {
@@ -58,43 +70,67 @@
         </thead>
     </table>
     <hr/>
-{#    <div class="progress">#}
-{#        <div class="progress-bar" role="progressbar" style="width: 75%" aria-valuenow="25" aria-valuemin="0"#}
-{#             aria-valuemax="100"></div>#}
-{#    </div>#}
+    {#    <div class="progress">#}
+    {#        <div class="progress-bar" role="progressbar" style="width: 75%" aria-valuenow="25" aria-valuemin="0"#}
+    {#             aria-valuemax="100"></div>#}
+    {#    </div>#}
 
     <h2>Organisation Functions | Selected Organisation Function: Ransomware</h2>
-    <div class="row dashboard-row">
-        <div class="col-5 custom-select-column">
-            <h4>Related Services</h4>
-            <button type="button" class="btn btn-primary fa fa-arrow-right" style="margin-bottom: 3px; background-color: #00cc00">
-                Insurance check
-            </button>
-            <button type="button" class="btn btn-primary fa fa-arrow-right" style="margin-bottom: 3px; background-color: #00cc00">
-                Blood test
-            </button>
-            <button type="button" class="btn btn-primary fa fa-arrow-right" style="margin-bottom: 3px; background-color: #00cc00">
-                Biopsy test
-            </button>
+    <form action="/repo/assets/services-relations/{{ asset_id }}/" method="post">
+        <div class="row dashboard-row">
+            <div class="col-5 custom-select-column">
+                <h4>Related Services</h4>
+                {% for related_service in related_services %}
+                    <button type="button" class="btn btn-primary fa fa-arrow-right btn-asset-service-related"
+                            id="related-btn-{{ related_service.id }}"
+                            onclick="unRelateService({{ related_service.id }})">
+                        {{ related_service.name }}
+                    </button>
+                {% endfor %}
+                {% for unrelated_service in unrelated_services %}
+                    <button type="button" class="btn btn-primary fa fa-arrow-right btn-asset-service-related"
+                            id="related-btn-{{ unrelated_service.id }}" style="display: none"
+                            onclick="unRelateService({{ unrelated_service.id }})">
+                        {{ unrelated_service.name }}
+                    </button>
+                {% endfor %}
+            </div>
+            <div class="col-5 custom-select-column">
+                <h4>Unrated Services </h4>
+                {% for unrelated_service in unrelated_services %}
+                    <button type="button" class="btn btn-primary fa fa-arrow-left btn-asset-service-unrelated"
+                            id="unrelated-btn-{{ unrelated_service.id }}"
+                            onclick="relateService({{ unrelated_service.id }})">
+                        {{ unrelated_service.name }}
+                    </button>
+                {% endfor %}
+                {% for related_service in related_services %}
+                    <button type="button" class="btn btn-primary fa fa-arrow-left btn-asset-service-unrelated"
+                            id="unrelated-btn-{{ related_service.id }}" style="display: none"
+                            onclick="relateService({{ related_service.id }})">
+                        {{ related_service.name }}
+                    </button>
+                {% endfor %}
+            </div>
         </div>
-        <div class="col-5 custom-select-column">
-            <h4>Unrated Services </h4>
-            <button type="button" class="btn btn-primary fa fa-arrow-left" style="margin-bottom: 3px; background-color: #9C1A1C">
-                Catering
-            </button>
-            <button type="button" class="btn btn-primary fa fa-arrow-left" style="margin-bottom: 3px; background-color: #9C1A1C">
-                Pharmacy
-            </button>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-5">
+        {% for related_service in related_services %}
+            <input type="hidden" id="{{ related_service.id }}" name="{{ related_service.id }}" value="1">
+        {% endfor %}
+        {% for unrelated_service in unrelated_services %}
+            <input type="hidden" id="{{ unrelated_service.id }}" name="{{ unrelated_service.id }}" value="0">
+        {% endfor %}
+        <div class="row">
+            <div class="col-4">
 
+            </div>
+            <div class="col-2">
+                <input type="submit" value="Save Asset Settings" class="btn btn-primary fa fa-edit">
+            </div>
+            <div class="col-1">
+                <a href="/repo/assets/" value="Save Asset Settings" class="btn btn-primary fa fa-edit"> Go Back </a>
+            </div>
         </div>
-        <div class="col-1">
-            <button type="button" class="btn btn-primary fa fa-edit">
-                Save Asset Settings
-            </button>
-        </div>
-    </div>
+    </form>
+
+
 {% endblock %}

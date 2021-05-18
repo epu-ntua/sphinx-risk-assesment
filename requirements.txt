@@ -8,6 +8,7 @@ certifi==2019.11.28
 chardet==3.0.4
 Click==7.0
 colorama==0.4.4
+configparser==5.0.2
 cpe==1.2.1
 Django==3.0.3
 dominate==2.4.0
@@ -30,7 +31,9 @@ kafka-python==2.0.2
 kazoo==2.5.0
 Mako==1.1.1
 MarkupSafe==1.1.1
+numpy==1.20.3
 openpyxl==3.0.4
+pyAgrum==0.20.2
 pykafka==2.8.0
 pyrsistent==0.17.3
 python-dateutil==2.8.1

@@ -244,12 +244,43 @@ class VulnerabilitiesWeaknessLink(db.Model):
 #     def __repr__(self):
 #         return '<Risk_Vulnerability_Threat {}>'.format(self.id)
 
+class RepoAssetRepoThreatRelationship(db.Model):
+    __tablename__ = 'repo_asset_repo_threat_relationship'
+    repo_asset_id = db.Column(db.Integer, db.ForeignKey('repo_asset.id'), primary_key=True)
+    repo_threat_id = db.Column(db.Integer, db.ForeignKey('repo_threat.id'), primary_key=True)
+    asset = db.relationship('RepoAsset', back_populates='threats')
+    threat = db.relationship('RepoThreat', back_populates='assets')
+    skill_level = db.Column(db.Integer, nullable=True)
+    motive = db.Column(db.Integer, nullable=True)
+    opportunity = db.Column(db.Integer, nullable=True)
+    ease_of_discovery = db.Column(db.Integer, nullable=True)
+    ease_of_exploit = db.Column(db.Integer, nullable=True)
+    awareness = db.Column(db.Integer, nullable=True)
+
+
+# db.Table('repo_asset_repo_threat_association_table', db.Model.metadata,
+#                                                     db.Column('repo_asset_id', db.Integer,
+#                                                               db.ForeignKey('repo_asset.id')),
+#                                                     db.Column('repo_threat_id', db.Integer,
+#                                                               db.ForeignKey('repo_threat.id'))
+#                                                     )
+repo_threat_repo_consequence_association_table = db.Table('repo_threat_repo_consequence_association_table',
+                                                          db.Model.metadata,
+                                                          db.Column('repo_threat', db.Integer,
+                                                                    db.ForeignKey('repo_threat.id')),
+                                                          db.Column('repo_consequence', db.Integer,
+                                                                    db.ForeignKey('repo_consequence.id'))
+                                                          )
+
 
 class RepoThreat(db.Model):
     __tablename__ = 'repo_threat'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String)
     CAPEC_id = db.Column(db.Integer, db.ForeignKey('common_attack_pattern_enumeration_classification.id'))
+    assets = db.relationship("RepoAssetRepoThreatRelationship", back_populates="threats")
+    consequences = db.relationship('RepoConsequence', secondary=repo_threat_repo_consequence_association_table,
+                                   back_populates='threats')
 
 
 class RepoVulnerability(db.Model):
@@ -265,6 +296,14 @@ repo_asset_repo_service_association_table = db.Table('repo_asset_repo_service_as
                                                      db.Column('repo_service_id', db.Integer,
                                                                db.ForeignKey('repo_service.id'))
                                                      )
+
+
+class RepoConsequence(db.Model):
+    __tablename__ = 'repo_consequence'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String)
+    threats = db.relationship('RepoThreat', secondary=repo_threat_repo_consequence_association_table,
+                              back_populates='consequences')
 
 
 class RepoAsset(db.Model):
@@ -290,6 +329,8 @@ class RepoAsset(db.Model):
     type_fk = db.Column(db.Integer, db.ForeignKey('repo_assets_type.id'))
     services = db.relationship("RepoService", secondary=repo_asset_repo_service_association_table,
                                back_populates="assets")
+    threats = db.relationship("RepoAssetRepoThreatRelationship",
+                              back_populates="assets")
 
 
 class RepoAssetsType(db.Model):
@@ -334,7 +375,8 @@ class RepoObjectivesOptions(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, nullable=False)
     objective_fk = db.Column(db.Integer, db.ForeignKey('model_objective.id'), nullable=False)
-    alert_level = db.Column(db.Integer, nullable=True, default=0) #0-No Alert #1-Oddness3> #2-RareThanRare #3-Rare #4-Possible #5-Certain
+    alert_level = db.Column(db.Integer, nullable=True,
+                            default=0)  # 0-No Alert #1-Oddness3> #2-RareThanRare #3-Rare #4-Possible #5-Certain
     prob_likelihood = db.Column(db.Integer, nullable=True)
 
 
