@@ -1,0 +1,6 @@
+id,description,name
+1,The potential leak of information,Confidentiality
+2,"Consistency, accuracy and trustworthiness of data over its entire lifecycle",Integrity
+3,Availability of data and hospital services,Availability
+4,The potential monetary loss,Monetary
+5,The potential impact on patient safety,Safety

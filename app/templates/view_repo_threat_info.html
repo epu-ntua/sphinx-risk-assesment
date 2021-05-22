@@ -1,0 +1,112 @@
+{% extends "sidebar_asset_management.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{#{% block header %}#}
+{#<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/repo.css') }}">#}
+{#{% endblock %}#}
+{#{% block head %}#}
+{##}
+{#{% endblock %}#}
+{% block script %}
+    <script>
+        $("#new_m_c_form").find("#threat_id").val({{ repo_threat_dict[0].id }})
+        $("#new_r_form").find("#threat_id").val({{ repo_threat_dict[0].id }})
+
+        var $table = $('#table')
+        var $table_materialisations = $('#table_materialisations')
+        var $table_consequences = $('#table_consequences')
+        var $table_responses = $('#table_responses')
+
+        $(function () {
+            var data = {{ repo_threat | safe }};
+            var data_materialisations = {{ repo_materialisations | safe }};
+            var data_consequences = {{ repo_consequences | safe }};
+            var data_responses = {{ repo_responses | safe }}
+            {#console.log(data)#}
+            $table.bootstrapTable({data: data});
+            $table_materialisations.bootstrapTable({data: data_materialisations});
+            $table_consequences.bootstrapTable({data: data_consequences});
+            $table_responses.bootstrapTable({data: data_responses});
+        })
+    </script>
+{% endblock %}
+
+{% block content %}
+    <h1> Threat-Materialisation-Consequences </h1>
+    <h1>Selected Threat</h1>
+    <hr/>
+    <table
+            id="table">
+        <thead>
+        <tr>
+            {#            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents"></th>#}
+            {#            <th data-field="operate" data-formatter="operateFormatter1" data-events="operateEvents1"></th>#}
+            <th data-field="id" data-sortable="true">ID</th>
+            <th data-field="name" data-sortable="true">Name</th>
+        </tr>
+        </thead>
+    </table>
+    <hr/>
+    <h2>Threat Materialisations</h2>
+    <div class="row">
+        <table id="table_materialisations">
+            <thead>
+            <tr>
+                {#            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents"></th>#}
+                {#            <th data-field="operate" data-formatter="operateFormatter1" data-events="operateEvents1"></th>#}
+                <th data-field="id" data-sortable="true">ID</th>
+                <th data-field="name" data-sortable="true">Name</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+    <hr/>
+    <h2>Threat Consequences</h2>
+    <div class="row">
+        <table id="table_consequences">
+            <thead>
+            <tr>
+                {#            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents"></th>#}
+                {#            <th data-field="operate" data-formatter="operateFormatter1" data-events="operateEvents1"></th>#}
+                <th data-field="id" data-sortable="true">ID</th>
+                <th data-field="name" data-sortable="true">Name</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+    <hr/>
+    <h2>Threat Responses</h2>
+    <div class="row">
+        <table id="table_responses">
+            <thead>
+            <tr>
+                {#            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents"></th>#}
+                {#            <th data-field="operate" data-formatter="operateFormatter1" data-events="operateEvents1"></th>#}
+                <th data-field="id" data-sortable="true">ID</th>
+                <th data-field="name" data-sortable="true">Name</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+    <hr/>
+    <h2>Add new Materialisations</h2>
+    <form id="new_m_c_form" action="/repo/threat/{{ repo_threat_dict[0].id }}/info/" method="post" novalidate>
+        {{ new_materialisation_consequence_form.hidden_tag() }}
+
+        {{ wtf.form_field(new_materialisation_consequence_form.name_consequence) }}
+        {{ wtf.form_field(new_materialisation_consequence_form.name_materialisation) }}
+{#        {{ wtf.form_field(new_objective_form.states[3]) }}#}
+
+        {{ wtf.form_field(new_materialisation_consequence_form.submit) }}
+        {#        {{ wtf.quick_form(new_objective_form) }}#}
+        {#        <p>{{ wtf.form_field(new_asset_form.submit()) }}</p>#}
+        </p>
+    </form>
+    <hr/>
+    <h2>Add new Responses</h2>
+    <form id="new_r_form" action="/repo/threat/{{ repo_threat_dict[0].id }}/info/" method="post" novalidate>
+        {{ new_response_form.hidden_tag() }}
+        {{ wtf.form_field(new_response_form.name) }}
+        {{ wtf.form_field(new_response_form.submit) }}
+        </p>
+    </form>
+{% endblock %}

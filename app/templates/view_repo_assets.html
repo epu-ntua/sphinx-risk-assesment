@@ -27,11 +27,12 @@
         }
 
         function operateFormatter1(value, row, index) {
-            random_test = Math.floor(Math.random() * 10);
+            {#random_test = Math.floor(Math.random() * 10);#}
+            random_test =2
             if (random_test % 2 == 0) {
                 return [
-                    '<a href="" style="background-color: #ff1a1a; color: #ffffff" type="button" class="btn btn-primary fa fa-edit">\n' +
-                    '<span class= "custom-font">Setup New Threat Relations</span>' +
+                    '<a href="/repo/assets/threats-relations/1/" style="background-color: #ff1a1a; color: #ffffff" type="button" class="btn btn-primary fa fa-edit">\n' +
+                    '<span class= "custom-font">Security Protocol</span>' +
                     '</a>'
                 ].join('')
             } else {

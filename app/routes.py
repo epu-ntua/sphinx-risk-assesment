@@ -494,10 +494,10 @@ def repo_dashboard_risk_objectives():
         repo_threats = [
             {
                 "likelihood": "Certain",
-                "monetary": "x<1000€",
-                "confidentiality": "-",
-                "integrity": "-",
-                "availability": "-",
+                "monetary": "(Low) No monetary loss",
+                "confidentiality": "(Low) No records leaked",
+                "integrity": "(Low) No records lost or altered",
+                "availability": "(Low) No disruption of services",
                 "safety": "-"
             },
             {
@@ -506,31 +506,31 @@ def repo_dashboard_risk_objectives():
                 "confidentiality": "-",
                 "integrity": "-",
                 "availability": "-",
-                "safety": "No Injuries"
+                "safety": "(Low) No injuries or fatalities likely"
             },
             {
                 "likelihood": "Rare",
                 "monetary": "-",
                 "confidentiality": "-",
-                "integrity": "-",
-                "availability": "-",
-                "safety": "Injuries"
+                "integrity": "(Medium) Some records lost or altered",
+                "availability": "(Medium) Some disruption of services",
+                "safety": "(Medium) Injuries are likely"
             },
             {
                 "likelihood": "Rare than Rare",
-                "monetary": "1000€ < x < 10000€",
-                "confidentiality": "-",
-                "integrity": "-",
+                "monetary": "(High) Significant monetary loss",
+                "confidentiality": "(High) Many records leaked",
+                "integrity": "(High) Many records lost or altered",
                 "availability": "-",
                 "safety": "-"
             },
             {
                 "likelihood": "Oddness 3 or higher",
-                "monetary": "x > 10000€",
-                "confidentiality": "-",
+                "monetary": "(Medium) Some monetary loss",
+                "confidentiality": "(Medium) Some records leaked",
                 "integrity": "-",
-                "availability": "-",
-                "safety": "Fatalities"
+                "availability": "(High) Significant disruption of services",
+                "safety": "(High) Fatalities are likley"
             }
         ]
         print(repo_threats)
@@ -1061,6 +1061,45 @@ def view_repo_assets():
                                new_asset_form=new_asset_form)
 
 
+@app.route('/repo/impacts/', methods=['GET', 'POST', 'PUT'])
+def view_repo_impacts():
+    if request.method == 'POST':
+        new_impact_form = FormAddRepoImpact()
+
+        if new_impact_form.validate_on_submit():
+            new_impact = RepoImpact(name=new_impact_form.name.data,
+                                    description=new_impact_form.description.data)
+            db.session.add(new_impact)
+            db.session.commit()
+
+            flash('Impact "{}" Added Succesfully'.format(new_impact_form.name.data))
+            return redirect('/repo/impacts/')
+        else:
+            print("Errors", new_impact_form.errors, flush=True)
+            flash('Objective "{}" Error on add'.format(new_impact_form.name.data))
+
+        return redirect('/repo/impacts/')
+    else:
+        try:
+            repo_impacts = RepoImpact.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        # print("------------------------------")
+        # print(repo_actors, flush=True)
+        #
+        # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
+
+        repo_impacts = convert_database_items_to_json_table(repo_impacts)
+        repo_impacts = json.dumps(repo_impacts)
+        # print("ACTORS ARE --------")
+        # print("JSON OBJECTIVES LIST IS", json_objectives)
+
+        new_impact_form = FormAddRepoImpact()
+        return render_template("view_repo_impacts.html", repo_impacts=repo_impacts,
+                               new_impact_form=new_impact_form)
+
+
 @app.route('/repo/objectives/', methods=['GET', 'POST', 'PUT'])
 def view_repo_objectives():
     if request.method == 'POST':
@@ -1078,7 +1117,8 @@ def view_repo_objectives():
             new_objective_form = FormAddRepoObjective()
 
             if new_objective_form.validate_on_submit():
-                new_objective = RepoObjective(name=new_objective_form.name.data)
+                new_objective = RepoObjective(name=new_objective_form.name.data,
+                                              description=new_objective_form.description.data)
                 db.session.add(new_objective)
                 db.session.flush()
 
@@ -1385,10 +1425,88 @@ def view_repo_threats():
                                new_threat_form=new_threat_form)
 
 
+@app.route('/repo/threat/<threat_id>/info/', methods=['GET', 'POST'])
+def view_repo_threat_info(threat_id):
+    if request.method == 'POST':
+        new_materialisation_consequence_form = FormAddRepoMaterialisationConsequence()
+
+        new_response_form = FormAddRepoResponse()
+        # print("Im am here correctly")
+        if new_materialisation_consequence_form.validate_on_submit():
+            to_add_materialisation = RepoMaterialisation(
+                name=new_materialisation_consequence_form.name_materialisation.data,
+                threat_id=new_materialisation_consequence_form.threat_id.data)
+
+            db.session.add(to_add_materialisation)
+            db.session.flush()
+
+            print("Mat id is: ", to_add_materialisation.id)
+            to_add_consequences = RepoConsequence(name=new_materialisation_consequence_form.name_consequence.data,
+                                                  threat_id=new_materialisation_consequence_form.threat_id.data,
+                                                  materialisation_id=to_add_materialisation.id)
+
+            db.session.add(to_add_consequences)
+            db.session.commit()
+        else:
+            print("Form Mat and Cons: ", new_materialisation_consequence_form.errors)
+
+        if new_response_form.validate_on_submit():
+            to_add_response = RepoResponse(name=new_response_form.name.data, threat_id=new_response_form.threat_id.data)
+
+            db.session.add(to_add_response)
+            db.session.commit()
+        else:
+            print("Form Response :", new_response_form.errors)
+
+        return redirect("/repo/threat/" + threat_id + "/info/")
+    else:
+        try:
+            repo_threat = RepoThreat.query.filter_by(id=threat_id).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        try:
+            repo_materialisations = RepoMaterialisation.query.filter_by(threat_id=threat_id).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        try:
+            repo_consequences = RepoConsequence.query.filter_by(threat_id=threat_id).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        try:
+            repo_responses = RepoResponse.query.filter_by(threat_id=threat_id).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        repo_threat = convert_database_items_to_json_table(repo_threat)
+        repo_threat_dict = repo_threat
+        repo_threat = json.dumps(repo_threat)
+
+        repo_materialisations = convert_database_items_to_json_table(repo_materialisations)
+        repo_materialisations = json.dumps(repo_materialisations)
+
+        repo_consequences = convert_database_items_to_json_table(repo_consequences)
+        repo_consequences = json.dumps(repo_consequences)
+
+        repo_responses = convert_database_items_to_json_table(repo_responses)
+        repo_responses = json.dumps(repo_responses)
+
+        new_materialisation_consequence_form = FormAddRepoMaterialisationConsequence()
+
+        new_response_form = FormAddRepoResponse()
+        print("Mats here is: ", repo_materialisations)
+        return render_template("view_repo_threat_info.html", repo_threat=repo_threat,
+                               repo_threat_dict=repo_threat_dict,
+                               repo_materialisations=repo_materialisations, repo_consequences=repo_consequences,
+                               new_materialisation_consequence_form=new_materialisation_consequence_form,
+                               repo_responses=repo_responses, new_response_form=new_response_form)
+
+
 @app.route('/repo/assets/threats-relations/<asset_id>/', methods=['GET', 'POST'])
 def view_repo_asset_threats_relation(asset_id):
     if request.method == 'POST':
-
         # flash('Threat "{}" Added Succesfully'.format(new_threat_form.name.data))
         return redirect("/repo/assets/threats-relations/1/")
     else:
@@ -1505,22 +1623,415 @@ def view_repo_asset_services_relation(asset_id):
                                asset_id=asset_id)
 
 
-@app.route('/test_repo/dtm/', methods=['GET', 'POST'])
-def test_repo():
-    if request.method == "POST":
-        return redirect("/test_repo/dtm/")
-    else:
-        found_flag = 0
-        repo_assets = RepoAsset.query.all()
-        for repo_asset in repo_assets:
-            if (repo_asset == "1"):
-                found_flag = 1
-                repo_asset.last_touch_date = ""
-                if (repo_asset.verified == False):
-                    send_asset_id_alert(repo_asset)
+@app.route('/repo/risk/configuration/threat/<threat_id>/', methods=['GET', 'POST'])
+@app.route('/repo/risk/configuration/threat/<threat_id>/asset/<asset_id>/', methods=['GET', 'POST'])
+def repo_risk_configuration_threat_aset(threat_id=1, asset_id=-1):
+    if request.method == 'POST':
+        # new_service_form = FormAddRepoService
+        print("Requests are: ")
+        print(request.form)
+        # The name in the input forms has the following template
+        # "mat|<materialisation_id>|<response_id>|<threat_occurrence>" for materialisations
+        # "cons|<consequence_id>|<response_id>|<threat_occurrence>" for consequences
 
-        if found_flag == 0:
-            new_asset = RepoAsset(name="", last_touch_date="")
-            db.session.add(new_asset)
+        # Check if there are already data for this threat-asset pair
+        if RepoRiskThreatAssetMaterialisation.query.filter_by(repo_asset_id=asset_id,
+                                                              repo_threat_id=threat_id).count() is not 0:
+            for user_input in request.form:
+                deconstructedId = user_input.split("|")
+                print("deconstructedId Mat")
+                print(deconstructedId)
+                if deconstructedId[0] == "mat":
+                    if deconstructedId[3] == "True":
+                        to_add_threat_occurence_bool = True
+                    elif deconstructedId[3] == "False":
+                        to_add_threat_occurence_bool = False
+                    else:
+                        flash('Error adding user input, this shouldnt happen: Malformed Mat threat occurrence form')
+                        return redirect("/repo/risk/configuration/threat/" + threat_id + "/asset/" + asset_id + "/")
+
+                    to_edit_mat_node = RepoRiskThreatAssetMaterialisation.query.filter_by(repo_asset_id=asset_id,
+                                                                                          repo_threat_id=threat_id,
+                                                                                          repo_materialisation_id=
+                                                                                          deconstructedId[1],
+                                                                                          repo_response_id=
+                                                                                          deconstructedId[2],
+                                                                                          threat_occurrence=to_add_threat_occurence_bool).first()
+                    to_edit_mat_node.prob = request.form[user_input]
+                    db.session.commit()
+
+                elif deconstructedId[0] == "cons":
+                    print("deconstructedId Cons")
+                    print(deconstructedId)
+                    if deconstructedId[3] == "True":
+                        to_add_threat_occurence_bool = True
+                    elif deconstructedId[3] == "False":
+                        to_add_threat_occurence_bool = False
+                    else:
+                        flash('Error adding user input, this shouldnt happen: Malformed Cons threat occurrence form')
+                        return redirect("/repo/risk/configuration/threat/" + threat_id + "/asset/" + asset_id + "/")
+
+                    to_edit_cons_node = RepoRiskThreatAssetConsequence.query.filter_by(repo_asset_id=asset_id,
+                                                                                       repo_threat_id=threat_id,
+                                                                                       repo_consequence_id=
+                                                                                       deconstructedId[1],
+                                                                                       repo_response_id=deconstructedId[
+                                                                                           2],
+                                                                                       threat_occurrence=to_add_threat_occurence_bool).first()
+
+                    to_edit_cons_node.prob = request.form[user_input]
+                    db.session.commit()
+                else:
+                    flash('Error adding user input, this shouldnt happen: Malformed Input forms')
+                    return redirect("/repo/risk/configuration/threat/" + threat_id + "/asset/" + asset_id + "/")
+        else:
+            for user_input in request.form:
+                deconstructedId = user_input.split("|")
+                print("deconstructedId Mat")
+                print(deconstructedId)
+                if deconstructedId[0] == "mat":
+                    if deconstructedId[3] == "True":
+                        to_add_threat_occurence_bool = True
+                    elif deconstructedId[3] == "False":
+                        to_add_threat_occurence_bool = False
+                    else:
+                        flash('Error adding user input, this shouldnt happen: Malformed Mat threat occurrence form')
+                        return redirect("/repo/risk/configuration/threat/" + threat_id + "/asset/" + asset_id + "/")
+
+                    to_add_mat_node = RepoRiskThreatAssetMaterialisation(repo_asset_id=asset_id,
+                                                                         repo_threat_id=threat_id,
+                                                                         repo_materialisation_id=deconstructedId[1],
+                                                                         repo_response_id=deconstructedId[2],
+                                                                         threat_occurrence=to_add_threat_occurence_bool,
+                                                                         prob=request.form[user_input])
+
+                    db.session.add(to_add_mat_node)
+                elif deconstructedId[0] == "cons":
+                    print("deconstructedId Cons")
+                    print(deconstructedId)
+                    if deconstructedId[3] == "True":
+                        to_add_threat_occurence_bool = True
+                    elif deconstructedId[3] == "False":
+                        to_add_threat_occurence_bool = False
+                    else:
+                        flash('Error adding user input, this shouldnt happen: Malformed Cons threat occurrence form')
+                        return redirect("/repo/risk/configuration/threat/" + threat_id + "/asset/" + asset_id + "/")
+
+                    to_add_cons_node = RepoRiskThreatAssetConsequence(repo_asset_id=asset_id, repo_threat_id=threat_id,
+                                                                      repo_consequence_id=deconstructedId[1],
+                                                                      repo_response_id=deconstructedId[2],
+                                                                      threat_occurrence=to_add_threat_occurence_bool,
+                                                                      prob=request.form[user_input])
+
+                    db.session.add(to_add_cons_node)
+                else:
+                    flash('Error adding user input, this shouldnt happen: Malformed Input forms')
+                    return redirect("/repo/risk/configuration/threat/" + threat_id + "/asset/" + asset_id + "/")
 
         db.session.commit()
+        flash('User input for threat "{}" and asset "{}" Added Succesfully'.format(threat_id, asset_id))
+        return redirect("/repo/risk/configuration/threat/" + threat_id + "/asset/" + asset_id + "/")
+    else:
+        try:
+            repo_threats = RepoThreat.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        try:
+            this_threat = RepoThreat.query.filter_by(id=threat_id).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        try:
+            repo_assets = RepoAsset.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        # print("------------------------------")
+        # print(repo_actors, flush=True)
+        #
+        # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
+
+        try:
+            repo_threat_materialisations = RepoMaterialisation.query.filter_by(threat_id=threat_id).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        array_threat_materialisation_calculation = []
+        array_threat_consequence_calculation = []
+
+        if asset_id != -1:
+            # If we view specific asset create/load the input forms
+            try:
+                repo_threat_responses = RepoResponse.query.filter_by(threat_id=threat_id).all()
+            except SQLAlchemyError:
+                return Response("SQLAlchemyError", 500)
+
+            try:
+                repo_threat_consequence = RepoConsequence.query.filter_by(threat_id=threat_id).all()
+            except SQLAlchemyError:
+                return Response("SQLAlchemyError", 500)
+
+            repo_threat_materialisations = convert_database_items_to_json_table(repo_threat_materialisations)
+            repo_threat_responses = convert_database_items_to_json_table(repo_threat_responses)
+            repo_threat_consequence = convert_database_items_to_json_table(repo_threat_consequence)
+
+            # Check if there are already data for this threat-asset pair
+            if RepoRiskThreatAssetMaterialisation.query.filter_by(
+                    repo_asset_id=asset_id,
+                    repo_threat_id=threat_id).count() is 0:
+                print("NO PREVIOUS INPUT------------------------")
+                print(RepoRiskThreatAssetMaterialisation.query.filter_by(
+                    repo_asset_id=asset_id,
+                    repo_threat_id=threat_id).first())
+                print("threat_id =" + str(type(threat_id)) + "asset_id= " + str(type(asset_id)))
+                for materialisation in repo_threat_materialisations:
+                    temp_array_threat_materialisation_calculation = []
+                    for response in repo_threat_responses:
+                        temp_array_threat_materialisation_calculation.append(
+                            {"response": response, "materialisation": materialisation, "threat_occurrence": True,
+                             "prob": 50})
+                        temp_array_threat_materialisation_calculation.append(
+                            {"response": response, "materialisation": materialisation, "threat_occurrence": False,
+                             "prob": 50})
+
+                    array_threat_materialisation_calculation.append(temp_array_threat_materialisation_calculation)
+
+                for consequence in repo_threat_consequence:
+                    temp_array_threat_consequence_calculation = []
+                    for response in repo_threat_responses:
+                        temp_array_threat_consequence_calculation.append(
+                            {"response": response, "consequence": consequence, "threat_occurrence": True, "prob": 50})
+
+                        temp_array_threat_consequence_calculation.append(
+                            {"response": response, "consequence": consequence, "threat_occurrence": False, "prob": 50})
+
+                    array_threat_consequence_calculation.append(temp_array_threat_consequence_calculation)
+            else:
+                try:
+                    existing_user_input_materialisation = RepoRiskThreatAssetMaterialisation.query.filter_by(
+                        repo_asset_id=asset_id,
+                        repo_threat_id=threat_id).all()
+                except SQLAlchemyError:
+                    return Response("SQLAlchemyError", 500)
+
+                try:
+                    existing_user_input_consequence = RepoRiskThreatAssetConsequence.query.filter_by(
+                        repo_asset_id=asset_id,
+                        repo_threat_id=threat_id).all()
+                except SQLAlchemyError:
+                    return Response("SQLAlchemyError", 500)
+
+                existing_user_input_consequence = convert_database_items_to_json_table(existing_user_input_consequence)
+                existing_user_input_materialisation = convert_database_items_to_json_table(
+                    existing_user_input_materialisation)
+                print("Existing Input:")
+                print(existing_user_input_consequence)
+
+                for materialisation in repo_threat_materialisations:
+                    temp_array_threat_materialisation_calculation = []
+                    for response in repo_threat_responses:
+                        prob_item = next(item for item in existing_user_input_materialisation if
+                                         item["repo_response_id"] == response["id"] and item[
+                                             "repo_materialisation_id"] == materialisation["id"] and item[
+                                             "threat_occurrence"] is True)
+                        temp_array_threat_materialisation_calculation.append(
+                            {"response": response, "materialisation": materialisation, "threat_occurrence": True,
+                             "prob": prob_item['prob']})
+
+                        prob_item = next(item for item in existing_user_input_materialisation if
+                                         item["repo_response_id"] == response["id"] and item[
+                                             "repo_materialisation_id"] == materialisation["id"] and item[
+                                             "threat_occurrence"] is False)
+                        temp_array_threat_materialisation_calculation.append(
+                            {"response": response, "materialisation": materialisation, "threat_occurrence": False,
+                             "prob": prob_item['prob']})
+
+                    array_threat_materialisation_calculation.append(temp_array_threat_materialisation_calculation)
+
+                for consequence in repo_threat_consequence:
+                    temp_array_threat_consequence_calculation = []
+                    for response in repo_threat_responses:
+                        prob_item = next(item for item in existing_user_input_consequence if
+                                         item["repo_response_id"] == response["id"] and item["repo_consequence_id"] ==
+                                         consequence["id"] and item["threat_occurrence"] is True)
+                        temp_array_threat_consequence_calculation.append(
+                            {"response": response, "consequence": consequence, "threat_occurrence": True,
+                             "prob": prob_item['prob']})
+                        prob_item = next(item for item in existing_user_input_consequence if
+                                         item["repo_response_id"] == response["id"] and item["repo_consequence_id"] ==
+                                         materialisation["id"] and item["threat_occurrence"] is False)
+                        temp_array_threat_consequence_calculation.append(
+                            {"response": response, "consequence": consequence, "threat_occurrence": False,
+                             "prob": prob_item['prob']})
+
+                    array_threat_consequence_calculation.append(temp_array_threat_consequence_calculation)
+
+        repo_threats = convert_database_items_to_json_table(repo_threats)
+        this_threat = convert_database_items_to_json_table(this_threat)
+        repo_assets = convert_database_items_to_json_table(repo_assets)
+        # repo_threats = json.dumps(repo_threats)
+        print("This threat is", this_threat)
+        for toprint in array_threat_materialisation_calculation:
+            print("Materialisations are: ", toprint)
+
+        for toprint in array_threat_consequence_calculation:
+            print("Consequences are: ", toprint)
+
+        return render_template("repo_risk_configuration_threat_asset.html", threat_id=threat_id, asset_id=asset_id,
+                               repo_threats=repo_threats, this_threat=this_threat, repo_assets=repo_assets,
+                               array_threat_consequence_calculation=array_threat_consequence_calculation,
+                               array_threat_materialisation_calculation=array_threat_materialisation_calculation)
+
+
+@app.route('/repo/risk/configuration/service/<service_id>/', methods=['GET', 'POST'],
+           defaults={"service_id": 1, "impact_id": -1})
+@app.route('/repo/risk/configuration/service/<service_id>/impact/<impact_id>/', methods=['GET', 'POST'],
+           defaults={"service_id": 1, "impact_id": -1})
+def repo_risk_configuration_services_risk(service_id, impact_id):
+    if request.method == 'POST':
+        # new_service_form = FormAddRepoService()
+
+        # flash('Service "{}" Added Succesfully'.format(new_service_form.name.data))
+        return redirect("/repo/services/")
+    else:
+        try:
+            this_service = RepoService.query.filter_by(id=service_id).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        try:
+            repo_services = RepoService.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        try:
+            repo_impacts = RepoImpact.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+        # print("------------------------------")
+        # print(repo_actors, flush=True)
+        #
+        # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
+
+        repo_services = convert_database_items_to_json_table(repo_services)
+        this_service = convert_database_items_to_json_table(this_service)
+
+        array_impact_calculation = [
+            {"service": {"id": "1", "name": "Catering"}, "service_status": {"id": "1", "name": "Not working"},
+             "consequence": {"id":"1", "name": "Consequence 1"}, 'consequence_status': True,
+             "prob": '50'},
+            {"service": {"id": "1", "name": "Catering"}, "service_status": {"id": "1", "name": "Not working"},
+             "consequence": {"id": "1", "name": "Consequence 1"}, 'consequence_status': False,
+             "prob": '50'},
+            {"service": {"id": "1", "name": "Catering"}, "service_status": {"id": "1", "name": "Normal Work"},
+             "consequence": {"id": "1", "name": "Consequence 1"}, 'consequence_status': True,
+             "prob": '50'},
+            {"service": {"id": "1", "name": "Catering"}, "service_status": {"id": "1", "name": "Normal Work"},
+             "consequence": {"id": "1", "name": "Consequence 1"}, 'consequence_status': False,
+             "prob": '50'},
+        ]
+        return render_template("repo_risk_configuration_services_risk.html", repo_services=repo_services,
+                               repo_impacts=repo_impacts, service_id=service_id, impact_id=impact_id,
+                               this_service=this_service, array_impact_calculation=array_impact_calculation)
+
+@app.route('/repo/risk/configuration/objective/<objective_id>/', methods=['GET', 'POST'],
+           defaults={"objective_id": 1})
+def repo_risk_configuration_objective_risk(objective_id):
+    if request.method == 'POST':
+        # new_service_form = FormAddRepoService()
+
+        # flash('Service "{}" Added Succesfully'.format(new_service_form.name.data))
+        return redirect("/repo/services/")
+    else:
+        try:
+            this_objective = RepoObjective.query.filter_by(id=objective_id).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        try:
+            this_objective_options = RepoObjectivesOptions.query.filter_by(objective_fk=objective_id).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        try:
+            repo_objectives = RepoObjective.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        # Need to change this to only select related to the objective impacts
+        try:
+            repo_impacts = RepoImpact.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+        # print("------------------------------")
+        # print(repo_actors, flush=True)
+        #
+        # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
+
+        repo_objectives = convert_database_items_to_json_table(repo_objectives)
+        this_objective = convert_database_items_to_json_table(this_objective)
+
+        array_objective_calculation = [ [{}],[{}]
+        ]
+        # for
+
+        return render_template("repo_risk_configuration_objectives_risk.html", repo_objectives=repo_objectives,
+                            objective_id=objective_id,
+                           this_objective=this_objective, array_objective_calculation=array_objective_calculation)
+
+@app.route('/repo/risk/assessment/<threat_id>/', methods=['GET', 'POST'],
+           defaults={"threat_id": 1})
+def repo_risk_assessment(threat_id):
+    if request.method == 'POST':
+        # new_service_form = FormAddRepoService()
+
+        # flash('Service "{}" Added Succesfully'.format(new_service_form.name.data))
+        return redirect("/repo/services/")
+    else:
+        try:
+            this_threat = RepoThreat.query.filter_by(id=threat_id).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        try:
+            repo_threats = RepoThreat.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        # print("------------------------------")
+        # print(repo_actors, flush=True)
+        #
+        # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
+
+        repo_threats = convert_database_items_to_json_table(repo_threats)
+        this_threat = convert_database_items_to_json_table(this_threat)
+
+        array_objective_calculation = [[{}], [{}]
+                                       ]
+        # for
+
+        return render_template("repo_risk_assessment.html", repo_threats=repo_threats,
+                               threat_id=threat_id,
+                               this_threat=this_threat,
+                               array_objective_calculation=array_objective_calculation)
+
+    @app.route('/test_repo/dtm/', methods=['GET', 'POST'])
+    def test_repo():
+        if request.method == "POST":
+            return redirect("/test_repo/dtm/")
+        else:
+            found_flag = 0
+            repo_assets = RepoAsset.query.all()
+            for repo_asset in repo_assets:
+                if (repo_asset == "1"):
+                    found_flag = 1
+                    repo_asset.last_touch_date = ""
+                    if (repo_asset.verified == False):
+                        send_asset_id_alert(repo_asset)
+
+            if found_flag == 0:
+                new_asset = RepoAsset(name="", last_touch_date="")
+                db.session.add(new_asset)
+
+            db.session.commit()

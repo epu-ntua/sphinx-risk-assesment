@@ -243,6 +243,25 @@ class VulnerabilitiesWeaknessLink(db.Model):
 #
 #     def __repr__(self):
 #         return '<Risk_Vulnerability_Threat {}>'.format(self.id)
+class RepoRiskThreatAssetMaterialisation(db.Model):
+    __tablename__ = "repo_risk_threat_asset_materialisation"
+    repo_asset_id = db.Column(db.Integer, db.ForeignKey('repo_asset.id'), primary_key=True)
+    repo_threat_id = db.Column(db.Integer, db.ForeignKey('repo_threat.id'), primary_key=True)
+    repo_response_id = db.Column(db.Integer, db.ForeignKey('repo_response.id'), primary_key=True)
+    repo_materialisation_id = db.Column(db.Integer, db.ForeignKey('repo_materialisation.id'), primary_key=True)
+    threat_occurrence = db.Column(db.Boolean(), primary_key=True)
+    prob = db.Column(db.Integer)
+
+
+class RepoRiskThreatAssetConsequence(db.Model):
+    __tablename__ = "repo_risk_threat_asset_consequence"
+    repo_asset_id = db.Column(db.Integer, db.ForeignKey('repo_asset.id'), primary_key=True)
+    repo_threat_id = db.Column(db.Integer, db.ForeignKey('repo_threat.id'), primary_key=True)
+    repo_response_id = db.Column(db.Integer, db.ForeignKey('repo_response.id'), primary_key=True)
+    repo_consequence_id = db.Column(db.Integer, db.ForeignKey('repo_consequence.id'), primary_key=True)
+    threat_occurrence = db.Column(db.Boolean(), primary_key=True)
+    prob = db.Column(db.Integer)
+
 
 class RepoAssetRepoThreatRelationship(db.Model):
     __tablename__ = 'repo_asset_repo_threat_relationship'
@@ -264,23 +283,40 @@ class RepoAssetRepoThreatRelationship(db.Model):
 #                                                     db.Column('repo_threat_id', db.Integer,
 #                                                               db.ForeignKey('repo_threat.id'))
 #                                                     )
-repo_threat_repo_consequence_association_table = db.Table('repo_threat_repo_consequence_association_table',
-                                                          db.Model.metadata,
-                                                          db.Column('repo_threat', db.Integer,
-                                                                    db.ForeignKey('repo_threat.id')),
-                                                          db.Column('repo_consequence', db.Integer,
-                                                                    db.ForeignKey('repo_consequence.id'))
-                                                          )
-
 
 class RepoThreat(db.Model):
     __tablename__ = 'repo_threat'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String)
     CAPEC_id = db.Column(db.Integer, db.ForeignKey('common_attack_pattern_enumeration_classification.id'))
-    assets = db.relationship("RepoAssetRepoThreatRelationship", back_populates="threats")
-    consequences = db.relationship('RepoConsequence', secondary=repo_threat_repo_consequence_association_table,
-                                   back_populates='threats')
+    assets = db.relationship("RepoAssetRepoThreatRelationship", back_populates="threat")
+    prob = db.Column(db.Integer)
+    user_prob = db.Column(db.Integer)
+
+
+class RepoResponse(db.Model):
+    """ Responses are intrinsically tied to the threats and therefore are unique for each one"""
+    __tablename__ = 'repo_response'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String)
+    threat_id = db.Column(db.Integer, db.ForeignKey('repo_threat.id'))
+
+
+class RepoMaterialisation(db.Model):
+    """ Materialisations are intrinsically tied to the threats and assets and therefore are unique for each one"""
+    __tablename__ = 'repo_materialisation'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String)
+    threat_id = db.Column(db.Integer, db.ForeignKey('repo_threat.id'))
+
+
+class RepoConsequence(db.Model):
+    """ Consequences are intrinsically tied to the threat materialisation and assets and therefore are unique for each one"""
+    __tablename__ = 'repo_consequence'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String)
+    threat_id = db.Column(db.Integer, db.ForeignKey('repo_threat.id'))
+    materialisation_id = db.Column(db.Integer, db.ForeignKey('repo_materialisation.id'))
 
 
 class RepoVulnerability(db.Model):
@@ -296,14 +332,6 @@ repo_asset_repo_service_association_table = db.Table('repo_asset_repo_service_as
                                                      db.Column('repo_service_id', db.Integer,
                                                                db.ForeignKey('repo_service.id'))
                                                      )
-
-
-class RepoConsequence(db.Model):
-    __tablename__ = 'repo_consequence'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String)
-    threats = db.relationship('RepoThreat', secondary=repo_threat_repo_consequence_association_table,
-                              back_populates='consequences')
 
 
 class RepoAsset(db.Model):
@@ -330,7 +358,7 @@ class RepoAsset(db.Model):
     services = db.relationship("RepoService", secondary=repo_asset_repo_service_association_table,
                                back_populates="assets")
     threats = db.relationship("RepoAssetRepoThreatRelationship",
-                              back_populates="assets")
+                              back_populates="asset")
 
 
 class RepoAssetsType(db.Model):
@@ -362,9 +390,17 @@ class RepoService(db.Model):
                              back_populates="services")
 
 
+class RepoImpact(db.Model):
+    __tablename__ = 'repo_impact'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    description = db.Column(db.String, nullable=True)
+    name = db.Column(db.String, nullable=False)
+
+
 class RepoObjective(db.Model):
     __tablename__ = 'repo_objective'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    description = db.Column(db.String, nullable=True)
     name = db.Column(db.String, nullable=False)
     # status = db.relationship('modelObjectivesOptions', backref='objective', lazy=True)
     # instances = db.relationship("ModelObjectiveAssociation", back_populates="objective")

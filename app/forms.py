@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm, Form
-from wtforms import StringField, PasswordField, IntegerField, DateTimeField, BooleanField, SubmitField, FieldList, FormField
+from wtforms import StringField, PasswordField, IntegerField, DateTimeField, BooleanField, SubmitField, FieldList, \
+    FormField
 from wtforms.validators import DataRequired, Optional
 from wtforms.widgets import HiddenInput
 from wtforms_sqlalchemy.fields import QuerySelectField
@@ -61,6 +62,7 @@ class FormAddRepoVulnerability(FlaskForm):
 class FormAddRepoObjectiveState(Form):
     class Meta:
         csrf = False
+
     id = IntegerField("Id", widget=HiddenInput(), validators=[Optional()])
     name = StringField('Name', validators=[DataRequired()])
 
@@ -69,8 +71,15 @@ class FormAddRepoObjective(FlaskForm):
     id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
     name = StringField('Name', validators=[DataRequired()])
     description = StringField('Description')
-    states = FieldList(FormField(FormAddRepoObjectiveState), min_entries=4, max_entries=10)
+    states = FieldList(FormField(FormAddRepoObjectiveState), min_entries=3, max_entries=10)
     submit = SubmitField("Add new Objective")
+
+
+class FormAddRepoImpact(FlaskForm):
+    id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
+    name = StringField('Name', validators=[DataRequired()])
+    description = StringField('Description')
+    submit = SubmitField("Add new Impact")
 
 
 class FormAddRepoThreat(FlaskForm):
@@ -80,6 +89,20 @@ class FormAddRepoThreat(FlaskForm):
     submit = SubmitField("Add new Threat")
 
 
+class FormAddRepoMaterialisationConsequence(FlaskForm):
+    id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
+    threat_id = IntegerField('Threat Id', widget=HiddenInput(), validators=[DataRequired()])
+    name_materialisation = StringField('Name Materialisation', validators=[DataRequired()])
+    name_consequence = StringField('Name Consequence', validators=[DataRequired()])
+    submit = SubmitField("Add Materialisation Consequence Pair")
+
+
+class FormAddRepoResponse(FlaskForm):
+    id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
+    threat_id = IntegerField('Threat Id', widget=HiddenInput(), validators=[DataRequired()])
+    name = StringField('Name', validators=[DataRequired()])
+    submit = SubmitField("Add Response")
+
 class FormAddRepoAsset(FlaskForm):
     id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
     name = StringField('Name', validators=[DataRequired()])
@@ -87,13 +110,15 @@ class FormAddRepoAsset(FlaskForm):
     owner = QuerySelectField(query_factory=query_generic_repo_actor, allow_blank=True, get_label='name')
     location = StringField('Location', validators=[Optional()])
     verified = BooleanField('Verified', validators=[Optional()])
-    verified_by = QuerySelectField(query_factory=query_generic_repo_actor, allow_blank=True, get_label='name', validators=[Optional()])
+    verified_by = QuerySelectField(query_factory=query_generic_repo_actor, allow_blank=True, get_label='name',
+                                   validators=[Optional()])
     # verified_by = FieldList(
     #     QuerySelectField(query_factory=query_generic_repo_actor, allow_blank=True, get_label='name'), min_entries=3)
     mac_address = StringField("Mac Address", validators=[Optional()])
     has_static_ip = BooleanField('Has Static IP', validators=[Optional()])
     ip = StringField('IP', validators=[Optional()])
-    net_group_fk = QuerySelectField(query_factory=query_generic_repo_net_group, allow_blank=True, get_label='name', validators=[Optional()])
+    net_group_fk = QuerySelectField(query_factory=query_generic_repo_net_group, allow_blank=True, get_label='name',
+                                    validators=[Optional()])
     value = IntegerField("Value", validators=[Optional()])
     loss_of_revenue = IntegerField("Loss of revenue", validators=[Optional()])
     additional_expenses = IntegerField("Additional Expenses", validators=[Optional()])
@@ -101,5 +126,6 @@ class FormAddRepoAsset(FlaskForm):
     customer_service = IntegerField("Customer Service", validators=[Optional()])
     goodwill = IntegerField("Goodwill", validators=[Optional()])
     last_touch_date = DateTimeField("Last Touch", validators=[Optional()])
-    type_fk = QuerySelectField(query_factory=query_generic_repo_type, allow_blank=True, get_label='name', validators=[Optional()])
+    type_fk = QuerySelectField(query_factory=query_generic_repo_type, allow_blank=True, get_label='name',
+                               validators=[Optional()])
     submit = SubmitField("Add new asset")

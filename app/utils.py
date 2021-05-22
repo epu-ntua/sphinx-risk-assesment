@@ -579,6 +579,7 @@ def rcra_db_init():
         print(RepoService.query.count())
         return "Already exists"
 
+    # Adding Services
     to_add_services = import_fixture_from_file("repo_service")
 
     for service_json in to_add_services:
@@ -586,11 +587,32 @@ def rcra_db_init():
         to_add_service = RepoService(**service_json)
         db.session.add(to_add_service)
 
+    # Adding Threats
     to_add_threats = import_fixture_from_file("repo_threat")
 
     for threat_json in to_add_threats:
         to_add_threat = RepoThreat(**threat_json)
         db.session.add(to_add_threat)
+
+    # Adding Impacts
+    to_add_impacts = import_fixture_from_file("repo_impact")
+
+    for impact_json in to_add_impacts:
+        to_add_impact = RepoImpact(**impact_json)
+        db.session.add(to_add_impact)
+
+    # Adding Objectives
+    to_add_objectives = import_fixture_from_file("repo_objective")
+
+    for objective_json in to_add_objectives:
+        to_add_objective = RepoObjective(**objective_json)
+        db.session.add(to_add_objective)
+
+    to_add_objective_options = import_fixture_from_file("repo_objectives_option")
+
+    for objectives_option_json in to_add_objective_options:
+        to_add_objectives_option = RepoObjectivesOptions(**objectives_option_json)
+        db.session.add(to_add_objectives_option)
 
     db.session.commit()
 

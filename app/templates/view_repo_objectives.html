@@ -57,7 +57,7 @@
             $("#state_btn_1").html(statesArray[1]);
             $("#state_btn_2").html(statesArray[2]);
             $("#state_btn_3").html(statesArray[3]);
-            $("#state_btn_4").html(statesArray[4]);
+            {#$("#state_btn_4").html(statesArray[4]);#}
             $("#alertModalLabel").html("Add/Edit  Alert of Objective: " + row.name)
             // Setup correct objective id to form
             $("#objectiveAlertId").val(row.id);
@@ -66,12 +66,12 @@
             $("#objective_state_alert_1").val(parseInt(alertArray[1]));
             $("#objective_state_alert_2").val(parseInt(alertArray[2]));
             $("#objective_state_alert_3").val(parseInt(alertArray[3]));
-            $("#objective_state_alert_4").val(parseInt(alertArray[4]));
+            {#$("#objective_state_alert_4").val(parseInt(alertArray[4]));#}
 
             $("#objective_state_alert_1").attr('name', statesArray[1]);
             $("#objective_state_alert_2").attr('name', statesArray[2]);
             $("#objective_state_alert_3").attr('name', statesArray[3]);
-            $("#objective_state_alert_4").attr('name', statesArray[4]);
+            {#$("#objective_state_alert_4").attr('name', statesArray[4]);#}
 
             {#//Reset Value in case user has previously opened the modal#}
             {#$("#objective_state_alert_1").val(0)#}
@@ -95,14 +95,14 @@
             $("#state_btn_1").removeClass(["fa", "fa-edit", "btn-objective-alert-selected"]);
             $("#state_btn_2").removeClass(["fa", "fa-edit", "btn-objective-alert-selected"]);
             $("#state_btn_3").removeClass(["fa", "fa-edit", "btn-objective-alert-selected"]);
-            $("#state_btn_4").removeClass(["fa", "fa-edit", "btn-objective-alert-selected"]);
+            {#$("#state_btn_4").removeClass(["fa", "fa-edit", "btn-objective-alert-selected"]);#}
             $("#" + btn_id).addClass(["fa", "fa-edit", "btn-objective-alert-selected"]);
 
             //Hide all range forms inputs
             $("#objective_state_alert_1").hide();
             $("#objective_state_alert_2").hide();
             $("#objective_state_alert_3").hide();
-            $("#objective_state_alert_4").hide();
+            {#$("#objective_state_alert_4").hide();#}
 
 
             //Show only selected state range input
@@ -112,9 +112,9 @@
                 $("#objective_state_alert_2").show();
             } else if (btn_id.localeCompare("state_btn_3") === 0) {
                 $("#objective_state_alert_3").show();
-            } else {
-                $("#objective_state_alert_4").show();
             }
+            {#    $("#objective_state_alert_4").show();#}
+            {# }#}
 
         }
 
@@ -173,7 +173,7 @@
         {{ wtf.form_field(new_objective_form.states[0]) }}
         {{ wtf.form_field(new_objective_form.states[1]) }}
         {{ wtf.form_field(new_objective_form.states[2]) }}
-        {{ wtf.form_field(new_objective_form.states[3]) }}
+        {#        {{ wtf.form_field(new_objective_form.states[3]) }}#}
 
         {{ wtf.form_field(new_objective_form.submit) }}
         {#        {{ wtf.quick_form(new_objective_form) }}#}
@@ -310,16 +310,16 @@
                                 </div>
                                 <input type="range" class="form-control-range" id="objective_state_alert_1" step="1"
                                        min="0"
-                                       max="5" value="0" style="display: none", name="objective_state_alert_1">
+                                       max="5" value="0" style="display: none" , name="objective_state_alert_1">
                                 <input type="range" class="form-control-range" id="objective_state_alert_2" step="1"
                                        min="0"
-                                       max="5" value="0" style="display: none", name="objective_state_alert_2">
+                                       max="5" value="0" style="display: none" , name="objective_state_alert_2">
                                 <input type="range" class="form-control-range" id="objective_state_alert_3" step="1"
                                        min="0"
-                                       max="5" value="0" style="display: none", name="objective_state_alert_3">
+                                       max="5" value="0" style="display: none" , name="objective_state_alert_3">
                                 <input type="range" class="form-control-range" id="objective_state_alert_4" step="1"
                                        min="0"
-                                       max="5" value="0" style="display: none", name="objective_state_alert_4">
+                                       max="5" value="0" style="display: none" , name="objective_state_alert_4">
 
                                 <input type="hidden" id="objectiveAlertId" name="objectiveAlertId" value="">
                                 {#                            <select>#}
@@ -334,7 +334,8 @@
                         {#                    {{ wtf.quick_form(new_actor_form) }}#}
                     </div>
                     <div class="modal-footer">
-                        <input type="submit" name="objective_alert_form" value="Save Alerts for Objective" class="btn btn-primary">
+                        <input type="submit" name="objective_alert_form" value="Save Alerts for Objective"
+                               class="btn btn-primary">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                         {#                    <button type="button" class="btn btn-primary">Save changes</button>#}
                     </div>

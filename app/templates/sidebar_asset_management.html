@@ -72,11 +72,11 @@
                         {#                    <span class="fa fa-dashboard fa-fw mr-3"></span>#}
                         <span class="menu-collapsed">Risk Dashboard</span>
                     </a>
-{#                    <a href="http://{{ serverAddress }}:{{ serverPort }}/general_dashboard/asset_view/"#}
-{#                       class="list-group-item list-group-item-action bg-dark text-white">#}
-                        {#                    <span class="fa fa-dashboard fa-fw mr-3"></span>#}
-{#                        <span class="menu-collapsed">Risk Dashboard</span>#}
-{#                    </a>#}
+                    {#                    <a href="http://{{ serverAddress }}:{{ serverPort }}/general_dashboard/asset_view/"#}
+                    {#                       class="list-group-item list-group-item-action bg-dark text-white">#}
+                    {#                    <span class="fa fa-dashboard fa-fw mr-3"></span>#}
+                    {#                        <span class="menu-collapsed">Risk Dashboard</span>#}
+                    {#                    </a>#}
                 </div>
 
                 <!--            Menu with submenu -->
@@ -130,6 +130,10 @@
                        class="list-group-item list-group-item-action bg-dark text-white">
                         <span class="menu-collapsed">Organisation Functions</span>
                     </a>
+                    <a href="http://{{ serverAddress }}:{{ serverPort }}/repo/impacts/"
+                       class="list-group-item list-group-item-action bg-dark text-white">
+                        <span class="menu-collapsed">Organisation Impacts</span>
+                    </a>
                     <a href="http://{{ serverAddress }}:{{ serverPort }}/repo/objectives/"
                        class="list-group-item list-group-item-action bg-dark text-white">
                         <span class="menu-collapsed">Organisation Objectives</span>
@@ -175,20 +179,58 @@
                     <small>Start Functions</small>
                 </li>
                 <!--            /END Separator -->
-                <a href="http://{{ serverAddress }}:{{ serverPort }}/assets"
+
+
+                <a href="#submenu5" data-toggle="collapse" aria-expanded="false"
+                   class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-start align-items-center">
+                        <span class="fa fa-cogs fa-fw mr-3"></span>
+                        <span class="menu-collapsed">Risk Configuration</span>
+                        <span class="submenu-icon ml-auto"></span>
+                    </div>
+                </a>
+                <!--            Submenu content -->
+                <div id='submenu5' class="collapse sidebar-submenu">
+                    <a href="http://{{ serverAddress }}:{{ serverPort }}/repo/risk/configuration/threat/1/"
+                       class="list-group-item list-group-item-action bg-dark text-white">
+                        <span class="menu-collapsed">Threat-Asset Configuration</span>
+                    </a>
+                    {#                    <a href="http://{{ serverAddress }}:{{ serverPort }}/gira_overview/gira_threat_materialisation/"#}
+                    {#                       class="list-group-item list-group-item-action bg-dark text-white">#}
+                    {#                        <span class="menu-collapsed">Asset-Consequences Configuration</span>#}
+                    {#                    </a>#}
+                    <a href="http://{{ serverAddress }}:{{ serverPort }}/repo/risk/configuration/service/1/"
+                       class="list-group-item list-group-item-action bg-dark text-white">
+                        <span class="menu-collapsed">Services Risk Configuration </span>
+                    </a>
+                    <a href="http://{{ serverAddress }}:{{ serverPort }}/repo/risk/configuration/objective/1/"
+                       class="list-group-item list-group-item-action bg-dark text-white">
+                        <span class="menu-collapsed">Objectives Utility Configuration</span>
+                    </a>
+                </div>
+
+                <a href="http://{{ serverAddress }}:{{ serverPort }}/repo/risk/assessment/1/"
                    class="bg-dark list-group-item list-group-item-action">
                     <div class="d-flex w-100 justify-content-start align-items-center">
                         <span class="fa fa-binoculars fa-fw mr-3"></span>
                         <span class="menu-collapsed">Risk Assessment</span>
                     </div>
                 </a>
-                <a href="http://{{ serverAddress }}:{{ serverPort }}/gira_assess/gira_assess_exposure/"
-                   class="bg-dark list-group-item list-group-item-action">
-                    <div class="d-flex w-100 justify-content-start align-items-center">
-                        <span class="fa fa-tasks fa-fw mr-3"></span>
-                        <span class="menu-collapsed">Risk Analysis</span>
-                    </div>
-                </a>
+                {##}
+                {#                <a href="http://{{ serverAddress }}:{{ serverPort }}/assets"#}
+                {#                   class="bg-dark list-group-item list-group-item-action">#}
+                {#                    <div class="d-flex w-100 justify-content-start align-items-center">#}
+                {#                        <span class="fa fa-binoculars fa-fw mr-3"></span>#}
+                {#                        <span class="menu-collapsed">Risk Assessment</span>#}
+                {#                    </div>#}
+                {#                </a>#}
+                {#                <a href="http://{{ serverAddress }}:{{ serverPort }}/gira_assess/gira_assess_exposure/"#}
+                {#                   class="bg-dark list-group-item list-group-item-action">#}
+                {#                    <div class="d-flex w-100 justify-content-start align-items-center">#}
+                {#                        <span class="fa fa-tasks fa-fw mr-3"></span>#}
+                {#                        <span class="menu-collapsed">Risk Analysis</span>#}
+                {#                    </div>#}
+                {#                </a>#}
                 <!--             Separator with title -->
                 <li class="list-group-item sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
                     <small>OPTIONS</small>
