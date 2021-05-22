@@ -157,7 +157,7 @@
 **/veris_df.csv
 
 .DS_Store
-.env
+#.env
 *.pyc
 *.pyo
 env/
