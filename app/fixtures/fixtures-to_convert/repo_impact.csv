@@ -1,0 +1,7 @@
+id,description,name
+1,The capability of an organisation to continue the delivery of products or services at pre-defined acceptable levels following a disruptive incident,Business Continuity
+2,The impact on the reputation of the organisation as viewed by its clients,Reputation
+3,Impact on compliance ,Compliance with regulations
+4,"The maintenance of, and the assurance of, data accuracy and consistency over its entire life-cycle",Data Integrity
+5,The impact on the physical infrastucture,Infrastructure
+6,Potential impact on the safety of the patients,Individual Safety

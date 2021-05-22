@@ -1,0 +1,22 @@
+[
+    {
+        "id": "1",
+        "name": "Insurance Check"
+    },
+    {
+        "id": "2",
+        "name": "Blood Test"
+    },
+    {
+        "id": "3",
+        "name": "Biopsy Test"
+    },
+    {
+        "id": "4",
+        "name": "Catering"
+    },
+    {
+        "id": "5",
+        "name": "Pharmacy"
+    }
+]

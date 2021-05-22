@@ -1,0 +1,13 @@
+{% extends "sidebar_asset_management.html" %}
+{% block content %}
+
+<!--    MAIN -->
+
+<div class="container">
+    {{jsonfile}}
+  </div>
+{%- endblock %}
+
+{% block script %}
+    var jsonfile ={{jsonfile}};
+{% endblock %}

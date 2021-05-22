@@ -1,0 +1,244 @@
+{#{% extends "base.html" %}#}
+{% extends "sidebar_asset_management.html" %}
+
+
+{% block head %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock %}
+{% block script %}
+    <script>
+        {# Array that stores and names and ids of selected threats #}
+        {# Names are passed to display the new divs and ids to send in backend #}
+        var materialisationsToAdd = [];
+
+        //From modal, add id to array to send to backend, for adding materialisations to threat
+        function addTempMaterialisations() {
+            var checkBoxes = document.getElementsByClassName("materialisationCheckBox")
+            for (var i = 0; i < checkBoxes.length; i++) {
+                if (checkBoxes[i].checked) {
+                    materialisationsToAdd.push([checkBoxes[i].value, checkBoxes[i].name]);
+                }
+            }
+
+            {# Update the hidden field that actually passes the value #}
+            updateMaterialisationField(materialisationsToAdd);
+
+            {# Create visual representaion of materialisation to send #}
+            addMaterialisationDivs();
+        }
+
+        function addMaterialisationDivs() {
+            for(var i = 0; i< materialisationsToAdd.length; i++){
+                var divToAdd = document.getElementById("materialisation-div-"+ materialisationsToAdd[i][0])
+                if (!divToAdd){
+                    {# Create visual representaion of materialisation to send #}
+                    divToAdd = document.createElement('button');
+                    divToAdd.className = "btn btn-primary btn-table-percentage";
+                    divToAdd.type = "button";
+                    divToAdd.id = "materialisation-div-" + materialisationsToAdd[i][0];
+                    divToAdd.innerHTML = materialisationsToAdd[i][1]+ '\n' +
+                        '                        <span class="fa fa-close" style="color: red"></span>';
+                    divToAdd.onclick = function (){deleteTempMaterialisationDiv(divToAdd.id)}
+
+                    {# Add to document #}
+                    document.getElementById("temp-materialisation-list").appendChild(divToAdd);
+                }
+            }
+        }
+
+
+        function deleteTempMaterialisationDiv(MyId){
+            {# Remove deleted field from array to send#}
+
+            var itToRemove = -1;
+            for( var it = 0 ; materialisationsToAdd.length; it++){
+                if("materialisation-div-" + materialisationsToAdd[it][0] == MyId){
+                    itToRemove = it;
+                     unCheckBox(materialisationsToAdd[it][0]);
+                    break;
+                }
+            }
+
+            if(itToRemove == -1)
+                return;
+
+            materialisationsToAdd.splice(itToRemove, 1)
+
+
+            {# Update the hidden field that actually passes the value #}
+            updateMaterialisationField(materialisationsToAdd);
+
+            {#Delete visual representaiton of materialisaiton to send#}
+            document.getElementById(MyId).remove();
+        }
+
+        function unCheckBox(itToUncheck){
+            var checkBoxes = document.getElementsByClassName("materialisationCheckBox")
+            for (var i = 0; i < checkBoxes.length; i++) {
+                console.log(itToUncheck)
+                console.log(checkBoxes[i].id)
+                if (checkBoxes[i].value == itToUncheck) {
+                   checkBoxes[i].checked = false;
+                }
+            }
+        }
+
+        function updateMaterialisationField(materialisationsToAdd){
+            {# Update the hidden field that actually passes the value #}
+            document.getElementById("materialisationsToAdd").value = JSON.stringify(materialisationsToAdd);
+        }
+
+    </script>
+{% endblock %}
+
+
+{% block content %}
+    <form action="/gira_overview/gira_threat_exposure/" , method="post">
+        <div id="gira-bar" class="row d-flex flex-grow-1 gira-bar">
+            <div class="col-2 gira-bar-nav custom-border-finished">
+                {#                <img id="gira-background-response" src={{  url_for('static', filename='/images/gira_menu_response.jpg') }}#}
+                {#                     class="gira-menu-background">#}
+                <a class="gira-bar-nav-link  custom-white-color" href="/gira_overview/gira_threat_exposure">
+                    <h5> Threat Exposure </h5>
+                </a>
+            </div>
+            <div class="col-1 gira-bar-nav ">
+                {#                <img id="gira-background-response" src={{  url_for('static', filename='/images/gira_menu_response.jpg') }}#}
+                {#                     class="gira-menu-background">#}
+                <a class="gira-bar-nav-link  custom-white-color" href="/gira_overview/gira_threat_response">
+                    <h5> Response </h5>
+                </a>
+            </div>
+            <div class="col-2 gira-bar-nav ">
+                {#                <img id="gira-background-consequence" src={{  url_for('static', filename='/images/gira_menu_consequences.jpg') }}#}
+                {#                     class="gira-menu-background">#}
+                <a class="gira-bar-nav-link   custom-white-color" href="/gira_overview/gira_consequence">
+                    <h5> Consequence </h5>
+                </a>
+            </div>
+            <div class="col-2 gira-bar-nav ">
+                {#                <img id="gira-background-asset" src={{  url_for('static', filename='/images/gira_menu_asset.jpg') }}#}
+                {#                     class="gira-menu-background">#}
+                <a class="gira-bar-nav-link   custom-white-color" href="/gira_overview/gira_asset_status">
+                    <h5> Asset Status</h5>
+                </a>
+            </div>
+            <div class="col-1 gira-bar-nav ">
+                {#                <img id="gira-background-impact" src={{  url_for('static', filename='/images/gira_menu_impact.jpg') }}#}
+                {#                     class="gira-menu-background">#}
+                <a class="gira-bar-nav-link   custom-white-color" href="/gira_overview/gira_asset_impact">
+                    <h5>Impact</h5>
+                </a>
+            </div>
+            <div class="col-1 gira-bar-nav  ">
+                {#                <img id="gira-background-objective" src={{  url_for('static', filename='/images/gira_menu_objective.jpg') }}#}
+                {#                     class="gira-menu-background">#}
+                <a class="gira-bar-nav-link   custom-white-color" href="/gira_overview/gira_objective">
+                    <h5> Objective</h5>
+                </a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2 custom-select-column">
+                <h4> Add new Threat Exposure </h4>
+                <hr>
+                <div class="form-group row">
+                    <label for="name">Threat Exposure Title</label>
+                    <input type="text" class="form-control" name="name" id="name" placeholder="Name">
+                </div>
+                <div class="form-group row">
+                    <label for="description">Threat Exposure Description</label>
+                    <input type="text" class="form-control" name="description" id="description"
+                           placeholder="Description">
+                </div>
+                <div class="form-group row">
+                    <label for="description">Threat Exposure Probability</label>
+                    <input type="text" class="form-control" name="probability" id="probability"
+                           placeholder="Probability 0 - 100">
+                </div>
+                <hr/>
+                <button type="button" class="btn btn-primary " data-toggle="modal"
+                        data-target="#modalMaterilisations">
+                    Link materialisation to the threat
+                </button>
+                <hr/>
+                <button type="submit" name="new_group_flow_form" class="btn btn-primary">Submit ></button>
+            </div>
+            <div class="col-2 custom-select-column">
+                <h4> Selected Materialisations </h4>
+                <hr>
+                <div id="temp-materialisation-list" class="list-group list-group-flush">
+{#                    <button type="submit" name="new_group_flow_form" class="btn btn-primary btn-table-percentage">Name 1#}
+{#                        <span class="fa fa-close" style="color: red"></span></button>#}
+{#                    <button type="submit" name="new_group_flow_form" class="btn btn-primary btn-table-percentage">Name 1#}
+{#                        <span class="fa fa-close" style="color: red"></span></button>#}
+{#                    <button type="submit" name="new_group_flow_form" class="btn btn-primary btn-table-percentage">Name 1#}
+{#                        <span class="fa fa-close" style="color: red"></span></button>#}
+{#                    <button type="submit" name="new_group_flow_form" class="btn btn-primary btn-table-percentage">Name 1#}
+{#                        <span class="fa fa-close" style="color: red"></span></button>#}
+{#                    <button type="submit" name="new_group_flow_form" class="btn btn-primary btn-table-percentage">Name 1#}
+{#                        <span class="fa fa-close" style="color: red"></span></button>#}
+
+                </div>
+            </div>
+            <div class="col-8 d-flex flex-wrap align-content-start custom-select-column">
+                {% for tempThreat in threats %}
+                    <div class="card bg-light mb-3 custom-card" style="max-width: 18rem;">
+                        <div class="card-header"> Materialisation # {{ tempThreat.id }}:
+                            {{ tempThreat.name }}
+                        </div>
+                        <div class="card-body">
+                            <h4 class="card-title">Description</h4>
+                            <p class="card-text"> {{ tempThreat.description }} </p>
+                            <h4 class="card-title">Probability Effect</h4>
+                            <p class="card-text"> {{ tempThreat.probability }}%</p>
+
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <input type="hidden" id="materialisationsToAdd" name="materialisationsToAdd" value=[]>
+    </form>
+
+
+    <div class="modal fade" id="modalMaterilisations" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {% for tempMaterialisation in materialisations %}
+                        <div class="card bg-light mb-3 custom-card custom-card-assessment" style="max-width: 18rem;">
+                            <div class="card-header"> {{ tempMaterialisation.name }} </div>
+                            <div class="card-body">
+                                <h4 class="card-title">Description</h4>
+                                <p class="card-text"> {{ tempMaterialisation.description }} </p>
+                                <h4 class="card-title">Usual probability of occuring</h4>
+                                <p class="card-text"> {{ tempMaterialisation.probability }} </p>
+                                <label class="form-check-label">
+                                    <input class="form-check-input materialisationCheckBox" type="checkbox"
+                                           name="{{ tempMaterialisation.name }}"
+                                           value="{{ tempMaterialisation.id }}"> Add to threat
+                                </label>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal"
+                            onclick="addTempMaterialisations()">Save changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

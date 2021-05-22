@@ -1,0 +1,12 @@
+version: '3.4'
+
+services:
+  risk-assessment:
+    hostname: risk-assessment
+    container_name: risk-assessment
+    restart: always
+    build:
+      context: ".."
+      dockerfile: docker/Dockerfile
+    ports:
+      - 5002:5002

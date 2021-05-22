@@ -1,0 +1,392 @@
+{% extends "sidebar_asset_management.html" %}
+
+{% block script %}
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@3.2.0/dist/chart.min.js"></script>
+
+    <script>
+        {#var ctx = document.getElementById('myChart').getContext('2d');#}
+        var ctx1 = document.getElementById('pieThreatPerAssetType').getContext('2d');
+        var ctx2 = document.getElementById('barTopThreats').getContext('2d');
+        var ctx3 = document.getElementById('pieThreatsPerOccurrences').getContext('2d');
+        var ctx4 = document.getElementById('lineThreatPerMonth').getContext('2d');
+
+
+        const dataThreatPerAssetType = {
+            labels:
+                ['Server',
+                    'Media',
+                    'User Dev',
+                    'Person',
+                    'Kiosk/Term',
+                    'Network',
+                    'Embedded',
+                    'Facilities',
+                    'Other'],
+
+            datasets: [
+                {
+                    label: 'Dataset 1',
+                    data: [1, 5, 0, 0, 1, 2, 4, 5, 2],
+                    color: '#ffffff',
+                    backgroundColor: ['#003f5c',
+                        '#2f4b7c',
+                        '#665191',
+                        '#a05195',
+                        '#d45087',
+                        '#f95d6a',
+                        '#ff7c43',
+                        '#ffa600',
+                        '#e6e600']
+                }
+            ]
+        };
+
+        const dataLineThreatPerMonth = {
+            labels:
+                [
+                    'Jan',
+                    'Feb',
+                    'Mar',
+                    'Apr',
+                    'May',
+                    'Jun',
+                    'Jul',
+                    'Aug',
+                    'Sept',
+                    'Oct',
+                    'Nov',
+                    'Dec'
+                ],
+
+            datasets: [
+                {
+                    label: 'Threats',
+                    data: [1, 2, 4, 3, 6, 5, 1, 6, 9, 3, 2, 1],
+                    borderColor: "#e6e600",
+                    backgroundColor:
+                        '#e6e600'
+                }
+            ]
+        };
+
+        const dataBarTopThreats = {
+            labels:
+                [
+                    'Ransomware',
+                    'Hijacking',
+                    'DoS/DDoS',
+                    'SQL Injection',
+                    'Data integrity violation',
+                    'Bruteforce Attack',
+                    'Unauthorized Remote Access',
+                    'Unauthorized Device Connection',
+                    'Port Scanning',
+                    'Abnormal Network Activity',
+                    'MiTM',
+                    'Suspicious Human Action/Behavior',
+                ],
+
+            datasets: [
+                {
+                    label: 'Top Threats by Liklihood',
+                    data: [90, 80, 75, 67, 54, 32, 21, 20, 20, 15, 5, 1],
+                    backgroundColor: ['#e5029d',
+                        '#345cba',
+                        '#67e6ef',
+                        '#fc7671',
+                        '#c6af00',
+                        '#dd5646',
+                        '#07915e',
+                        '#5d55cc',
+                        '#3fc1a7',
+                        '#d8261a',
+                        '#55fc87']
+                }
+            ]
+        };
+
+        const dataPieThreatsPerOccurrences = {
+            labels:
+                [
+                    'Ransomware',
+                    'Hijacking',
+                    'DoS/DDoS',
+                    'SQL Injection',
+                    'Data integrity violation',
+                    'Bruteforce Attack',
+                    'Unauthorized Remote Access',
+                    'Unauthorized Device Connection',
+                    'Port Scanning',
+                    'Abnormal Network Activity',
+                    'MiTM',
+                    'Suspicious Human Action/Behavior',
+                ],
+
+            datasets: [
+                {
+                    label: 'Dataset Owned Assets',
+                    data: [1, 2, 4, 3, 6, 5, 1, 6, 9, 3, 2, 1],
+                    backgroundColor: [
+                        '#e5029d',
+                        '#345cba',
+                        '#67e6ef',
+                        '#fc7671',
+                        '#c6af00',
+                        '#dd5646',
+                        '#07915e',
+                        '#5d55cc',
+                        '#3fc1a7',
+                        '#d8261a',
+                        '#55fc87'
+                    ]
+                }
+            ]
+        };
+
+
+        var pieThreatPerAssetType = new Chart(ctx1, {
+            type: 'pie',
+            data: dataThreatPerAssetType,
+            options: {
+                responsive: true,
+                color: '#ffffff',
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'High Likelihood Threats threatening each asset type',
+                        color: '#ffffff'
+                    },
+
+                }
+            },
+        })
+
+        var pieOwned = new Chart(ctx2, {
+            type: 'bar',
+            data: dataBarTopThreats,
+            options: {
+                responsive: true,
+                indexAxis: 'y',
+                color: '#ffffff',
+                scales: {
+                    x: {
+                        grid: {
+                            display: 'true',
+                            color: "#ffffff"
+                        },
+                        ticks: {
+                            color: '#ffffff'
+                        }
+                    },
+                    y: {
+                        grid: {
+                            display: 'true',
+                            color: "#ffffff"
+
+                        },
+                        ticks: {
+                            color: '#ffffff'
+                        }
+                    },
+
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Top Threats by Likelihood',
+                        color: '#ffffff'
+                    }
+                }
+            },
+        })
+
+        var pieThreatsPerOccurrences = new Chart(ctx3, {
+            type: 'polarArea',
+            data: dataPieThreatsPerOccurrences,
+            options: {
+                responsive: true,
+                color: '#ffffff',
+                {#borderColor: '#ffffff',#}
+                {#backgroundColor: '#ffffff',#}
+                scales: {
+                    r: {
+                        grid: {
+                            color: '#ffffff'
+                        },
+                        ticks: {
+                            color: 'black'
+                        }
+                    },
+
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'High likelihood threats per number of assets threatened',
+                        color: '#ffffff'
+                    }
+                }
+            },
+        })
+
+        var lineThreatPerMonth = new Chart(ctx4, {
+            type: 'line',
+            data: dataLineThreatPerMonth,
+            options: {
+                responsive: true,
+                color: '#ffffff',
+                {#borderColor: '#ffffff',#}
+                {#backgroundColor: '#ffffff',#}
+                scales: {
+                    x: {
+                        grid: {
+                            color: '#ffffff'
+                        },
+                        ticks: {
+                            color: '#ffffff'
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: '#ffffff'
+                        },
+                        ticks: {
+                            color: '#ffffff'
+                        }
+                    },
+
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'High likelihood threats per number of assets threatened by month',
+                        color: '#ffffff'
+                    }
+                }
+            },
+        })
+
+        function rowStyle(row, index) {
+            console.log(row)
+            console.log(row.has_static_ip)
+            if (typeof row.has_static_ip !== "undefined") {
+                if (row.has_static_ip === true) {
+                    console.log("Is false")
+                    return {
+                        css: {
+                            color: 'blue'
+                        }
+                    }
+                } else {
+                    console.log("Is true")
+                    return {
+                        css: {
+                            color: 'red'
+                        }
+                    }
+                }
+            } else {
+                console.log("Is undefined")
+                return {
+                    css: {
+                        color: 'red'
+                    }
+                }
+            }
+
+        }
+
+        var $table = $('#table')
+
+        function operateFormatter(value, row, index) {
+            return [
+                {#'<a class="edit" href="javascript:void(0)" title="Edit">',#}
+                {#'<i class="fa fa-edit"></i>',#}
+                {#'</a>  ',#}
+                '<a type="button" class="btn btn-primary fa fa-edit" href="/repo/assets/">\n' +
+                '<span class= "custom-font">Verify Asset</span>' +
+                '</a>'
+            ].join('')
+        }
+
+        $(function () {
+            var data = {{ repo_threats | safe }};
+            console.log(data)
+            $table.bootstrapTable({data: data});
+        })
+    </script>
+
+{% endblock %}
+
+
+{% block content %}
+    <h1>Threat Dashboard</h1>
+    <hr/>
+    <a class="btn btn-primary" href="/repo/threats/"> Detailed Threat View </a>
+    <hr/>
+    <div class="row dashboard-row">
+        <div class="col-5 custom-select-column">
+            <canvas id="pieThreatPerAssetType" width="400" height="400"></canvas>
+        </div>
+        <div class="col-5 custom-select-column">
+            <canvas id="barTopThreats" width="400" height="400"></canvas>
+        </div>
+    </div>
+    <hr/>
+    <h5>Threat Related Enumerations</h5>
+    <div class="row dashboard-row">
+        <br/>
+        <div id="toolbar">
+
+        </div>
+        <table
+                id="table"
+                data-toolbar="#toolbar"
+                data-search="true"
+                data-search-on-enter-key="true"
+                data-show-search-button="true"
+                data-show-refresh="true"
+                data-show-toggle="true"
+                data-show-fullscreen="true"
+                data-show-columns="true"
+                data-show-columns-toggle-all="true"
+                data-loading-template="loadingTemplate"
+                data-pagination="true"
+                data-page-list="[10, 25, 50, 100, all]"
+                show-button-icons="true"
+                data-row-style="rowStyle"
+        >
+            <thead>
+            <tr>
+                <th data-field="id" data-sortable="true">ID</th>
+                <th data-field="name" data-sortable="true">Threat Name</th>
+                <th data-field="capec" data-sortable="true">Related CAPEC</th>
+                <th data-field="cwe" data-sortable="true">Related CWE</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+    <hr/>
+    <div class="row dashboard-row">
+        <div class="col-6 custom-select-column">
+            <canvas id="pieThreatsPerOccurrences" width="400" height="400"></canvas>
+        </div>
+        <div class="col-6 custom-select-column">
+            <canvas id="lineThreatPerMonth" width="400" height="400"></canvas>
+        </div>
+    </div>
+
+
+{% endblock %}

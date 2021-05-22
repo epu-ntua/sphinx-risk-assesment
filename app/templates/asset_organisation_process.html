@@ -1,0 +1,80 @@
+{% extends "sidebar_asset_management.html" %}
+{% block content %}
+
+<h1>Organisation - Organisation services</h1>
+<div style="text-align: right; padding-bottom: 20px">
+    <button type="button" class="btn btn-primary" onclick=""> Add new +></button>
+    <br/>
+</div>
+<table id="example" class="table  table table-striped table-bordered" style="width:100%">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Supported by</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Diagnosis</td>
+            <td>Inpatient</td>
+            <td>Diagnosis services</td>
+            <td>Intensive Care Unit, Radiology</td>
+        </tr>
+        <tr>
+            <td>Treatment</td>
+            <td>Inpatient</td>
+            <td>Treatment services</td>
+            <td>Intensive Care Unit</td>
+        </tr>
+        <tr>
+            <td>Surgical</td>
+            <td>Inpatient</td>
+            <td>Surgical procedures that require post-surgery, medically supervised care</td>
+            <td>Cardiac Surgery Department</td>
+        </tr>
+        <tr>
+            <td>Surgical</td>
+            <td>Outpatient</td>
+            <td>Surgical procedures</td>
+            <td>Cardiac Surgery Department</td>
+        </tr>
+        <tr>
+            <td>Diagnosis</td>
+            <td>Outpatient</td>
+            <td>Diagnosis services</td>
+            <td>Emergency – Outpatient Unit</td>
+        </tr>
+        <tr>
+            <td>Laboratory</td>
+            <td>Outpatient</td>
+            <td>Laboratory services</td>
+            <td>PET / CT Department, CT & MRI Department</td>
+        </tr>
+        <tr>
+            <td>Advisory</td>
+            <td>Inpatient</td>
+            <td>Advisory services</td>
+            <td>Emergency – Outpatient</td>
+        </tr>
+            </tbody>
+             <tfoot>
+                 <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Supported by</th>
+                </tr>
+             </tfoot>
+        </table>
+{% endblock %}
+
+{% block script %}
+
+    <script>
+    $(document).ready(function() {
+    $('#example').DataTable();
+    } );
+    </script>
+{% endblock %}
