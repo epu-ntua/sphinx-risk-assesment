@@ -1,12 +1,12 @@
 {% include "base.html" %}
 <head>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/sidebar.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{#    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">#}
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css"
           crossorigin="anonymous">
 <!-- load the d3.js library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
-
+<script src="extensions/export/bootstrap-table-export.js"></script>
     {% block head %}
     {% endblock %}
 </head>
@@ -105,6 +105,12 @@
 
 <!--    MAIN -->
 <div class="col-10">
+{% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+{% endfor %}
     {% block content %}
 
     {% endblock %}

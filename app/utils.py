@@ -2,10 +2,12 @@ from flask import jsonify
 from sqlalchemy.exc import SQLAlchemyError
 from app import db
 from app.models import *
+# from app.csv_to_json_converter_util import *
 from sqlalchemy import exists
 from datetime import date, datetime
 import openpyxl
 import json
+import os
 import requests
 import stix2
 import stix2validator
@@ -266,12 +268,13 @@ def get_assets():
     # db.session.query(your_table.column1.distinct()).filter_by(column2 = 'some_column2_value').all()
 
 
-def get_assetsfromrepository():
-    if db.session.query().distinct(HardwareAsset.id).count() > 0:
-        list_of_assets = db.session.query(HardwareAsset).distinct(HardwareAsset.id)
-        return list_of_assets
-    else:
-        return -1
+#
+# def get_assetsfromrepository():
+#     if db.session.query().distinct(HardwareAsset.id).count() > 0:
+#         list_of_assets = db.session.query(HardwareAsset).distinct(HardwareAsset.id)
+#         return list_of_assets
+#     else:
+#         return -1
 
 
 # region get Recommended CVEs for an asset
@@ -390,14 +393,14 @@ def get_capec_recommendations(selected_cve_id):
 #                 temp_scope.append(temp_it)
 
 
-def get_hardwareassets():
-    if db.session.query(HardwareAsset).distinct(
-            HardwareAsset.id).count() > 0:
-        list_of_hardwareassets = db.session.query(HardwareAsset).distinct(
-            HardwareAsset.id)
-        return list_of_hardwareassets
-    else:
-        return []
+# def get_hardwareassets():
+#     if db.session.query(HardwareAsset).distinct(
+#             HardwareAsset.id).count() > 0:
+#         list_of_hardwareassets = db.session.query(HardwareAsset).distinct(
+#             HardwareAsset.id)
+#         return list_of_hardwareassets
+#     else:
+#         return []
 
 
 # endregion
@@ -434,11 +437,49 @@ def sendDSSScore():
     bundle = stix2.Bundle(asset, attack, relationship, rcra)
     print(bundle, flush=True)
     stix2validator.validate_instance(bundle)
-    SendKafkaReport(str(bundle))
+    SendKafkaReport(str(bundle), "rcra-report-topic")
 
     return 0
 
-def sendDSSAlert():
+
+def sendDSSScoreTest():
+    asset = stix2.IPv4Address(
+        # type="ipv4-addr",
+        value="10.0.255.106"
+    )
+    attack = stix2.AttackPattern(
+        # type="attack-pattern",
+        name="Spear Phishing as Practiced by Adversary X",
+        description="A particular form of spear phishing where the attacker claims that the target had won a contest, including personal details, to get them to click on a link.",
+    )
+
+    relationship = stix2.Relationship(
+        # type="relationship",
+        relationship_type="targets",
+        source_ref=attack.id,
+        target_ref=asset.id
+    )
+
+    scoring = {
+        "score": "20",
+        "impact": "high",
+        "probability": "low"
+    }
+    rcra = stix2_custom.RCRAObjective(
+        x_rcra_scoring=json.dumps(scoring)
+
+    )
+
+    bundle = stix2.Bundle(asset, attack, relationship, rcra)
+    print(bundle, flush=True)
+    stix2validator.validate_instance(bundle)
+    SendKafkaReport(str(bundle), "rcra-report-topic-test")
+
+    return 0
+
+
+
+def send_dss_alert():
     asset = stix2.IPv4Address(
         # type="ipv4-addr",
         value="10.0.255.106"
@@ -472,7 +513,9 @@ def sendDSSAlert():
     # SendKafkaReport(str(bundle))
     return str(bundle)
 
+
 def make_visualisation():
+    """ Constructs example visualisation for Current Threats by impact level"""
     score = {
         "low_impact": "1",
         "medium_impact": "2",
@@ -481,15 +524,103 @@ def make_visualisation():
     }
 
     vis_1 = stix2_custom.RCRACurrentThreatsVis(
-        x_rcra_threats = score
+        x_rcra_threats=score
     )
     bundle = stix2.Bundle(vis_1)
     stix2validator.validate_instance(bundle)
 
-    print(bundle, flush=True)
+    # print(bundle, flush=True)
     return str(bundle)
-# def validate_stix_2():
-#
+
+def make_visualisation_current_assets(assets):
+    """ Constructs Visualisation for ID new-unverified asset alert """
+    vis_1 = stix2_custom.RCRACurrentAssets(
+        x_rcra_assets=assets
+    )
+    bundle = stix2.Bundle(vis_1)
+    stix2validator.validate_instance(bundle)
+
+    return str(bundle)
+
+def send_asset_id_alert():
+    """' Function Recieves New Detected Assets and Send new visualisation data to ID (all or uknown-unverified only?)"""
+    return 1
+
+
+def convert_database_items_to_json_table(items):
+    """ Converts sqlalchemy entries to json ,
+    Needs to be in an array to work"""
+    if items:
+        # print(items)
+        columns = items[0].__table__.columns._data.keys()
+        json_ready = []
+        temp_json = {}
+        # print(columns, flush=True)
+        for item in items:
+            # print(item)
+            for column in columns:
+                temp_json[column] = getattr(item, column)
+            json_ready.append(temp_json.copy())
+            # print(json_ready)
+
+        return json_ready
+    else:
+        return []
+
+def import_fixture_from_file(file_name):
+    '''Function to imports Json from app/fixtures'''
+    with open(os.path.join(os.getcwd(),"app", "fixtures",file_name+".json"),encoding='utf-8') as json_file:
+        return json.load(json_file)
+
+def rcra_db_init():
+    """Function is run in the _init_ file when server starts to initialise static table data"""
+    print("Initiating Database", flush=True)
+    if RepoService.query.count() is not 0:
+        print(RepoService.query.count())
+        return "Already exists"
+
+    # Adding Services
+    to_add_services = import_fixture_from_file("repo_service")
+
+    for service_json in to_add_services:
+        print(service_json)
+        to_add_service = RepoService(**service_json)
+        db.session.add(to_add_service)
+
+    # Adding Threats
+    to_add_threats = import_fixture_from_file("repo_threat")
+
+    for threat_json in to_add_threats:
+        to_add_threat = RepoThreat(**threat_json)
+        db.session.add(to_add_threat)
+
+    # Adding Impacts
+    to_add_impacts = import_fixture_from_file("repo_impact")
+
+    for impact_json in to_add_impacts:
+        to_add_impact = RepoImpact(**impact_json)
+        db.session.add(to_add_impact)
+
+    # Adding Objectives
+    to_add_objectives = import_fixture_from_file("repo_objective")
+
+    for objective_json in to_add_objectives:
+        to_add_objective = RepoObjective(**objective_json)
+        db.session.add(to_add_objective)
+
+    to_add_objective_options = import_fixture_from_file("repo_objectives_option")
+
+    for objectives_option_json in to_add_objective_options:
+        to_add_objectives_option = RepoObjectivesOptions(**objectives_option_json)
+        db.session.add(to_add_objectives_option)
+
+    db.session.commit()
+
+# def repo_check_dtm_asset_exits_and_add(dtm_object, assets):
+#     """This function uses a single object of the DTM and the retrieved database assets
+#     as input and will check if the described asset exists in the database"""
+#     if dtm_object in assets:
+
 
 # url = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/Authentication"
 # payload = {

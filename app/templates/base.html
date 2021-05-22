@@ -10,7 +10,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
           integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
-
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+          integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     <title>SPHINX Risk Assessment Module</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/general.css') }}">
     {% block head %}
@@ -19,29 +20,32 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark nav-custom">
-    <a class="navbar-brand logo-custom" href="http://{{ serverAddress }}:{{ serverPort }}/home" class = "main-link-navbar" style="height: 100%"> <img
+    <a class="navbar-brand logo-custom" href="http://{{ serverAddress }}:{{ serverPort }}/home" class="main-link-navbar"
+       style="height: 100%"> <img
             src="https://sphinx-project.eu/nx-uploads/2019/04/SPHINX.png" height="100%" width="150">
         Risk Assesment Module</a>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <div class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="http://{{ serverAddress }}:{{ serverPort }}/asset_dashboard"> Asset Management</a>
-            </li>
 {#            <li class="nav-item active">#}
-{#                <a class="nav-link" href="http://{{ serverAddress }}:{{ serverPort }}/gira_overview">Gira Static#}
-{#                    Information Management</a>#}
+{#                <a class="nav-link" href="http://{{ serverAddress }}:{{ serverPort }}/repo/dashboard/asset/"> Asset#}
+{#                    Management</a>#}
 {#            </li>#}
+            {#            <li class="nav-item active">#}
+            {#                <a class="nav-link" href="http://{{ serverAddress }}:{{ serverPort }}/gira_overview">Gira Static#}
+            {#                    Information Management</a>#}
+            {#            </li>#}
+            {#            <li class="nav-item active">#}
+            {#                <a class="nav-link" href="http://{{ serverAddress }}:{{ serverPort }}/assets">Threat Assessment</a>#}
+            {#            </li>#}
+            {#            <li class="nav-item active">#}
+            {#                <a class="nav-link" href="http://{{ serverAddress }}:{{ serverPort }}/gira_assess/gira_assess_exposure"> Start Gira#}
+            {#                    Assessment</a>#}
+            {#            </li>#}
 {#            <li class="nav-item active">#}
-{#                <a class="nav-link" href="http://{{ serverAddress }}:{{ serverPort }}/assets">Threat Assessment</a>#}
+{#                <a class="nav-link" href="http://{{ serverAddress }}:{{ serverPort }}/general_dashboard/asset_view/">#}
+{#                    Risk Management</a>#}
 {#            </li>#}
-{#            <li class="nav-item active">#}
-{#                <a class="nav-link" href="http://{{ serverAddress }}:{{ serverPort }}/gira_assess/gira_assess_exposure"> Start Gira#}
-{#                    Assessment</a>#}
-{#            </li>#}
-            <li class="nav-item active">
-                <a class="nav-link" href="http://{{ serverAddress }}:{{ serverPort }}/general_dashboard/asset_view/"> Risk Management</a>
-            </li>
             {#        <li class="nav-item">#}
             {#            <a class="nav-link" href="http://0.0.0.0:5002/shutdown">Shutdown</a>#}
             {#        </li>#}
@@ -69,7 +73,7 @@
         crossorigin="anonymous"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 <script src=" https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
-<script src="{{url_for('static', filename='sidebar.js')}}"></script>
+<script src="{{ url_for('static', filename='sidebar.js') }}"></script>
 
 {% block script %}
 
