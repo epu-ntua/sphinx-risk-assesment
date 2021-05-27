@@ -26,10 +26,20 @@
             ].join('')
         }
 
+        function operateFormatter1(value, row, index) {
+            var href_custom = "/repo/service/" + row.id + "/info/"
+            return [
+                '<a href="' + href_custom + '"style="color: #ffffff" type="button" class="btn btn-primary fa fa-edit">\n' +
+                '<span class= "custom-font">Service Additional Info</span>' +
+                '</a>'
+            ].join('')
+        }
+
         function populateEditFields(row){
             $("#editForm").find("#id").val(row.id)
             $("#editForm").find("#name").val(row.name)
         }
+
 
 
         window.operateEvents = {
@@ -49,7 +59,7 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Organisation Functions </h1>
+    <h1>Organisation Services </h1>
 
     <hr/>
     <div id="toolbar">
@@ -78,11 +88,12 @@
             <th data-field="id" data-sortable="true">ID</th>
             <th data-field="name" data-sortable="true">Name</th>
             <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents">Item Price</th>
+            <th data-field="operate" data-formatter="operateFormatter1" data-events="operateEvents1"></th>
         </tr>
         </thead>
     </table>
     <hr/>
-    <h2>Add New Organisation Function</h2>
+    <h2>Add New Organisation Service</h2>
     <form action="/repo/services/" method="post" novalidate>
      {{ wtf.quick_form(new_service_form) }}
 {#        <p>{{ wtf.form_field(new_actor_form.submit()) }}</p>#}

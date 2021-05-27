@@ -31,6 +31,14 @@ def query_generic_repo_type():
     return RepoAssetsType.query
 
 
+def query_generic_repo_materialisation():
+    return RepoMaterialisation.query
+
+
+def query_generic_repo_impact():
+    return RepoImpact.query
+
+
 # def query_generic_repo_type():
 #     return RepoAssetsType.query
 
@@ -97,11 +105,43 @@ class FormAddRepoMaterialisationConsequence(FlaskForm):
     submit = SubmitField("Add Materialisation Consequence Pair")
 
 
+class FormAddRepoMaterialisation(FlaskForm):
+    id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
+    threat_id = IntegerField('Threat Id', widget=HiddenInput(), validators=[DataRequired()])
+    name_materialisation = StringField('Name Materialisation', validators=[DataRequired()])
+    submit = SubmitField("Add Materialisation")
+
+
+class FormAddRepoConsequence(FlaskForm):
+    id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
+    threat_id = IntegerField('Threat Id', widget=HiddenInput(), validators=[DataRequired()])
+    materialisation_fk = QuerySelectField(query_factory=query_generic_repo_materialisation, allow_blank=False, get_label='name',
+                               validators=[DataRequired()])
+    name_consequence = StringField('Name Consequence', validators=[DataRequired()])
+    submit = SubmitField("Add Consequence")
+
+
+class FormAddRepoServiceImpact(FlaskForm):
+    id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
+    service_id = IntegerField('Threat Id', widget=HiddenInput(), validators=[DataRequired()])
+    impact_fk = QuerySelectField(query_factory=query_generic_repo_impact, allow_blank=False, get_label='name',
+                               validators=[DataRequired()])
+    submit = SubmitField("Add Impact - Service connection")
+
+
+class FormAddRepoConsequenceImpact(FlaskForm):
+    id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
+    impact_fk = QuerySelectField(query_factory=query_generic_repo_impact, allow_blank=False, get_label='name',
+                               validators=[DataRequired()])
+    submit = SubmitField("Add Impact - Consequence connection")
+
+
 class FormAddRepoResponse(FlaskForm):
     id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
     threat_id = IntegerField('Threat Id', widget=HiddenInput(), validators=[DataRequired()])
     name = StringField('Name', validators=[DataRequired()])
     submit = SubmitField("Add Response")
+
 
 class FormAddRepoAsset(FlaskForm):
     id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])

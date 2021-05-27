@@ -37,7 +37,8 @@
                 {#                    </option>#}
                 {#                {% endfor %}#}
             </h3>
-            <br/>
+{#        <hr/>#}
+{#        <br/>#}
             {#            <h4>Threat Exposure</h4>#}
             {#            <h6> This value is calculated with other values and is optional</h6>#}
             {#            <hr/>#}
@@ -64,7 +65,6 @@
             {#            <input type="range" class="form-control-range" id="objective_state_alert_3" step="1"#}
             {#                   min="0"#}
             {#                   max="5" value="0" , name="objective_state_alert_3">#}
-            <br/>
             {#    <a class="btn btn-primary" href="/repo/threats/"> Detailed Threat View </a>#}
             <h4>Impacts</h4>
             <h6>Select each impact to setup the relation between the impact and the threat. This process needs to be
@@ -72,14 +72,14 @@
             <hr/>
             <div class="row dashboard-row">
                 {% for impact in repo_impacts %}
-                    {% if impact.id|string == 1|string %}
+                    {% if impact.id|string == impact_id|string %}
                         <a href="/repo/risk/configuration/service/{{ service_id }}/impact/{{ impact.id }}/"
                            class="btn btn-primary fa fa-edit"
                            style="margin-bottom: 3px; background-color: #447e9b">
                             Impact | {{ impact.name }}
                         </a>
                     {% else %}
-                        <a href="/repo/risk/configuration/service/{{ service_id }}/asset/{{ impact.id }}/"
+                        <a href="/repo/risk/configuration/service/{{ service_id }}/impact/{{ impact.id }}/"
                            class="btn btn-primary fa fa-check"
                            style="margin-bottom: 3px; background-color: #00cc00">
                             Impact | {{ impact.name }}

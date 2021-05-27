@@ -1,0 +1,69 @@
+{% extends "sidebar_asset_management.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{#{% block header %}#}
+{#<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/repo.css') }}">#}
+{#{% endblock %}#}
+{#{% block head %}#}
+{##}
+{#{% endblock %}#}
+{% block script %}
+    <script>
+        $("#new_i_form").find("#service_id").val({{ service_id }})
+
+        var $table = $('#table')
+        var $table_impacts = $('#table_impacts')
+
+
+        $(function () {
+            var data = {{ this_service | safe }};
+            var data_impacts_service_conncted = {{ repo_impacts_service_connected | safe }};
+
+            {#console.log(data)#}
+            $table.bootstrapTable({data: data});
+            $table_impacts.bootstrapTable({data: data_impacts_service_conncted});
+
+        })
+    </script>
+{% endblock %}
+
+{% block content %}
+    <h1> Service Info </h1>
+    <h1>Selected Service</h1>
+    <hr/>
+    <table
+            id="table">
+        <thead>
+        <tr>
+            {#            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents"></th>#}
+            {#            <th data-field="operate" data-formatter="operateFormatter1" data-events="operateEvents1"></th>#}
+            <th data-field="id" data-sortable="true">ID</th>
+            <th data-field="name" data-sortable="true">Name</th>
+        </tr>
+        </thead>
+    </table>
+    <hr/>
+    <h2>Service - Impact Relationship</h2>
+    <div class="row">
+        <table id="table_impacts">
+            <thead>
+            <tr>
+                {#            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents"></th>#}
+                {#            <th data-field="operate" data-formatter="operateFormatter1" data-events="operateEvents1"></th>#}
+                <th data-field="id" data-sortable="true">ID</th>
+                <th data-field="name" data-sortable="true">Name</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+    <hr/>
+    <h2>Add new Impact Connection</h2>
+    <form id="new_i_form" action="/repo/service/{{ service_id }}/info/" method="post" novalidate>
+        {{ new_service_impact_form.hidden_tag() }}
+
+        {{ wtf.form_field(new_service_impact_form.impact_fk) }}
+
+        {{ wtf.form_field(new_service_impact_form.submit) }}
+
+        </p>
+    </form>
+{% endblock %}

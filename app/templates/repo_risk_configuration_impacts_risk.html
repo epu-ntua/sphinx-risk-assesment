@@ -1,0 +1,229 @@
+{% extends "sidebar_asset_management.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{#{% block header %}#}
+{#<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/repo.css') }}">#}
+{#{% endblock %}#}
+{#{% block head %}#}
+{##}
+{#{% endblock %}#}
+{% block script %}
+    <script>
+
+    </script>
+{% endblock %}
+
+{% block content %}
+    <h1>Impact Risk Configuration</h1>
+    <hr/>
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-6">
+                    <h3>Current Selected Threat:
+                        <div class="dropdown">
+                            <button class="btn btn-primary">{{ this_threat[0].name }} ></button>
+                            <div class="dropdown-list">
+                                {% for threat in repo_threats %}
+                                    <a href="/repo/risk/configuration/impact/threat/{{ threat.id }}/">{{ threat.name }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </h3>
+                </div>
+                <div class="col-6">
+                    <h3>Current Selected Asset:
+                        <div class="dropdown">
+                            <button class="btn btn-primary">
+                                {% if asset_id|string == "-1"|string %}
+                                    Please select an asset >
+                                {% else %}
+                                    {{ this_asset[0].name }} >
+                                {% endif %}
+                            </button>
+                            <div class="dropdown-list">
+                                {% for asset in repo_assets %}
+                                    <a href="/repo/risk/configuration/impact/threat/{{ threat_id }}/asset/{{ asset.id }}/">{{ asset.name }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                    </h3>
+                </div>
+            </div>
+            {% if asset_id|string != '-1'|string %}
+                <h4>Impacts</h4>
+                <h6>Select each impact to setup the relation between the impact and the threat. This process needs to be
+                    completed for each impact individually.</h6>
+                <hr/>
+                <div class="row dashboard-row">
+                    {% for impact in repo_impacts %}
+                        {% if impact.id|string == impact_id|string %}
+                            <a href="/repo/risk/configuration/impact/{{ impact.id }}/threat/{{ threat_id }}/asset/{{ asset_id }}/"
+                               class="btn btn-primary fa fa-edit"
+                               style="margin-bottom: 3px; background-color: #447e9b">
+                                Impact | {{ impact.name }}
+                            </a>
+                        {% else %}
+                            <a href="/repo/risk/configuration/impact/{{ impact.id }}/threat/{{ threat_id }}/asset/{{ asset_id }}/"
+                               class="btn btn-primary fa fa-check"
+                               style="margin-bottom: 3px; background-color: #00cc00">
+                                Impact | {{ impact.name }}
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+
+                </div>
+                {% if impact_id|string != '-1'|string %}
+                    <form action="/repo/risk/configuration/threat/{{ threat_id }}/asset/{{ asset_id }}/" method="post">
+                        <div class="row dashboard-row">
+                            <div class="col-12">
+                                <h4>Threat Impact Calculation </h4>
+                                {% for impact_calculation_wrapper in array_impact_calculation %}
+                                    {#                                    <h6>Materialisation#}
+                                    {#                                        | {{ materialisation_calculation_wrapper[0].materialisation.name }}</h6>#}
+                                    <div class="row dashboard-row">
+                                        <div class="col-3 custom-select-column">
+                                            {% for temp_header in impact_calculation_wrapper %}
+                                                {% if 'service' in temp_header %}
+                                                    Service: {{ temp_header.service.name }} | State:
+                                                    {{ temp_header.state }}
+                                                {% else %}
+                                                    Consequence: {{ temp_header.consequence.name }} | Happening
+                                                    {{ temp_header.state }}
+                                                {% endif %}
+                                                <br/>
+                                            {% endfor %}
+                                            {#                                                Response: {{ materialisation_calculation.response.name }}#}
+                                            {#                                                Threat Occurs: {{ materialisation_calculation.threat_occurrence }}#}
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="row dashboard-row">
+                                                <h5>Low</h5>
+                                            </div>
+                                            <div class="row dashboard-row">
+                                                <div class="col-2">
+                                                    0%
+                                                </div>
+                                                <div class="col-2">
+                                                    25%
+                                                </div>
+                                                <div class="col-2">
+                                                    50%
+                                                </div>
+                                                <div class="col-2 ">
+                                                    75%
+                                                </div>
+                                                <div class="col-2">
+                                                    100%
+                                                </div>
+                                            </div>
+                                            <div class="row dashboard-row">
+                                                <div class="col-10">
+                                                    <input type="range" class="form-control-range"
+                                                           name="low{% for temp_header in impact_calculation_wrapper %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}{% else %}|cons|{{ temp_header.consequence.id }}{% endif %}{% endfor %}"
+                                                           id="low{% for temp_header in impact_calculation_wrapper %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}{% else %}|cons|{{ temp_header.consequence.id }}{% endif %}{% endfor %}"
+                                                           step="1"
+                                                           min="0"
+                                                           max="100"
+                                                           value="" >
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="row dashboard-row">
+                                                <h5>Medium</h5>
+                                            </div>
+                                            <div class="row dashboard-row">
+                                                <div class="col-2">
+                                                    0%
+                                                </div>
+                                                <div class="col-2">
+                                                    25%
+                                                </div>
+                                                <div class="col-2">
+                                                    50%
+                                                </div>
+                                                <div class="col-2 ">
+                                                    75%
+                                                </div>
+                                                <div class="col-2">
+                                                    100%
+                                                </div>
+                                            </div>
+                                            <div class="row dashboard-row">
+                                                <div class="col-10">
+                                                    <input type="range" class="form-control-range"
+                                                           name="medium{% for temp_header in impact_calculation_wrapper %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}{% else %}|cons|{{ temp_header.consequence.id }}{% endif %}{% endfor %}"
+                                                           id="medium{% for temp_header in impact_calculation_wrapper %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}{% else %}|cons|{{ temp_header.consequence.id }}{% endif %}{% endfor %}"
+                                                           step="1"
+                                                           min="0"
+                                                           max="100"
+                                                            {#value="{{ materialisation_calculation.prob }}"#}
+                                                           ,
+                                                           name="objective_state_alert_3">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="row dashboard-row">
+                                                <h5>High</h5>
+                                            </div>
+                                            <div class="row dashboard-row">
+                                                <div class="col-2">
+                                                    0%
+                                                </div>
+                                                <div class="col-2">
+                                                    25%
+                                                </div>
+                                                <div class="col-2">
+                                                    50%
+                                                </div>
+                                                <div class="col-2 ">
+                                                    75%
+                                                </div>
+                                                <div class="col-2">
+                                                    100%
+                                                </div>
+                                            </div>
+                                            <div class="row dashboard-row">
+                                                <div class="col-10">
+                                                    <input type="range" class="form-control-range"
+                                                           name="high{% for temp_header in impact_calculation_wrapper %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}{% else %}|cons|{{ temp_header.consequence.id }}{% endif %}{% endfor %}"
+                                                           id="high{% for temp_header in impact_calculation_wrapper %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}{% else %}|cons|{{ temp_header.consequence.id }}{% endif %}{% endfor %}"
+                                                           step="1"
+                                                           min="0"
+                                                           max="100"
+                                                            {#  value="{{ materialisation_calculation.prob }}"#}
+                                                           ,
+                                                           name="objective_state_alert_3">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+
+                        <div class="row dashboard-row">
+                            <button type="submit" class="btn btn-primary" style="margin-right: 3px; ">
+                                Submit
+                            </button>
+                        </div>
+                    </form>
+                {% else %}
+                    <h2>Please select a specific impact</h2>
+                {% endif %}
+            {% else %}
+                <h2>Please first select a specific asset</h2>
+            {% endif %}
+        </div>
+        {#        <div class="col-2">#}
+        {#            <h3>Current Selections</h3>#}
+        {#            <hr/>#}
+        {#            Threat: Ransomware#}
+        {#            <br/>#}
+        {#            Asset: Asset1#}
+        {#        </div>#}
+    </div>
+{% endblock %}

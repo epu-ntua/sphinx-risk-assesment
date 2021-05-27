@@ -1,0 +1,88 @@
+{% extends "sidebar_asset_management.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{#{% block header %}#}
+{#<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/repo.css') }}">#}
+{#{% endblock %}#}
+{#{% block head %}#}
+{##}
+{#{% endblock %}#}
+{% block script %}
+    <script>
+        var $table = $('#table')
+        var $table_impacts = $('#table_impacts')
+        var $table_threat = $('#table_threat')
+
+        $(function () {
+            var data = {{ this_consequence | safe }};
+            var data_impacts = {{  repo_related_impacts | safe }};
+            var data_threats = {{  this_threat | safe }};
+
+                {#console.log(data)#}
+                $table.bootstrapTable({data: data});
+                $table_impacts.bootstrapTable({data: data_impacts});
+                $table_threat.bootstrapTable({data: data_threats});
+        })
+    </script>
+{% endblock %}
+
+{% block content %}
+    <h1> Threat Consequences Impact Relation
+        <a href="/repo/threat/{{ this_threat_dict[0].id }}/info/" class="btn btn-primary">
+            < Back
+        </a>
+    </h1>
+    <h1>Selected Threat</h1>
+    <hr/>
+    <table
+            id="table_threat">
+        <thead>
+        <tr>
+            {#            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents"></th>#}
+            {#            <th data-field="operate" data-formatter="operateFormatter1" data-events="operateEvents1"></th>#}
+            <th data-field="id" data-sortable="true">ID</th>
+            <th data-field="name" data-sortable="true">Name</th>
+        </tr>
+        </thead>
+    </table>
+    <hr/>
+    <h1>Selected Consequence</h1>
+    <hr/>
+    <table
+            id="table">
+        <thead>
+        <tr>
+            {#            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents"></th>#}
+            {#            <th data-field="operate" data-formatter="operateFormatter1" data-events="operateEvents1"></th>#}
+            <th data-field="id" data-sortable="true">ID</th>
+            <th data-field="name" data-sortable="true">Name</th>
+        </tr>
+        </thead>
+    </table>
+    <hr/>
+    <h2>Related Impacts</h2>
+    <div class="row">
+        <table id="table_impacts">
+            <thead>
+            <tr>
+                {#            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents"></th>#}
+                {#            <th data-field="operate" data-formatter="operateFormatter1" data-events="operateEvents1"></th>#}
+                <th data-field="id" data-sortable="true">ID</th>
+                <th data-field="name" data-sortable="true">Name</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+    <hr/>
+    <h2>Add new Consequence Impact Relation</h2>
+    <form id="new_i_form" action="/repo/threat/{{ this_threat_dict[0].id }}/info/consequence/{{this_consequence_dict[0].id }}/info/" method="post" novalidate>
+        {{ new_consequence_impact_form.hidden_tag() }}
+
+        {{ wtf.form_field(new_consequence_impact_form.impact_fk) }}
+        {#        {{ wtf.form_field(new_objective_form.states[3]) }}#}
+
+        {{ wtf.form_field(new_consequence_impact_form.submit) }}
+        {#        {{ wtf.quick_form(new_objective_form) }}#}
+        {#        <p>{{ wtf.form_field(new_asset_form.submit()) }}</p>#}
+        </p>
+    </form>
+{% endblock %}

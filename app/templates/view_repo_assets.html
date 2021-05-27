@@ -46,11 +46,12 @@
 
 
         function operateFormatter2(value, row, index) {
+            var href_custom = "/repo/assets/services-relations/"+row.id+"/"
             return [
                 {#'<a class="edit" href="javascript:void(0)" title="Edit">',#}
                 {#'<i class="fa fa-edit"></i>',#}
                 {#'</a>  ',#}
-                '<a href="/repo/assets/services-relations/1/" style="background-color: #00cc00; color: #ffffff" type="button" class="btn btn-primary fa fa-edit">\n' +
+                '<a href="'+ href_custom +'" style="background-color: #00cc00; color: #ffffff" type="button" class="btn btn-primary fa fa-edit">\n' +
                 '<span class= "custom-font">Edit Organisation Functions Relations</span>' +
                 '</a>'
             ].join('')
