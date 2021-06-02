@@ -255,17 +255,46 @@ class RepoRiskThreatAssetMaterialisation(db.Model):
 
 
 class RepoAssetThreatConsequenceServiceImpactRelationship(db.Model):
-    """Each entry at this table servers as an entry to the risk assessment matrix risk impact node"""
+    """Each entry at this table servers as an entry to the risk assessment matrix risk impact node, it needs the
+    corresponding entries for consequences and services to figure out which is which in the following table.
+    RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany
+    RepoAssetThreatConsequenceServiceImpactRelationshipServiceManyToMany
+    """
     __tablename__ = 'repo_asset_threat_consequence_service_impact_relationship'
-    repo_asset_id = db.Column(db.Integer, db.ForeignKey('repo_asset.id'), primary_key=True)
-    repo_threat_id = db.Column(db.Integer, db.ForeignKey('repo_threat.id'), primary_key=True)
-    repo_consequence_id = db.Column(db.Integer, db.ForeignKey('repo_consequence.id'), primary_key=True)
-    repo_consequence_state = db.Column(db.Boolean(), primary_key=True)
-    repo_service_id = db.Column(db.Integer, db.ForeignKey('repo_service.id'), primary_key=True)
-    repo_service_state = db.Column(db.Boolean(), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    repo_asset_id = db.Column(db.Integer, db.ForeignKey('repo_asset.id'))
+    repo_threat_id = db.Column(db.Integer, db.ForeignKey('repo_threat.id'))
+    repo_impact_id = db.Column(db.Integer, db.ForeignKey('repo_impact.id'))
+    high_prob = db.Column(db.Integer)
+    med_prob = db.Column(db.Integer)
+    low_prob = db.Column(db.Integer)
+    consequences = db.relationship("RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany",
+                                   back_populates="repo_this_entry")
+    services = db.relationship("RepoAssetThreatConsequenceServiceImpactRelationshipServiceManyToMany",
+                               back_populates="repo_this_entry")
 
 
-    prob = db.Column(db.Integer)
+class RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany(db.Model):
+    __tablename__ = 'repo_asset_threat_consequence_service_impact_relationship_consequence_many_to_many'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    repo_this_entry_id = db.Column(db.Integer,
+                                   db.ForeignKey('repo_asset_threat_consequence_service_impact_relationship.id'))
+    repo_this_entry = db.relationship("RepoAssetThreatConsequenceServiceImpactRelationship",
+                                      back_populates="consequences")
+    repo_consequence_id = db.Column(db.Integer, db.ForeignKey('repo_consequence.id'))
+    repo_consequence_state = db.Column(db.Boolean())
+
+
+class RepoAssetThreatConsequenceServiceImpactRelationshipServiceManyToMany(db.Model):
+    __tablename__ = 'repo_asset_threat_consequence_service_impact_relationship_service_many_to_many'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    repo_this_entry_id = db.Column(db.Integer,
+                                   db.ForeignKey('repo_asset_threat_consequence_service_impact_relationship.id'))
+    repo_this_entry = db.relationship("RepoAssetThreatConsequenceServiceImpactRelationship",
+                                      back_populates="services")
+    repo_service_id = db.Column(db.Integer, db.ForeignKey('repo_service.id'))
+    repo_service_state = db.Column(db.Boolean())
+
 
 class RepoRiskThreatAssetConsequence(db.Model):
     """Each entry at this table servers as an entry to the risk assessment matrix risk consequence node"""
@@ -324,12 +353,15 @@ class RepoMaterialisation(db.Model):
     name = db.Column(db.String)
     threat_id = db.Column(db.Integer, db.ForeignKey('repo_threat.id'))
 
-repo_consequence_repo_impact_association_table = db.Table('repo_consequence_repo_impact_association_table', db.Model.metadata,
-                                                      db.Column('repo_consequence_id', db.Integer,
-                                                                db.ForeignKey('repo_consequence.id')),
-                                                      db.Column('repo_impact_id', db.Integer,
-                                                                db.ForeignKey('repo_impact.id'))
-                                                      )
+
+repo_consequence_repo_impact_association_table = db.Table('repo_consequence_repo_impact_association_table',
+                                                          db.Model.metadata,
+                                                          db.Column('repo_consequence_id', db.Integer,
+                                                                    db.ForeignKey('repo_consequence.id')),
+                                                          db.Column('repo_impact_id', db.Integer,
+                                                                    db.ForeignKey('repo_impact.id'))
+                                                          )
+
 
 class RepoConsequence(db.Model):
     """ Consequences are intrinsically tied to the threat materialisation and assets and therefore are unique for each one"""
@@ -339,7 +371,7 @@ class RepoConsequence(db.Model):
     threat_id = db.Column(db.Integer, db.ForeignKey('repo_threat.id'))
     materialisation_id = db.Column(db.Integer, db.ForeignKey('repo_materialisation.id'))
     impacts = db.relationship("RepoImpact", secondary=repo_consequence_repo_impact_association_table,
-                               back_populates="consequences")
+                              back_populates="consequences")
 
 
 class RepoVulnerability(db.Model):
@@ -419,7 +451,7 @@ class RepoService(db.Model):
     assets = db.relationship("RepoAsset", secondary=repo_asset_repo_service_association_table,
                              back_populates="services")
     impacts = db.relationship("RepoImpact", secondary=repo_service_repo_impact_association_table,
-                               back_populates="services")
+                              back_populates="services")
 
 
 class RepoImpact(db.Model):
@@ -430,7 +462,7 @@ class RepoImpact(db.Model):
     services = db.relationship("RepoService", secondary=repo_service_repo_impact_association_table,
                                back_populates="impacts")
     consequences = db.relationship("RepoConsequence", secondary=repo_consequence_repo_impact_association_table,
-                               back_populates="impacts")
+                                   back_populates="impacts")
 
 
 class RepoObjective(db.Model):
