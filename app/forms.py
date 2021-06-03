@@ -136,6 +136,13 @@ class FormAddRepoConsequenceImpact(FlaskForm):
     submit = SubmitField("Add Impact - Consequence connection")
 
 
+class FormAddRepoObjectiveImpact(FlaskForm):
+    id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
+    impact_fk = QuerySelectField(query_factory=query_generic_repo_impact, allow_blank=False, get_label='name',
+                               validators=[DataRequired()])
+    submit = SubmitField("Add Impact - Objective connection")
+
+
 class FormAddRepoResponse(FlaskForm):
     id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
     threat_id = IntegerField('Threat Id', widget=HiddenInput(), validators=[DataRequired()])

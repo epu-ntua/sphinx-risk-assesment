@@ -22,269 +22,153 @@
                     <button class="btn btn-primary">{{ this_objective[0].name }}</button>
                     <div class="dropdown-list">
                         {% for objective in repo_objectives %}
-                            <a href="/repo/risk/configuration/objective/{{ objective_id }}/">{{ objective.name }}</a>
+                            <a href="/repo/risk/configuration/objective/{{ objective.id }}/">{{ objective.name }}</a>
                         {% endfor %}
                     </div>
                 </div>
-                {#                {% for threat in repo_threats %}#}
-                {#                    <option value="{{ threat.id }}">#}
-                {#                        <a href="http://{{ serverAddress }}:{{ serverPort }}/repo/dashboard/risk/objectives/"#}
-                {#                           class="list-group-item list-group-item-action bg-dark text-white">#}
-                {#                    <span class="fa fa-dashboard fa-fw mr-3"></span>#}
-                {#                            {{ threat.name }}#}
-                {#                        </a>#}
-                {#                    </option>#}
-                {#                {% endfor %}#}
             </h3>
-            <br/>
-{#            <h4>Threat Exposure</h4>#}
-{#            <h6> This value is calculated with other values and is optional</h6>#}
-{#            <hr/>#}
-{#            <div class="row dashboard-row">#}
-{#                <div class="col-2">#}
-{#                    |None#}
-{#                </div>#}
-{#                <div class="col-2">#}
-{#                    |Very Low#}
-{#                </div>#}
-{#                <div class="col-2">#}
-{#                    |Low#}
-{#                </div>#}
-{#                <div class="col-2 ">#}
-{#                    |Medium#}
-{#                </div>#}
-{#                <div class="col-2">#}
-{#                    |High#}
-{#                </div>#}
-{#                <div class="col-2">#}
-{#                    |Critical#}
-{#                </div>#}
-{#            </div>#}
-{#            <input type="range" class="form-control-range" id="objective_state_alert_3" step="1"#}
-{#                   min="0"#}
-{#                   max="5" value="0" , name="objective_state_alert_3">#}
             <br/>
             {#    <a class="btn btn-primary" href="/repo/threats/"> Detailed Threat View </a>#}
             <h4>Objective Options</h4>
             <h6>Setup the relation between the impact and the threat. This process needs to be
                 completed for each objective individually.</h6>
             <hr/>
-{#            <div class="row dashboard-row">#}
-{#                {% for impact in repo_impacts %}#}
-{#                    {% if impact.id|string == impact_id|string %}#}
-{#                        <a href="/repo/risk/configuration/service/{{ service_id }}/impact/{{ impact.id }}/"#}
-{#                           class="btn btn-primary fa fa-edit"#}
-{#                           style="margin-bottom: 3px; background-color: #447e9b">#}
-{#                            Impact | {{ impact.name }}#}
-{#                        </a>#}
-{#                    {% else %}#}
-{#                        <a href="/repo/risk/configuration/service/{{ service_id }}/asset/{{ impact.id }}/"#}
-{#                           class="btn btn-primary fa fa-check"#}
-{#                           style="margin-bottom: 3px; background-color: #00cc00">#}
-{#                            Impact | {{ impact.name }}#}
-{#                        </a>#}
-{#                    {% endif %}#}
-{#                {% endfor %}#}
+            {#            <div class="row dashboard-row">#}
+            {#                {% for impact in repo_impacts %}#}
+            {#                    {% if impact.id|string == impact_id|string %}#}
+            {#                        <a href="/repo/risk/configuration/service/{{ service_id }}/impact/{{ impact.id }}/"#}
+            {#                           class="btn btn-primary fa fa-edit"#}
+            {#                           style="margin-bottom: 3px; background-color: #447e9b">#}
+            {#                            Impact | {{ impact.name }}#}
+            {#                        </a>#}
+            {#                    {% else %}#}
+            {#                        <a href="/repo/risk/configuration/service/{{ service_id }}/asset/{{ impact.id }}/"#}
+            {#                           class="btn btn-primary fa fa-check"#}
+            {#                           style="margin-bottom: 3px; background-color: #00cc00">#}
+            {#                            Impact | {{ impact.name }}#}
+            {#                        </a>#}
+            {#                    {% endif %}#}
+            {#                {% endfor %}#}
 
-{#            </div>#}
+            {#            </div>#}
             <form action="/repo/risk/configuration/objective/{{ objective_id }}/" method="post">
                 <div class="row dashboard-row">
                     <div class="col-12">
                         <h4>Objective Options Calculation </h4>
-                        <div class="row dashboard-row">
-                            <div class="col-2 custom-select-column">
-                                Impact1: Low
-                                Impact2: Low
-                                Impact3: Low
-                                Impact4: Low
-                            </div>
-                            <div class="col-10">
-                                <div class="row dashboard-row">
-                                    <div class="col-2">
-                                        0%
+                        {% for objective_calculation_wrapper in array_objective_calculation %}
+                            <div class="row dashboard-row">
+                                <div class="col-2 custom-select-column">
+                                    {% for temp_header in objective_calculation_wrapper[:-3] %}
+                                        Impact: {{ temp_header.impact.name }} | State:
+                                        {{ temp_header.state }}
+                                        <br/>
+                                    {% endfor %}
+
+                                </div>
+                                <div class="col-3">
+                                    <div class="row dashboard-row">
+                                        <h5>Low</h5>
                                     </div>
-                                    <div class="col-2">
-                                        25%
+                                    <div class="row dashboard-row">
+                                        <div class="col-2">
+                                            0%
+                                        </div>
+                                        <div class="col-2">
+                                            25%
+                                        </div>
+                                        <div class="col-2">
+                                            50%
+                                        </div>
+                                        <div class="col-2 ">
+                                            75%
+                                        </div>
+                                        <div class="col-2">
+                                            100%
+                                        </div>
                                     </div>
-                                    <div class="col-2">
-                                        50%
-                                    </div>
-                                    <div class="col-2 ">
-                                        75%
-                                    </div>
-                                    <div class="col-2">
-                                        100%
+                                    <div class="row dashboard-row">
+                                        <div class="col-10">
+                                            <input type="range" class="form-control-range"
+                                                   name="low{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state}}{% endfor %}"
+                                                   id="low{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state}}{% endfor %}"
+                                                   step="1"
+                                                   min="0"
+                                                   max="100"
+                                                   value="{{ objective_calculation_wrapper[-3] }}">
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="row dashboard-row">
-                                    <div class="col-10">
-                                        <input type="range" class="form-control-range"
-{#                                               name="mat|{{ materialisation_calculation.materialisation.id }}|{{ materialisation_calculation.response.id }}|{{ materialisation_calculation.threat_occurrence }}"#}
-{#                                               id="mat|{{ materialisation_calculation.materialisation.id }}|{{ materialisation_calculation.response.id }}|{{ materialisation_calculation.threat_occurrence }}"#}
-                                               step="1"
-                                               min="0"
-                                               max="100" value="50" ,
-                                               name="objective_state_alert_3">
+                                <div class="col-3">
+                                    <div class="row dashboard-row">
+                                        <h5>Medium</h5>
+                                    </div>
+                                    <div class="row dashboard-row">
+                                        <div class="col-2">
+                                            0%
+                                        </div>
+                                        <div class="col-2">
+                                            25%
+                                        </div>
+                                        <div class="col-2">
+                                            50%
+                                        </div>
+                                        <div class="col-2 ">
+                                            75%
+                                        </div>
+                                        <div class="col-2">
+                                            100%
+                                        </div>
+                                    </div>
+                                    <div class="row dashboard-row">
+                                        <div class="col-10">
+                                            <input type="range" class="form-control-range"
+                                                   name="med{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state}}{% endfor %}"
+                                                   id="med{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state}}{% endfor %}"
+                                                  step="1"
+                                                   min="0"
+                                                   max="100"
+                                                   value="{{ objective_calculation_wrapper[-2] }}"
+                                                   ,
+                                                   name="objective_state_alert_3">
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row dashboard-row">
-                            <div class="col-2 custom-select-column">
-                                Impact1: Medium
-                                Impact2: Low
-                                Impact3: Low
-                                Impact4: Low
-                            </div>
-                            <div class="col-10">
-                                <div class="row dashboard-row">
-                                    <div class="col-2">
-                                        0%
+                                <div class="col-3">
+                                    <div class="row dashboard-row">
+                                        <h5>High</h5>
                                     </div>
-                                    <div class="col-2">
-                                        25%
+                                    <div class="row dashboard-row">
+                                        <div class="col-2">
+                                            0%
+                                        </div>
+                                        <div class="col-2">
+                                            25%
+                                        </div>
+                                        <div class="col-2">
+                                            50%
+                                        </div>
+                                        <div class="col-2 ">
+                                            75%
+                                        </div>
+                                        <div class="col-2">
+                                            100%
+                                        </div>
                                     </div>
-                                    <div class="col-2">
-                                        50%
-                                    </div>
-                                    <div class="col-2 ">
-                                        75%
-                                    </div>
-                                    <div class="col-2">
-                                        100%
-                                    </div>
-                                </div>
-                                <div class="row dashboard-row">
-                                    <div class="col-10">
-                                        <input type="range" class="form-control-range"
-{#                                               name="mat|{{ materialisation_calculation.materialisation.id }}|{{ materialisation_calculation.response.id }}|{{ materialisation_calculation.threat_occurrence }}"#}
-{#                                               id="mat|{{ materialisation_calculation.materialisation.id }}|{{ materialisation_calculation.response.id }}|{{ materialisation_calculation.threat_occurrence }}"#}
-                                               step="1"
-                                               min="0"
-                                               max="100" value="50" ,
-                                               name="objective_state_alert_3">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row dashboard-row">
-                            <div class="col-2 custom-select-column">
-                                Impact1: High
-                                Impact2: Low
-                                Impact3: Low
-                                Impact4: Low
-                            </div>
-                            <div class="col-10">
-                                <div class="row dashboard-row">
-                                    <div class="col-2">
-                                        0%
-                                    </div>
-                                    <div class="col-2">
-                                        25%
-                                    </div>
-                                    <div class="col-2">
-                                        50%
-                                    </div>
-                                    <div class="col-2 ">
-                                        75%
-                                    </div>
-                                    <div class="col-2">
-                                        100%
-                                    </div>
-                                </div>
-                                <div class="row dashboard-row">
-                                    <div class="col-10">
-                                        <input type="range" class="form-control-range"
-{#                                               name="mat|{{ materialisation_calculation.materialisation.id }}|{{ materialisation_calculation.response.id }}|{{ materialisation_calculation.threat_occurrence }}"#}
-{#                                               id="mat|{{ materialisation_calculation.materialisation.id }}|{{ materialisation_calculation.response.id }}|{{ materialisation_calculation.threat_occurrence }}"#}
-                                               step="1"
-                                               min="0"
-                                               max="100" value="50" ,
-                                               name="objective_state_alert_3">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row dashboard-row">
-                            <div class="col-2 custom-select-column">
-                                Impact1: Low
-                                Impact2: Medium
-                                Impact3: Low
-                                Impact4: Low
-                            </div>
-                            <div class="col-10">
-                                <div class="row dashboard-row">
-                                    <div class="col-2">
-                                        0%
-                                    </div>
-                                    <div class="col-2">
-                                        25%
-                                    </div>
-                                    <div class="col-2">
-                                        50%
-                                    </div>
-                                    <div class="col-2 ">
-                                        75%
-                                    </div>
-                                    <div class="col-2">
-                                        100%
-                                    </div>
-                                </div>
-                                <div class="row dashboard-row">
-                                    <div class="col-10">
-                                        <input type="range" class="form-control-range"
-{#                                               name="mat|{{ materialisation_calculation.materialisation.id }}|{{ materialisation_calculation.response.id }}|{{ materialisation_calculation.threat_occurrence }}"#}
-{#                                               id="mat|{{ materialisation_calculation.materialisation.id }}|{{ materialisation_calculation.response.id }}|{{ materialisation_calculation.threat_occurrence }}"#}
-                                               step="1"
-                                               min="0"
-                                               max="100" value="50" ,
-                                               name="objective_state_alert_3">
+                                    <div class="row dashboard-row">
+                                        <div class="col-10">
+                                            <input type="range" class="form-control-range"
+                                                   name="high{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state}}{% endfor %}"
+                                                   id="high{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state}}{% endfor %}"                                         step="1"
+                                                   min="0"
+                                                   max="100"
+                                                   value="{{ objective_calculation_wrapper[-1] }}"
+                                                   ,
+                                                   name="objective_state_alert_3">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-{#                        {% for objective_calculation_wrapper in array_objective_calculation %}#}
-{#                            <h6>Materialisation#}
-{#                                | {{ objective_calculation_wrapper[0].materialisation.name }}</h6>#}
-{#                            {% for materialisation_calculation in objective_calculation_wrapper %}#}
-{#                                <div class="row dashboard-row">#}
-{#                                    <div class="col-2 custom-select-column">#}
-{#                                        Response: {{ materialisation_calculation.response.name }}#}
-{#                                        Threat Occurs: {{ materialisation_calculation.threat_occurrence }}#}
-{#                                    </div>#}
-{#                                    <div class="col-10">#}
-{#                                        <div class="row dashboard-row">#}
-{#                                            <div class="col-2">#}
-{#                                                0%#}
-{#                                            </div>#}
-{#                                            <div class="col-2">#}
-{#                                                25%#}
-{#                                            </div>#}
-{#                                            <div class="col-2">#}
-{#                                                50%#}
-{#                                            </div>#}
-{#                                            <div class="col-2 ">#}
-{#                                                75%#}
-{#                                            </div>#}
-{#                                            <div class="col-2">#}
-{#                                                100%#}
-{#                                            </div>#}
-{#                                        </div>#}
-{#                                        <div class="row dashboard-row">#}
-{#                                            <div class="col-10">#}
-{#                                                <input type="range" class="form-control-range"#}
-{#                                                       name="mat|{{ materialisation_calculation.materialisation.id }}|{{ materialisation_calculation.response.id }}|{{ materialisation_calculation.threat_occurrence }}"#}
-{#                                                       id="mat|{{ materialisation_calculation.materialisation.id }}|{{ materialisation_calculation.response.id }}|{{ materialisation_calculation.threat_occurrence }}"#}
-{#                                                       step="1"#}
-{#                                                       min="0"#}
-{#                                                       max="100" value="{{ materialisation_calculation.prob }}" ,#}
-{#                                                       name="objective_state_alert_3">#}
-{#                                            </div>#}
-{#                                        </div>#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                            {% endfor %}#}
-{#                        {% endfor %}#}
+                        {% endfor %}
                     </div>
                 </div>
 

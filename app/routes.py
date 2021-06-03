@@ -10,6 +10,7 @@ from app.forms import *
 from multiprocessing import Process
 import ast
 from copy import deepcopy
+from deepdiff import DeepDiff
 
 
 @app.context_processor
@@ -1182,6 +1183,54 @@ def view_repo_objectives():
                                new_objective_form=new_objective_form)
 
 
+@app.route('/repo/objective/<objective_id>/info/', methods=['GET', 'POST'])
+def view_repo_objective_info(objective_id):
+    if request.method == 'POST':
+        new_objective_impact_form = FormAddRepoObjectiveImpact()
+
+        if new_objective_impact_form.validate_on_submit():
+            try:
+                this_objective = RepoObjective.query.filter_by(id=objective_id).first()
+            except SQLAlchemyError:
+                return Response("SQLAlchemyError", 500)
+
+            try:
+                to_relate_impact = RepoImpact.query.filter_by(id=new_objective_impact_form.impact_fk.data.id).first()
+            except SQLAlchemyError:
+                return Response("SQLAlchemyError", 500)
+
+            this_objective.impacts.append(to_relate_impact)
+            db.session.commit()
+        else:
+            print("Form Consequence Impact Error :", new_objective_impact_form.errors)
+
+        return redirect("/repo/objective/" + objective_id + "/info/")
+    else:
+        try:
+            this_objective = RepoObjective.query.filter_by(id=objective_id).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        try:
+            repo_related_impacts = RepoImpact.query.filter(RepoImpact.objectives.any(id=objective_id)).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        this_objective = convert_database_items_to_json_table(this_objective)
+        this_objective_dict = this_objective
+        this_objective = json.dumps(this_objective)
+
+        repo_related_impacts = convert_database_items_to_json_table(repo_related_impacts)
+        repo_related_impacts = json.dumps(repo_related_impacts)
+
+        new_objective_impact_form = FormAddRepoObjectiveImpact()
+
+        return render_template("view_repo_objective_info.html", this_objective=this_objective,
+                               this_objective_dict=this_objective_dict,
+                               repo_related_impacts=repo_related_impacts,
+                               new_objective_impact_form=new_objective_impact_form)
+
+
 @app.route('/repo/actors/', methods=['GET', 'POST', 'PUT'])
 def view_repo_actors():
     if request.method == 'POST':
@@ -2060,7 +2109,7 @@ def repo_risk_configuration_impacts_risk(threat_id=1, asset_id=-1, impact_id=-1)
                         {"cons_id": str(temp_entry[custom_it + 1]), "state": temp_entry[custom_it + 2]})
                     related_consequence_list.append(temp_entry[custom_it + 1])
             # If this entry is about consequences
-            # print(related_service_state)
+            print(related_service_state)
             # print(related_consequence_state)
             related_mixed_state = related_service_state + related_consequence_state
             # Find if this specific input exists
@@ -2094,10 +2143,12 @@ def repo_risk_configuration_impacts_risk(threat_id=1, asset_id=-1, impact_id=-1)
                     # print(concatted[temp_joined[0]])
                     if type(inner_joined) is RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany:
                         # inner_joined_arrayed = ['cons', inner_joined.repo_consequence_id, inner_joined.repo_consequence_state]
-                        inner_joined_arrayed = {"cons_id": str(inner_joined.repo_consequence_id), "state": str(inner_joined.repo_consequence_state)}
+                        inner_joined_arrayed = {"cons_id": str(inner_joined.repo_consequence_id),
+                                                "state": str(inner_joined.repo_consequence_state)}
                     else:
                         # inner_joined_arrayed = ['serv', inner_joined.repo_service_id, inner_joined.repo_service_state]
-                        inner_joined_arrayed = {"serv_id": str(inner_joined.repo_service_id), "state": str(inner_joined.repo_service_state)}
+                        inner_joined_arrayed = {"serv_id": str(inner_joined.repo_service_id),
+                                                "state": str(inner_joined.repo_service_state)}
                     if inner_joined_arrayed not in concatted[temp_joined[0]]:
                         concatted[temp_joined[0]].append(inner_joined_arrayed)
                     # print(inner_joined)
@@ -2109,7 +2160,9 @@ def repo_risk_configuration_impacts_risk(threat_id=1, asset_id=-1, impact_id=-1)
             for concatted_entry_key, concatted_entry_value in concatted.items():
                 # print(related_mixed_state)
                 # print(concatted_entry_value)
-                if sorted(concatted_entry_value, key = lambda ele: sorted(ele.items())) == sorted(related_mixed_state, key = lambda ele: sorted(ele.items())):
+                if sorted(concatted_entry_value, key=lambda ele: sorted(ele.items())) == sorted(related_mixed_state,
+                                                                                                key=lambda ele: sorted(
+                                                                                                        ele.items())):
                     # print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSAAAAAAAAAAAAAAAAAAAAAAAAMMMMMMMMMMMMEEEEEEEEEE")
                     # print(related_mixed_state)
                     # print(concatted_entry_value)
@@ -2185,9 +2238,9 @@ def repo_risk_configuration_impacts_risk(threat_id=1, asset_id=-1, impact_id=-1)
                 else:
                     to_add_main.high_prob = request.form[user_input]
 
-            print("WILL SAVE NOW")
-            db.session.commit()
-            flash('Impact Info Added-Edited Successfully')
+        print("WILL SAVE NOW")
+        db.session.commit()
+        flash('Impact Info Added-Edited Successfully')
         return redirect(
             "/repo/risk/configuration/impact/" + impact_id + "/threat/" + threat_id + "/asset/" + asset_id + "/")
     else:
@@ -2292,14 +2345,14 @@ def repo_risk_configuration_impacts_risk(threat_id=1, asset_id=-1, impact_id=-1)
 
         # If there are aready values
         existing_values = db.session.query(RepoAssetThreatConsequenceServiceImpactRelationship,
-                                      RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany,
-                                      RepoAssetThreatConsequenceServiceImpactRelationshipServiceManyToMany).join(
-                RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany,
-                RepoAssetThreatConsequenceServiceImpactRelationshipServiceManyToMany).filter(
-                RepoAssetThreatConsequenceServiceImpactRelationship.repo_threat_id == threat_id,
-                RepoAssetThreatConsequenceServiceImpactRelationship.repo_impact_id == impact_id,
-                RepoAssetThreatConsequenceServiceImpactRelationship.repo_asset_id == asset_id,
-            )
+                                           RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany,
+                                           RepoAssetThreatConsequenceServiceImpactRelationshipServiceManyToMany).join(
+            RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany,
+            RepoAssetThreatConsequenceServiceImpactRelationshipServiceManyToMany).filter(
+            RepoAssetThreatConsequenceServiceImpactRelationship.repo_threat_id == threat_id,
+            RepoAssetThreatConsequenceServiceImpactRelationship.repo_impact_id == impact_id,
+            RepoAssetThreatConsequenceServiceImpactRelationship.repo_asset_id == asset_id,
+        )
         if existing_values.count() > 0:
             joined = existing_values.all()
 
@@ -2314,33 +2367,52 @@ def repo_risk_configuration_impacts_risk(threat_id=1, asset_id=-1, impact_id=-1)
                     if inner_joined is temp_joined[0]:
                         continue
                     # print(concatted[temp_joined[0]])
-                    # if type(inner_joined) is RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany:
-                    #     # inner_joined_arrayed = ['cons', inner_joined.repo_consequence_id, inner_joined.repo_consequence_state]
-                    #     inner_joined_arrayed = {"cons_id": str(inner_joined.repo_consequence_id),
-                    #                             "state": str(inner_joined.repo_consequence_state)}
-                    # else:
-                    #     # inner_joined_arrayed = ['serv', inner_joined.repo_service_id, inner_joined.repo_service_state]
-                    #     ################### FIIIIIIIIIIX THIS ADD NAME IN MODELS ### STILL NEED TO COMMENT EVERYTHING
-                    #     #### ALSO ANSWER IMPILO
-                    #     inner_joined_arrayed = {"service": {'id': str(inner_joined.repo_service_id), 'name': inner_joined.},
-                    #                             "state": inner_joined.repo_service_state}
-                    if inner_joined not in concatted[temp_joined[0]]:
-                        concatted[temp_joined[0]].append(inner_joined)
-
-                    existing_entry = None
-                    # print(concatted.items())
+                    if type(inner_joined) is RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany:
+                        # inner_joined_arrayed = ['cons', inner_joined.repo_consequence_id, inner_joined.repo_consequence_state]
+                        inner_joined_arrayed = {"consequence": {'id': inner_joined.repo_consequence_id,
+                                                                'name': inner_joined.repo_consequence.name,
+                                                                'threat_id': inner_joined.repo_consequence.threat_id,
+                                                                'materialisation_id' : inner_joined.repo_consequence.materialisation_id
+                                                                },
+                                                "state": inner_joined.repo_consequence_state}
+                    else:
+                        # inner_joined_arrayed = ['serv', inner_joined.repo_service_id, inner_joined.repo_service_state]
+                        inner_joined_arrayed = {
+                            "service": {'id': inner_joined.repo_service_id, 'name': inner_joined.repo_service.name},
+                            "state": inner_joined.repo_service_state}
+                    if inner_joined_arrayed not in concatted[temp_joined[0]]:
+                        concatted[temp_joined[0]].append(inner_joined_arrayed)
             print("------------ RESULTS ARE ----------")
-            for concatted_entry_key, concatted_entry_value in concatted.items():
-                # print(related_mixed_state)
-                print(concatted_entry_value)
-                # if sorted(concatted_entry_value, key=lambda ele: sorted(ele.items())) == sorted(
-                #         related_mixed_state, key=lambda ele: sorted(ele.items())):
-                #     # print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSAAAAAAAAAAAAAAAAAAAAAAAAMMMMMMMMMMMMEEEEEEEEEE")
+            print(concatted.items())
+            for to_send in array_impact_calculation:
+                for concatted_entry_key, concatted_entry_value in concatted.items():
+                    # print("------Comparison------")
+                    # print(to_send)
+                    # print(concatted_entry_value)
+                    ddiff = DeepDiff(to_send, concatted_entry_value, ignore_order=True)
+                    # print(ddiff)
+
+                    if ddiff == {}:
+                        print("SAMEEEEEEEEEEEEEEE")
+                        to_send.append(concatted_entry_key.low_prob)
+                        to_send.append(concatted_entry_key.med_prob)
+                        to_send.append(concatted_entry_key.high_prob)
+                        print(to_send)
+
+
+                    # if sorted(concatted_entry_value, key=lambda ele: sorted(ele.items())) == sorted(
+                    #         to_send, key=lambda ele: sorted(ele.items())):
+                #             print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSAAAAAAAAAAAAAAAAAAAAAAAAMMMMMMMMMMMMEEEEEEEEEE")
                 #     # print(related_mixed_state)
-                #     # print(concatted_entry_value)
-                #     # print("STOOOOOOOOOOOOOOOOOOOOOOOOOOOOPPPPPPPPPPPSSSSSSSSSSSSSSSSSSSSSSS")
-                #     existing_entry = concatted_entry_key
-                #     break
+                # #     # print(concatted_entry_value)
+                #  print("STOOOOOOOOOOOOOOOOOOOOOOOOOOOOPPPPPPPPPPPSSSSSSSSSSSSSSSSSSSSSSS")
+                # #             existing_entry = concatted_entry_key
+                #         break
+        else:
+            for to_send in array_impact_calculation:
+                to_send.append(50)
+                to_send.append(50)
+                to_send.append(50)
 
 
         return render_template("repo_risk_configuration_impacts_risk.html",
@@ -2350,14 +2422,149 @@ def repo_risk_configuration_impacts_risk(threat_id=1, asset_id=-1, impact_id=-1)
                                this_impact=this_impact, array_impact_calculation=array_impact_calculation)
 
 
-@app.route('/repo/risk/configuration/objective/<objective_id>/', methods=['GET', 'POST'],
-           defaults={"objective_id": 1})
-def repo_risk_configuration_objective_risk(objective_id):
+@app.route('/repo/risk/configuration/objective/<objective_id>/', methods=['GET', 'POST'])
+def repo_risk_configuration_objective_risk(objective_id=1):
     if request.method == 'POST':
         # new_service_form = FormAddRepoService()
+        for user_input in request.form:
+            deconstructedId = user_input.split("|")
+            print("deconstructedId Mat")
+            print(deconstructedId)
 
-        # flash('Service "{}" Added Succesfully'.format(new_service_form.name.data))
-        return redirect("/repo/services/")
+            # Entries for low,medium and high states are in the same table entry
+            # but arent sent by the frontend as one entry but as three in succession
+            # We are currently assuming data is send in order but this should become a check
+            # The format of data sent is and should such as this
+            # ['low', 'serv', '1', 'False', 'serv', '4', 'False', 'cons', '1', 'False', 'cons', '3', 'False']
+
+            # Create two lists one with this entries related services- state and impacts-state
+
+            related_impact_state = []
+            related_impact_list = []
+            # Copy current entry and prepare to create the lists above
+            temp_entry = deepcopy(deconstructedId)
+            temp_entry.pop(0)
+            for custom_it in range(0, len(temp_entry), 2):
+                if temp_entry[custom_it + 1] == "low":
+                    temp_state = 0
+                elif temp_entry[custom_it + 1] == "med":
+                    temp_state = 1
+                else:
+                    temp_state = 2
+                related_impact_state.append(
+                    {"imp_id": str(temp_entry[custom_it + 0]), "state": str(temp_state)})
+                related_impact_list.append(temp_entry[custom_it + 1])
+
+            print(related_impact_state)
+            #             # Find if this specific input exists
+            joined = db.session.query(RepoObjectiveImpactRelationship,RepoObjectiveImpactRelationshipImpactManyToMany)\
+                .join(RepoObjectiveImpactRelationshipImpactManyToMany) \
+                .filter(
+                RepoObjectiveImpactRelationship.repo_objective_id == objective_id,
+                # RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany.repo_consequence_id == 1,
+                # RepoAssetThreatConsequenceServiceImpactRelationshipServiceManyToMany.repo_service_id == 1,
+            )
+            # print("NUMBER OF RECORDS")
+            # print(joined.count())
+            joined = joined.all()
+
+            concatted = {}
+
+            for temp_joined in joined:
+                # print("Single Line")
+                # print("Inner Line")
+                if temp_joined[0] not in concatted:
+                    concatted[temp_joined[0]] = []
+                for inner_joined in temp_joined:
+                    if inner_joined is temp_joined[0]:
+                        continue
+                    # print(concatted[temp_joined[0]])
+                    inner_joined_arrayed = {"imp_id": str(inner_joined.repo_impact_id),
+                                            "state": str(inner_joined.repo_impact_state)}
+
+                    if inner_joined_arrayed not in concatted[temp_joined[0]]:
+                        concatted[temp_joined[0]].append(inner_joined_arrayed)
+                    # print(inner_joined)
+            # print(concatted)
+
+            existing_entry = None
+            # print(concatted.items())
+            print("------------ COMPARISON ARE ----------")
+            for concatted_entry_key, concatted_entry_value in concatted.items():
+                print(related_impact_state)
+                print(concatted_entry_value)
+                if sorted(concatted_entry_value, key=lambda ele: sorted(ele.items())) == sorted(related_impact_state,
+                                                                                                key=lambda ele: sorted(
+                                                                                                        ele.items())):
+                    # print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSAAAAAAAAAAAAAAAAAAAAAAAAMMMMMMMMMMMMEEEEEEEEEE")
+                    # print(related_mixed_state)
+                    # print(concatted_entry_value)
+                    # print("STOOOOOOOOOOOOOOOOOOOOOOOOOOOOPPPPPPPPPPPSSSSSSSSSSSSSSSSSSSSSSS")
+                    existing_entry = concatted_entry_key
+                    break
+
+            # print(existing_entry)
+            # print("THIS QUERY RESULT IS")
+            # print()
+            # current_entry = convert_database_items_to_json_table(joined)
+            # for temp_joined in current_entry:
+            #     # temp_temp = convert_database_items_to_json_table(temp_joined)
+            #     print(temp_joined)
+            if existing_entry:
+                # Entry already exists
+
+                # print("Already exists")
+                # print(related_mixed_state)
+                # print(existing_entry)
+                if deconstructedId[0] == "low":
+                    existing_entry.low_prob = request.form[user_input]
+                elif deconstructedId[0] == "med":
+                    existing_entry.med_prob = request.form[user_input]
+                else:
+                    existing_entry.high_prob = request.form[user_input]
+
+                # print("Not yet 2")
+            else:
+                # print("NEW ENTRY")
+                # print(related_mixed_state)
+                # Entry doesnt exist create new one
+                # Create main entry
+                to_add_main = RepoObjectiveImpactRelationship(repo_objective_id=objective_id)
+                db.session.add(to_add_main)
+                db.session.flush()
+                # Create secondary entries
+
+                for single_impact in related_impact_state:
+                    # Convert String to bool
+                    # if single_impact["state"] == "low":
+                    #     temp_bool = 0
+                    # elif single_impact["state"] == "med":
+                    #     temp_bool = 1
+                    # else:
+                    #     temp_bool = 2
+                    to_add_secondary_imp = RepoObjectiveImpactRelationshipImpactManyToMany(
+                        repo_impact_id=single_impact["imp_id"],
+                        repo_impact_state= int(single_impact["state"])
+                    )
+                    print("ADDING")
+                    print(to_add_secondary_imp)
+                    print(to_add_main)
+                    to_add_main.impacts.append(to_add_secondary_imp)
+                    db.session.add(to_add_secondary_imp)
+                    db.session.flush()
+
+                if deconstructedId[0] == "low":
+                    to_add_main.low_prob = request.form[user_input]
+                elif deconstructedId[0] == "medium":
+                    to_add_main.med_prob = request.form[user_input]
+                else:
+                    to_add_main.high_prob = request.form[user_input]
+
+        print("WILL SAVE NOW")
+        db.session.commit()
+
+        flash('Objective Risk "{}" Added Succesfully'.format(objective_id))
+        return redirect("/repo/risk/configuration/objective/" + objective_id + "/")
     else:
         try:
             this_objective = RepoObjective.query.filter_by(id=objective_id).all()
@@ -2374,9 +2581,8 @@ def repo_risk_configuration_objective_risk(objective_id):
         except SQLAlchemyError:
             return Response("SQLAlchemyError", 500)
 
-        # Need to change this to only select related to the objective impacts
         try:
-            repo_impacts = RepoImpact.query.all()
+            repo_related_impacts = RepoImpact.query.filter(RepoImpact.objectives.any(id=objective_id)).all()
         except SQLAlchemyError:
             return Response("SQLAlchemyError", 500)
         # print("------------------------------")
@@ -2386,14 +2592,118 @@ def repo_risk_configuration_objective_risk(objective_id):
 
         repo_objectives = convert_database_items_to_json_table(repo_objectives)
         this_objective = convert_database_items_to_json_table(this_objective)
+        array_impact_calculation = []
 
-        array_objective_calculation = [[{}], [{}]
-                                       ]
+        # print(repo_related_impacts)
+        for repo_temp_impact in repo_related_impacts:
+            if not array_impact_calculation:
+                temp_to_add_1 = {"impact": repo_temp_impact, "state": "high"}
+                temp_to_add_2 = {"impact": repo_temp_impact, "state": "med"}
+                temp_to_add_3 = {"impact": repo_temp_impact, "state": "low"}
+                array_impact_calculation.append([temp_to_add_1])
+                array_impact_calculation.append([temp_to_add_2])
+                array_impact_calculation.append([temp_to_add_3])
+            else:
+                temp_impact_array = deepcopy(array_impact_calculation)
+                temp_impact_array_2 = deepcopy(array_impact_calculation)
+                for to_be_added in temp_impact_array:
+                    to_be_added.append({"impact": repo_temp_impact, "state": "high"})
+
+                for to_be_added in temp_impact_array_2:
+                    to_be_added.append({"impact": repo_temp_impact, "state": "med"})
+
+                for to_be_added in array_impact_calculation:
+                    to_be_added.append({"impact": repo_temp_impact, "state": "low"})
+
+                array_impact_calculation = array_impact_calculation + temp_impact_array + temp_impact_array_2
+
+
+        existing_values = db.session.query(RepoObjectiveImpactRelationship, RepoObjectiveImpactRelationshipImpactManyToMany) \
+            .join(RepoObjectiveImpactRelationshipImpactManyToMany) \
+            .filter(
+            RepoObjectiveImpactRelationship.repo_objective_id == objective_id,
+        )
+
+
+        if existing_values.count() > 0:
+            joined = existing_values.all()
+
+            concatted = {}
+
+            for temp_joined in joined:
+                # print("Single Line")
+                # print("Inner Line")
+                if temp_joined[0] not in concatted:
+                    concatted[temp_joined[0]] = []
+                for inner_joined in temp_joined:
+                    if inner_joined is temp_joined[0]:
+                        continue
+                    # print(concatted[temp_joined[0]])
+                    if inner_joined.repo_impact_state == 0:
+                        temp_state = "low"
+                    elif inner_joined.repo_impact_state == 1:
+                        temp_state = "med"
+                    else:
+                        temp_state = "high"
+                    inner_joined_arrayed = {"impact": inner_joined.repo_impact,
+                                            "state": temp_state}
+                    # if type(inner_joined) is RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany:
+                    #     # inner_joined_arrayed = ['cons', inner_joined.repo_consequence_id, inner_joined.repo_consequence_state]
+                    #     inner_joined_arrayed = {"consequence": {'id': inner_joined.repo_consequence_id,
+                    #                                             'name': inner_joined.repo_consequence.name,
+                    #                                             'threat_id': inner_joined.repo_consequence.threat_id,
+                    #                                             'materialisation_id': inner_joined.repo_consequence.materialisation_id
+                    #                                             },
+                    #                             "state": inner_joined.repo_consequence_state}
+                    # else:
+                    #     # inner_joined_arrayed = ['serv', inner_joined.repo_service_id, inner_joined.repo_service_state]
+                    #     inner_joined_arrayed = {
+                    #         "service": {'id': inner_joined.repo_service_id, 'name': inner_joined.repo_service.name},
+                    #         "state": inner_joined.repo_service_state}
+                    if inner_joined_arrayed not in concatted[temp_joined[0]]:
+                        concatted[temp_joined[0]].append(inner_joined_arrayed)
+            print("------------ RESULTS ARE ----------")
+            print(concatted.items())
+            for to_send in array_impact_calculation:
+                for concatted_entry_key, concatted_entry_value in concatted.items():
+                    # print("------Comparison------")
+                    # print(to_send)
+                    # print(concatted_entry_value)
+                    ddiff = DeepDiff(to_send, concatted_entry_value, ignore_order=True)
+                    # print(ddiff)
+
+                    if ddiff == {}:
+                        print("SAMEEEEEEEEEEEEEEE")
+                        print(to_send)
+                        print(concatted_entry_value)
+                        to_send.append(concatted_entry_key.low_prob)
+                        to_send.append(concatted_entry_key.med_prob)
+                        to_send.append(concatted_entry_key.high_prob)
+                        # print(to_send)
+
+                    # if sorted(concatted_entry_value, key=lambda ele: sorted(ele.items())) == sorted(
+                    #         to_send, key=lambda ele: sorted(ele.items())):
+                #             print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSAAAAAAAAAAAAAAAAAAAAAAAAMMMMMMMMMMMMEEEEEEEEEE")
+                #     # print(related_mixed_state)
+                # #     # print(concatted_entry_value)
+                #  print("STOOOOOOOOOOOOOOOOOOOOOOOOOOOOPPPPPPPPPPPSSSSSSSSSSSSSSSSSSSSSSS")
+                # #             existing_entry = concatted_entry_key
+                #         break
+        else:
+            for to_send in array_impact_calculation:
+                to_send.append(50)
+                to_send.append(50)
+                to_send.append(50)
+
+            print(to_send)
         # for
+
+        for to_send in array_impact_calculation:
+            print(to_send)
 
         return render_template("repo_risk_configuration_objectives_risk.html", repo_objectives=repo_objectives,
                                objective_id=objective_id,
-                               this_objective=this_objective, array_objective_calculation=array_objective_calculation)
+                               this_objective=this_objective, array_objective_calculation=array_impact_calculation)
 
 
 @app.route('/repo/risk/assessment/<threat_id>/', methods=['GET', 'POST'],

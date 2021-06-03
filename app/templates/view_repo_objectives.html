@@ -34,6 +34,15 @@
             ].join('')
         }
 
+        function operateFormatter2(value, row, index) {
+            var href_custom = "/repo/objective/" + row.id + "/info/"
+            return [
+                '<a href="' + href_custom + '"style="color: #ffffff" type="button" class="btn btn-primary fa fa-edit">\n' +
+                '<span class= "custom-font">Objective Additional Info</span>' +
+                '</a>'
+            ].join('')
+        }
+
 
         function populateEditFields(row) {
             $("#editForm").find("#id").val(row.id)
@@ -154,6 +163,7 @@
         <tr>
             <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents"></th>
             <th data-field="operate1" data-formatter="operateFormatter1" data-events="operateEvents1"></th>
+            <th data-field="operate1" data-formatter="operateFormatter2" data-events="operateEvents2"></th>
             {#            <th data-field="operate" data-formatter="operateFormatter2" data-events="operateEvents2"></th>#}
             <th data-field="id" data-sortable="true">ID</th>
             <th data-field="name" data-sortable="true">Name</th>
