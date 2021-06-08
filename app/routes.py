@@ -2706,14 +2706,22 @@ def repo_risk_configuration_objective_risk(objective_id=1):
                                this_objective=this_objective, array_objective_calculation=array_impact_calculation)
 
 
-@app.route('/repo/risk/assessment/<threat_id>/', methods=['GET', 'POST'],
-           defaults={"threat_id": 1})
-def repo_risk_assessment(threat_id):
+@app.route('/repo/risk/assessment/<threat_id>/asset/<asset_id>/', methods=['GET', 'POST'])
+def repo_risk_assessment(threat_id = 1, asset_id = -1):
     if request.method == 'POST':
         # new_service_form = FormAddRepoService()
+        try:
+            this_risk_assessment = RepoRiskAssessment.query.filter_by(repo_threat_id=threat_id, repo_asset_id=asset_id)
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
 
-        # flash('Service "{}" Added Succesfully'.format(new_service_form.name.data))
-        return redirect("/repo/services/")
+        if this_risk_assessment.count() == 0:
+            this_risk_assessment = RepoRiskAssessment(repo_threat_id=threat_id, repo_asset_id=asset_id)
+            db.session.add(this_risk_assessment)
+            db.session.commit()
+
+        flash('Assed "{}" Added Succesfully to risk assessment'.format(asset_id))
+        return redirect("/repo/risk/assessment/"+ threat_id+"/asset/"+asset_id+"/")
     else:
         try:
             this_threat = RepoThreat.query.filter_by(id=threat_id).all()
@@ -2725,6 +2733,30 @@ def repo_risk_assessment(threat_id):
         except SQLAlchemyError:
             return Response("SQLAlchemyError", 500)
 
+        try:
+            all_assets = RepoAsset.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        try:
+            related_assessments = RepoRiskAssessment.query.filter_by(repo_threat_id=threat_id).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        related_assets = []
+        print(all_assets)
+        for related_assessment in related_assessments:
+            related_assets.append(related_assessment.asset)
+            # print(related_assessment.asset)
+
+        if asset_id != -1:
+            try:
+                this_asset = RepoAsset.query.filter_by(id=asset_id).all()
+            except SQLAlchemyError:
+                return Response("SQLAlchemyError", 500)
+        else:
+            this_asset = []
+
         # print("------------------------------")
         # print(repo_actors, flush=True)
         #
@@ -2733,31 +2765,49 @@ def repo_risk_assessment(threat_id):
         repo_threats = convert_database_items_to_json_table(repo_threats)
         this_threat = convert_database_items_to_json_table(this_threat)
 
-        array_objective_calculation = [[{}], [{}]
-                                       ]
+        related_assets = convert_database_items_to_json_table(related_assets)
+        unrelated_assets = convert_database_items_to_json_table(all_assets)
+
+
+
+        this_asset = convert_database_items_to_json_table(this_asset)
+        for related_asset in related_assets:
+            unrelated_assets.remove(related_asset)
+        # array_objective_calculation = [[{}], [{}]                                       ]
         # for
 
         return render_template("repo_risk_assessment.html", repo_threats=repo_threats,
-                               threat_id=threat_id,
+                               threat_id=threat_id, asset_id =asset_id,
                                this_threat=this_threat,
-                               array_objective_calculation=array_objective_calculation)
+                               related_assets=related_assets,
+                               unrelated_assets=unrelated_assets,
+                               this_asset=this_asset)
 
-    @app.route('/test_repo/dtm/', methods=['GET', 'POST'])
-    def test_repo():
-        if request.method == "POST":
-            return redirect("/test_repo/dtm/")
-        else:
-            found_flag = 0
-            repo_assets = RepoAsset.query.all()
-            for repo_asset in repo_assets:
-                if (repo_asset == "1"):
-                    found_flag = 1
-                    repo_asset.last_touch_date = ""
-                    if (repo_asset.verified == False):
-                        send_asset_id_alert(repo_asset)
 
-            if found_flag == 0:
-                new_asset = RepoAsset(name="", last_touch_date="")
-                db.session.add(new_asset)
+@app.route('/test/dynamic/risk/', methods=['GET', 'POST'])
+def test_dynamic_risk():
+    if request.method == 'POST':
+        return redirect('/test/dynamic/risk/')
+    else:
+        start_risk_assessment(1,1)
+        return Response(200)
 
-            db.session.commit()
+@app.route('/test_repo/dtm/', methods=['GET', 'POST'])
+def test_repo():
+    if request.method == "POST":
+        return redirect("/test_repo/dtm/")
+    else:
+        found_flag = 0
+        repo_assets = RepoAsset.query.all()
+        for repo_asset in repo_assets:
+            if (repo_asset == "1"):
+                found_flag = 1
+                repo_asset.last_touch_date = ""
+                if (repo_asset.verified == False):
+                    send_asset_id_alert(repo_asset)
+
+        if found_flag == 0:
+            new_asset = RepoAsset(name="", last_touch_date="")
+            db.session.add(new_asset)
+
+        db.session.commit()

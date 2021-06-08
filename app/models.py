@@ -334,6 +334,7 @@ class RepoRiskThreatAssetConsequence(db.Model):
     repo_asset_id = db.Column(db.Integer, db.ForeignKey('repo_asset.id'), primary_key=True)
     repo_threat_id = db.Column(db.Integer, db.ForeignKey('repo_threat.id'), primary_key=True)
     repo_response_id = db.Column(db.Integer, db.ForeignKey('repo_response.id'), primary_key=True)
+    repo_consequence = db.relationship("RepoConsequence", back_populates="consequence_risk_relationship")
     repo_consequence_id = db.Column(db.Integer, db.ForeignKey('repo_consequence.id'), primary_key=True)
     threat_occurrence = db.Column(db.Boolean(), primary_key=True)
     prob = db.Column(db.Integer)
@@ -353,12 +354,34 @@ class RepoAssetRepoThreatRelationship(db.Model):
     awareness = db.Column(db.Integer, nullable=True)
 
 
-# db.Table('repo_asset_repo_threat_association_table', db.Model.metadata,
-#                                                     db.Column('repo_asset_id', db.Integer,
-#                                                               db.ForeignKey('repo_asset.id')),
-#                                                     db.Column('repo_threat_id', db.Integer,
-#                                                               db.ForeignKey('repo_threat.id'))
-#                                                     )
+# repo_risk_assessment_repo_asset_association_table = db.Table('repo_risk_assessment_repo_asset_association_table',
+#                                                         db.Model.metadata,
+#                                                         db.Column('repo_risk_assessment_id', db.Integer,
+#                                                                   db.ForeignKey('repo_risk_assessment.id')),
+#                                                         db.Column('repo_asset_id', db.Integer,
+#                                                                   db.ForeignKey('repo_asset.id'))
+#                                                         )
+
+
+class RepoRiskAssessment(db.Model):
+    __tablename__ = 'repo_risk_assessment'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    repo_threat_id = db.Column(db.Integer, db.ForeignKey('repo_threat.id'))
+    repo_asset_id = db.Column(db.Integer, db.ForeignKey('repo_asset.id'))
+    asset = db.relationship("RepoAsset", back_populates="risk_assessment")
+    threat = db.relationship("RepoThreat", back_populates="risk_assessment")
+    # assets = db.relationship("RepoAsset", secondary=repo_risk_assessment_repo_asset_association_table,
+    #                           back_populates="risk_assessment")
+
+    # assets = db.relationship("RepoRiskAssessmentManyToMany", back_populates="repo_this_assessment")
+
+#
+# class RepoRiskAssessmentManyToMany(db.Model):
+#     __tablename__ = 'repo_risk_assessment'
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     repo_this_assessment = db.relationship("RepoRiskAssessment", back_populates="assets")
+#     repo_threat_id = db.Column(db.Integer, db.ForeignKey('repo_threat.id'))
+#     repo_asset_id = db.Column(db.Integer, db.ForeignKey('repo_asset.id'))
 
 class RepoThreat(db.Model):
     __tablename__ = 'repo_threat'
@@ -368,6 +391,8 @@ class RepoThreat(db.Model):
     assets = db.relationship("RepoAssetRepoThreatRelationship", back_populates="threat")
     prob = db.Column(db.Integer)
     user_prob = db.Column(db.Integer)
+    risk_assessment = db.relationship("RepoRiskAssessment", back_populates="threat")
+
 
 
 class RepoResponse(db.Model):
@@ -404,6 +429,7 @@ class RepoConsequence(db.Model):
     materialisation_id = db.Column(db.Integer, db.ForeignKey('repo_materialisation.id'))
     impacts = db.relationship("RepoImpact", secondary=repo_consequence_repo_impact_association_table,
                               back_populates="consequences")
+    consequence_risk_relationship = db.relationship("RepoRiskThreatAssetConsequence", back_populates="repo_consequence")
     impact_risk_relationship = db.relationship(
         "RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany", back_populates="repo_consequence")
 
@@ -461,8 +487,11 @@ class RepoAsset(db.Model):
     type_fk = db.Column(db.Integer, db.ForeignKey('repo_assets_type.id'))
     services = db.relationship("RepoService", secondary=repo_asset_repo_service_association_table,
                                back_populates="assets")
+    # risk_assessment = db.relationship("RepoRiskAssessment", secondary=repo_risk_assessment_repo_asset_association_table,
+    #                            back_populates="assets")
     threats = db.relationship("RepoAssetRepoThreatRelationship",
                               back_populates="asset")
+    risk_assessment = db.relationship("RepoRiskAssessment", back_populates="asset")
 
 
 class RepoAssetsType(db.Model):

@@ -22,7 +22,7 @@
                     <button class="btn btn-primary">{{ this_threat[0].name }}</button>
                     <div class="dropdown-list">
                         {% for threat in repo_threats %}
-                            <a href="/repo/risk/assessment/{{ threat.id }}/">{{ threat.name }}</a>
+                            <a href="/repo/risk/assessment/{{ threat.id }}/asset/-1/">{{ threat.name }}</a>
                         {% endfor %}
                     </div>
                 </div>
@@ -62,27 +62,25 @@
             <div class="row">
                 <div class="col-6 custom-select-column">
                     <h4>Included Assets</h4>
-                    <button type="button" class="btn btn-primary btn-asset-service-related"
+                    {% for related_asset in related_assets %}
+                    <a href="/repo/risk/assessment/{{ threat_id }}/asset/{{ related_asset.id }}/" type="button" class="btn btn-primary btn-asset-service-related"
                             {#                            id="related-btn-{{ related_service.id }}"#}
                             {#                            onclick="unRelateService({{ related_service.id }})"#}
                     >
-                        Asset1
-                    </button>
+                        {{ related_asset.name }}
+                    </a>
+                    {% endfor %}
                 </div>
                 <div class="col-6 custom-select-column">
                     <h4> Not included Assets </h4>
-                    <button type="button" class="btn btn-primary fa btn-asset-service-unrelated"
+                    {% for unrelated_asset in unrelated_assets %}
+                    <a href="/repo/risk/assessment/{{ threat_id }}/asset/{{ unrelated_asset.id }}/" type="button" class="btn btn-primary fa btn-asset-service-unrelated"
                             {#                                id="unrelated-btn-{{ unrelated_service.id }}"#}
                             {#                                onclick="relateService({{ unrelated_service.id }})"#}
                     >
-                        Asset2
-                    </button>
-                    <button type="button" class="btn btn-primary fa btn-asset-service-unrelated"
-                            {#                                id="unrelated-btn-{{ unrelated_service.id }}"#}
-                            {#                                onclick="relateService({{ unrelated_service.id }})"#}
-                    >
-                        Asset3
-                    </button>
+                        {{ unrelated_asset.name }}
+                    </a>
+                    {% endfor %}
                 </div>
             </div>
 
@@ -105,8 +103,9 @@
             {#                {% endfor %}#}
 
             {#            </div>#}
+            {% if asset_id != '-1' %}
             <h3>Current Selected Asset:
-                <button class="btn btn-primary" style="background-color: #9C1A1C"> Asset2 </button>
+                <button class="btn btn-primary" style="background-color: #9C1A1C"> {{ this_asset[0].name }} </button>
 {#                <div class="dropdown">#}
 {#                    <button class="btn btn-primary">{{ this_threat[0].name }}</button>#}
 {#                    <div class="dropdown-list">#}
@@ -117,7 +116,9 @@
 {#                </div>#}
             </h3>
             <hr/>
-            <form action="/repo/risk/assessment/{{ threat_id }}/" method="post">
+
+            <form action="/repo/risk/assessment/{{ threat_id }}/asset/{{ this_asset[0].id }}/" method="post">
+                {# THESE ARE STILL PLACEHOLDERS AND DONT GIVE THE RIGHT INFORMATION #}
                 <div class="row dashboard-row">
                     <div class="col-12">
                         <h3>Asset Requirements</h3>
@@ -154,7 +155,11 @@
                     </div>
                 </div>
             </form>
+        {% else %}
+            <h2>Please select an asset</h2>
+        {% endif %}
         </div>
+
         {#        <div class="col-2">#}
         {#            <h3>Current Selections</h3>#}
         {#            <hr/>#}
