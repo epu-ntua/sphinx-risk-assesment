@@ -582,14 +582,19 @@ def import_fixture_from_file(file_name):
 
 def rcra_db_init():
     """Function is run in the _init_ file when server starts to initialise static table data"""
-    print("Initiating Tamarin SSH Forward", flush=True)
-    bash_com = './docker/expect.sh tamarin-prover ssh -4 -o "StrictHostKeyChecking no" -L 0.0.0.0:3005:localhost:3001 tamarin-prover@tamarin'
-    cmd = ['./docker/expect.sh', 'tamarin-prover', 'ssh', '-4', '-o', "StrictHostKeyChecking no", '-L',
-         '0.0.0.0:3005:localhost:3001', 'tamarin-prover@tamarin']
-    process = subprocess.Popen(
-        cmd, stdout=subprocess.PIPE)
-    output, error = process.communicate()
-    print(output)
+    # print("Initiating Tamarin SSH Forward", flush=True)
+    # # bash_com = './docker/expect.sh tamarin-prover ssh -4 -fN -o "StrictHostKeyChecking no" -L 0.0.0.0:3005:localhost:3001 tamarin-prover@tamarin'
+    # bash_com = 'ssh -4 -fN -o "StrictHostKeyChecking no" -L 0.0.0.0:3005:localhost:3001 tamarin-prover@tamarin'
+    # cmd = ['./docker/expect.sh', 'tamarin-prover', 'ssh', '-N','-4', '-o', "StrictHostKeyChecking no", '-L',
+    #      '0.0.0.0:3005:localhost:3001', 'tamarin-prover@tamarin']
+    # process = subprocess.Popen(
+    #     cmd, stdout=subprocess.PIPE)
+    # output, error = process.communicate()
+    # print(output)
+
+    # process = subprocess.run(cmd, capture_output=True, text=True, input="tamarin_prover")
+    # output, error = process.communicate()
+    # print(output)
 
     print("Initiating Database", flush=True)
     if RepoService.query.count() is not 0:
