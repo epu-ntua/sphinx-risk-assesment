@@ -1,3 +1,4 @@
+import subprocess
 from copy import deepcopy
 
 from deepdiff import DeepDiff
@@ -581,6 +582,15 @@ def import_fixture_from_file(file_name):
 
 def rcra_db_init():
     """Function is run in the _init_ file when server starts to initialise static table data"""
+    print("Initiating Tamarin SSH Forward", flush=True)
+    bash_com = './docker/expect.sh tamarin-prover ssh -4 -o "StrictHostKeyChecking no" -L 0.0.0.0:3005:localhost:3001 tamarin-prover@tamarin'
+    cmd = ['./docker/expect.sh', 'tamarin-prover', 'ssh', '-4', '-o', "StrictHostKeyChecking no", '-L',
+         '0.0.0.0:3005:localhost:3001', 'tamarin-prover@tamarin']
+    process = subprocess.Popen(
+        cmd, stdout=subprocess.PIPE)
+    output, error = process.communicate()
+    print(output)
+
     print("Initiating Database", flush=True)
     if RepoService.query.count() is not 0:
         print(RepoService.query.count())
@@ -782,12 +792,13 @@ def start_risk_assessment(threat_id, asset_id):
                 occurance_bool_num = 0
 
             # response shouldnt work like that this needs a bit of a rework
-            if node_value.repo_response_id %2 == 0:
+            if node_value.repo_response_id % 2 == 0:
                 response_bool_num = 1
             else:
                 response_bool_num = 0
 
-            diag.cpt(nodeMatId)[{exposureNodeId: occurance_bool_num, nodeReId: response_bool_num}] = [node_value.prob, 1 - node_value.prob]
+            diag.cpt(nodeMatId)[{exposureNodeId: occurance_bool_num, nodeReId: response_bool_num}] = [node_value.prob,
+                                                                                                      1 - node_value.prob]
 
         print(these_materialisation_values)
 
@@ -800,8 +811,8 @@ def start_risk_assessment(threat_id, asset_id):
         nodeReId = "re"
         try:
             these_cosnequence_values = RepoRiskThreatAssetConsequence.query.filter_by(repo_asset_id=asset_id,
-                                                                                              repo_threat_id=threat_id,
-                                                                                              repo_consequence_id=consequence.id).all()
+                                                                                      repo_threat_id=threat_id,
+                                                                                      repo_consequence_id=consequence.id).all()
         except SQLAlchemyError:
             return "SQLAlchemyError"
 
@@ -812,13 +823,14 @@ def start_risk_assessment(threat_id, asset_id):
                 occurance_bool_num = 0
 
             # response shouldnt work like that this needs a bit of a rework
-            if node_value.repo_response_id %2 == 0:
+            if node_value.repo_response_id % 2 == 0:
                 response_bool_num = 1
             else:
                 response_bool_num = 0
 
             nodeMatId = "mat" + str(node_value.repo_consequence.materialisation_id)
-            diag.cpt(nodeConsId)[{nodeMatId: occurance_bool_num, nodeReId: response_bool_num}] = [node_value.prob, 1 - node_value.prob]
+            diag.cpt(nodeConsId)[{nodeMatId: occurance_bool_num, nodeReId: response_bool_num}] = [node_value.prob,
+                                                                                                  1 - node_value.prob]
         print(these_cosnequence_values)
 
     # Impact Node Values
@@ -869,10 +881,9 @@ def start_risk_assessment(threat_id, asset_id):
         for temp in array_impact_calculation:
             print(temp)
 
-
         joined = db.session.query(RepoAssetThreatConsequenceServiceImpactRelationship,
-                                           RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany,
-                                           RepoAssetThreatConsequenceServiceImpactRelationshipServiceManyToMany).join(
+                                  RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany,
+                                  RepoAssetThreatConsequenceServiceImpactRelationshipServiceManyToMany).join(
             RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany,
             RepoAssetThreatConsequenceServiceImpactRelationshipServiceManyToMany).filter(
             RepoAssetThreatConsequenceServiceImpactRelationship.repo_threat_id == threat_id,
@@ -944,14 +955,12 @@ def start_risk_assessment(threat_id, asset_id):
             print(nodeImpactId)
             diag.cpt(nodeImpactId)[impact_node_id] = impact_node_value
 
-
-
     # Objective  Node Values
     for objective in these_objectives:
         nodeObjectiveId = "obj" + str(objective.id)
 
         joined = db.session.query(RepoObjectiveImpactRelationship,
-                                           RepoObjectiveImpactRelationshipImpactManyToMany) \
+                                  RepoObjectiveImpactRelationshipImpactManyToMany) \
             .join(RepoObjectiveImpactRelationshipImpactManyToMany) \
             .filter(
             RepoObjectiveImpactRelationship.repo_objective_id == objective.id,
@@ -1010,9 +1019,6 @@ def start_risk_assessment(threat_id, asset_id):
 
             diag.cpt(nodeObjectiveId)[objective_node_id] = objective_node_value
 
-
-
-
     # Print Diagram
     diag.saveBIFXML(os.path.join("out", "GiraDynamic.bifxml"))
 
@@ -1044,7 +1050,7 @@ def start_risk_assessment(threat_id, asset_id):
     print(ie.posterior('obj5'))
     # Print Graph
     # with open(os.path.join("out", "GiraDynamic.bifxml"), "r") as out:
-        # print(out.read())
+    # print(out.read())
     # try:
     #     mat_nodes = RepoRiskThreatAssetMaterialisation.query.filter_by(repo_asset_id=asset_id,
     #                                                                                       repo_threat_id=threat_id,

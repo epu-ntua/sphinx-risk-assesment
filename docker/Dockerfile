@@ -5,7 +5,15 @@ COPY . .
 WORKDIR .
 
 #COPY requirements.txt .
+RUN apt-get update
+RUN apt-get install -y expect ssh
+RUN apt-get install libgomp1
 RUN pip install -r requirements.txt
+#RUN flask db init
+#RUN flask db migrate
+#RUN flask db upgrade
+
+#RUN chmod 755 ./docker/expect.sh
 #RUN flask db init
 #RUN flask db migrate
 #RUN flask db upgrade
@@ -14,11 +22,12 @@ RUN pip install -r requirements.txt
 
 EXPOSE 5002
 
-ENTRYPOINT ["flask"]
+#CMD ["./expect.sh tamarin-prover ssh -o "StrictHostKeyChecking no" -L localhost:3005:localhost:3001 tamarin-prover@<tamarin-container-ip>"]
 
-CMD ["db init"]
-CMD ["db migrate"]
-CMD ["db upgrade"]
+#ENTRYPOINT ["flask"]
 
-CMD ["run", "--host=0.0.0.0" , "--no-reload"]
+
+
+#CMD ["bash", "run"]
+
 
