@@ -556,306 +556,306 @@ class RepoObjectivesOptions(db.Model):
     __tablename__ = 'repo_objectives_options'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, nullable=False)
-    objective_fk = db.Column(db.Integer, db.ForeignKey('model_objective.id'), nullable=False)
+    objective_fk = db.Column(db.Integer, db.ForeignKey('repo_objective.id'), nullable=False)
     alert_level = db.Column(db.Integer, nullable=True,
                             default=0)  # 0-No Alert #1-Oddness3> #2-RareThanRare #3-Rare #4-Possible #5-Certain
     prob_likelihood = db.Column(db.Integer, nullable=True)
 
 
-class ModelThreatExposure(db.Model):
-    __tablename__ = 'model_threat_exposure'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String, nullable=False)
-    probability = db.Column(db.Integer, nullable=False)  # Probability that this thread appears
-    description = db.Column(db.String, nullable=True)
-
-    instance = db.relationship("ModelInstance", uselist=False, back_populates="threat")
-
-
-class ModelIncidentResponse(db.Model):
-    __tablename__ = 'model_incident_response'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String, nullable=False)
-    description = db.Column(db.String, nullable=True)
-    default_effect = db.Column(db.Integer, nullable=True)
-
-    instances = db.relationship("ModelIncidentResponseAssociation", back_populates="incident_response")
-
-
-class ModelThreatMaterialisation(db.Model):
-    __tablename__ = 'model_threat_materialisation'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String, nullable=False)
-    # Default Probability that this materialisation appears maybe not needed/cant be sources
-    probability = db.Column(db.Integer)
-    description = db.Column(db.String, nullable=True)
-
-    instances = db.relationship("ModelThreatMaterialisationAssociation", back_populates="threat_materialisation")
-
-
-class ModelConsequence(db.Model):
-    __tablename__ = 'model_consequence'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String, nullable=False)
-    description = db.Column(db.String, nullable=True)
-    instances = db.relationship("ModelConsequenceAssociation", back_populates="consequence")
-
-    # TO be enabled when asset repository is finished
-    # asset = db.Column(db.Integer, db.ForeignKey())
-
-
-# model Asset status table has all the different status of a single model asset since they are dynamic
-class ModelConsequenceStatus(db.Model):
-    __tablename__ = 'model_consequence_status'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String, nullable=False)
-    consequence_fk = db.Column(db.Integer, db.ForeignKey('model_consequence.id'), nullable=False)
-
-
-# Table to store list of initial consequence status
-# This isnt currently needed but may be in the future
-# class ModelConsequenceStatusList(db.Model):
-#     __tablename__ = 'model_consequence_status_list'
+# class ModelThreatExposure(db.Model):
+#     __tablename__ = 'model_threat_exposure'
 #     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 #     name = db.Column(db.String, nullable=False)
-
-
-# High level model assets describing business logic or high level assets like doctors or patients(not network assets)
-class ModelAsset(db.Model):
-    __tablename__ = 'model_asset'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String, nullable=False)
-
-
-# model Asset status table has all the different status of a single model asset since they are dynamic
-class ModelAssetStatus(db.Model):
-    __tablename__ = 'model_asset_status'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String, nullable=False)
-    asset_fk = db.Column(db.Integer, db.ForeignKey('model_asset.id'), nullable=False)
-    prob_likelihood = db.Column(db.Integer, nullable=True)
-
-
-class ModelImpact(db.Model):
-    __tablename__ = 'model_impact'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String, nullable=False)
-    instances = db.relationship("ModelImpactAssociation", back_populates="impact")
-
-
-class ModelImpactStatus(db.Model):
-    __tablename__ = 'model_impact_status'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String, nullable=False)
-    impact_fk = db.Column(db.Integer, db.ForeignKey('model_impact.id'), nullable=False)
-    prob_likelihood = db.Column(db.Integer, nullable=True)
-
-
-class ModelObjective(db.Model):
-    __tablename__ = 'model_objective'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String, nullable=False)
-    # status = db.relationship('modelObjectivesOptions', backref='objective', lazy=True)
-    instances = db.relationship("ModelObjectiveAssociation", back_populates="objective")
-
-
-class ModelObjectivesOptions(db.Model):
-    __tablename__ = 'model_objectives_options'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String, nullable=False)
-    objective_fk = db.Column(db.Integer, db.ForeignKey('model_objective.id'), nullable=False)
-    prob_likelihood = db.Column(db.Integer, nullable=True)
-
-
-# endregion
-#  region Dynamic model Models
-
-# # This table serves as the main model for a single instance of a model model
-# # Each Instance corresponds to a single threat and contains all the necessary links
-# # To all the relevant nodes
-class ModelInstance(db.Model):
-    __tablename__ = 'model_instance'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-
-    # Threat Exposure One To One Relationship
-    threat_id = db.Column(db.Integer, db.ForeignKey('model_threat_exposure.id'))
-    threat = db.relationship("ModelThreatExposure", back_populates="instance")
-
-    # Threat Materialisation Many To Many Relationship
-    threat_materialisations = db.relationship("ModelThreatMaterialisationAssociation", back_populates="instance")
-    incident_responses = db.relationship("ModelIncidentResponseAssociation", back_populates="instance")
-    consequences = db.relationship("ModelConsequenceAssociation", back_populates="instance")
-    impacts = db.relationship("ModelImpactAssociation", back_populates="instance")
-    objectives = db.relationship("ModelObjectiveAssociation", back_populates="instance")
-
-
-class ModelThreatMaterialisationAssociation(db.Model):
-    __tablename__ = "model_threat_materialisation_association"
-    instance_id = db.Column(db.Integer, db.ForeignKey('model_instance.id'), primary_key=True)
-    threat_materialisation_id = db.Column(db.Integer, db.ForeignKey('model_threat_materialisation.id'),
-                                          primary_key=True)
-    instance = db.relationship("ModelInstance", back_populates="threat_materialisations")
-    threat_materialisation = db.relationship("ModelThreatMaterialisation", back_populates="instances")
-
-
-class ModelIncidentResponseAssociation(db.Model):
-    __tablename__ = "model_incident_response_association"
-    instance_id = db.Column(db.Integer, db.ForeignKey('model_instance.id'), primary_key=True)
-    incident_response_id = db.Column(db.Integer, db.ForeignKey('model_incident_response.id'), primary_key=True)
-    instance = db.relationship("ModelInstance", back_populates="incident_responses")
-    incident_response = db.relationship("ModelIncidentResponse", back_populates="instances")
-
-
-class ModelConsequenceAssociation(db.Model):
-    __tablename__ = "model_consequence_association"
-    instance_id = db.Column(db.Integer, db.ForeignKey('model_instance.id'), primary_key=True)
-    consequence_id = db.Column(db.Integer, db.ForeignKey('model_consequence.id'), primary_key=True)
-    instance = db.relationship("ModelInstance", back_populates="consequences")
-    consequence = db.relationship("ModelConsequence", back_populates="instances")
-
-
-class ModelImpactAssociation(db.Model):
-    __tablename__ = "model_impact_association"
-    instance_id = db.Column(db.Integer, db.ForeignKey('model_instance.id'), primary_key=True)
-    impact_id = db.Column(db.Integer, db.ForeignKey('model_impact.id'), primary_key=True)
-    instance = db.relationship("ModelInstance", back_populates="impacts")
-    impact = db.relationship("ModelImpact", back_populates="instances")
-
-
-class ModelObjectiveAssociation(db.Model):
-    __tablename__ = "model_objective_association"
-    instance_id = db.Column(db.Integer, db.ForeignKey('model_instance.id'), primary_key=True)
-    objective_id = db.Column(db.Integer, db.ForeignKey('model_objective.id'), primary_key=True)
-    instance = db.relationship("ModelInstance", back_populates="objectives")
-    objective = db.relationship("ModelObjective", back_populates="instances")
-
-
-class ModelThreatMaterialisationInstanceEntry(db.Model):
-    __tablename__ = "model_threat_materialisation_instance_entry"
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    # Model instance
-    instance = db.Column(db.Integer)
-
-    # Specific response in table
-    incident_response = db.Column(db.Integer)
-
-    # Specific materialisation in table
-    threat_materialisation = db.Column(db.Integer)
-
-    # Actual Foreign Keys
-    __table_args__ = (db.ForeignKeyConstraint([instance, incident_response],
-                                              [ModelIncidentResponseAssociation.instance_id,
-                                               ModelIncidentResponseAssociation.incident_response_id]),
-                      db.ForeignKeyConstraint([instance, threat_materialisation],
-                                              [ModelThreatMaterialisationAssociation.instance_id,
-                                               ModelThreatMaterialisationAssociation.threat_materialisation_id])
-                      , {})
-    # Positive if threat materialisation is occurring in this entry
-    is_threat_materialising = db.Column(db.Boolean, nullable=False)
-    prob_threat_materialising = db.Column(db.Integer, nullable=False)
-    # Also needs reverse
-
-    prob_likelihood = db.Column(db.Integer, nullable=False)
-    prob_likelihood_other = db.Column(db.Integer, nullable=False)
-    prob_posterior = db.Column(db.Integer, nullable=False)
-
-
-class ModelConsequenceInstanceEntry(db.Model):
-    __tablename__ = "model_consequence_instance_entry"
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    # Model instance
-    instance = db.Column(db.Integer)
-
-    # Specific response in table
-    incident_response = db.Column(db.Integer)
-
-    # Specific materialisation in table
-    threat_materialisation = db.Column(db.Integer)
-
-    # Specific consequence
-    consequence = db.Column(db.Integer)
-
-    # Specific consequence (option) in table
-    consequence_status = db.Column(db.Integer, db.ForeignKey('model_consequence_status.id'), nullable=False)
-
-    __table_args__ = (db.ForeignKeyConstraint([instance, incident_response],
-                                              [ModelIncidentResponseAssociation.instance_id,
-                                               ModelIncidentResponseAssociation.incident_response_id]),
-                      db.ForeignKeyConstraint([instance, threat_materialisation],
-                                              [ModelThreatMaterialisationAssociation.instance_id,
-                                               ModelThreatMaterialisationAssociation.threat_materialisation_id]),
-                      db.ForeignKeyConstraint([instance, consequence],
-                                              [ModelConsequenceAssociation.instance_id,
-                                               ModelConsequenceAssociation.consequence_id])
-                      , {})
-    # Probably unneded
-    # Positive if threat materialisation is occurring in this entry
-    # is_threat_materialising = db.Column(db.Boolean, nullable=False)
-    # prob_threat_materialising = db.Column(db.Integer, nullable=False)
-    # Also needs reverse
-
-    prob_likelihood = db.Column(db.Integer, nullable=False)
-    prob_likelihood_other = db.Column(db.Integer, nullable=False)
-    prob_posterior = db.Column(db.Integer, nullable=False)
-
-
-class ModelImpactInstanceEntry(db.Model):
-    __tablename__ = "model_impact_instance_entry"
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    # Model instance
-    instance = db.Column(db.Integer)
-
-    # Specific response in table
-    incident_response = db.Column(db.Integer)
-
-    # Specific materialisation in table
-    threat_materialisation = db.Column(db.Integer)
-
-    # Specific consequence
-    consequence = db.Column(db.Integer)
-
-    # Specific consequence (option) in table
-    consequence_status = db.Column(db.Integer, db.ForeignKey('model_consequence_status.id'), nullable=False)
-
-    # Specific impact
-    impact = db.Column(db.Integer)
-
-    # Specific impact (option) in table
-    impact_status = db.Column(db.Integer, db.ForeignKey("model_impact_status.id"), nullable=False)
-
-    __table_args__ = (db.ForeignKeyConstraint([instance, incident_response],
-                                              [ModelIncidentResponseAssociation.instance_id,
-                                               ModelIncidentResponseAssociation.incident_response_id]),
-                      db.ForeignKeyConstraint([instance, threat_materialisation],
-                                              [ModelThreatMaterialisationAssociation.instance_id,
-                                               ModelThreatMaterialisationAssociation.threat_materialisation_id]),
-                      db.ForeignKeyConstraint([instance, consequence],
-                                              [ModelConsequenceAssociation.instance_id,
-                                               ModelConsequenceAssociation.consequence_id]),
-                      db.ForeignKeyConstraint([instance, impact],
-                                              [ModelImpactAssociation.instance_id,
-                                               ModelImpactAssociation.impact_id])
-                      , {})
-
-    prob_likelihood = db.Column(db.Integer, nullable=False)
-    prob_likelihood_other = db.Column(db.Integer, nullable=False)
-    prob_posterior = db.Column(db.Integer, nullable=False)
-
-
-# endregion
-
-class ModelObjectiveInstanceEntry(db.Model):
-    __tablename__ = "model_objective_instance_entry"
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    # Model instance
-    instance = db.Column(db.Integer)
-
-    # Specific objective
-    objective = db.Column(db.Integer)
-
-    impact_status = db.Column(db.Integer, db.ForeignKey("model_impact_status.id"), nullable=False)
-
-    __table_args__ = (db.ForeignKeyConstraint([instance, objective],
-                                              [ModelObjectiveAssociation.instance_id,
-                                               ModelObjectiveAssociation.objective_id])
-                      , {})
+#     probability = db.Column(db.Integer, nullable=False)  # Probability that this thread appears
+#     description = db.Column(db.String, nullable=True)
+#
+#     instance = db.relationship("ModelInstance", uselist=False, back_populates="threat")
+#
+#
+# class ModelIncidentResponse(db.Model):
+#     __tablename__ = 'model_incident_response'
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     name = db.Column(db.String, nullable=False)
+#     description = db.Column(db.String, nullable=True)
+#     default_effect = db.Column(db.Integer, nullable=True)
+#
+#     instances = db.relationship("ModelIncidentResponseAssociation", back_populates="incident_response")
+#
+#
+# class ModelThreatMaterialisation(db.Model):
+#     __tablename__ = 'model_threat_materialisation'
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     name = db.Column(db.String, nullable=False)
+#     # Default Probability that this materialisation appears maybe not needed/cant be sources
+#     probability = db.Column(db.Integer)
+#     description = db.Column(db.String, nullable=True)
+#
+#     instances = db.relationship("ModelThreatMaterialisationAssociation", back_populates="threat_materialisation")
+#
+#
+# class ModelConsequence(db.Model):
+#     __tablename__ = 'model_consequence'
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     name = db.Column(db.String, nullable=False)
+#     description = db.Column(db.String, nullable=True)
+#     instances = db.relationship("ModelConsequenceAssociation", back_populates="consequence")
+#
+#     # TO be enabled when asset repository is finished
+#     # asset = db.Column(db.Integer, db.ForeignKey())
+#
+#
+# # model Asset status table has all the different status of a single model asset since they are dynamic
+# class ModelConsequenceStatus(db.Model):
+#     __tablename__ = 'model_consequence_status'
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     name = db.Column(db.String, nullable=False)
+#     consequence_fk = db.Column(db.Integer, db.ForeignKey('model_consequence.id'), nullable=False)
+#
+#
+# # Table to store list of initial consequence status
+# # This isnt currently needed but may be in the future
+# # class ModelConsequenceStatusList(db.Model):
+# #     __tablename__ = 'model_consequence_status_list'
+# #     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+# #     name = db.Column(db.String, nullable=False)
+#
+#
+# # High level model assets describing business logic or high level assets like doctors or patients(not network assets)
+# class ModelAsset(db.Model):
+#     __tablename__ = 'model_asset'
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     name = db.Column(db.String, nullable=False)
+#
+#
+# # model Asset status table has all the different status of a single model asset since they are dynamic
+# class ModelAssetStatus(db.Model):
+#     __tablename__ = 'model_asset_status'
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     name = db.Column(db.String, nullable=False)
+#     asset_fk = db.Column(db.Integer, db.ForeignKey('model_asset.id'), nullable=False)
+#     prob_likelihood = db.Column(db.Integer, nullable=True)
+#
+#
+# class ModelImpact(db.Model):
+#     __tablename__ = 'model_impact'
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     name = db.Column(db.String, nullable=False)
+#     instances = db.relationship("ModelImpactAssociation", back_populates="impact")
+#
+#
+# class ModelImpactStatus(db.Model):
+#     __tablename__ = 'model_impact_status'
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     name = db.Column(db.String, nullable=False)
+#     impact_fk = db.Column(db.Integer, db.ForeignKey('model_impact.id'), nullable=False)
+#     prob_likelihood = db.Column(db.Integer, nullable=True)
+#
+#
+# class ModelObjective(db.Model):
+#     __tablename__ = 'model_objective'
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     name = db.Column(db.String, nullable=False)
+#     # status = db.relationship('modelObjectivesOptions', backref='objective', lazy=True)
+#     instances = db.relationship("ModelObjectiveAssociation", back_populates="objective")
+#
+#
+# class ModelObjectivesOptions(db.Model):
+#     __tablename__ = 'model_objectives_options'
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     name = db.Column(db.String, nullable=False)
+#     objective_fk = db.Column(db.Integer, db.ForeignKey('model_objective.id'), nullable=False)
+#     prob_likelihood = db.Column(db.Integer, nullable=True)
+#
+#
+# # endregion
+# #  region Dynamic model Models
+#
+# # # This table serves as the main model for a single instance of a model model
+# # # Each Instance corresponds to a single threat and contains all the necessary links
+# # # To all the relevant nodes
+# class ModelInstance(db.Model):
+#     __tablename__ = 'model_instance'
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#
+#     # Threat Exposure One To One Relationship
+#     threat_id = db.Column(db.Integer, db.ForeignKey('model_threat_exposure.id'))
+#     threat = db.relationship("ModelThreatExposure", back_populates="instance")
+#
+#     # Threat Materialisation Many To Many Relationship
+#     threat_materialisations = db.relationship("ModelThreatMaterialisationAssociation", back_populates="instance")
+#     incident_responses = db.relationship("ModelIncidentResponseAssociation", back_populates="instance")
+#     consequences = db.relationship("ModelConsequenceAssociation", back_populates="instance")
+#     impacts = db.relationship("ModelImpactAssociation", back_populates="instance")
+#     objectives = db.relationship("ModelObjectiveAssociation", back_populates="instance")
+#
+#
+# class ModelThreatMaterialisationAssociation(db.Model):
+#     __tablename__ = "model_threat_materialisation_association"
+#     instance_id = db.Column(db.Integer, db.ForeignKey('model_instance.id'), primary_key=True)
+#     threat_materialisation_id = db.Column(db.Integer, db.ForeignKey('model_threat_materialisation.id'),
+#                                           primary_key=True)
+#     instance = db.relationship("ModelInstance", back_populates="threat_materialisations")
+#     threat_materialisation = db.relationship("ModelThreatMaterialisation", back_populates="instances")
+#
+#
+# class ModelIncidentResponseAssociation(db.Model):
+#     __tablename__ = "model_incident_response_association"
+#     instance_id = db.Column(db.Integer, db.ForeignKey('model_instance.id'), primary_key=True)
+#     incident_response_id = db.Column(db.Integer, db.ForeignKey('model_incident_response.id'), primary_key=True)
+#     instance = db.relationship("ModelInstance", back_populates="incident_responses")
+#     incident_response = db.relationship("ModelIncidentResponse", back_populates="instances")
+#
+#
+# class ModelConsequenceAssociation(db.Model):
+#     __tablename__ = "model_consequence_association"
+#     instance_id = db.Column(db.Integer, db.ForeignKey('model_instance.id'), primary_key=True)
+#     consequence_id = db.Column(db.Integer, db.ForeignKey('model_consequence.id'), primary_key=True)
+#     instance = db.relationship("ModelInstance", back_populates="consequences")
+#     consequence = db.relationship("ModelConsequence", back_populates="instances")
+#
+#
+# class ModelImpactAssociation(db.Model):
+#     __tablename__ = "model_impact_association"
+#     instance_id = db.Column(db.Integer, db.ForeignKey('model_instance.id'), primary_key=True)
+#     impact_id = db.Column(db.Integer, db.ForeignKey('model_impact.id'), primary_key=True)
+#     instance = db.relationship("ModelInstance", back_populates="impacts")
+#     impact = db.relationship("ModelImpact", back_populates="instances")
+#
+#
+# class ModelObjectiveAssociation(db.Model):
+#     __tablename__ = "model_objective_association"
+#     instance_id = db.Column(db.Integer, db.ForeignKey('model_instance.id'), primary_key=True)
+#     objective_id = db.Column(db.Integer, db.ForeignKey('model_objective.id'), primary_key=True)
+#     instance = db.relationship("ModelInstance", back_populates="objectives")
+#     objective = db.relationship("ModelObjective", back_populates="instances")
+#
+#
+# class ModelThreatMaterialisationInstanceEntry(db.Model):
+#     __tablename__ = "model_threat_materialisation_instance_entry"
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     # Model instance
+#     instance = db.Column(db.Integer)
+#
+#     # Specific response in table
+#     incident_response = db.Column(db.Integer)
+#
+#     # Specific materialisation in table
+#     threat_materialisation = db.Column(db.Integer)
+#
+#     # Actual Foreign Keys
+#     __table_args__ = (db.ForeignKeyConstraint([instance, incident_response],
+#                                               [ModelIncidentResponseAssociation.instance_id,
+#                                                ModelIncidentResponseAssociation.incident_response_id]),
+#                       db.ForeignKeyConstraint([instance, threat_materialisation],
+#                                               [ModelThreatMaterialisationAssociation.instance_id,
+#                                                ModelThreatMaterialisationAssociation.threat_materialisation_id])
+#                       , {})
+#     # Positive if threat materialisation is occurring in this entry
+#     is_threat_materialising = db.Column(db.Boolean, nullable=False)
+#     prob_threat_materialising = db.Column(db.Integer, nullable=False)
+#     # Also needs reverse
+#
+#     prob_likelihood = db.Column(db.Integer, nullable=False)
+#     prob_likelihood_other = db.Column(db.Integer, nullable=False)
+#     prob_posterior = db.Column(db.Integer, nullable=False)
+#
+#
+# class ModelConsequenceInstanceEntry(db.Model):
+#     __tablename__ = "model_consequence_instance_entry"
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     # Model instance
+#     instance = db.Column(db.Integer)
+#
+#     # Specific response in table
+#     incident_response = db.Column(db.Integer)
+#
+#     # Specific materialisation in table
+#     threat_materialisation = db.Column(db.Integer)
+#
+#     # Specific consequence
+#     consequence = db.Column(db.Integer)
+#
+#     # Specific consequence (option) in table
+#     consequence_status = db.Column(db.Integer, db.ForeignKey('model_consequence_status.id'), nullable=False)
+#
+#     __table_args__ = (db.ForeignKeyConstraint([instance, incident_response],
+#                                               [ModelIncidentResponseAssociation.instance_id,
+#                                                ModelIncidentResponseAssociation.incident_response_id]),
+#                       db.ForeignKeyConstraint([instance, threat_materialisation],
+#                                               [ModelThreatMaterialisationAssociation.instance_id,
+#                                                ModelThreatMaterialisationAssociation.threat_materialisation_id]),
+#                       db.ForeignKeyConstraint([instance, consequence],
+#                                               [ModelConsequenceAssociation.instance_id,
+#                                                ModelConsequenceAssociation.consequence_id])
+#                       , {})
+#     # Probably unneded
+#     # Positive if threat materialisation is occurring in this entry
+#     # is_threat_materialising = db.Column(db.Boolean, nullable=False)
+#     # prob_threat_materialising = db.Column(db.Integer, nullable=False)
+#     # Also needs reverse
+#
+#     prob_likelihood = db.Column(db.Integer, nullable=False)
+#     prob_likelihood_other = db.Column(db.Integer, nullable=False)
+#     prob_posterior = db.Column(db.Integer, nullable=False)
+#
+#
+# class ModelImpactInstanceEntry(db.Model):
+#     __tablename__ = "model_impact_instance_entry"
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     # Model instance
+#     instance = db.Column(db.Integer)
+#
+#     # Specific response in table
+#     incident_response = db.Column(db.Integer)
+#
+#     # Specific materialisation in table
+#     threat_materialisation = db.Column(db.Integer)
+#
+#     # Specific consequence
+#     consequence = db.Column(db.Integer)
+#
+#     # Specific consequence (option) in table
+#     consequence_status = db.Column(db.Integer, db.ForeignKey('model_consequence_status.id'), nullable=False)
+#
+#     # Specific impact
+#     impact = db.Column(db.Integer)
+#
+#     # Specific impact (option) in table
+#     impact_status = db.Column(db.Integer, db.ForeignKey("model_impact_status.id"), nullable=False)
+#
+#     __table_args__ = (db.ForeignKeyConstraint([instance, incident_response],
+#                                               [ModelIncidentResponseAssociation.instance_id,
+#                                                ModelIncidentResponseAssociation.incident_response_id]),
+#                       db.ForeignKeyConstraint([instance, threat_materialisation],
+#                                               [ModelThreatMaterialisationAssociation.instance_id,
+#                                                ModelThreatMaterialisationAssociation.threat_materialisation_id]),
+#                       db.ForeignKeyConstraint([instance, consequence],
+#                                               [ModelConsequenceAssociation.instance_id,
+#                                                ModelConsequenceAssociation.consequence_id]),
+#                       db.ForeignKeyConstraint([instance, impact],
+#                                               [ModelImpactAssociation.instance_id,
+#                                                ModelImpactAssociation.impact_id])
+#                       , {})
+#
+#     prob_likelihood = db.Column(db.Integer, nullable=False)
+#     prob_likelihood_other = db.Column(db.Integer, nullable=False)
+#     prob_posterior = db.Column(db.Integer, nullable=False)
+#
+#
+# # endregion
+#
+# class ModelObjectiveInstanceEntry(db.Model):
+#     __tablename__ = "model_objective_instance_entry"
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     # Model instance
+#     instance = db.Column(db.Integer)
+#
+#     # Specific objective
+#     objective = db.Column(db.Integer)
+#
+#     impact_status = db.Column(db.Integer, db.ForeignKey("model_impact_status.id"), nullable=False)
+#
+#     __table_args__ = (db.ForeignKeyConstraint([instance, objective],
+#                                               [ModelObjectiveAssociation.instance_id,
+#                                                ModelObjectiveAssociation.objective_id])
+#                       , {})

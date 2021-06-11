@@ -737,6 +737,8 @@ obj4 = diag.add(gum.LabelizedVariable('obj4', 'Monetary', 3))
 obj5 = diag.add(gum.LabelizedVariable('obj5', 'Safety', 3))
 
 util1 = diag.addUtilityNode(gum.LabelizedVariable('util1', 'util1', 1))
+util2 = diag.addUtilityNode(gum.LabelizedVariable('util2', 'util2', 1))
+
 # Connect Tables
 diag.addArc(te1, mat1)
 diag.addArc(te1, mat2)
@@ -813,6 +815,9 @@ diag.addArc(imp7, obj5)
 diag.addArc(obj1, util1)
 diag.addArc(obj2, util1)
 diag.addArc(obj3, util1)
+
+diag.addArc(obj4, util2)
+diag.addArc(obj5, util2)
 
 # Fill tables
 diag.cpt(te1).fillWith([0.7, 0.5])
@@ -1323,4 +1328,5 @@ print("----------------------------------")
 print(ie.posterior(obj1))
 print(ie.posterior(obj2))
 print(ie.posteriorUtility(util1))
+print(ie.posteriorUtility(util2))
 # gum.ShaferShenoyLIMIDInference

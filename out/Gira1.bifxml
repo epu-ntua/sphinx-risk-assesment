@@ -203,6 +203,12 @@
 	<OUTCOME>0</OUTCOME>
 </VARIABLE>
 
+<VARIABLE TYPE="utility">
+	<NAME>util2</NAME>
+	<PROPERTY>util2</PROPERTY>
+	<OUTCOME>0</OUTCOME>
+</VARIABLE>
+
 <!-- Probability distributions -->
 <DEFINITION>
 	<FOR>te1</FOR>
@@ -357,6 +363,12 @@
 	<GIVEN>obj2</GIVEN>
 	<GIVEN>obj1</GIVEN>
 	<TABLE>-3 -8 -11 -8 -13 -16 -11 -16 -19 -1 -4 -6 -12 -54 -43 -34 -4 -23 -19 -15 -12 -4 -23 -23 -1 -2 -12 </TABLE>
+</DEFINITION>
+<DEFINITION>
+	<FOR>util2</FOR>
+	<GIVEN>obj5</GIVEN>
+	<GIVEN>obj4</GIVEN>
+	<TABLE>0 0 0 0 0 0 0 0 0 </TABLE>
 </DEFINITION>
 
 </NETWORK>
