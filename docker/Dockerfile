@@ -6,9 +6,9 @@ WORKDIR .
 
 #COPY requirements.txt .
 RUN apt-get update
-RUN apt-get install -y expect ssh
+RUN apt-get -y install ssh
 RUN apt-get install libgomp1
-RUN apt-get install sshpass
+RUN apt-get -y install sshpass
 RUN pip install -r requirements.txt
 #RUN flask db init
 #RUN flask db migrate

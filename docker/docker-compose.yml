@@ -37,7 +37,7 @@ services:
     ports:
       - 5002:5002
       - 3005:3005
-    command: bash -c "./docker/launch.sh"
+    command: bash -c "chmod +x ./docker/launch.sh && ./docker/launch.sh"
 #    command: bash -c " flask run --host=0.0.0.0 --no-reload"
     networks:
       - backend
