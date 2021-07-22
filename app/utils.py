@@ -16,6 +16,7 @@ import requests
 import stix2
 import stix2validator
 import app.stix2_custom as stix2_custom
+
 # region Insert information from Excel files
 # region Insert all CAPEC records from Excel
 from app.producer import SendKafkaReport
@@ -44,8 +45,7 @@ def CAPEC_excel_insertData(capecexcelpath):
     db.session.commit()
     return 1
 
-
-# endregion
+# endregion CAPEC
 
 # region Insert all CWE records from Excel
 def CWE_excel_insertData(cweexcelpath):
@@ -85,8 +85,7 @@ def CWE_excel_insertData(cweexcelpath):
     db.session.commit()
     return 1
 
-
-# endregion
+# endregion CWE
 
 # region Insert all CVE records from Excel
 def CVE_excel_insertData(cveexcelpath):
@@ -102,151 +101,178 @@ def CVE_excel_insertData(cveexcelpath):
     db.session.commit()
     return 1
 
-
-# endregion
+# endregion CVE
+# endregion Insert information from Excel files
 
 # region Insert information from VAaaS Report
 def v_report(fpath):
     with open(fpath, "r") as fp:
         obj = json.load(fp)
-        # todo: check what must be changed if a report has more than one devices
-        # print("Test")
-        if obj["report"]["@id"] is not None:
-            reprow_reportId = obj["report"]["@id"]
+        if obj["id"] is not None:
+            reprow_reportId = obj["id"]
             if db.session.query(exists().where(VulnerabilityReport.reportId == reprow_reportId)).scalar():
                 my_json_report = db.session.query(VulnerabilityReport).filter_by(reportId=reprow_reportId).one()
             else:
                 my_json_report = VulnerabilityReport(reportId=reprow_reportId)
-            my_json_report.creation_time = obj["report"]["creation_time"] if obj["report"][
-                                                                                 "creation_time"] is not None else ""
-            my_json_report.name = obj["report"]["name"] if obj["report"]["name"] is not None else ""
+            my_json_report.scan_start_time = obj["scan_start_time"] if obj["scan_start_time"] is not None else ""
+            my_json_report.scan_end_time = obj["scan_end_time"] if obj["scan_end_time"] is not None else ""
+            my_json_report.target_name = obj["target_name"] if obj["target_name"] is not None else ""
             db.session.add(my_json_report)
             try:
                 db.session.commit()
             except SQLAlchemyError as e:
                 db.session.rollback()
                 return -1
-            # Get CVE from the result nodes of the report
-            for item in obj['report']['report']['results']['result']:
-                print("Test1")
-                if item["nvt"]["cve"] == "NOCVE":
-                    print("Continue")
+
+            # Get asset IP
+            for item in obj['objects']:
+                if item['type'] != "ipv4-addr":
                     continue
                 else:
-                    print("CVE Exists")
-                    reprow_cveId = item["nvt"]["cve"]
-                    # NEEDS FIXING CVE IS IMPORTED WITH AN EXTRA " IN THE START ----------------------------------------
-                    reprow_cveId = '"' + reprow_cveId
-                    if not db.session.query(
-                            exists().where(CommonVulnerabilitiesAndExposures.CVEId == reprow_cveId)).scalar():
-                        print("Continue2")
-                        print(reprow_cveId)
+                    my_asset_IP = item["value"]
+
+            # Get CVE from the result nodes of the report
+            for item in obj['objects']:
+                if item['type'] != "vulnerability":
+                    continue
+                else:
+                    if item["cvss"] == "0.0":
                         continue
-                    # my_report = db.session.query(VReport).filter_by(reportId=reprow_reportId).one()
-                    my_cve = db.session.query(CommonVulnerabilitiesAndExposures).filter_by(CVEId=reprow_cveId).one()
-                    if VulnerabilityReport.query.join(VulnerabilityReportVulnerabilitiesLink).join(
-                            CommonVulnerabilitiesAndExposures).filter(
-                        (VulnerabilityReportVulnerabilitiesLink.vreport_id == my_json_report.id) & (
-                                VulnerabilityReportVulnerabilitiesLink.cve_id == my_cve.id)).first() is None:
-                        my_link = VulnerabilityReportVulnerabilitiesLink(vreport_id=my_json_report.id, cve_id=my_cve.id)
                     else:
-                        my_link = VulnerabilityReport.query.join(VulnerabilityReportVulnerabilitiesLink).join(
-                            CommonVulnerabilitiesAndExposures).filter(
-                            (VulnerabilityReportVulnerabilitiesLink.vreport_id == my_json_report.id) & (
-                                    VulnerabilityReportVulnerabilitiesLink.cve_id == my_cve.id)).first()
-                    my_link.VReport_assetID = item["host"]["asset"]["@asset_id"] if item["host"]["asset"][
-                                                                                        "@asset_id"] is not None else ""
-                    my_link.VReport_assetIp = obj["ip"] if obj["ip"] is not None else ""
-                    my_link.VReport_port = item["port"] if item["port"] is not None else ""
-                    my_link.comments = item["nvt"]["@oid"] if item["nvt"]["@oid"] is not None else ""
-                    db.session.add(my_link)
-                    print("Link Added")
-                    print("my_link")
-                    try:
-                        db.session.commit()
-                    except SQLAlchemyError as e:
-                        db.session.rollback()
-                        continue
-                    # call API for CVE and CWE information
-                    response = requests.get("https://services.nvd.nist.gov/rest/json/cve/1.0/" + item["nvt"]["cve"])
-                    if response is not None and response.status_code == 200:
-                        NVDreport = response.json()
-                        # update CVE table with API values
-                        impact = NVDreport['result']['CVE_Items'][0]['impact']
-                        my_cve = db.session.query(CommonVulnerabilitiesAndExposures).filter_by(CVEId=reprow_cveId).one()
-                        my_cve.severity = impact["baseMetricV2"]["severity"] if impact["baseMetricV2"][
-                                                                                    "severity"] is not None else ""
-                        my_cve.exploitabilityScore = impact["baseMetricV2"]['exploitabilityScore'] if \
-                            impact["baseMetricV2"][
-                                'exploitabilityScore'] is not None else ""
-                        my_cve.impactScore = impact["baseMetricV2"]['impactScore'] if impact["baseMetricV2"][
-                                                                                          'impactScore'] is not None else ""
-                        my_cve.obtainAllPrivilege = impact["baseMetricV2"]['obtainAllPrivilege'] if \
-                            impact["baseMetricV2"][
-                                'obtainAllPrivilege'] is not None else ""
-                        my_cve.obtainUserPrivilege = impact["baseMetricV2"]['obtainUserPrivilege'] if \
-                            impact["baseMetricV2"][
-                                'obtainUserPrivilege'] is not None else ""
-                        my_cve.obtainOtherPrivilege = impact["baseMetricV2"]['obtainOtherPrivilege'] if \
-                            impact["baseMetricV2"][
-                                'obtainOtherPrivilege'] is not None else ""
-                        my_cve.userInteractionRequired = impact["baseMetricV2"]['userInteractionRequired'] if \
-                            impact["baseMetricV2"][
-                                'userInteractionRequired'] is not None else ""
-                        my_cve.accessVector = impact['baseMetricV2']['cvssV2']['accessVector'] if impact[
-                                                                                                      'baseMetricV2'][
-                                                                                                      'cvssV2'][
-                                                                                                      'accessVector'] is not None else ""
-                        my_cve.accessComplexity = impact['baseMetricV2']['cvssV2']['accessComplexity'] if impact[
-                                                                                                              'baseMetricV2'][
-                                                                                                              'cvssV2'][
-                                                                                                              'accessComplexity'] is not None else ""
-                        my_cve.authentication = impact['baseMetricV2']['cvssV2']['authentication'] if impact[
-                                                                                                          'baseMetricV2'][
-                                                                                                          'cvssV2'][
-                                                                                                          'authentication'] is not None else ""
-                        my_cve.confidentialityImpact = impact['baseMetricV2']['cvssV2']['confidentialityImpact'] if \
-                            impact[
-                                'baseMetricV2']['cvssV2']['confidentialityImpact'] is not None else ""
-                        my_cve.integrityImpact = impact['baseMetricV2']['cvssV2']['integrityImpact'] if impact[
-                                                                                                            'baseMetricV2'][
-                                                                                                            'cvssV2'][
-                                                                                                            'integrityImpact'] is not None else ""
-                        my_cve.availabilityImpact = impact['baseMetricV2']['cvssV2']['availabilityImpact'] if impact[
-                                                                                                                  'baseMetricV2'][
-                                                                                                                  'cvssV2'][
-                                                                                                                  'availabilityImpact'] is not None else ""
-                        my_cve.baseScore = impact['baseMetricV2']['cvssV2']['baseScore'] if \
-                            impact['baseMetricV2']['cvssV2']['baseScore'] is not None else ""
-                        db.session.add(my_cve)
-                        # Get CWEs and link them with CVE
-                        for api_cve_desc, api_cveId, api_cweId in get_cwe_codes_from_API_report(NVDreport):
-                            my_cve.description = api_cve_desc
-                            cwe_number = api_cweId.split("CWE-", 1)[1].strip()
-                            if cwe_number.isnumeric():
-                                if db.session.query(
-                                        exists().where(CommonWeaknessEnumeration.CWEId == cwe_number)).scalar():
-                                    my_CWE_row = \
-                                        db.session.query(CommonWeaknessEnumeration).filter_by(CWEId=cwe_number)[0]
+                        for subitem in obj['external_references']:
+                            if subitem['source_name'] == "cve":
+                                reprow_cveId = subitem['source_name']
+                                if not db.session.query(
+                                        exists().where(CommonVulnerabilitiesAndExposures.CVEId == reprow_cveId)).scalar():
+                                    my_cve = CommonVulnerabilitiesAndExposures(CVEId=reprow_cveId)
                                 else:
-                                    my_CWE_row = CommonWeaknessEnumeration(CWEId=cwe_number)
-                                    db.session.add(my_CWE_row)
-                                if db.session.query(CommonVulnerabilitiesAndExposures).filter(
-                                        VulnerabilitiesWeaknessLink.cwe_id == my_CWE_row.id,
-                                        VulnerabilitiesWeaknessLink.cve_id == my_cve.id).first() is None:
-                                    my_cVecWe = VulnerabilitiesWeaknessLink(cve_id=my_cve.id, cwe_id=my_CWE_row.id,
-                                                                            date=datetime.utcnow())
+                                    my_cve = db.session.query(CommonVulnerabilitiesAndExposures).filter_by(CVEId=reprow_cveId).one()
+                                if VulnerabilityReport.query.join(VulnerabilityReportVulnerabilitiesLink).join(
+                                        CommonVulnerabilitiesAndExposures).filter(
+                                    (VulnerabilityReportVulnerabilitiesLink.vreport_id == my_json_report.id) & (
+                                            VulnerabilityReportVulnerabilitiesLink.cve_id == my_cve.id)).first() is None:
+                                    my_link = VulnerabilityReportVulnerabilitiesLink(vreport_id=my_json_report.id, cve_id=my_cve.id)
                                 else:
-                                    my_cVecWe = db.session.query(CommonVulnerabilitiesAndExposures).filter(
-                                        VulnerabilitiesWeaknessLink.cwe_id == my_CWE_row.id,
-                                        VulnerabilitiesWeaknessLink.cve_id == my_cve.id).first()
-                                    my_cVecWe.date = datetime.utcnow()
-                                db.session.add(my_cVecWe)
-                        db.session.commit()
+                                    my_link = VulnerabilityReport.query.join(VulnerabilityReportVulnerabilitiesLink).join(
+                                        CommonVulnerabilitiesAndExposures).filter(
+                                        (VulnerabilityReportVulnerabilitiesLink.vreport_id == my_json_report.id) & (
+                                                VulnerabilityReportVulnerabilitiesLink.cve_id == my_cve.id)).first()
+                                my_link.VReport_assetID = obj['target_id'] if obj['target_id'] is not None else ""
+                                my_link.VReport_assetIp = my_asset_IP if my_asset_IP is not None else ""
+                                my_link.VReport_port = item['vulnerable_port'] if item['vulnerable_port'] is not None else ""
+                                my_link.comments = item['threat_level'] if item['threat_level'] is not None else ""
+                                db.session.add(my_link)
+                                try:
+                                    db.session.commit()
+                                except SQLAlchemyError as e:
+                                    db.session.rollback()
+                                    continue
+                                update_cve_scores(reprow_cveId)
+
             return 1
 
+# region Call NVD API to update CVE scores and get CWEs
+# region Call NVD API to update CVE scores
+def update_cve_scores(cveId):
+    response = requests.get("https://services.nvd.nist.gov/rest/json/cve/1.0/" + cveId)
+    if response is not None and response.status_code == 200:
+        NVDreport = response.json()
+        # update CVE table with API values
+        impact = NVDreport['result']['CVE_Items'][0]['impact']
+        my_cve = db.session.query(CommonVulnerabilitiesAndExposures).filter_by(CVEId=cveId).one()
+        if impact['baseMetricV3']  is not None:
+            my_cve.exploitabilityScore = impact['baseMetricV3']['exploitabilityScore'] if impact['baseMetricV3']['exploitabilityScore'] is not None else ""
+            my_cve.impactScore = impact['baseMetricV3']['impactScore'] if impact['baseMetricV3']['impactScore'] is not None else ""
+            my_cve.accessVector = impact['baseMetricV3']['cvssV3']['attackVector'] if impact[
+                                                                                          'baseMetricV3'][
+                                                                                          'cvssV3'][
+                                                                                          'attackVector'] is not None else ""
+            my_cve.accessComplexity = impact['baseMetricV3']['cvssV3']['attackComplexity'] if impact[
+                                                                                                  'baseMetricV3'][
+                                                                                                  'cvssV3'][
+                                                                                                  'attackComplexity'] is not None else ""
+            my_cve.obtainAllPrivilege = impact['baseMetricV3']['cvssV3']['obtainAllPrivilege'] if impact['baseMetricV3']['cvssV3']['obtainAllPrivilege'] is not None else ""
+            my_cve.userInteractionRequired = impact['baseMetricV3']['cvssV3']['userInteractionRequired'] if impact['baseMetricV3']['cvssV3']['userInteractionRequired'] is not None else ""
+            my_cve.confidentialityImpact = impact['baseMetricV3']['cvssV3']['confidentialityImpact'] if impact['baseMetricV3']['cvssV3']['confidentialityImpact'] is not None else ""
+            my_cve.integrityImpact = impact['baseMetricV3']['cvssV3']['integrityImpact'] if impact['baseMetricV3']['cvssV3']['integrityImpact'] is not None else ""
+            my_cve.availabilityImpact = impact['baseMetricV3']['cvssV3']['availabilityImpact'] if impact['baseMetricV3']['cvssV3']['availabilityImpact'] is not None else ""
+            my_cve.baseScore = impact['baseMetricV3']['cvssV3']['baseScore'] if impact['baseMetricV3']['cvssV3']['baseScore'] is not None else ""
+            my_cve.severity = impact['baseMetricV3']['cvssV3']['baseSeverity'] if impact['baseMetricV3']['cvssV3'][
+                                                                                      'baseSeverity'] is not None else ""
+        else:
+            my_cve.severity = impact['baseMetricV2']['severity'] if impact['baseMetricV2']['severity'] is not None else ""
+            my_cve.exploitabilityScore = impact['baseMetricV2']['exploitabilityScore'] if \
+                impact['baseMetricV2'][
+                    'exploitabilityScore'] is not None else ""
+            my_cve.impactScore = impact['baseMetricV2']['impactScore'] if impact["baseMetricV2"][
+                                                                              'impactScore'] is not None else ""
+            my_cve.obtainAllPrivilege = impact['baseMetricV2']['obtainAllPrivilege'] if \
+                impact['baseMetricV2'][
+                    'obtainAllPrivilege'] is not None else ""
+            my_cve.obtainUserPrivilege = impact["baseMetricV2"]['obtainUserPrivilege'] if \
+                impact['baseMetricV2'][
+                    'obtainUserPrivilege'] is not None else ""
+            my_cve.obtainOtherPrivilege = impact["baseMetricV2"]['obtainOtherPrivilege'] if \
+                impact['baseMetricV2'][
+                    'obtainOtherPrivilege'] is not None else ""
+            my_cve.userInteractionRequired = impact["baseMetricV2"]['userInteractionRequired'] if \
+                impact['baseMetricV2'][
+                    'userInteractionRequired'] is not None else ""
+            my_cve.accessVector = impact['baseMetricV2']['cvssV2']['accessVector'] if impact[
+                                                                                          'baseMetricV2'][
+                                                                                          'cvssV2'][
+                                                                                          'accessVector'] is not None else ""
+            my_cve.accessComplexity = impact['baseMetricV2']['cvssV2']['accessComplexity'] if impact[
+                                                                                                  'baseMetricV2'][
+                                                                                                  'cvssV2'][
+                                                                                                  'accessComplexity'] is not None else ""
+            my_cve.authentication = impact['baseMetricV2']['cvssV2']['authentication'] if impact[
+                                                                                              'baseMetricV2'][
+                                                                                              'cvssV2'][
+                                                                                              'authentication'] is not None else ""
+            my_cve.confidentialityImpact = impact['baseMetricV2']['cvssV2']['confidentialityImpact'] if \
+                impact[
+                    'baseMetricV2']['cvssV2']['confidentialityImpact'] is not None else ""
+            my_cve.integrityImpact = impact['baseMetricV2']['cvssV2']['integrityImpact'] if impact[
+                                                                                                'baseMetricV2'][
+                                                                                                'cvssV2'][
+                                                                                                'integrityImpact'] is not None else ""
+            my_cve.availabilityImpact = impact['baseMetricV2']['cvssV2']['availabilityImpact'] if impact[
+                                                                                                      'baseMetricV2'][
+                                                                                                      'cvssV2'][
+                                                                                                      'availabilityImpact'] is not None else ""
+            my_cve.baseScore = impact['baseMetricV2']['cvssV2']['baseScore'] if impact['baseMetricV2']['cvssV2']['baseScore'] is not None else ""
+        db.session.add(my_cve)
 
-# endregion
+        # Get CWEs and link them with CVE
+        for api_cve_desc, api_cveId, api_cweId in get_cwe_codes_from_API_report(NVDreport):
+            my_cve.description = api_cve_desc
+            cwe_number = api_cweId.split("CWE-", 1)[1].strip()
+            if cwe_number.isnumeric():
+                if db.session.query(
+                        exists().where(CommonWeaknessEnumeration.CWEId == cwe_number)).scalar():
+                    my_CWE_row = \
+                        db.session.query(CommonWeaknessEnumeration).filter_by(CWEId=cwe_number)[0]
+                else:
+                    my_CWE_row = CommonWeaknessEnumeration(CWEId=cwe_number)
+                    db.session.add(my_CWE_row)
+                if db.session.query(CommonVulnerabilitiesAndExposures).filter(
+                        VulnerabilitiesWeaknessLink.cwe_id == my_CWE_row.id,
+                        VulnerabilitiesWeaknessLink.cve_id == my_cve.id).first() is None:
+                    my_cVecWe = VulnerabilitiesWeaknessLink(cve_id=my_cve.id, cwe_id=my_CWE_row.id,
+                                                            date=datetime.utcnow())
+                else:
+                    my_cVecWe = db.session.query(CommonVulnerabilitiesAndExposures).filter(
+                        VulnerabilitiesWeaknessLink.cwe_id == my_CWE_row.id,
+                        VulnerabilitiesWeaknessLink.cve_id == my_cve.id).first()
+                    my_cVecWe.date = datetime.utcnow()
+                db.session.add(my_cVecWe)
+        try:
+            db.session.commit()
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return -1
+        return 1
 # endregion
 
 # region NVD API get_cwe_codes
@@ -257,8 +283,9 @@ def get_cwe_codes_from_API_report(APIreport):
             for descr in problem['description']:
                 yield itemdescr, item["cve"]["CVE_data_meta"]["ID"], descr["value"]
 
-
-# endregion
+# endregion CWE
+# endregion CVE & CWE
+# endregion VAaaS report
 
 # region get_assets
 # temporarily from VaasReport table
@@ -281,6 +308,7 @@ def get_assets():
 #     else:
 #         return -1
 
+# endregion
 
 # region get Recommended CVEs for an asset
 def get_cve_recommendations(asset_id):

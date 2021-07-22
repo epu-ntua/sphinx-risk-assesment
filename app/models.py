@@ -7,8 +7,9 @@ class VulnerabilityReport(db.Model):
     __tablename__ = 'vulnerability_report'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     reportId = db.Column(db.String(), index=True, unique=True)
-    creation_time = db.Column(db.String())
-    name = db.Column(db.String())
+    scan_start_time = db.Column(db.String())
+    scan_end_time = db.Column(db.String())
+    target_name = db.Column(db.String())
     comments = db.Column(db.String())
 
     # CVEs = db.relationship("VReportCVELink", back_populates="vreport_s")
@@ -485,6 +486,7 @@ class RepoAsset(db.Model):
     goodwill = db.Column(db.Integer)
     last_touch_date = db.Column(db.DateTime)
     type_fk = db.Column(db.Integer, db.ForeignKey('repo_assets_type.id'))
+    integrity = db.Column(db.Integer)
     services = db.relationship("RepoService", secondary=repo_asset_repo_service_association_table,
                                back_populates="assets")
     # risk_assessment = db.relationship("RepoRiskAssessment", secondary=repo_risk_assessment_repo_asset_association_table,

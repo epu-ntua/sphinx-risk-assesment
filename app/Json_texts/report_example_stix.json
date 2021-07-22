@@ -1,0 +1,476 @@
+{
+    "type": "bundle",
+    "id": "bundle--8c854fe5-e6e0-40ed-8b69-4da055e5024b",
+    "objects": [
+        {
+            "type": "identity",
+            "spec_version": "2.1",
+            "id": "identity--a8d7c797-223c-4b0f-8c83-79a93a01aee2",
+            "created": "2021-02-10T10:34:29.920268Z",
+            "modified": "2021-02-10T10:34:29.920268Z",
+            "name": "admin"
+        },
+        {
+            "type": "ipv4-addr",
+            "spec_version": "2.1",
+            "id": "ipv4-addr--0474009e-5dc7-5a0b-bef7-d84c9839c500",
+            "value": "10.0.255.106"
+        },
+        {
+            "type": "course-of-action",
+            "spec_version": "2.1",
+            "id": "course-of-action--fc155b8f-953b-44f5-b5d7-d58daa2bfafb",
+            "created": "2021-02-10T10:34:29.922263Z",
+            "modified": "2021-02-10T10:34:29.922263Z",
+            "name": "WillNotFix",
+            "description": "No known solution was made available for at least one year since the disclosure of this vulnerability.\nLikely none will be provided anymore.\nGeneral solution options are to upgrade to a newer release, disable respective features, remove the product or replace the product by another one."
+        },
+        {
+            "type": "relationship",
+            "spec_version": "2.1",
+            "id": "relationship--a48e8b7f-8482-4f96-9f88-44d3d3392635",
+            "created": "2021-02-10T10:34:29.922263Z",
+            "modified": "2021-02-10T10:34:29.922263Z",
+            "relationship_type": "mitigates",
+            "source_ref": "course-of-action--fc155b8f-953b-44f5-b5d7-d58daa2bfafb",
+            "target_ref": "vulnerability--c3fc4516-aa2f-4d20-8ada-ed4b846a9eea"
+        },
+        {
+            "type": "vulnerability",
+            "spec_version": "2.1",
+            "id": "vulnerability--c3fc4516-aa2f-4d20-8ada-ed4b846a9eea",
+            "created": "2021-02-10T10:34:29.921266Z",
+            "modified": "2021-02-10T10:34:29.921266Z",
+            "name": "Apache Axis2 1.6.2 Multiple Vulnerabilities",
+            "external_references": [
+                {
+                    "source_name": "cve",
+                    "external_id": "CVE-2012-5785"
+                },
+                {
+                    "source_name": "cve",
+                    "external_id": "CVE-2012-4418"
+                },
+                {
+                    "source_name": "cve",
+                    "external_id": "CVE-2012-5351"
+                },
+                {
+                    "source_name": "bid",
+                    "external_id": "56408"
+                },
+                {
+                    "source_name": "bid",
+                    "external_id": "55508"
+                },
+                {
+                    "source_name": "url",
+                    "external_id": "https://www.securityfocus.com/bid/56408"
+                },
+                {
+                    "source_name": "url",
+                    "external_id": "https://www.securityfocus.com/bid/55508"
+                },
+                {
+                    "source_name": "url",
+                    "external_id": "http://ws.apache.org/axis2/"
+                },
+                {
+                    "source_name": "url",
+                    "external_id": "https://issues.apache.org/jira/browse/AXIS2C-1607"
+                }
+            ],
+            "cvss": "6.4",
+            "threat_level": "Medium",
+            "vulnerable_port": "8282/tcp"
+        },
+        {
+            "type": "course-of-action",
+            "spec_version": "2.1",
+            "id": "course-of-action--df8d296e-2066-4eb1-b555-40d43a3cef13",
+            "created": "2021-02-10T10:34:29.922263Z",
+            "modified": "2021-02-10T10:34:29.922263Z",
+            "name": "Mitigation",
+            "description": "Change the password."
+        },
+        {
+            "type": "relationship",
+            "spec_version": "2.1",
+            "id": "relationship--36dde2ed-6b90-44e0-83f6-75718bae389f",
+            "created": "2021-02-10T10:34:29.922263Z",
+            "modified": "2021-02-10T10:34:29.922263Z",
+            "relationship_type": "mitigates",
+            "source_ref": "course-of-action--df8d296e-2066-4eb1-b555-40d43a3cef13",
+            "target_ref": "vulnerability--7ed5a589-c324-4747-aaab-abdc1ee18a19"
+        },
+        {
+            "type": "vulnerability",
+            "spec_version": "2.1",
+            "id": "vulnerability--7ed5a589-c324-4747-aaab-abdc1ee18a19",
+            "created": "2021-02-10T10:34:29.922263Z",
+            "modified": "2021-02-10T10:34:29.922263Z",
+            "name": "Apache Axis2 axis2-admin default credentials",
+            "external_references": [
+                {
+                    "source_name": "cve",
+                    "external_id": "CVE-2010-0219"
+                },
+                {
+                    "source_name": "bid",
+                    "external_id": "44055"
+                },
+                {
+                    "source_name": "url",
+                    "external_id": "https://www.securityfocus.com/bid/44055"
+                },
+                {
+                    "source_name": "url",
+                    "external_id": "http://www.exploit-db.com/exploits/15869"
+                }
+            ],
+            "cvss": "10.0",
+            "threat_level": "High",
+            "vulnerable_port": "8282/tcp"
+        },
+        {
+            "type": "vulnerability",
+            "spec_version": "2.1",
+            "id": "vulnerability--defeffa8-a514-4783-8ff9-e70971b11d39",
+            "created": "2021-02-10T10:34:29.922263Z",
+            "modified": "2021-02-10T10:34:29.922263Z",
+            "name": "Apache Axis2 Detection",
+            "external_references": [
+                {
+                    "source_name": "url",
+                    "external_id": "http://ws.apache.org/axis2/"
+                }
+            ],
+            "cvss": "0.0",
+            "threat_level": "Log",
+            "vulnerable_port": "8282/tcp"
+        },
+        {
+            "type": "vulnerability",
+            "spec_version": "2.1",
+            "id": "vulnerability--fafdfe98-1b1c-4317-b132-56511fc059f9",
+            "created": "2021-02-10T10:34:29.922263Z",
+            "modified": "2021-02-10T10:34:29.922263Z",
+            "name": "Apache Axis2 Web Services Detection",
+            "external_references": [
+                {
+                    "source_name": "url",
+                    "external_id": "http://ws.apache.org/axis2/"
+                }
+            ],
+            "cvss": "0.0",
+            "threat_level": "Log",
+            "vulnerable_port": "8282/tcp"
+        },
+        {
+            "type": "vulnerability",
+            "spec_version": "2.1",
+            "id": "vulnerability--268c3553-07bf-4a41-bcaa-787cc761f9a9",
+            "created": "2021-02-10T10:34:29.922263Z",
+            "modified": "2021-02-10T10:34:29.922263Z",
+            "name": "Apache HTTP/Web Server Detection (HTTP)",
+            "cvss": "0.0",
+            "threat_level": "Log",
+            "vulnerable_port": "8020/tcp"
+        },
+        {
+            "type": "vulnerability",
+            "spec_version": "2.1",
+            "id": "vulnerability--8295e0f6-ab48-4df4-9649-570029bbcd43",
+            "created": "2021-02-10T10:34:29.92326Z",
+            "modified": "2021-02-10T10:34:29.92326Z",
+            "name": "Apache HTTP/Web Server Detection (HTTP)",
+            "cvss": "0.0",
+            "threat_level": "Log",
+            "vulnerable_port": "8383/tcp"
+        },
+        {
+            "type": "vulnerability",
+            "spec_version": "2.1",
+            "id": "vulnerability--2ac81652-40ed-49a2-b22b-7839d00d4906",
+            "created": "2021-02-10T10:34:29.92326Z",
+            "modified": "2021-02-10T10:34:29.92326Z",
+            "name": "Apache JServ Protocol (AJP) v1.3 Detection",
+            "cvss": "0.0",
+            "threat_level": "Log",
+            "vulnerable_port": "8019/tcp"
+        },
+        {
+            "type": "vulnerability",
+            "spec_version": "2.1",
+            "id": "vulnerability--a9fc358a-5a64-4cb2-ad1d-36b8e496642c",
+            "created": "2021-02-10T10:34:29.92326Z",
+            "modified": "2021-02-10T10:34:29.92326Z",
+            "name": "Apache JServ Protocol (AJP) v1.3 Detection",
+            "cvss": "0.0",
+            "threat_level": "Log",
+            "vulnerable_port": "8009/tcp"
+        },
+        {
+            "type": "course-of-action",
+            "spec_version": "2.1",
+            "id": "course-of-action--e627badd-3fb5-4d70-9185-e62c52fdfd07",
+            "created": "2021-02-10T10:34:29.92326Z",
+            "modified": "2021-02-10T10:34:29.92326Z",
+            "name": "VendorFix",
+            "description": "Upgrade to Apache Tomcat version 9.0.10 or\n  8.5.32 or 8.0.53 or 7.0.90 or later. Please see the references for more information."
+        },
+        {
+            "type": "relationship",
+            "spec_version": "2.1",
+            "id": "relationship--b3ec6b57-84d6-4752-96ff-a0aba24f66e9",
+            "created": "2021-02-10T10:34:29.92326Z",
+            "modified": "2021-02-10T10:34:29.92326Z",
+            "relationship_type": "mitigates",
+            "source_ref": "course-of-action--e627badd-3fb5-4d70-9185-e62c52fdfd07",
+            "target_ref": "vulnerability--ba73bf81-0d10-4561-9b0e-3bc990febaf8"
+        },
+        {
+            "type": "vulnerability",
+            "spec_version": "2.1",
+            "id": "vulnerability--ba73bf81-0d10-4561-9b0e-3bc990febaf8",
+            "created": "2021-02-10T10:34:29.92326Z",
+            "modified": "2021-02-10T10:34:29.92326Z",
+            "name": "Apache Tomcat 'Hostname Verification' Security Bypass Vulnerability (Windows)",
+            "external_references": [
+                {
+                    "source_name": "cve",
+                    "external_id": "CVE-2018-8034"
+                },
+                {
+                    "source_name": "url",
+                    "external_id": "http://mail-archives.us.apache.org/mod_mbox/www-announce/201807.mbox/%3C20180722091057.GA70283@minotaur.apache.org%3E"
+                },
+                {
+                    "source_name": "url",
+                    "external_id": "http://tomcat.apache.org/security-9.html#Fixed_in_Apache_Tomcat_9.0.10"
+                },
+                {
+                    "source_name": "url",
+                    "external_id": "http://tomcat.apache.org/security-8.html#Fixed_in_Apache_Tomcat_8.0.53"
+                },
+                {
+                    "source_name": "url",
+                    "external_id": "http://tomcat.apache.org/security-8.html#Fixed_in_Apache_Tomcat_8.5.32"
+                },
+                {
+                    "source_name": "url",
+                    "external_id": "http://tomcat.apache.org/security-7.html#Fixed_in_Apache_Tomcat_7.0.90"
+                },
+                {
+                    "source_name": "cert-bund",
+                    "external_id": "DFN-CERT-2019-2418"
+                },
+                {
+                    "source_name": "cert-bund",
+                    "external_id": "DFN-CERT-2019-1627"
+                },
+                {
+                    "source_name": "cert-bund",
+                    "external_id": "DFN-CERT-2019-1237"
+                },
+                {
+                    "source_name": "cert-bund",
+                    "external_id": "DFN-CERT-2019-0951"
+                },
+                {
+                    "source_name": "cert-bund",
+                    "external_id": "DFN-CERT-2019-0451"
+                },
+                {
+                    "source_name": "cert-bund",
+                    "external_id": "DFN-CERT-2019-0147"
+                },
+                {
+                    "source_name": "cert-bund",
+                    "external_id": "DFN-CERT-2018-2165"
+                },
+                {
+                    "source_name": "cert-bund",
+                    "external_id": "DFN-CERT-2018-2142"
+                },
+                {
+                    "source_name": "cert-bund",
+                    "external_id": "DFN-CERT-2018-1753"
+                },
+                {
+                    "source_name": "cert-bund",
+                    "external_id": "DFN-CERT-2018-1471"
+                },
+                {
+                    "source_name": "cert-bund",
+                    "external_id": "DFN-CERT-2018-1443"
+                },
+                {
+                    "source_name": "cert-bund",
+                    "external_id": "DFN-CERT-2018-1262"
+                }
+            ],
+            "cvss": "5.0",
+            "threat_level": "Medium",
+            "vulnerable_port": "8282/tcp"
+        },
+        {
+            "type": "course-of-action",
+            "spec_version": "2.1",
+            "id": "course-of-action--f186ea41-c00d-45ef-9e7f-c026ed1b8f05",
+            "created": "2021-02-10T10:34:29.924258Z",
+            "modified": "2021-02-10T10:34:29.924258Z",
+            "name": "VendorFix",
+            "description": "Upgrade to version 7.0.70, or 8.0.36,\n  or 8.5.3, or 9.0.0.M7, or later."
+        },
+        {
+            "type": "relationship",
+            "spec_version": "2.1",
+            "id": "relationship--6ab6c066-8afd-4157-ab3d-aa2650f7f245",
+            "created": "2021-02-10T10:34:29.924258Z",
+            "modified": "2021-02-10T10:34:29.924258Z",
+            "relationship_type": "mitigates",
+            "source_ref": "course-of-action--f186ea41-c00d-45ef-9e7f-c026ed1b8f05",
+            "target_ref": "vulnerability--30e91a3a-f9cc-47c1-999a-db56f219d2db"
+        },
+        {
+            "type": "vulnerability",
+            "spec_version": "2.1",
+            "id": "vulnerability--30e91a3a-f9cc-47c1-999a-db56f219d2db",
+            "created": "2021-02-10T10:34:29.92326Z",
+            "modified": "2021-02-10T10:34:29.92326Z",
+            "name": "Apache Tomcat 'MultipartStream' Class Denial of Service Vulnerability (Windows)",
+            "external_references": [
+                {
+                    "source_name": "cve",
+                    "external_id": "CVE-2016-3092"
+                },
+                {
+                    "source_name": "bid",
+                    "external_id": "91453"
+                },
+                {
+                    "source_name": "url",
+                    "external_id": "http://tomcat.apache.org/security-7.html"
+                },
+                {
+                    "source_name": "url",
+                    "external_id": "http://tomcat.apache.org/security-8.html"
+                },
+                {
+                    "source_name": "url",
+                    "external_id": "http://tomcat.apache.org/security-9.html"
+                },
+                {
+                    "source_name": "cert-bund",
+                    "external_id": "DFN-CERT-2018-2554"
+                },
+                {
+                    "source_name": "cert-bund",
+                    "external_id": "DFN-CERT-2018-0729"
+                },
+                {
+                    "source_name": "cert-bund",
+                    "external_id": "DFN-CERT-2017-1821"
+                },
+                {
+                    "source_name": "cert-bund",
+                    "external_id": "DFN-CERT-2017-1236"
+                },
+                {
+                    "source_name": "cert-bund",
+                    "external_id": "DFN-CERT-2017-1095"
+                },
+                {
+                    "source_name": "cert-bund",
+                    "external_id": "DFN-CERT-2017-0675"
+                },
+                {
+                    "source_name": "cert-bund",
+                    "external_id": "DFN-CERT-2017-0404"
+                },
+                {
+                    "source_name": "cert-bund",
+                    "external_id": "DFN-CERT-2016-2104"
+                },
+                {
+                    "source_name": "cert-bund",
+                    "external_id": "DFN-CERT-2016-1905"
+                },
+                {
+                    "source_name": "cert-bund",
+                    "external_id": "DFN-CERT-2016-1823"
+                },
+                {
+                    "source_name": "cert-bund",
+                    "external_id": "DFN-CERT-2016-1407"
+                },
+                {
+                    "source_name": "cert-bund",
+                    "external_id": "DFN-CERT-2016-1068"
+                },
+                {
+                    "source_name": "cert-bund",
+                    "external_id": "DFN-CERT-2016-1059"
+                }
+            ],
+            "cvss": "7.8",
+            "threat_level": "High",
+            "vulnerable_port": "8282/tcp"
+        }
+    ],
+    "errors": {
+        "count": "2",
+        "error": [
+            {
+                "description": "NVT timed out after 600 seconds.",
+                "host": {
+                    "#text": "10.0.255.106",
+                    "asset": {
+                        "@asset_id": "d7d444a0-2cfc-4324-848a-71bc26b1a94a"
+                    }
+                },
+                "nvt": {
+                    "@oid": "1.3.6.1.4.1.25623.1.0.804489",
+                    "cvss_base": "10.0",
+                    "name": "GNU Bash Environment Variable Handling Shell Remote Command Execution Vulnerability",
+                    "type": "nvt"
+                },
+                "port": "general/tcp",
+                "scan_nvt_version": null,
+                "severity": "-3"
+            },
+            {
+                "description": "NVT timed out after 600 seconds.",
+                "host": {
+                    "#text": "10.0.255.106",
+                    "asset": {
+                        "@asset_id": "d7d444a0-2cfc-4324-848a-71bc26b1a94a"
+                    }
+                },
+                "nvt": {
+                    "@oid": "1.3.6.1.4.1.25623.1.0.804489",
+                    "cvss_base": "10.0",
+                    "name": "GNU Bash Environment Variable Handling Shell Remote Command Execution Vulnerability",
+                    "type": "nvt"
+                },
+                "port": "general/tcp",
+                "scan_nvt_version": null,
+                "severity": "-3"
+            }
+        ]
+    },
+    "gmp_version": "20.08",
+    "scan_end_time": "2020-12-23T10:18:07Z",
+    "scan_start_time": "2020-12-23T07:42:33Z",
+    "scan_status": "Done",
+    "severity": {
+        "filtered": "10.0",
+        "full": "10.0"
+    },
+    "target_id": "40444803-1dac-4447-b21f-4ea78f3b12c1",
+    "target_name": "hp",
+    "task_id": "task--d59e9016-fff2-4fb6-9fa7-a4a572fa899d",
+    "task_name": "HP",
+    "vulns": "185"
+}

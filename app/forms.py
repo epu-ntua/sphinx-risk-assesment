@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm, Form
 from wtforms import StringField, PasswordField, IntegerField, DateTimeField, BooleanField, SubmitField, FieldList, \
-    FormField
-from wtforms.validators import DataRequired, Optional
+    FormField, SelectField
+from wtforms.validators import DataRequired, Optional, InputRequired
 from wtforms.widgets import HiddenInput
 from wtforms_sqlalchemy.fields import QuerySelectField
 from app.models import *
@@ -152,7 +152,7 @@ class FormAddRepoResponse(FlaskForm):
 
 class FormAddRepoAsset(FlaskForm):
     id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
-    name = StringField('Name', validators=[DataRequired()])
+    name = StringField('Name', validators=[InputRequired()])
     description = StringField('Description', validators=[Optional()])
     owner = QuerySelectField(query_factory=query_generic_repo_actor, allow_blank=True, get_label='name')
     location = StringField('Location', validators=[Optional()])
@@ -175,4 +175,5 @@ class FormAddRepoAsset(FlaskForm):
     last_touch_date = DateTimeField("Last Touch", validators=[Optional()])
     type_fk = QuerySelectField(query_factory=query_generic_repo_type, allow_blank=True, get_label='name',
                                validators=[Optional()])
+    # integrity = SelectField("Integrity", choices = {"0","1","2"}, validators = [InputRequired()])
     submit = SubmitField("Add new asset")

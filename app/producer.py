@@ -239,6 +239,10 @@ def get_kafka_data_print_test(kafka_topic):
                 print("--------------Kafka Received: dtm-alert -------------------------")
                 #print(dat)
                 print("-------------------------------------------------------------------------", flush = True)
+            elif msg.topic == "vaaas - reports":
+                print("--------------Kafka Received: vaaas - reports -------------------------")
+                # print(dat)
+                print("-------------------------------------------------------------------------", flush=True)
             else:
                 print("--------------Kafka Received: other topic -------------------------")
                 #print(dat)

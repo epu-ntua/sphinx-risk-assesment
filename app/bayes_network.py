@@ -1327,6 +1327,7 @@ print("----------------------------------")
 
 print(ie.posterior(obj1))
 print(ie.posterior(obj2))
+print(ie.posterior(obj5))
 print(ie.posteriorUtility(util1))
 print(ie.posteriorUtility(util2))
 # gum.ShaferShenoyLIMIDInference
