@@ -11,6 +11,8 @@
     <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.js"></script>
 
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.css">
+
+
     {% block head %}
     {% endblock %}
 </head>
@@ -191,6 +193,10 @@
                 </a>
                 <!--            Submenu content -->
                 <div id='submenu5' class="collapse sidebar-submenu">
+                    <a href="http://{{ serverAddress }}:{{ serverPort }}/repo/risk/configuration/threat/exposure/1/"
+                       class="list-group-item list-group-item-action bg-dark text-white">
+                        <span class="menu-collapsed">Threat-Asset Exposure Configuration</span>
+                    </a>
                     <a href="http://{{ serverAddress }}:{{ serverPort }}/repo/risk/configuration/threat/1/"
                        class="list-group-item list-group-item-action bg-dark text-white">
                         <span class="menu-collapsed">Threat-Asset Configuration</span>
@@ -207,15 +213,47 @@
                        class="list-group-item list-group-item-action bg-dark text-white">
                         <span class="menu-collapsed">Objectives Utility Configuration</span>
                     </a>
+                    <a href="http://{{ serverAddress }}:{{ serverPort }}/repo/risk/configuration/utility/-1/"
+                       class="list-group-item list-group-item-action bg-dark text-white">
+                        <span class="menu-collapsed">Utility Configuration </span>
+                    </a>
                 </div>
 
-                <a href="http://{{ serverAddress }}:{{ serverPort }}/repo/risk/assessment/1/asset/-1/"
-                   class="bg-dark list-group-item list-group-item-action">
+
+                 <a href="#submenu6" data-toggle="collapse" aria-expanded="false"
+                   class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
                     <div class="d-flex w-100 justify-content-start align-items-center">
-                        <span class="fa fa-binoculars fa-fw mr-3"></span>
+                        <span class="fa fa-cogs fa-fw mr-3"></span>
                         <span class="menu-collapsed">Risk Assessment</span>
+                        <span class="submenu-icon ml-auto"></span>
                     </div>
                 </a>
+                <!--            Submenu content -->
+                <div id='submenu6' class="collapse sidebar-submenu">
+                    <a href="http://{{ serverAddress }}:{{ serverPort }}/repo/risk/assessment/1/asset/-1/"
+                       class="list-group-item list-group-item-action bg-dark text-white">
+                        <span class="menu-collapsed">Risk Assessment Initialisation</span>
+                    </a>
+                    {#                    <a href="http://{{ serverAddress }}:{{ serverPort }}/gira_overview/gira_threat_materialisation/"#}
+                    {#                       class="list-group-item list-group-item-action bg-dark text-white">#}
+                    {#                        <span class="menu-collapsed">Asset-Consequences Configuration</span>#}
+                    {#                    </a>#}
+                    <a href="http://{{ serverAddress }}:{{ serverPort }}/repo/risk/reports/"
+                       class="list-group-item list-group-item-action bg-dark text-white">
+                        <span class="menu-collapsed">Risk Assessment Reports </span>
+                    </a>
+                </div>
+
+
+{#                <a href="http://{{ serverAddress }}:{{ serverPort }}/repo/risk/assessment/1/asset/-1/"#}
+{#                   class="bg-dark list-group-item list-group-item-action">#}
+{#                    <div class="d-flex w-100 justify-content-start align-items-center">#}
+{#                        <span class="fa fa-binoculars fa-fw mr-3"></span>#}
+{#                        <span class="menu-collapsed">Risk Assessment</span>#}
+{#                    </div>#}
+{#                </a>#}
+{#                #}
+
                 {##}
                 {#                <a href="http://{{ serverAddress }}:{{ serverPort }}/assets"#}
                 {#                   class="bg-dark list-group-item list-group-item-action">#}

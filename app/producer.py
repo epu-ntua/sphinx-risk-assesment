@@ -201,13 +201,14 @@ def get_kafka_data(kafka_topic):
 def get_kafka_data_print_test(kafka_topic):
     # #KAFKA CLIENT CONSUMER
     #   try:
-    print("Trying Consume: ", kafka_topic, flush = True)
+    # print("Trying Consume: ", kafka_topic, flush = True)
     print(BOOTSTRAP_SERVERS)
     print(path_to_kafka_cert)
     print(TokenProvider())
-    print("----------Consume Info End ", kafka_topic ,"--------------------------------")
+    print("----------Consume Info End ""--------------------------------")
     consumer = KafkaConsumer(bootstrap_servers=BOOTSTRAP_SERVERS,
-                             #auto_offset_reset='earliest',
+                             auto_offset_reset='earliest',
+                             # enable_auto_commit=False,
                              security_protocol='SASL_SSL',
                              sasl_mechanism='OAUTHBEARER',
                              sasl_oauth_token_provider=TokenProvider(),
@@ -215,12 +216,22 @@ def get_kafka_data_print_test(kafka_topic):
                              api_version=(2, 5, 0)
                              )
     # 'python-topic' default kafka topic
-    consumer.subscribe(["rcra-report-topic", "rcra-report-topic-test", "dtm-alert"])
+    consumer.subscribe([
+        "rcra-report-topic",
+        "rcra-report-topic-test",
+        "dtm-alert",
+        "vaaas-report",
+        "vaaas-reports",
+        "siem-alerts",
+        "siem-input-events"
+    ])
     # except KafkaError:
     #   print("KafkaConsumer error when initialising")
     #  return "Encountered Error"
 
+    print("Reading Consumer")
     for msg in consumer:
+        print("Reading")
         if msg:
             dat = {
                 "msg" : msg
@@ -239,8 +250,12 @@ def get_kafka_data_print_test(kafka_topic):
                 print("--------------Kafka Received: dtm-alert -------------------------")
                 #print(dat)
                 print("-------------------------------------------------------------------------", flush = True)
-            elif msg.topic == "vaaas - reports":
-                print("--------------Kafka Received: vaaas - reports -------------------------")
+            elif msg.topic == "vaaas-report":
+                print("--------------Kafka Received: vaaas-report -------------------------")
+                # print(dat)
+                print("-------------------------------------------------------------------------", flush=True)
+            elif msg.topic == "vaaas-reports":
+                print("--------------Kafka Received: vaaas-reports -------------------------")
                 # print(dat)
                 print("-------------------------------------------------------------------------", flush=True)
             else:

@@ -39,7 +39,7 @@ numpy==1.20.3
 openpyxl==3.0.4
 ordered-set==4.0.2
 Pillow==8.2.0
-pyAgrum==0.20.2
+pyAgrum==0.20.3
 pykafka==2.8.0
 pyparsing==2.4.7
 pyrsistent==0.17.3

@@ -371,6 +371,8 @@ class RepoRiskAssessment(db.Model):
     repo_asset_id = db.Column(db.Integer, db.ForeignKey('repo_asset.id'))
     asset = db.relationship("RepoAsset", back_populates="risk_assessment")
     threat = db.relationship("RepoThreat", back_populates="risk_assessment")
+    reports = db.relationship("RepoRiskAssessmentReports", back_populates="risk_assessment")
+
     # assets = db.relationship("RepoAsset", secondary=repo_risk_assessment_repo_asset_association_table,
     #                           back_populates="risk_assessment")
 
@@ -383,6 +385,15 @@ class RepoRiskAssessment(db.Model):
 #     repo_this_assessment = db.relationship("RepoRiskAssessment", back_populates="assets")
 #     repo_threat_id = db.Column(db.Integer, db.ForeignKey('repo_threat.id'))
 #     repo_asset_id = db.Column(db.Integer, db.ForeignKey('repo_asset.id'))
+
+
+class RepoRiskAssessmentReports(db.Model):
+    __tablename__ = 'repo_risk_assessment_reports'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    risk_assessment_id = db.Column(db.Integer, db.ForeignKey('repo_risk_assessment.id'))
+    risk_assessment = db.relationship("RepoRiskAssessment", back_populates="reports")
+
+
 
 class RepoThreat(db.Model):
     __tablename__ = 'repo_threat'
