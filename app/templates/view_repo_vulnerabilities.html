@@ -26,6 +26,15 @@
             ].join('')
         }
 
+         function operateFormatter1(value, row, index) {
+            var href_custom = "/repo/vulnerability/" + row.id + "/controls/"
+            return [
+                '<a href="' + href_custom + '"style="color: #ffffff" type="button" class="btn btn-primary fa fa-edit">\n' +
+                '<span class= "custom-font">View/Edit Controls</span>' +
+                '</a>'
+            ].join('')
+        }
+
         function populateEditFields(row){
             $("#editForm").find("#id").val(row.id)
             $("#editForm").find("#name").val(row.name)
@@ -77,17 +86,18 @@
             <th data-field="id" data-sortable="true">ID</th>
             <th data-field="name" data-sortable="true">Name</th>
             <th data-field="CVE_id" data-sortable="true">CVE</th>
-            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents">Item Price</th>
+            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents">Edit</th>
+            <th data-field="operate" data-formatter="operateFormatter1" data-events="operateEvents">View/Edit Controls</th>
         </tr>
         </thead>
     </table>
     <hr/>
-    <h2>Add new Vulnerability</h2>
-    <form action="/repo/vulnerabilities/" method="post" novalidate>
-     {{ wtf.quick_form(new_vulnerability_form) }}
+{#    <h2>Add new Vulnerability</h2>#}
+{#    <form action="/repo/vulnerabilities/" method="post" novalidate>#}
+{#     {{ wtf.quick_form(new_vulnerability_form) }}#}
 {#        <p>{{ wtf.form_field(new_actor_form.submit()) }}</p>#}
-    </p>
-    </form>
+{#    </p>#}
+{#    </form>#}
 
 
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"

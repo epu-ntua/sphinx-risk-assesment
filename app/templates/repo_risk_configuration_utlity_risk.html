@@ -1,0 +1,237 @@
+{% extends "sidebar_asset_management.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{#{% block header %}#}
+{#<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/repo.css') }}">#}
+{#{% endblock %}#}
+{#{% block head %}#}
+{##}
+{#{% endblock %}#}
+{% block script %}
+    <script>
+
+    </script>
+{% endblock %}
+
+{% block content %}
+    <h1>Utility Risk Configuration</h1>
+    <hr/>
+    <div class="row">
+        <div class="col-12">
+            <h3>Current Selected Utility Node:
+                <div class="dropdown">
+                    <button class="btn btn-primary">
+                        {#                        {{ this_objective[0].name }}#}
+                        CIA Utility
+                    </button>
+                    <div class="dropdown-list">
+                        {#                        {% for objective in repo_objectives %}#}
+                        {#                            <a href="/repo/risk/configuration/objective/{{ objective.id }}/">{{ objective.name }}</a>#}
+                        {#                        {% endfor %}#}
+                        <a href="/repo/risk/configuration/objective/">CIA Utility</a>
+                        <a href="/repo/risk/configuration/objective/">Evaluation Utility</a>
+                    </div>
+                </div>
+            </h3>
+            <br/>
+            {#    <a class="btn btn-primary" href="/repo/threats/"> Detailed Threat View </a>#}
+            <h4>Utility Scenarios</h4>
+            <h6>Setup the utility value of the following scenarios, in which objectives are found in the specified
+                states.
+            </h6>
+            <hr/>
+            {#            <div class="row dashboard-row">#}
+            {#                {% for impact in repo_impacts %}#}
+            {#                    {% if impact.id|string == impact_id|string %}#}
+            {#                        <a href="/repo/risk/configuration/service/{{ service_id }}/impact/{{ impact.id }}/"#}
+            {#                           class="btn btn-primary fa fa-edit"#}
+            {#                           style="margin-bottom: 3px; background-color: #447e9b">#}
+            {#                            Impact | {{ impact.name }}#}
+            {#                        </a>#}
+            {#                    {% else %}#}
+            {#                        <a href="/repo/risk/configuration/service/{{ service_id }}/asset/{{ impact.id }}/"#}
+            {#                           class="btn btn-primary fa fa-check"#}
+            {#                           style="margin-bottom: 3px; background-color: #00cc00">#}
+            {#                            Impact | {{ impact.name }}#}
+            {#                        </a>#}
+            {#                    {% endif %}#}
+            {#                {% endfor %}#}
+
+            {#            </div>#}
+            <form action="/repo/risk/configuration/objective/" method="post">
+                <div class="row dashboard-row">
+                    <div class="col-12">
+                        <h4>Utility Scenarios Calculation </h4>
+                        {#                        {% for objective_calculation_wrapper in array_objective_calculation %}#}
+                        <div class="row dashboard-row">
+                            <div class="col-2 custom-select-column">
+                                {#                                    {% for temp_header in objective_calculation_wrapper[:-3] %}#}
+                                {#                                        Impact: {{ temp_header.impact.name }} | State:#}
+                                {#                                        {{ temp_header.state }}#}
+                                {#                                        <br/>#}
+                                {#                                    {% endfor %}#}
+                                Objective: Confidentialiyy | State: Low
+                                {#                                {{ temp_header.state }}#}
+                                <br/>
+                                Objective: Integrity | State: Low
+                                {#                                {{ temp_header.state }}#}
+                                <br/>
+                                Objective: Availability | State: Low
+                                {#                                {{ temp_header.state }}#}
+                                <br/>
+                            </div>
+                            <div class="col-9">
+                                <div class="row dashboard-row">
+                                    <div class="col-3">
+                                        <h5>Utility | Detailed Input</h5>
+                                    </div>
+                                </div>
+
+                                <div class="row dashboard-row">
+                                    <div class="col-3">
+                                        <input type="number" class="form-control-range"
+                                                {#                                               name="low{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"#}
+                                                {#                                               id="low{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"#}
+                                               step="0.0001"
+                                               min="0"
+                                               max="100"
+                                               value="50">
+                                        {#                                               value="{{ objective_calculation_wrapper[-3] }}">#}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row dashboard-row">
+                            <div class="col-2 custom-select-column">
+                                {#                                    {% for temp_header in objective_calculation_wrapper[:-3] %}#}
+                                {#                                        Impact: {{ temp_header.impact.name }} | State:#}
+                                {#                                        {{ temp_header.state }}#}
+                                {#                                        <br/>#}
+                                {#                                    {% endfor %}#}
+                                Objective: Confidentialiyy | State: Low
+                                {#                                {{ temp_header.state }}#}
+                                <br/>
+                                Objective: Integrity | State: Low
+                                {#                                {{ temp_header.state }}#}
+                                <br/>
+                                Objective: Availability | State: Medium
+                                {#                                {{ temp_header.state }}#}
+                                <br/>
+                            </div>
+                            <div class="col-9">
+                                <div class="row dashboard-row">
+                                    <div class="col-3">
+                                        <h5>Utility | Detailed Input</h5>
+                                    </div>
+                                </div>
+
+                                <div class="row dashboard-row">
+                                    <div class="col-3">
+                                        <input type="number" class="form-control-range"
+                                                {#                                               name="low{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"#}
+                                                {#                                               id="low{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"#}
+                                               step="0.0001"
+                                               min="0"
+                                               max="100"
+                                               value="50">
+                                        {#                                               value="{{ objective_calculation_wrapper[-3] }}">#}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row dashboard-row">
+                            <div class="col-2 custom-select-column">
+                                {#                                    {% for temp_header in objective_calculation_wrapper[:-3] %}#}
+                                {#                                        Impact: {{ temp_header.impact.name }} | State:#}
+                                {#                                        {{ temp_header.state }}#}
+                                {#                                        <br/>#}
+                                {#                                    {% endfor %}#}
+                                Objective: Confidentialiyy | State: Low
+                                {#                                {{ temp_header.state }}#}
+                                <br/>
+                                Objective: Integrity | State: Medium
+                                {#                                {{ temp_header.state }}#}
+                                <br/>
+                                Objective: Availability | State: Low
+                                {#                                {{ temp_header.state }}#}
+                                <br/>
+                            </div>
+                           <div class="col-9">
+                                <div class="row dashboard-row">
+                                    <div class="col-3">
+                                        <h5>Utility | Detailed Input</h5>
+                                    </div>
+                                </div>
+
+                                <div class="row dashboard-row">
+                                    <div class="col-3">
+                                        <input type="number" class="form-control-range"
+                                                {#                                               name="low{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"#}
+                                                {#                                               id="low{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"#}
+                                               step="0.0001"
+                                               min="0"
+                                               max="100"
+                                               value="50">
+                                        {#                                               value="{{ objective_calculation_wrapper[-3] }}">#}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row dashboard-row">
+                            <div class="col-2 custom-select-column">
+                                {#                                    {% for temp_header in objective_calculation_wrapper[:-3] %}#}
+                                {#                                        Impact: {{ temp_header.impact.name }} | State:#}
+                                {#                                        {{ temp_header.state }}#}
+                                {#                                        <br/>#}
+                                {#                                    {% endfor %}#}
+                                Objective: Confidentialiyy | State: Medium
+                                {#                                {{ temp_header.state }}#}
+                                <br/>
+                                Objective: Integrity | State: Low
+                                {#                                {{ temp_header.state }}#}
+                                <br/>
+                                Objective: Availability | State: Low
+                                {#                                {{ temp_header.state }}#}
+                                <br/>
+                            </div>
+                            <div class="col-9">
+                                <div class="row dashboard-row">
+                                    <div class="col-3">
+                                        <h5>Utility | Detailed Input</h5>
+                                    </div>
+                                </div>
+
+                                <div class="row dashboard-row">
+                                    <div class="col-3">
+                                        <input type="number" class="form-control-range"
+                                                {#                                               name="low{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"#}
+                                                {#                                               id="low{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"#}
+                                               step="0.0001"
+                                               min="0"
+                                               max="100"
+                                               value="50">
+                                        {#                                               value="{{ objective_calculation_wrapper[-3] }}">#}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {#                        {% endfor %}#}
+                    </div>
+                </div>
+
+
+                <div class="row dashboard-row">
+                    <button type="submit" class="btn btn-primary" style="margin-right: 3px; ">
+                        Submit
+                    </button>
+                </div>
+            </form>
+        </div>
+        {#        <div class="col-2">#}
+        {#            <h3>Current Selections</h3>#}
+        {#            <hr/>#}
+        {#            Threat: Ransomware#}
+        {#            <br/>#}
+        {#            Asset: Asset1#}
+        {#        </div>#}
+    </div>
+{% endblock %}

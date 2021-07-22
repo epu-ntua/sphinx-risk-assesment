@@ -1,0 +1,136 @@
+{% extends "sidebar_asset_management.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{#{% block header %}#}
+{#<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/repo.css') }}">#}
+{#{% endblock %}#}
+{#{% block head %}#}
+{##}
+{#{% endblock %}#}
+{% block script %}
+    <script>
+
+    </script>
+{% endblock %}
+
+{% block content %}
+    <h1>Asset-Threat Exposure Risk Configuration</h1>
+    <hr/>
+    <div class="row">
+        <div class="col-12">
+
+            <h3>Current Selected Threat:
+                <div class="dropdown">
+                    <button class="btn btn-primary">{{ this_threat[0].name }}</button>
+                    <div class="dropdown-list">
+                        {% for threat in repo_threats %}
+                            <a href="/repo/risk/configuration/threat/{{ threat.id }}/">{{ threat.name }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {#                {% for threat in repo_threats %}#}
+                {#                    <option value="{{ threat.id }}">#}
+                {#                        <a href="http://{{ serverAddress }}:{{ serverPort }}/repo/dashboard/risk/objectives/"#}
+                {#                           class="list-group-item list-group-item-action bg-dark text-white">#}
+                {#                    <span class="fa fa-dashboard fa-fw mr-3"></span>#}
+                {#                            {{ threat.name }}#}
+                {#                        </a>#}
+                {#                    </option>#}
+                {#                {% endfor %}#}
+            </h3>
+            <br/>
+
+            {#            <div class="row dashboard-row">#}
+            {#                <div class="col-2">#}
+            {#                    |None#}
+            {#                </div>#}
+            {#                <div class="col-2">#}
+            {#                    |Very Low#}
+            {#                </div>#}
+            {#                <div class="col-2">#}
+            {#                    |Low#}
+            {#                </div>#}
+            {#                <div class="col-2 ">#}
+            {#                    |Medium#}
+            {#                </div>#}
+            {#                <div class="col-2">#}
+            {#                    |High#}
+            {#                </div>#}
+            {#                <div class="col-2">#}
+            {#                    |Critical#}
+            {#                </div>#}
+            {#            </div>#}
+            {#            <input type="range" class="form-control-range" id="objective_state_alert_3" step="1"#}
+            {#                   min="0"#}
+            {#                   max="5" value="0" , name="objective_state_alert_3">#}
+            {#            <br/>#}
+            {#    <a class="btn btn-primary" href="/repo/threats/"> Detailed Threat View </a>#}
+            <h4>Assets</h4>
+            <h6>Select each asset to setup the relation between the assetand the threat. This process needs to be
+                completed for each asset individually.</h6>
+            <h6>These values are supplemented with available asset information.</h6>
+            <hr/>
+
+            <div class="row dashboard-row">
+                {% for asset in repo_assets %}
+                    {% if asset.id|string == asset_id|string %}
+                        <a href="/repo/risk/configuration/threat/{{ threat_id }}/asset/{{ asset.id }}/"
+                           class="btn btn-primary fa fa-edit"
+                           style="margin-bottom: 3px; background-color: #447e9b">
+                            Asset | {{ asset.name }}
+                        </a>
+                    {% else %}
+                        <a href="/repo/risk/configuration/threat/{{ threat_id }}/asset/{{ asset.id }}/"
+                           class="btn btn-primary fa fa-check"
+                           style="margin-bottom: 3px; background-color: #00cc00">
+                            Asset | {{ asset.name }}
+                        </a>
+                    {% endif %}
+                {% endfor %}
+
+            </div>
+        </div>
+
+
+        {#        <div class="col-2">#}
+        {#            <h3>Current Selections</h3>#}
+        {#            <hr/>#}
+        {#            Threat: Ransomware#}
+        {#            <br/>#}
+        {#            Asset: Asset1#}
+        {#        </div>#}
+    </div>
+    <h4>Threat Exposure</h4>
+    <h6> These values is the user estimation about the specific threat characteristics and is optional.</h6>
+    <h6>The final value is calculated in conjuction with
+        threat forecasting</h6>
+    <hr/>
+    <div class="row">
+        <div class="col-6">
+            {#            <div class="row flex-grow custom-select-column-header">#}
+{#            <h3> Likelihood &lt Medium 50% &gt </h3>#}
+            <h4> Threat Agent Factory </h4>
+            <label for="formControlRange">Skill Level</label>
+            <input type="range" class="form-control-range" id="formControlRange">
+            <label for="formControlRange">Motive</label>
+            <input type="range" class="form-control-range" id="formControlRange">
+            <label for="formControlRange">Source</label>
+            <input type="range" class="form-control-range" id="formControlRange">
+            {#            </div>#}
+
+        </div>
+        <div class="col-6">
+            {#            <div class="row flex-grow custom-select-column-header">#}
+{#            <h4> </h4>#}
+            <br/>
+            <br/>
+            <label for="formControlRange">Actor</label>
+            <input type="range" class="form-control-range" id="formControlRange">
+            <label for="formControlRange">Opportunity</label>
+            <input type="range" class="form-control-range" id="formControlRange">
+{#            <label for="formControlRange">Awareness</label>#}
+{#            <input type="range" class="form-control-range" id="formControlRange">#}
+            {#            </div>#}
+
+        </div>
+    </div>
+{% endblock %}

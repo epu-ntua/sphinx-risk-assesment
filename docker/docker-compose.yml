@@ -1,29 +1,47 @@
 version: '3.7'
 
 services:
-  tamarin:
-    restart: always
-    build: ../../my-tamarin
-    container_name: tamarin
-    ports:
-      - 22:22
-    expose:
-      - 22
-    user: root
-    #networks:
-    #    - front-end
-    # network_mode: 'host'
-    # extra_hosts:
-    #     - "host.docker.internal:host-gateway"
-    privileged: true
-    #volumes:
-    #    - .:/tamarin-prover
-    working_dir: /tamarin-prover
-    entrypoint: /bin/bash
-    command: -c "sudo service ssh start && sudo /usr/sbin/sshd -D; tamarin-prover interactive ."
-    networks:
-      - backend
-      - frontend
+#  spa:
+#    restart: always
+#    build: ../../spa
+#    container_name: spa
+#    image: registry.sphinx-repo.intracom-telecom.com/sphinx-project/real-time-cyber-risk-assessment/spa
+#    ports:
+#      - 3001:3001
+#    expose:
+#      - 3001
+#    #user: root
+#    #priviledged: true
+#    working_dir: /tamarin-prover
+#    entrypoint: /bin/bash
+#    command: -c "/home/tamarin/.local/bin/tamarin-prover interactive . -i=*4"
+#    networks:
+#      - backend
+#      - frontend
+
+#  tamarin:
+#    restart: always
+#    build: ../../my-tamarin
+#    container_name: tamarin
+#    ports:
+#      - 22:22
+#    expose:
+#      - 22
+#    user: root
+#    #networks:
+#    #    - front-end
+#    # network_mode: 'host'
+#    # extra_hosts:
+#    #     - "host.docker.internal:host-gateway"
+#    privileged: true
+#    #volumes:
+#    #    - .:/tamarin-prover
+#    working_dir: /tamarin-prover
+#    entrypoint: /bin/bash
+#    command: -c "sudo service ssh start && sudo /usr/sbin/sshd -D; tamarin-prover interactive ."
+#    networks:
+#      - backend
+#      - frontend
 
   risk-assessment:
     hostname: risk-assessment
@@ -175,9 +193,11 @@ services:
 #      - backend
 #      - frontend
 #    command: bash -c "sleep 3 && ./run_app/run_all.sh" # "./run_app/train_asset.sh" #"./run_app/run_all.sh" #"tail -F skata"
-    # train_asset.sh
-    # waits for mlflow server
-    # do git clone here in the end
+
+
+#     train_asset.sh
+#     waits for mlflow server
+#     do git clone here in the end
 
 
 
