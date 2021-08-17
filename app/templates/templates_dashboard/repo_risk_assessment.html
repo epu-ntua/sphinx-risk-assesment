@@ -1,0 +1,171 @@
+{% extends "templates_supporting/sidebar_asset_management.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{#{% block header %}#}
+{#<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/repo.css') }}">#}
+{#{% endblock %}#}
+{#{% block head %}#}
+{##}
+{#{% endblock %}#}
+{% block script %}
+    <script>
+
+    </script>
+{% endblock %}
+
+{% block content %}
+    <h1>Risk Assessment</h1>
+    <hr/>
+    <div class="row">
+        <div class="col-12">
+            <h3>Current Selected Threat:
+                <div class="dropdown">
+                    <button class="btn btn-primary">{{ this_threat[0].name }}</button>
+                    <div class="dropdown-list">
+                        {% for threat in repo_threats %}
+                            <a href="/repo/risk/assessment/{{ threat.id }}/asset/-1/">{{ threat.name }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </h3>
+            {#            <h4>Threat Exposure</h4>#}
+            {#            <h6> This value is calculated with other values and is optional</h6>#}
+            {#            <hr/>#}
+            {#            <div class="row dashboard-row">#}
+            {#                <div class="col-2">#}
+            {#                    |None#}
+            {#                </div>#}
+            {#                <div class="col-2">#}
+            {#                    |Very Low#}
+            {#                </div>#}
+            {#                <div class="col-2">#}
+            {#                    |Low#}
+            {#                </div>#}
+            {#                <div class="col-2 ">#}
+            {#                    |Medium#}
+            {#                </div>#}
+            {#                <div class="col-2">#}
+            {#                    |High#}
+            {#                </div>#}
+            {#                <div class="col-2">#}
+            {#                    |Critical#}
+            {#                </div>#}
+            {#            </div>#}
+            {#            <input type="range" class="form-control-range" id="objective_state_alert_3" step="1"#}
+            {#                   min="0"#}
+            {#                   max="5" value="0" , name="objective_state_alert_3">#}
+            <hr/>
+            {#    <a class="btn btn-primary" href="/repo/threats/"> Detailed Threat View </a>#}
+            <h4>Assets Included in this threat's risk assessment</h4>
+            <h6>To include assets, all connections with services and threats must be described by the user</h6>
+            <h6>Selecting an asset will display all the information related to this risk assessment,If all information
+                exists and is valid, the asset can be added to the model </h6>
+            <div class="row">
+                <div class="col-6 custom-select-column">
+                    <h4>Included Assets</h4>
+                    {% for related_asset in related_assets %}
+                    <a href="/repo/risk/assessment/{{ threat_id }}/asset/{{ related_asset.id }}/" type="button" class="btn btn-primary btn-asset-service-related"
+                            {#                            id="related-btn-{{ related_service.id }}"#}
+                            {#                            onclick="unRelateService({{ related_service.id }})"#}
+                    >
+                        {{ related_asset.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+                <div class="col-6 custom-select-column">
+                    <h4> Not included Assets </h4>
+                    {% for unrelated_asset in unrelated_assets %}
+                    <a href="/repo/risk/assessment/{{ threat_id }}/asset/{{ unrelated_asset.id }}/" type="button" class="btn btn-primary fa btn-asset-service-unrelated"
+                            {#                                id="unrelated-btn-{{ unrelated_service.id }}"#}
+                            {#                                onclick="relateService({{ unrelated_service.id }})"#}
+                    >
+                        {{ unrelated_asset.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <hr/>
+            {#            <div class="row dashboard-row">#}
+            {#                {% for impact in repo_impacts %}#}
+            {#                    {% if impact.id|string == impact_id|string %}#}
+            {#                        <a href="/repo/risk/configuration/service/{{ service_id }}/impact/{{ impact.id }}/"#}
+            {#                           class="btn btn-primary fa fa-edit"#}
+            {#                           style="margin-bottom: 3px; background-color: #447e9b">#}
+            {#                            Impact | {{ impact.name }}#}
+            {#                        </a>#}
+            {#                    {% else %}#}
+            {#                        <a href="/repo/risk/configuration/service/{{ service_id }}/asset/{{ impact.id }}/"#}
+            {#                           class="btn btn-primary fa fa-check"#}
+            {#                           style="margin-bottom: 3px; background-color: #00cc00">#}
+            {#                            Impact | {{ impact.name }}#}
+            {#                        </a>#}
+            {#                    {% endif %}#}
+            {#                {% endfor %}#}
+
+            {#            </div>#}
+            {% if asset_id != '-1' %}
+            <h3>Current Selected Asset:
+                <button class="btn btn-primary" style="background-color: #9C1A1C"> {{ this_asset[0].name }} </button>
+{#                <div class="dropdown">#}
+{#                    <button class="btn btn-primary">{{ this_threat[0].name }}</button>#}
+{#                    <div class="dropdown-list">#}
+{#                        {% for threat in repo_threats %}#}
+{#                            <a href="/repo/risk/assessment/{{ threat.id }}/">{{ threat.name }}</a>#}
+{#                        {% endfor %}#}
+{#                    </div>#}
+{#                </div>#}
+            </h3>
+            <hr/>
+
+            <form action="/repo/risk/assessment/{{ threat_id }}/asset/{{ this_asset[0].id }}/" method="post">
+                {# THESE ARE STILL PLACEHOLDERS AND DONT GIVE THE RIGHT INFORMATION #}
+                <div class="row dashboard-row">
+                    <div class="col-12">
+                        <h3>Asset Requirements</h3>
+                        <div class="row dashboard-row">
+                            <div class="col-2 custom-select-column">
+                                <h4>Related to Services</h4>
+                            </div>
+                            <div class="col-10">
+                                <button type="button" class="btn fa fa-check btn-primary btn-asset-service-related">
+                                    Connections Exist | See Connections >
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row dashboard-row">
+                            <div class="col-2 custom-select-column">
+                                <h4>Asset-Threat Risk Configured</h4>
+                            </div>
+                            <div class="col-10">
+                                <a href="http://127.0.0.1:5002/repo/risk/configuration/threat/1/asset/1/" class="btn fa fa-times-circle btn-primary btn-asset-service-unrelated">
+                                    Not configured | Got to configuration >
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row dashboard-row">
+                    <div class="col-5"></div>
+                    <div class="col-2">
+                        <button type="submit" class="btn btn-primary" style="margin-right: 3px; ">
+                            Add asset to assessment
+                        </button>
+                    </div>
+                </div>
+            </form>
+        {% else %}
+            <h2>Please select an asset</h2>
+        {% endif %}
+        </div>
+
+        {#        <div class="col-2">#}
+        {#            <h3>Current Selections</h3>#}
+        {#            <hr/>#}
+        {#            Threat: Ransomware#}
+        {#            <br/>#}
+        {#            Asset: Asset1#}
+        {#        </div>#}
+    </div>
+{% endblock %}

@@ -1,0 +1,136 @@
+{% extends "templates_supporting/sidebar_asset_management.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{#{% block header %}#}
+{#<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/repo.css') }}">#}
+{#{% endblock %}#}
+{#{% block head %}#}
+{##}
+{#{% endblock %}#}
+{% block script %}
+    <script>
+        function relateService(serviceId) {
+            $("#" + serviceId).val("1")
+            $("#related-btn-" + serviceId).show()
+            $("#unrelated-btn-" + serviceId).hide()
+        }
+
+        function unRelateService(serviceId) {
+            $("#" + serviceId).val("0")
+            $("#related-btn-" + serviceId).hide()
+            $("#unrelated-btn-" + serviceId).show()
+        }
+
+        var $table = $('#table')
+
+        $(function () {
+            var data = {{ repo_assets | safe }};
+            {#console.log(data)#}
+            $table.bootstrapTable({data: data});
+        })
+    </script>
+{% endblock %}
+
+{% block content %}
+    <h1>Selected Asset</h1>
+    <hr/>
+    <table
+            id="table"
+            {#            data-show-columns="true"#}
+            {#            data-show-columns-toggle-all="true"#}
+            {#            data-loading-template="loadingTemplate"#}
+            {#            data-pagination="true"#}
+            {#            data-page-list="[10, 25, 50, 100, all]"#}
+            {#            show-button-icons="true"#}
+            {#            data-row-style="rowStyle"#}
+    >
+        <thead>
+        <tr>
+            {#            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents"></th>#}
+            {#            <th data-field="operate" data-formatter="operateFormatter1" data-events="operateEvents1"></th>#}
+            <th data-field="id" data-sortable="true">ID</th>
+            <th data-field="name" data-sortable="true">Name</th>
+            <th data-field="description" data-sortable="true">Description</th>
+            <th data-field="owner" data-sortable="true">Owner</th>
+            <th data-field="location" data-sortable="true">Location</th>
+            <th data-field="Verified" data-sortable="true">Verified</th>
+            <th data-field="verified_by" data-sortable="true">Verified by</th>
+            <th data-field="mac_address" data-sortable="true">Mac_address</th>
+            <th data-field="has_static_ip" data-sortable="true">Has static IP</th>
+            <th data-field="ip">IP</th>
+            <th data-field="net_group_fk" data-sortable="true">Name</th>
+            <th data-field="value" data-sortable="true">Value</th>
+            <th data-field="loss_of_revenue" data-sortable="true">Loss of Revenue</th>
+            <th data-field="additional_expenses" data-sortable="true">Additional Expenses</th>
+            <th data-field="regulatory_legal" data-sortable="true">Regulatory Legal</th>
+            <th data-field="customer_service" data-sortable="true">Customer_service</th>
+            <th data-field="goodwill" data-sortable="true">Goodwill</th>
+            <th data-field="last_touch_date" data-sortable="true">Last Touch Date</th>
+            <th data-field="type_fk" data-sortable="true">Type</th>
+        </tr>
+        </thead>
+    </table>
+    <hr/>
+    {#    <div class="progress">#}
+    {#        <div class="progress-bar" role="progressbar" style="width: 75%" aria-valuenow="25" aria-valuemin="0"#}
+    {#             aria-valuemax="100"></div>#}
+    {#    </div>#}
+
+    <h2>Organisation Functions | Selected Organisation Function: Ransomware</h2>
+    <form action="/repo/assets/services-relations/{{ asset_id }}/" method="post">
+        <div class="row dashboard-row">
+            <div class="col-5 custom-select-column">
+                <h4>Related Services</h4>
+                {% for related_service in related_services %}
+                    <button type="button" class="btn btn-primary fa fa-arrow-right btn-asset-service-related"
+                            id="related-btn-{{ related_service.id }}"
+                            onclick="unRelateService({{ related_service.id }})">
+                        {{ related_service.name }}
+                    </button>
+                {% endfor %}
+                {% for unrelated_service in unrelated_services %}
+                    <button type="button" class="btn btn-primary fa fa-arrow-right btn-asset-service-related"
+                            id="related-btn-{{ unrelated_service.id }}" style="display: none"
+                            onclick="unRelateService({{ unrelated_service.id }})">
+                        {{ unrelated_service.name }}
+                    </button>
+                {% endfor %}
+            </div>
+            <div class="col-5 custom-select-column">
+                <h4>Unrated Services </h4>
+                {% for unrelated_service in unrelated_services %}
+                    <button type="button" class="btn btn-primary fa fa-arrow-left btn-asset-service-unrelated"
+                            id="unrelated-btn-{{ unrelated_service.id }}"
+                            onclick="relateService({{ unrelated_service.id }})">
+                        {{ unrelated_service.name }}
+                    </button>
+                {% endfor %}
+                {% for related_service in related_services %}
+                    <button type="button" class="btn btn-primary fa fa-arrow-left btn-asset-service-unrelated"
+                            id="unrelated-btn-{{ related_service.id }}" style="display: none"
+                            onclick="relateService({{ related_service.id }})">
+                        {{ related_service.name }}
+                    </button>
+                {% endfor %}
+            </div>
+        </div>
+        {% for related_service in related_services %}
+            <input type="hidden" id="{{ related_service.id }}" name="{{ related_service.id }}" value="1">
+        {% endfor %}
+        {% for unrelated_service in unrelated_services %}
+            <input type="hidden" id="{{ unrelated_service.id }}" name="{{ unrelated_service.id }}" value="0">
+        {% endfor %}
+        <div class="row">
+            <div class="col-4">
+
+            </div>
+            <div class="col-2">
+                <input type="submit" value="Save Asset Settings" class="btn btn-primary fa fa-edit">
+            </div>
+            <div class="col-1">
+                <a href="/repo/assets/" value="Save Asset Settings" class="btn btn-primary fa fa-edit"> Go Back </a>
+            </div>
+        </div>
+    </form>
+
+
+{% endblock %}

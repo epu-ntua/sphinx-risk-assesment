@@ -1,0 +1,72 @@
+{% extends "templates_supporting/sidebar_asset_management.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{#{% block header %}#}
+{#<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/repo.css') }}">#}
+{#{% endblock %}#}
+{#{% block head %}#}
+{##}
+{#{% endblock %}#}
+{% block script %}
+    <script>
+        var $table = $('#table')
+        var $table_impacts = $('#table_impacts')
+
+        $(function () {
+            var data = {{ this_objective | safe }};
+            var data_impacts = {{  repo_related_impacts | safe }};
+
+                {#console.log(data)#}
+                $table.bootstrapTable({data: data});
+                $table_impacts.bootstrapTable({data: data_impacts});
+        })
+    </script>
+{% endblock %}
+
+{% block content %}
+    <h1> Objectives Impact Relation
+        <a href="/repo/objectives/" class="btn btn-primary">
+            < Back
+        </a>
+    </h1>
+    <hr/>
+    <h1>Selected Objective</h1>
+    <hr/>
+    <table
+            id="table">
+        <thead>
+        <tr>
+            {#            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents"></th>#}
+            {#            <th data-field="operate" data-formatter="operateFormatter1" data-events="operateEvents1"></th>#}
+            <th data-field="id" data-sortable="true">ID</th>
+            <th data-field="name" data-sortable="true">Name</th>
+        </tr>
+        </thead>
+    </table>
+    <hr/>
+    <h2>Related Impacts</h2>
+    <div class="row">
+        <table id="table_impacts">
+            <thead>
+            <tr>
+                {#            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents"></th>#}
+                {#            <th data-field="operate" data-formatter="operateFormatter1" data-events="operateEvents1"></th>#}
+                <th data-field="id" data-sortable="true">ID</th>
+                <th data-field="name" data-sortable="true">Name</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+    <hr/>
+    <h2>Add new Objective Impact Relation</h2>
+    <form id="new_i_form" action="/repo/objective/{{ this_objective_dict[0].id }}/info/" method="post" novalidate>
+        {{ new_objective_impact_form.hidden_tag() }}
+
+        {{ wtf.form_field(new_objective_impact_form.impact_fk) }}
+        {#        {{ wtf.form_field(new_objective_form.states[3]) }}#}
+
+        {{ wtf.form_field(new_objective_impact_form.submit) }}
+        {#        {{ wtf.quick_form(new_objective_form) }}#}
+        {#        <p>{{ wtf.form_field(new_asset_form.submit()) }}</p>#}
+        </p>
+    </form>
+{% endblock %}

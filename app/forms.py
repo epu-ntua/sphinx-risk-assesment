@@ -39,9 +39,6 @@ def query_generic_repo_impact():
     return RepoImpact.query
 
 
-# def query_generic_repo_type():
-#     return RepoAssetsType.query
-
 class FormAddRepoActor(FlaskForm):
     id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
     name = StringField('Name', validators=[DataRequired()])
@@ -169,8 +166,6 @@ class FormAddRepoAsset(FlaskForm):
     verified = BooleanField('Verified', validators=[Optional()])
     verified_by = QuerySelectField(query_factory=query_generic_repo_actor, allow_blank=True, get_label='name',
                                    validators=[Optional()])
-    # verified_by = FieldList(
-    #     QuerySelectField(query_factory=query_generic_repo_actor, allow_blank=True, get_label='name'), min_entries=3)
     mac_address = StringField("Mac Address", validators=[Optional()])
     has_static_ip = BooleanField('Has Static IP', validators=[Optional()])
     ip = StringField('IP', validators=[Optional()])
@@ -185,5 +180,4 @@ class FormAddRepoAsset(FlaskForm):
     last_touch_date = DateTimeField("Last Touch", validators=[Optional()])
     type_fk = QuerySelectField(query_factory=query_generic_repo_type, allow_blank=True, get_label='name',
                                validators=[Optional()])
-    # integrity = SelectField("Integrity", choices = {"0","1","2"}, validators = [InputRequired()])
     submit = SubmitField("Add new asset")

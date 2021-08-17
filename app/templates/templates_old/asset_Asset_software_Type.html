@@ -1,0 +1,52 @@
+{% extends "templates_supporting/sidebar_asset_management.html" %}
+{% block content %}
+
+<!--    MAIN -->
+<h1>Software - Software Type</h1>
+<div style="text-align: right; padding-bottom: 20px">
+    <button type="button" class="btn btn-primary" onclick=""> Add new +></button>
+    <br/>
+</div>
+<table id="example" class="table  table table-striped table-bordered" style="width:100%">
+    <thead>
+        <tr>
+            <th>Shoftware Type</th>
+            <th>Description</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>Freeware</td>
+        <td>Freeware</td>
+        <td>15/06/2020</td>
+    </tr>
+        <tr>
+        <td>Managed</td>
+        <td>Handled by Admins</td>
+        <td>15/06/2020</td>
+    </tr>
+    <tr>
+        <td>Excluded</td>
+        <td>Handled by external authorized personnel</td>
+        <td>15/06/2020</td>
+    </tr>
+            </tbody>
+             <tfoot>
+                 <tr>
+                    <th>Shoftware Type</th>
+                    <th>Description</th>
+                    <th>Date</th>
+                </tr>
+             </tfoot>
+        </table>
+{%- endblock %}
+
+{% block script %}
+
+    <script>
+    $(document).ready(function() {
+    $('#example').DataTable();
+    } );
+    </script>
+{% endblock %}

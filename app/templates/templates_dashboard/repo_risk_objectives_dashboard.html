@@ -1,0 +1,87 @@
+{% extends "templates_supporting/sidebar_asset_management.html" %}
+
+{% block script %}
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@3.2.0/dist/chart.min.js"></script>
+
+    <script>
+
+        var $table = $('#table')
+
+        function operateFormatter(value, row, index) {
+            return [
+                '<a type="button" class="btn btn-primary fa fa-edit" href="/repo/assets/">\n' +
+                '<span class= "custom-font">Verify Asset</span>' +
+                '</a>'
+            ].join('')
+        }
+
+        $(function () {
+            var data = {{ repo_threats | safe }};
+            console.log(data)
+            $table.bootstrapTable({data: data});
+        })
+    </script>
+
+{% endblock %}
+
+
+{% block content %}
+    <h1>Risk - Objective Dashboard</h1>
+    <hr/>
+    <div class="row">
+        <div class="col-10">
+
+            <h3>Current Selected Threat: <select>
+                <option value="">Ransomware</option>
+                <option value="">Hijacking</option>
+                <option value="">DoS/DDoS</option>
+                <option value="">SQL Injection</option>
+                <option value="">Data integrity violation</option>
+            </select></h3>
+            <hr/>
+
+            {#    <a class="btn btn-primary" href="/repo/threats/"> Detailed Threat View </a>#}
+            <h4>Scenario #1 | Scenario Details</h4>
+            <h6>Affected Organisation Functions</h6>
+            <hr/>
+            <div class="row dashboard-row">
+                <button type="button" class="btn btn-primary" style="margin-right: 3px; ">
+                    Blood Test: Normal Work
+                </button>
+                <button type="button" class="btn btn-primary" style="margin-right: 3px; ">
+                    Catering: Normal Work
+                </button>
+                <button type="button" class="btn btn-primary" style="margin-right: 3px; ">
+                    Pharmacy: Normal Work
+                </button>
+            </div>
+            <h6>User Response</h6>
+            <hr/>
+            <div class="row dashboard-row">
+                <button type="button" class="btn btn-primary" style="margin-right: 3px; ">
+                    Do Nothing
+                </button>
+            </div>
+            <div class="row dashboard-row">
+                <br/>
+                <table id="table">
+                    <thead>
+                    <tr>
+                        <th data-field="likelihood">Likelihood</th>
+                        <th data-field="monetary">Objective: Monetary</th>
+                        <th data-field="confidentiality">Objective: Confidentiality</th>
+                        <th data-field="integrity">Objective: Integrity</th>
+                        <th data-field="availability">Objective: Availability</th>
+                        <th data-field="safety">Objective: Safety</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="col-2">
+            <h3>Alerts</h3>
+            No Alerts Triggered
+            <hr/>
+        </div>
+    </div>
+{% endblock %}
