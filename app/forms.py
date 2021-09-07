@@ -39,6 +39,10 @@ def query_generic_repo_impact():
     return RepoImpact.query
 
 
+def query_generic_repo_objective():
+    return RepoObjective.query
+
+
 class FormAddRepoActor(FlaskForm):
     id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
     name = StringField('Name', validators=[DataRequired()])
@@ -155,6 +159,19 @@ class FormAddRepoResponse(FlaskForm):
     threat_id = IntegerField('Threat Id', widget=HiddenInput(), validators=[DataRequired()])
     name = StringField('Name', validators=[DataRequired()])
     submit = SubmitField("Add Response")
+
+
+class FormAddRepoUtility(FlaskForm):
+    id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
+    name = StringField('Name', validators=[DataRequired()])
+    submit_utility = SubmitField("Add Utility")
+
+
+class FormAddRepoUtilityObjective(FlaskForm):
+    id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
+    utility_id = IntegerField('Utility_id', widget=HiddenInput(), validators=[InputRequired()])
+    objective = QuerySelectField(query_factory=query_generic_repo_objective, allow_blank=True, get_label='name')
+    submit_utility_objective = SubmitField("Add Objective to Utility")
 
 
 class FormAddRepoAsset(FlaskForm):

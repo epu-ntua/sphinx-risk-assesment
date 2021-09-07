@@ -964,8 +964,8 @@ diag.cpt(imp7)[{'ass1': 1, 'ass2': 0, 'con1': 1, 'con4': 1}] = [0.3, 0.3, 0.4]
 diag.cpt(imp7)[{'ass1': 0, 'ass2': 1, 'con1': 1, 'con4': 1}] = [0.3, 0.3, 0.4]
 diag.cpt(imp7)[{'ass1': 1, 'ass2': 1, 'con1': 1, 'con4': 1}] = [0.3, 0.3, 0.4]
 
-diag.cpt(obj1)[{'imp1': 0, 'imp2': 0, 'imp3': 0}] = [0.3, 0.3, 0.4]
-diag.cpt(obj1)[{'imp1': 1, 'imp2': 0, 'imp3': 0}] = [0.3, 0.3, 0.4]
+diag.cpt(obj1)[{'imp1': 0, 'imp2': 0, 'imp3': 0}] = [0.4, 0.2, 0.4]
+diag.cpt(obj1)[{'imp1': 1, 'imp2': 0, 'imp3': 0}] = [0.2, 0.4, 0.4]
 diag.cpt(obj1)[{'imp1': 2, 'imp2': 0, 'imp3': 0}] = [0.3, 0.3, 0.4]
 diag.cpt(obj1)[{'imp1': 0, 'imp2': 1, 'imp3': 0}] = [0.3, 0.3, 0.4]
 diag.cpt(obj1)[{'imp1': 1, 'imp2': 1, 'imp3': 0}] = [0.3, 0.3, 0.4]
@@ -1245,23 +1245,23 @@ diag.cpt(obj4)[{'imp1': 1, 'imp2': 2, 'imp3': 2, 'imp6': 2}] = [0.3, 0.3, 0.4]
 diag.cpt(obj4)[{'imp1': 2, 'imp2': 2, 'imp3': 2, 'imp6': 2}] = [0.3, 0.3, 0.4]
 
 
-diag.cpt(obj5)[{'imp5': 0, 'imp6': 0, 'imp7': 0}] = [0.3, 0.3, 0.4]
+diag.cpt(obj5)[{'imp5': 0, 'imp6': 0, 'imp7': 0}] = [0.5, 0.3, 0.2]
 diag.cpt(obj5)[{'imp5': 1, 'imp6': 0, 'imp7': 0}] = [0.3, 0.3, 0.4]
-diag.cpt(obj5)[{'imp5': 2, 'imp6': 0, 'imp7': 0}] = [0.3, 0.3, 0.4]
+diag.cpt(obj5)[{'imp5': 2, 'imp6': 0, 'imp7': 0}] = [0.5, 0.3, 0.2]
 diag.cpt(obj5)[{'imp5': 0, 'imp6': 1, 'imp7': 0}] = [0.3, 0.3, 0.4]
 diag.cpt(obj5)[{'imp5': 1, 'imp6': 1, 'imp7': 0}] = [0.3, 0.3, 0.4]
-diag.cpt(obj5)[{'imp5': 2, 'imp6': 1, 'imp7': 0}] = [0.3, 0.3, 0.4]
+diag.cpt(obj5)[{'imp5': 2, 'imp6': 1, 'imp7': 0}] = [0.1, 0.5, 0.4]
 diag.cpt(obj5)[{'imp5': 0, 'imp6': 2, 'imp7': 0}] = [0.3, 0.3, 0.4]
 diag.cpt(obj5)[{'imp5': 1, 'imp6': 2, 'imp7': 0}] = [0.3, 0.3, 0.4]
 diag.cpt(obj5)[{'imp5': 2, 'imp6': 2, 'imp7': 0}] = [0.3, 0.3, 0.4]
-diag.cpt(obj5)[{'imp5': 0, 'imp6': 0, 'imp7': 1}] = [0.3, 0.3, 0.4]
+diag.cpt(obj5)[{'imp5': 0, 'imp6': 0, 'imp7': 1}] = [0.1, 0.5, 0.4]
 diag.cpt(obj5)[{'imp5': 1, 'imp6': 0, 'imp7': 1}] = [0.3, 0.3, 0.4]
 diag.cpt(obj5)[{'imp5': 2, 'imp6': 0, 'imp7': 1}] = [0.3, 0.3, 0.4]
 diag.cpt(obj5)[{'imp5': 0, 'imp6': 1, 'imp7': 1}] = [0.3, 0.3, 0.4]
 diag.cpt(obj5)[{'imp5': 1, 'imp6': 1, 'imp7': 1}] = [0.3, 0.3, 0.4]
 diag.cpt(obj5)[{'imp5': 2, 'imp6': 1, 'imp7': 1}] = [0.3, 0.3, 0.4]
 diag.cpt(obj5)[{'imp5': 0, 'imp6': 2, 'imp7': 1}] = [0.3, 0.3, 0.4]
-diag.cpt(obj5)[{'imp5': 1, 'imp6': 2, 'imp7': 1}] = [0.3, 0.3, 0.4]
+diag.cpt(obj5)[{'imp5': 1, 'imp6': 2, 'imp7': 1}] = [0.2, 0.4, 0.4]
 diag.cpt(obj5)[{'imp5': 2, 'imp6': 2, 'imp7': 1}] = [0.3, 0.3, 0.4]
 diag.cpt(obj5)[{'imp5': 0, 'imp6': 0, 'imp7': 2}] = [0.3, 0.3, 0.4]
 diag.cpt(obj5)[{'imp5': 1, 'imp6': 0, 'imp7': 2}] = [0.3, 0.3, 0.4]
@@ -1317,7 +1317,9 @@ ie.addNoForgettingAssumption(["re1", "ass1" ,"ass2"])
 print("Is this solvable =" +str(ie.isSolvable()))
 ie.addEvidence(te1, 1)
 ie.addEvidence(re1, 0)
-
+# ie.addEvidence(con1,1)
+# ie.addEvidence(con2,1)
+# ie.addEvidence(con3,1)
 ie.makeInference()
 
 print(ie.optimalDecision("re1"))
@@ -1325,10 +1327,18 @@ print(ie.optimalDecision("ass1"))
 print(ie.optimalDecision("ass2"))
 print("----------------------------------")
 
-print(ie.posterior(obj1))
+print(ie.posterior(obj1).tolist())
+print(ie.posterior(obj2).tolist())
 print(ie.posterior(obj2))
+print(ie.posterior(imp2))
+print(ie.posterior(mat1))
+print(ie.posterior(mat2))
+print(ie.posterior(con1))
+print(ie.posterior(con2))
+print(ie.posterior(con3))
 print(ie.posterior("imp1"))
 print(ie.posterior(obj5))
+print(ie.posteriorUtility(util1).tolist())
 print(ie.posteriorUtility(util1))
 print(ie.posteriorUtility(util2))
 # gum.ShaferShenoyLIMIDInference

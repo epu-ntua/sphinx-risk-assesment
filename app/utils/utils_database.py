@@ -85,4 +85,22 @@ def rcra_db_init():
         to_add_objectives_option = RepoObjectivesOptions(**objectives_option_json)
         db.session.add(to_add_objectives_option)
 
+    # Adding Utility Nodes
+    to_add_utilities = import_fixture_from_file("repo_utility")
+
+    for utility_json in to_add_utilities:
+        to_add_utility = RepoUtility(**utility_json)
+        db.session.add(to_add_utility)
+
+    # Adding Utility Nodes - Objective Relation
+    db.session.flush()
+    to_add_utility_objective_relations = import_fixture_from_file("repo_utility_objective_relation")
+
+    for utility_objective_relation_json in to_add_utility_objective_relations:
+        utility_to_link = RepoUtility.query.filter_by(id=utility_objective_relation_json["repo_utility_id"]).first()
+        objective_to_link = RepoObjective.query.filter_by(id=utility_objective_relation_json["repo_objective_id"]).first()
+        # print("gehajedadaw")
+        # print(utility_objective_relation_json["repo_objective_id"])
+        utility_to_link.objectives.append(objective_to_link)
+
     db.session.commit()

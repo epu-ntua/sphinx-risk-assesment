@@ -344,6 +344,74 @@ def view_repo_objective_info(objective_id):
                                new_objective_impact_form=new_objective_impact_form)
 
 
+@app.route('/repo/utilities/', methods=['GET', 'POST', 'PUT'])
+def view_repo_utilities():
+    if request.method == 'POST':
+        if 'submit_utility' in request.form:
+            print("UTILITY IS:", request.form)
+            to_add_utility = RepoUtility(name=request.form["name"])
+
+            db.session.add(to_add_utility)
+            # print(objective_states)
+            db.session.commit()
+        else:
+            new_utility_objective = FormAddRepoUtilityObjective()
+            if new_utility_objective.validate_on_submit():
+                try:
+                    to_edit_utility = RepoUtility.query.filter_by(id=new_utility_objective.utility_id.data).first()
+                except SQLAlchemyError:
+                    return Response("SQLAlchemyError", 500)
+
+                to_edit_utility.objectives.append(new_utility_objective.objective.data)
+
+                db.session.commit()
+                flash('Utility-Objective "{}" Added Succesfully'.format(new_utility_objective.objective.data))
+                # add_new_objective = RepoObjective(name=new_objective_form.name.data)
+                return redirect('/repo/utilities/')
+            else:
+                print("Errors", new_utility_objective.errors, flush=True)
+
+            flash('Utility "{}" Error on add'.format(new_utility_objective.utility_id.data))
+
+        return redirect('/repo/utilities/')
+    else:
+        try:
+            repo_utilities = RepoUtility.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        # print("------------------------------")
+        # print(repo_actors, flush=True)
+        #
+        # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
+
+        json_utilities = convert_database_items_to_json_table(repo_utilities)
+
+        print(json_utilities)
+
+        for utility in json_utilities:
+            print(utility["id"])
+            try:
+                repo_objectives_related = RepoObjective.query.filter(RepoObjective.utilities.any(id=utility["id"])).all()
+            except SQLAlchemyError:
+                return Response("SQLAlchemyError", 500)
+
+            utility["objectives"] = ""
+            for repo_objective_related in repo_objectives_related:
+                utility["objectives"] += repo_objective_related.name + "|"
+
+                # Passing this to add edit functionality at a later date
+                utility["Objective"+str(repo_objective_related.id)] = repo_objective_related.name
+
+        print(json_utilities)
+        json_utilities = json.dumps(json_utilities)
+
+        new_utlity_form = FormAddRepoUtility()
+        new_utlity_objective_form = FormAddRepoUtilityObjective()
+        return render_template("templates_asset_repo/view_repo_utilities.html", json_utilities=json_utilities,
+                               new_utlity_form=new_utlity_form, new_utlity_objective_form=new_utlity_objective_form)
+
+
 @app.route('/repo/actors/', methods=['GET', 'POST', 'PUT'])
 def view_repo_actors():
     if request.method == 'POST':
