@@ -1106,30 +1106,45 @@ def repo_risk_configuration_objective_risk(objective_id=1):
 def repo_risk_configuration_utility_risk(utility_id=1):
     if request.method == 'POST':
         # for user_input in request.form:
-        for user_input in request.form:
-            print(user_input)
-            deconstructedId = user_input.split("|")
-            deconstructedId.pop(0)
-            print("deconstructedId Mat")
-            print(deconstructedId)
-            # print(request.form[user_input])
-            to_add_relationship = RepoUtilityObjectiveRelationship(repo_utility_id=utility_id,
-                                                                   utility_value=request.form[user_input])
-            db.session.add(to_add_relationship)
-            db.session.flush()
-            for custom_it in range(0, len(deconstructedId), 2):
-                if deconstructedId[custom_it + 1] == 'low':
-                    to_add_state = 1
-                elif deconstructedId[custom_it + 1] == 'med':
-                    to_add_state = 2
-                else:
-                    to_add_state = 3
-                to_add_many_to_many = RepoUtilityObjectiveRelationshipManyToMany(
-                    repo_objective_id=deconstructedId[custom_it], repo_this_entry_id=to_add_relationship.id,
-                    repo_objective_state=to_add_state)
-                db.session.add(to_add_many_to_many)
+        existing_values = RepoUtilityObjectiveRelationship.query.filter_by(repo_utility_id=utility_id)
+        if existing_values.count() > 0:
+            # This is done in a 'dumb' way where the instances get their values depending on their order
+            # This should work unless the database is changed
+            existing_values =existing_values.all()
+
+            custom_it = 0
+            results = list(request.form.values())
+            for existing_value in existing_values:
+                print(custom_it)
+                print(results)
+                existing_value.utility_value = results[custom_it]
+                custom_it += 1
 
             db.session.commit()
+        else:
+            for user_input in request.form:
+                print(user_input)
+                deconstructedId = user_input.split("|")
+                deconstructedId.pop(0)
+                print("deconstructedId Mat")
+                print(deconstructedId)
+                # print(request.form[user_input])
+                to_add_relationship = RepoUtilityObjectiveRelationship(repo_utility_id=utility_id,
+                                                                       utility_value=request.form[user_input])
+                db.session.add(to_add_relationship)
+                db.session.flush()
+                for custom_it in range(0, len(deconstructedId), 2):
+                    if deconstructedId[custom_it + 1] == 'low':
+                        to_add_state = 1
+                    elif deconstructedId[custom_it + 1] == 'med':
+                        to_add_state = 2
+                    else:
+                        to_add_state = 3
+                    to_add_many_to_many = RepoUtilityObjectiveRelationshipManyToMany(
+                        repo_objective_id=deconstructedId[custom_it], repo_this_entry_id=to_add_relationship.id,
+                        repo_objective_state=to_add_state)
+                    db.session.add(to_add_many_to_many)
+        db.session.commit()
 
         flash('Utlity "{}" Configured Succesfully'.format(utility_id))
         return redirect("/repo/risk/configuration/utility/" + utility_id + "/")
@@ -1155,12 +1170,9 @@ def repo_risk_configuration_utility_risk(utility_id=1):
         array_utility_calculation = []
         for repo_objective_related in repo_objectives_related:
             if not array_utility_calculation:
-                to_add_low = {"id": repo_objective_related.id, "name": repo_objective_related.name, "state": "low",
-                              "value": "50"}
-                to_add_med = {"id": repo_objective_related.id, "name": repo_objective_related.name, "state": "med",
-                              "value": "50"}
-                to_add_high = {"id": repo_objective_related.id, "name": repo_objective_related.name, "state": "high",
-                               "value": "50"}
+                to_add_low = {"id": repo_objective_related.id, "name": repo_objective_related.name, "state": "low"}
+                to_add_med = {"id": repo_objective_related.id, "name": repo_objective_related.name, "state": "med"}
+                to_add_high = {"id": repo_objective_related.id, "name": repo_objective_related.name, "state": "high"}
 
                 array_utility_calculation.append([to_add_low])
                 array_utility_calculation.append([to_add_med])
@@ -1171,18 +1183,15 @@ def repo_risk_configuration_utility_risk(utility_id=1):
 
                 for to_be_added in array_utility_calculation:
                     to_be_added.append(
-                        {"id": repo_objective_related.id, "name": repo_objective_related.name, "state": "low",
-                         "value": "50"})
+                        {"id": repo_objective_related.id, "name": repo_objective_related.name, "state": "low"})
 
                 for to_be_added in temp_array_utility_calculation_1:
                     to_be_added.append(
-                        {"id": repo_objective_related.id, "name": repo_objective_related.name, "state": "med",
-                         "value": "50"})
+                        {"id": repo_objective_related.id, "name": repo_objective_related.name, "state": "med"})
 
                 for to_be_added in temp_array_utility_calculation_2:
                     to_be_added.append(
-                        {"id": repo_objective_related.id, "name": repo_objective_related.name, "state": "high",
-                         "value": "50"})
+                        {"id": repo_objective_related.id, "name": repo_objective_related.name, "state": "high"})
 
                 array_utility_calculation = array_utility_calculation + temp_array_utility_calculation_1 + temp_array_utility_calculation_2
 
@@ -1196,16 +1205,9 @@ def repo_risk_configuration_utility_risk(utility_id=1):
         #     RepoUtilityObjectiveRelationship.repo_utility_id == utility_id,
         # )
 
-        existing_values = RepoUtilityObjectiveRelationship.query
+        existing_values = RepoUtilityObjectiveRelationship.query.filter_by(repo_utility_id=int(utility_id))
         if existing_values.count() > 0:
-            # for to_edit in array_utility_calculation:
-            #     value_to_edit = db.session.query(RepoUtilityObjectiveRelationship,
-            #                                      RepoUtilityObjectiveRelationshipManyToMany).join(
-            #         RepoUtilityObjectiveRelationshipManyToMany).filter(
-            #         RepoUtilityObjectiveRelationship.repo_utility_id == utility_id,
-            #     ).all()
-            # for value in value_to_edit:
-            #     print(value)
+            # Add values of utlity nodes if they exist
 
             # This is for testing it isnt exactly right even if it works
             # THis arranges value in a dumb way
@@ -1215,13 +1217,17 @@ def repo_risk_configuration_utility_risk(utility_id=1):
                 print("NEW TEST")
                 print(to_edit)
                 print(array_utility_calculation[it])
-                array_utility_calculation[it]["value"] = to_edit.utility_value
-            # for utility_calculation in array_utility_calculation:
-            #     try:
-            #         repo_utlity_objective_entries = RepoUtilityObjectiveRelationship.query.filter(
-            #             RepoObjective.utilities.any(id=int(utility_id))).all()
-            #     except SQLAlchemyError:
-            #         return Response("SQLAlchemyError", 500)
+                array_utility_calculation[it].append({"value": to_edit.utility_value})
+                it += 1
+
+        else:
+            # Add default values if there are none
+            for to_edit in array_utility_calculation:
+                to_edit.append({"value": "50"})
+
+        print("TEST3")
+        for two in array_utility_calculation:
+            print(two)
 
         repo_utilities = convert_database_items_to_json_table(repo_utilities)
         return render_template("templates_risk_assessment/repo_risk_configuration_utlity_risk.html",
