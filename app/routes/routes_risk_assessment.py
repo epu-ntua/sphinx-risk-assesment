@@ -239,8 +239,20 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
                                                                                           deconstructedId[1],
                                                                                           repo_response_id=
                                                                                           deconstructedId[2],
-                                                                                          threat_occurrence=to_add_threat_occurence_bool).first()
-                    to_edit_mat_node.prob = request.form[user_input]
+                                                                                          threat_occurrence=to_add_threat_occurence_bool)
+                    if to_edit_mat_node.count() > 0:
+                        to_edit_mat_node = to_edit_mat_node.first()
+                        to_edit_mat_node.prob = request.form[user_input]
+                    else:
+                        to_add_missing_mat_node = RepoRiskThreatAssetMaterialisation(repo_asset_id=asset_id,
+                                                                                     repo_threat_id=threat_id,
+                                                                                     repo_materialisation_id=
+                                                                                     deconstructedId[1],
+                                                                                     repo_response_id=deconstructedId[
+                                                                                         2],
+                                                                                     threat_occurrence=to_add_threat_occurence_bool,
+                                                                                     prob=request.form[user_input])
+                        db.session.add(to_add_missing_mat_node)
                     db.session.commit()
 
                 elif deconstructedId[0] == "cons":
@@ -260,9 +272,23 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
                                                                                        deconstructedId[1],
                                                                                        repo_response_id=deconstructedId[
                                                                                            2],
-                                                                                       threat_occurrence=to_add_threat_occurence_bool).first()
+                                                                                       threat_occurrence=to_add_threat_occurence_bool)
 
                     to_edit_cons_node.prob = request.form[user_input]
+
+                    if to_edit_cons_node.count() > 0:
+                        to_edit_cons_node = to_edit_cons_node.first()
+                        to_edit_cons_node.prob = request.form[user_input]
+                    else:
+                        to_add_missing_cons_node = RepoRiskThreatAssetConsequence(repo_asset_id=asset_id,
+                                                                                  repo_threat_id=threat_id,
+                                                                                  repo_consequence_id=
+                                                                                  deconstructedId[1],
+                                                                                  repo_response_id=deconstructedId[
+                                                                                      2],
+                                                                                  threat_occurrence=to_add_threat_occurence_bool,
+                                                                                  prob=request.form[user_input])
+                        db.session.add(to_add_missing_cons_node)
                     db.session.commit()
                 else:
                     flash('Error adding user input, this shouldnt happen: Malformed Input forms')
@@ -415,39 +441,104 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
                 for materialisation in repo_threat_materialisations:
                     temp_array_threat_materialisation_calculation = []
                     for response in repo_threat_responses:
-                        prob_item = next(item for item in existing_user_input_materialisation if
-                                         item["repo_response_id"] == response["id"] and item[
-                                             "repo_materialisation_id"] == materialisation["id"] and item[
-                                             "threat_occurrence"] is True)
-                        temp_array_threat_materialisation_calculation.append(
-                            {"response": response, "materialisation": materialisation, "threat_occurrence": True,
-                             "prob": prob_item['prob']})
 
-                        prob_item = next(item for item in existing_user_input_materialisation if
-                                         item["repo_response_id"] == response["id"] and item[
-                                             "repo_materialisation_id"] == materialisation["id"] and item[
-                                             "threat_occurrence"] is False)
-                        temp_array_threat_materialisation_calculation.append(
-                            {"response": response, "materialisation": materialisation, "threat_occurrence": False,
-                             "prob": prob_item['prob']})
+                        # prob_item = next(item for item in existing_user_input_materialisation if
+                        #                  item["repo_response_id"] == response["id"] and item[
+                        #                      "repo_materialisation_id"] == materialisation["id"] and item[
+                        #                      "threat_occurrence"] is True)
+
+                        prob_item = False
+
+                        for item in existing_user_input_materialisation:
+                            if item["repo_response_id"] == response["id"] and item[
+                                "repo_materialisation_id"] == materialisation["id"] and item[
+                                "threat_occurrence"] is True:
+                                prob_item = item
+
+                        if prob_item:
+                            print("Prob Item is:")
+                            print(prob_item)
+                            temp_array_threat_materialisation_calculation.append(
+                                {"response": response, "materialisation": materialisation, "threat_occurrence": True,
+                                 "prob": prob_item['prob']})
+                        else:
+                            temp_array_threat_materialisation_calculation.append(
+                                {"response": response, "materialisation": materialisation, "threat_occurrence": True,
+                                 "prob": 50})
+
+                        # prob_item = next(item for item in existing_user_input_materialisation if
+                        #                  item["repo_response_id"] == response["id"] and item[
+                        #                      "repo_materialisation_id"] == materialisation["id"] and item[
+                        #                      "threat_occurrence"] is False)
+
+                        prob_item = False
+
+                        for item in existing_user_input_materialisation:
+                            if item["repo_response_id"] == response["id"] and item[
+                                "repo_materialisation_id"] == materialisation["id"] and item[
+                                "threat_occurrence"] is False:
+                                prob_item = item
+
+                        if prob_item:
+                            print("Prob Item is:")
+                            print(prob_item)
+                            temp_array_threat_materialisation_calculation.append(
+                                {"response": response, "materialisation": materialisation, "threat_occurrence": False,
+                                 "prob": prob_item['prob']})
+                        else:
+                            temp_array_threat_materialisation_calculation.append(
+                                {"response": response, "materialisation": materialisation, "threat_occurrence": False,
+                                 "prob": 50})
 
                     array_threat_materialisation_calculation.append(temp_array_threat_materialisation_calculation)
 
                 for consequence in repo_threat_consequence:
                     temp_array_threat_consequence_calculation = []
                     for response in repo_threat_responses:
-                        prob_item = next(item for item in existing_user_input_consequence if
-                                         item["repo_response_id"] == response["id"] and item["repo_consequence_id"] ==
-                                         consequence["id"] and item["threat_occurrence"] is True)
-                        temp_array_threat_consequence_calculation.append(
-                            {"response": response, "consequence": consequence, "threat_occurrence": True,
-                             "prob": prob_item['prob']})
-                        prob_item = next(item for item in existing_user_input_consequence if
-                                         item["repo_response_id"] == response["id"] and item["repo_consequence_id"] ==
-                                         materialisation["id"] and item["threat_occurrence"] is False)
-                        temp_array_threat_consequence_calculation.append(
-                            {"response": response, "consequence": consequence, "threat_occurrence": False,
-                             "prob": prob_item['prob']})
+
+                        # prob_item = next(item for item in existing_user_input_consequence if
+                        #                  item["repo_response_id"] == response["id"] and item["repo_consequence_id"] ==
+                        #                  consequence["id"] and item["threat_occurrence"] is True)
+
+                        prob_item = False
+
+                        for item in existing_user_input_consequence:
+                            if item["repo_response_id"] == response["id"] and item["repo_consequence_id"] == \
+                                    consequence["id"] and item["threat_occurrence"] is True:
+                                prob_item = item
+
+                        if prob_item:
+                            print("Prob Item is:")
+                            print(prob_item)
+                            temp_array_threat_consequence_calculation.append(
+                                {"response": response, "consequence": consequence, "threat_occurrence": True,
+                                 "prob": prob_item['prob']})
+                        else:
+                            temp_array_threat_consequence_calculation.append(
+                                {"response": response, "consequence": consequence, "threat_occurrence": True,
+                                 "prob": 50})
+
+                        # prob_item = next(item for item in existing_user_input_consequence if
+                        #                  item["repo_response_id"] == response["id"] and item["repo_consequence_id"] ==
+                        #                  materialisation["id"] and item["threat_occurrence"] is False)
+
+                        prob_item = False
+
+                        for item in existing_user_input_consequence:
+                            if item["repo_response_id"] == response["id"] and item["repo_consequence_id"] == \
+                                    consequence["id"] and item["threat_occurrence"] is True:
+                                prob_item = item
+
+                        if prob_item:
+                            print("Prob Item is:")
+                            print(prob_item)
+                            temp_array_threat_consequence_calculation.append(
+                                {"response": response, "consequence": consequence, "threat_occurrence": False,
+                                 "prob": prob_item['prob']})
+                        else:
+                            temp_array_threat_consequence_calculation.append(
+                                {"response": response, "consequence": consequence, "threat_occurrence": False,
+                                 "prob": 50})
 
                     array_threat_consequence_calculation.append(temp_array_threat_consequence_calculation)
 
@@ -1110,7 +1201,7 @@ def repo_risk_configuration_utility_risk(utility_id=1):
         if existing_values.count() > 0:
             # This is done in a 'dumb' way where the instances get their values depending on their order
             # This should work unless the database is changed
-            existing_values =existing_values.all()
+            existing_values = existing_values.all()
 
             custom_it = 0
             results = list(request.form.values())
@@ -1283,11 +1374,63 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
             related_assets.append(related_assessment.asset)
             # print(related_assessment.asset)
 
+        check_threat_exposure_exists = 0
+        check_threat_materialisation_exists = 0
+        check_asset_impact_exists = 0
+        check_objectives_impact_exists = 0
+        check_utility_conf_exists = 0
+        asset_is_related = 0
         if asset_id != -1:
             try:
                 this_asset = RepoAsset.query.filter_by(id=asset_id).all()
             except SQLAlchemyError:
                 return Response("SQLAlchemyError", 500)
+
+            try:
+                threat_exposure_relationship = RepoAssetRepoThreatRelationship.query.filter_by(repo_asset_id=asset_id,
+                                                                                               repo_threat_id=threat_id)
+            except SQLAlchemyError:
+                return Response("SQLAlchemyError", 500)
+
+            if threat_exposure_relationship.count() > 0:
+                check_threat_exposure_exists = 1
+
+            try:
+                asset_threat_relationship = RepoRiskThreatAssetMaterialisation.query.filter_by(repo_asset_id=asset_id,
+                                                                                               repo_threat_id=threat_id)
+            except SQLAlchemyError:
+                return Response("SQLAlchemyError", 500)
+
+            if asset_threat_relationship.count() > 0:
+                check_threat_materialisation_exists = 1
+
+            try:
+                asset_threat_impact_relationship = RepoAssetThreatConsequenceServiceImpactRelationship.query.filter_by(
+                    repo_asset_id=asset_id,
+                    repo_threat_id=threat_id)
+            except SQLAlchemyError:
+                return Response("SQLAlchemyError", 500)
+
+            if asset_threat_impact_relationship.count() > 0:
+                check_asset_impact_exists = 1
+
+            try:
+                objective_impact_relationship = RepoObjectiveImpactRelationship.query
+            except SQLAlchemyError:
+                return Response("SQLAlchemyError", 500)
+
+            if objective_impact_relationship.count() > 0:
+                check_objectives_impact_exists = 1
+
+            try:
+                utility_conf = RepoUtilityObjectiveRelationship.query
+            except SQLAlchemyError:
+                return Response("SQLAlchemyError", 500)
+
+            if utility_conf.count() > 0:
+                check_utility_conf_exists = 1
+
+
         else:
             this_asset = []
 
@@ -1305,6 +1448,11 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
         this_asset = convert_database_items_to_json_table(this_asset)
         for related_asset in related_assets:
             unrelated_assets.remove(related_asset)
+
+        if asset_id != "-1":
+            for related_asset_each in related_asset:
+                if this_asset[0] == related_asset_each:
+                    asset_is_related = 1
         # array_objective_calculation = [[{}], [{}]                                       ]
         # for
 
@@ -1313,7 +1461,14 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
                                this_threat=this_threat,
                                related_assets=related_assets,
                                unrelated_assets=unrelated_assets,
-                               this_asset=this_asset)
+                               this_asset=this_asset,
+                               check_threat_exposure_exists=check_threat_exposure_exists,
+                               check_threat_materialisation_exists=check_threat_materialisation_exists,
+                               check_asset_impact_exists=check_asset_impact_exists,
+                               check_objectives_impact_exists=check_objectives_impact_exists,
+                               check_utility_conf_exists=check_utility_conf_exists,
+                               asset_is_related=asset_is_related
+                               )
 
 
 @app.route('/repo/risk/reports/', methods=['GET', 'POST'])
