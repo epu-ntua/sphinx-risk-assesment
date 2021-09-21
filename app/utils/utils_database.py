@@ -103,4 +103,49 @@ def rcra_db_init():
         # print(utility_objective_relation_json["repo_objective_id"])
         utility_to_link.objectives.append(objective_to_link)
 
+    # Adding Objective Impact Relationship
+    db.session.flush()
+    to_add_objective_impact_relationship = import_fixture_from_file("repo_objective_repo_impact_association_table")
+    for objective_impact_relation_json in to_add_objective_impact_relationship:
+        objective_to_link = RepoObjective.query.filter_by(
+            id=objective_impact_relation_json["repo_objective_id"]).first()
+        impact_to_link = RepoImpact.query.filter_by(id=objective_impact_relation_json["repo_impact_id"]).first()
+        objective_to_link.impacts.append(impact_to_link)
+
+    # Adding Service Impact Relationship
+    db.session.flush()
+    to_add_service_impact_relationship = import_fixture_from_file("repo_service_repo_impact_association_table")
+    for service_impact_relation_json in to_add_service_impact_relationship:
+        service_to_link = RepoService.query.filter_by(
+            id=service_impact_relation_json["repo_service_id"]).first()
+        impact_to_link = RepoImpact.query.filter_by(id=service_impact_relation_json["repo_impact_id"]).first()
+        service_to_link.impacts.append(impact_to_link)
+
+
+    # Adding Repo Consequence
+    to_add_consequences = import_fixture_from_file("repo_consequence")
+    for consequence_json in to_add_consequences:
+        to_add_consequence = RepoConsequence(**consequence_json)
+        db.session.add(to_add_consequence)
+
+    # Adding Repo Materialisation
+    to_add_materialisations = import_fixture_from_file("repo_materialisation")
+    for materialisation_json in to_add_materialisations:
+        to_add_materialisation = RepoMaterialisation(**materialisation_json)
+        db.session.add(to_add_materialisation)
+
+    # Adding Repo Response
+    to_add_responses = import_fixture_from_file("repo_response")
+    for response_json in to_add_responses:
+        to_add_response = RepoResponse(**response_json)
+        db.session.add(to_add_response)
+
+    # Adding Repo Consequence Impact Relationship
+    db.session.flush()
+    to_add_consequence_impact_relations = import_fixture_from_file("repo_consequence_impact_relationship")
+    for consequence_impact_relation_json in to_add_consequence_impact_relations:
+        consequence_to_link = RepoConsequence.query.filter_by(id=consequence_impact_relation_json["repo_consequence_id"]).first()
+        impact_to_link = RepoImpact.query.filter_by(id=consequence_impact_relation_json["repo_impact_id"]).first()
+        consequence_to_link.impacts.append(impact_to_link)
+
     db.session.commit()

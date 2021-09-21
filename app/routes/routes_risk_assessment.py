@@ -565,9 +565,16 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
 @app.route('/repo/risk/configuration/impact/threat/<threat_id>/asset/<asset_id>/', methods=['GET', 'POST'])
 @app.route('/repo/risk/configuration/impact/<impact_id>/threat/<threat_id>/asset/<asset_id>/', methods=['GET', 'POST'])
 def repo_risk_configuration_impacts_risk(threat_id=1, asset_id=-1, impact_id=-1):
+    """ Page that setups values for impact asset threat relationship risk assessment values
+    The value assignment depends on knowing what the order of the entries will be since we know the
+    metadat of the table if these change then this will not work correctly or at all
+    This page will not work if static datam such as service -a asset relationship is changed """
     if request.method == 'POST':
-        # If there are any entries regarding this pair of threats, assets and impacts, entries need to be edited not added
-        # Add new entries since none exist
+        # existing_values = RepoAssetThreatConsequenceServiceImpactRelationship.query.filter_by(
+        #     repo_threat_id=threat_id,
+        #     repo_impact_id=impact_id,
+        #     repo_asset_id=asset_id)
+
         for user_input in request.form:
             deconstructedId = user_input.split("|")
             print("deconstructedId Mat")
@@ -598,135 +605,46 @@ def repo_risk_configuration_impacts_risk(threat_id=1, asset_id=-1, impact_id=-1)
                     related_consequence_state.append(
                         {"cons_id": str(temp_entry[custom_it + 1]), "state": temp_entry[custom_it + 2]})
                     related_consequence_list.append(temp_entry[custom_it + 1])
-            # If this entry is about consequences
+
+            # print("NEW ENTRY")
+            # print(related_mixed_state)
+            # Entry doesnt exist create new one
+            # Create main entry
+            print("ARRAYS ARE")
             print(related_service_state)
-            # print(related_consequence_state)
-            related_mixed_state = related_service_state + related_consequence_state
-            # Find if this specific input exists
-            joined = db.session.query(RepoAssetThreatConsequenceServiceImpactRelationship,
-                                      RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany,
-                                      RepoAssetThreatConsequenceServiceImpactRelationshipServiceManyToMany) \
-                .join(
-                RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany,
-                RepoAssetThreatConsequenceServiceImpactRelationshipServiceManyToMany) \
-                .filter(
-                RepoAssetThreatConsequenceServiceImpactRelationship.repo_threat_id == threat_id,
-                RepoAssetThreatConsequenceServiceImpactRelationship.repo_impact_id == impact_id,
-                RepoAssetThreatConsequenceServiceImpactRelationship.repo_asset_id == asset_id,
-                # RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany.repo_consequence_id == 1,
-                # RepoAssetThreatConsequenceServiceImpactRelationshipServiceManyToMany.repo_service_id == 1,
+            print(related_service_list)
+            # print(json.dumps(related_service_list))
+            print(related_consequence_state)
+            print(related_consequence_list)
+            # print(json.dumps(related_consequence_list))
+            does_exist = RepoAssetThreatConsequenceServiceImpactRelationship.query.filter_by(
+                repo_asset_id=asset_id,
+                repo_threat_id=threat_id,
+                repo_impact_id=impact_id,
+                services_state=json.dumps(related_service_state),
+                consequences_state=json.dumps(related_consequence_state)
             )
-            # print("NUMBER OF RECORDS")
-            # print(joined.count())
-            joined = joined.all()
-
-            concatted = {}
-
-            for temp_joined in joined:
-                # print("Single Line")
-                # print("Inner Line")
-                if temp_joined[0] not in concatted:
-                    concatted[temp_joined[0]] = []
-                for inner_joined in temp_joined:
-                    if inner_joined is temp_joined[0]:
-                        continue
-                    # print(concatted[temp_joined[0]])
-                    if type(inner_joined) is RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany:
-                        # inner_joined_arrayed = ['cons', inner_joined.repo_consequence_id, inner_joined.repo_consequence_state]
-                        inner_joined_arrayed = {"cons_id": str(inner_joined.repo_consequence_id),
-                                                "state": str(inner_joined.repo_consequence_state)}
-                    else:
-                        # inner_joined_arrayed = ['serv', inner_joined.repo_service_id, inner_joined.repo_service_state]
-                        inner_joined_arrayed = {"serv_id": str(inner_joined.repo_service_id),
-                                                "state": str(inner_joined.repo_service_state)}
-                    if inner_joined_arrayed not in concatted[temp_joined[0]]:
-                        concatted[temp_joined[0]].append(inner_joined_arrayed)
-                    # print(inner_joined)
-            # print(concatted)
-
-            existing_entry = None
-            # print(concatted.items())
-            # print("------------ RESULTS ARE ----------")
-            for concatted_entry_key, concatted_entry_value in concatted.items():
-                # print(related_mixed_state)
-                # print(concatted_entry_value)
-                if sorted(concatted_entry_value, key=lambda ele: sorted(ele.items())) == sorted(related_mixed_state,
-                                                                                                key=lambda ele: sorted(
-                                                                                                    ele.items())):
-                    # print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSAAAAAAAAAAAAAAAAAAAAAAAAMMMMMMMMMMMMEEEEEEEEEE")
-                    # print(related_mixed_state)
-                    # print(concatted_entry_value)
-                    # print("STOOOOOOOOOOOOOOOOOOOOOOOOOOOOPPPPPPPPPPPSSSSSSSSSSSSSSSSSSSSSSS")
-                    existing_entry = concatted_entry_key
-                    break
-
-            # print(existing_entry)
-            # print("THIS QUERY RESULT IS")
-            # print()
-            # current_entry = convert_database_items_to_json_table(joined)
-            # for temp_joined in current_entry:
-            #     # temp_temp = convert_database_items_to_json_table(temp_joined)
-            #     print(temp_joined)
-            if existing_entry:
-                # Entry already exists
-
-                # print("Already exists")
-                # print(related_mixed_state)
-                # print(existing_entry)
-                if deconstructedId[0] == "low":
-                    existing_entry.low_prob = request.form[user_input]
-                elif deconstructedId[0] == "medium":
-                    existing_entry.med_prob = request.form[user_input]
-                else:
-                    existing_entry.high_prob = request.form[user_input]
-
-                # print("Not yet 2")
+            if does_exist.count() > 0:
+                to_score_entry = does_exist.first()
             else:
-                # print("NEW ENTRY")
-                # print(related_mixed_state)
-                # Entry doesnt exist create new one
-                # Create main entry
-                to_add_main = RepoAssetThreatConsequenceServiceImpactRelationship(repo_asset_id=asset_id,
-                                                                                  repo_threat_id=threat_id,
-                                                                                  repo_impact_id=impact_id,
-                                                                                  )
-                db.session.add(to_add_main)
+                to_score_entry = RepoAssetThreatConsequenceServiceImpactRelationship(repo_asset_id=asset_id,
+                                                                                     repo_threat_id=threat_id,
+                                                                                     repo_impact_id=impact_id,
+                                                                                     services_state=json.dumps(
+                                                                                         related_service_state),
+                                                                                     consequences_state=json.dumps(
+                                                                                         related_consequence_state)
+                                                                                     )
+                db.session.add(to_score_entry)
                 db.session.flush()
-                # Create secondary entries
-                for single_service in related_service_state:
-                    # Convert String to bool
-                    if single_service["state"] == "True":
-                        temp_bool = True
-                    else:
-                        temp_bool = False
-                    to_add_secondary_serv = RepoAssetThreatConsequenceServiceImpactRelationshipServiceManyToMany(
-                        repo_service_id=single_service["serv_id"],
-                        repo_service_state=temp_bool
-                    )
-                    to_add_main.services.append(to_add_secondary_serv)
-                    db.session.add(to_add_secondary_serv)
-                    db.session.flush()
 
-                for single_consequence in related_consequence_state:
-                    # Convert String to bool
-                    if single_consequence["state"] == "True":
-                        temp_bool = True
-                    else:
-                        temp_bool = False
-                    to_add_secondary_cons = RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany(
-                        repo_consequence_id=single_consequence["cons_id"],
-                        repo_consequence_state=temp_bool
-                    )
-                    to_add_main.consequences.append(to_add_secondary_cons)
-                    db.session.add(to_add_secondary_cons)
-                    db.session.flush()
 
-                if deconstructedId[0] == "low":
-                    to_add_main.low_prob = request.form[user_input]
-                elif deconstructedId[0] == "medium":
-                    to_add_main.med_prob = request.form[user_input]
-                else:
-                    to_add_main.high_prob = request.form[user_input]
+            if deconstructedId[0] == "low":
+                to_score_entry.low_prob = request.form[user_input]
+            elif deconstructedId[0] == "medium":
+                to_score_entry.med_prob = request.form[user_input]
+            else:
+                to_score_entry.high_prob = request.form[user_input]
 
         print("WILL SAVE NOW")
         db.session.commit()
@@ -834,74 +752,28 @@ def repo_risk_configuration_impacts_risk(threat_id=1, asset_id=-1, impact_id=-1)
             print(temp)
 
         # If there are aready values
-        existing_values = db.session.query(RepoAssetThreatConsequenceServiceImpactRelationship,
-                                           RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany,
-                                           RepoAssetThreatConsequenceServiceImpactRelationshipServiceManyToMany).join(
-            RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany,
-            RepoAssetThreatConsequenceServiceImpactRelationshipServiceManyToMany).filter(
-            RepoAssetThreatConsequenceServiceImpactRelationship.repo_threat_id == threat_id,
-            RepoAssetThreatConsequenceServiceImpactRelationship.repo_impact_id == impact_id,
-            RepoAssetThreatConsequenceServiceImpactRelationship.repo_asset_id == asset_id,
+        does_exist = RepoAssetThreatConsequenceServiceImpactRelationship.query.filter_by(
+            repo_asset_id=asset_id,
+            repo_threat_id=threat_id,
+            repo_impact_id=impact_id
+            # services_state=json.dumps(related_service_state),
+            # consequences_state=json.dumps(related_consequence_state)
         )
-        if existing_values.count() > 0:
-            joined = existing_values.all()
-
-            concatted = {}
-
-            for temp_joined in joined:
-                # print("Single Line")
-                # print("Inner Line")
-                if temp_joined[0] not in concatted:
-                    concatted[temp_joined[0]] = []
-                for inner_joined in temp_joined:
-                    if inner_joined is temp_joined[0]:
-                        continue
-                    # print(concatted[temp_joined[0]])
-                    if type(inner_joined) is RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany:
-                        # inner_joined_arrayed = ['cons', inner_joined.repo_consequence_id, inner_joined.repo_consequence_state]
-                        inner_joined_arrayed = {"consequence": {'id': inner_joined.repo_consequence_id,
-                                                                'name': inner_joined.repo_consequence.name,
-                                                                'threat_id': inner_joined.repo_consequence.threat_id,
-                                                                'materialisation_id': inner_joined.repo_consequence.materialisation_id
-                                                                },
-                                                "state": inner_joined.repo_consequence_state}
-                    else:
-                        # inner_joined_arrayed = ['serv', inner_joined.repo_service_id, inner_joined.repo_service_state]
-                        inner_joined_arrayed = {
-                            "service": {'id': inner_joined.repo_service_id, 'name': inner_joined.repo_service.name},
-                            "state": inner_joined.repo_service_state}
-                    if inner_joined_arrayed not in concatted[temp_joined[0]]:
-                        concatted[temp_joined[0]].append(inner_joined_arrayed)
-            print("------------ RESULTS ARE ----------")
-            print(concatted.items())
+        if does_exist.count() == 0:
             for to_send in array_impact_calculation:
-                for concatted_entry_key, concatted_entry_value in concatted.items():
-                    # print("------Comparison------")
-                    # print(to_send)
-                    # print(concatted_entry_value)
-                    ddiff = DeepDiff(to_send, concatted_entry_value, ignore_order=True)
-                    # print(ddiff)
-
-                    if ddiff == {}:
-                        print("SAMEEEEEEEEEEEEEEE")
-                        to_send.append(concatted_entry_key.low_prob)
-                        to_send.append(concatted_entry_key.med_prob)
-                        to_send.append(concatted_entry_key.high_prob)
-                        print(to_send)
-
-                    # if sorted(concatted_entry_value, key=lambda ele: sorted(ele.items())) == sorted(
-                    #         to_send, key=lambda ele: sorted(ele.items())):
-                #             print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSAAAAAAAAAAAAAAAAAAAAAAAAMMMMMMMMMMMMEEEEEEEEEE")
-                #     # print(related_mixed_state)
-                # #     # print(concatted_entry_value)
-                #  print("STOOOOOOOOOOOOOOOOOOOOOOOOOOOOPPPPPPPPPPPSSSSSSSSSSSSSSSSSSSSSSS")
-                # #             existing_entry = concatted_entry_key
-                #         break
+                to_send.append(50)
+                to_send.append(50)
+                to_send.append(50)
+            # to_score_entry = does_exist.first()
         else:
+            custom_it = 0
+            does_exist=does_exist.all()
             for to_send in array_impact_calculation:
-                to_send.append(50)
-                to_send.append(50)
-                to_send.append(50)
+                to_send.append(does_exist[custom_it].low_prob)
+                to_send.append(does_exist[custom_it].med_prob)
+                to_send.append(does_exist[custom_it].high_prob)
+                custom_it = custom_it+1
+
 
         return render_template("templates_risk_assessment/repo_risk_configuration_impacts_risk.html",
                                repo_impacts=repo_impacts, repo_threats=repo_threats, repo_assets=repo_assets,
@@ -912,6 +784,10 @@ def repo_risk_configuration_impacts_risk(threat_id=1, asset_id=-1, impact_id=-1)
 
 @app.route('/repo/risk/configuration/objective/<objective_id>/', methods=['GET', 'POST'])
 def repo_risk_configuration_objective_risk(objective_id=1):
+    """ Page that setups values for objectives impact values
+        The value assignment depends on knowing what the order of the entries will be since we know the
+        metadat of the table if these change then this will not work correctly or at all
+        This page will not work if static datam such as impact objective relations is changed """
     if request.method == 'POST':
         # new_service_form = FormAddRepoService()
         for user_input in request.form:
@@ -944,109 +820,129 @@ def repo_risk_configuration_objective_risk(objective_id=1):
                 related_impact_list.append(temp_entry[custom_it + 1])
 
             print(related_impact_state)
-            #             # Find if this specific input exists
-            joined = db.session.query(RepoObjectiveImpactRelationship, RepoObjectiveImpactRelationshipImpactManyToMany) \
-                .join(RepoObjectiveImpactRelationshipImpactManyToMany) \
-                .filter(
-                RepoObjectiveImpactRelationship.repo_objective_id == objective_id,
-                # RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany.repo_consequence_id == 1,
-                # RepoAssetThreatConsequenceServiceImpactRelationshipServiceManyToMany.repo_service_id == 1,
+
+            does_exist = RepoObjectiveImpactRelationship.query.filter_by(
+                repo_objective_id=objective_id,
+                impacts_state=json.dumps(related_impact_state)
             )
-            # print("NUMBER OF RECORDS")
-            # print(joined.count())
-            joined = joined.all()
-
-            concatted = {}
-
-            for temp_joined in joined:
-                # print("Single Line")
-                # print("Inner Line")
-                if temp_joined[0] not in concatted:
-                    concatted[temp_joined[0]] = []
-                for inner_joined in temp_joined:
-                    if inner_joined is temp_joined[0]:
-                        continue
-                    # print(concatted[temp_joined[0]])
-                    inner_joined_arrayed = {"imp_id": str(inner_joined.repo_impact_id),
-                                            "state": str(inner_joined.repo_impact_state)}
-
-                    if inner_joined_arrayed not in concatted[temp_joined[0]]:
-                        concatted[temp_joined[0]].append(inner_joined_arrayed)
-                    # print(inner_joined)
-            # print(concatted)
-
-            existing_entry = None
-            # print(concatted.items())
-            print("------------ COMPARISON ARE ----------")
-            for concatted_entry_key, concatted_entry_value in concatted.items():
-                print(related_impact_state)
-                print(concatted_entry_value)
-                if sorted(concatted_entry_value, key=lambda ele: sorted(ele.items())) == sorted(related_impact_state,
-                                                                                                key=lambda ele: sorted(
-                                                                                                    ele.items())):
-                    # print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSAAAAAAAAAAAAAAAAAAAAAAAAMMMMMMMMMMMMEEEEEEEEEE")
-                    # print(related_mixed_state)
-                    # print(concatted_entry_value)
-                    # print("STOOOOOOOOOOOOOOOOOOOOOOOOOOOOPPPPPPPPPPPSSSSSSSSSSSSSSSSSSSSSSS")
-                    existing_entry = concatted_entry_key
-                    break
-
-            # print(existing_entry)
-            # print("THIS QUERY RESULT IS")
-            # print()
-            # current_entry = convert_database_items_to_json_table(joined)
-            # for temp_joined in current_entry:
-            #     # temp_temp = convert_database_items_to_json_table(temp_joined)
-            #     print(temp_joined)
-            if existing_entry:
-                # Entry already exists
-
-                # print("Already exists")
-                # print(related_mixed_state)
-                # print(existing_entry)
-                if deconstructedId[0] == "low":
-                    existing_entry.low_prob = request.form[user_input]
-                elif deconstructedId[0] == "med":
-                    existing_entry.med_prob = request.form[user_input]
-                else:
-                    existing_entry.high_prob = request.form[user_input]
-
-                # print("Not yet 2")
+            if does_exist.count() > 0:
+                to_score_entry = does_exist.first()
             else:
-                # print("NEW ENTRY")
-                # print(related_mixed_state)
-                # Entry doesnt exist create new one
-                # Create main entry
-                to_add_main = RepoObjectiveImpactRelationship(repo_objective_id=objective_id)
-                db.session.add(to_add_main)
+                to_score_entry = RepoObjectiveImpactRelationship(repo_objective_id=objective_id,
+                                                                                     impacts_state=json.dumps(related_impact_state))
+                db.session.add(to_score_entry)
                 db.session.flush()
-                # Create secondary entries
 
-                for single_impact in related_impact_state:
-                    # Convert String to bool
-                    # if single_impact["state"] == "low":
-                    #     temp_bool = 0
-                    # elif single_impact["state"] == "med":
-                    #     temp_bool = 1
-                    # else:
-                    #     temp_bool = 2
-                    to_add_secondary_imp = RepoObjectiveImpactRelationshipImpactManyToMany(
-                        repo_impact_id=single_impact["imp_id"],
-                        repo_impact_state=int(single_impact["state"])
-                    )
-                    print("ADDING")
-                    print(to_add_secondary_imp)
-                    print(to_add_main)
-                    to_add_main.impacts.append(to_add_secondary_imp)
-                    db.session.add(to_add_secondary_imp)
-                    db.session.flush()
+            if deconstructedId[0] == "low":
+                to_score_entry.low_prob = request.form[user_input]
+            elif deconstructedId[0] == "med":
+                to_score_entry.med_prob = request.form[user_input]
+            else:
+                to_score_entry.high_prob = request.form[user_input]
+             #     Find if this specific input exists
 
-                if deconstructedId[0] == "low":
-                    to_add_main.low_prob = request.form[user_input]
-                elif deconstructedId[0] == "medium":
-                    to_add_main.med_prob = request.form[user_input]
-                else:
-                    to_add_main.high_prob = request.form[user_input]
+            # joined = db.session.query(RepoObjectiveImpactRelationship, RepoObjectiveImpactRelationshipImpactManyToMany) \
+            #     .join(RepoObjectiveImpactRelationshipImpactManyToMany) \
+            #     .filter(
+            #     RepoObjectiveImpactRelationship.repo_objective_id == objective_id,
+            #     # RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany.repo_consequence_id == 1,
+            #     # RepoAssetThreatConsequenceServiceImpactRelationshipServiceManyToMany.repo_service_id == 1,
+            # )
+            # # print("NUMBER OF RECORDS")
+            # # print(joined.count())
+            # joined = joined.all()
+            #
+            # concatted = {}
+            #
+            # for temp_joined in joined:
+            #     # print("Single Line")
+            #     # print("Inner Line")
+            #     if temp_joined[0] not in concatted:
+            #         concatted[temp_joined[0]] = []
+            #     for inner_joined in temp_joined:
+            #         if inner_joined is temp_joined[0]:
+            #             continue
+            #         # print(concatted[temp_joined[0]])
+            #         inner_joined_arrayed = {"imp_id": str(inner_joined.repo_impact_id),
+            #                                 "state": str(inner_joined.repo_impact_state)}
+            #
+            #         if inner_joined_arrayed not in concatted[temp_joined[0]]:
+            #             concatted[temp_joined[0]].append(inner_joined_arrayed)
+            #         # print(inner_joined)
+            # # print(concatted)
+            #
+            # existing_entry = None
+            # # print(concatted.items())
+            # print("------------ COMPARISON ARE ----------")
+            # for concatted_entry_key, concatted_entry_value in concatted.items():
+            #     print(related_impact_state)
+            #     print(concatted_entry_value)
+            #     if sorted(concatted_entry_value, key=lambda ele: sorted(ele.items())) == sorted(related_impact_state,
+            #                                                                                     key=lambda ele: sorted(
+            #                                                                                         ele.items())):
+            #         # print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSAAAAAAAAAAAAAAAAAAAAAAAAMMMMMMMMMMMMEEEEEEEEEE")
+            #         # print(related_mixed_state)
+            #         # print(concatted_entry_value)
+            #         # print("STOOOOOOOOOOOOOOOOOOOOOOOOOOOOPPPPPPPPPPPSSSSSSSSSSSSSSSSSSSSSSS")
+            #         existing_entry = concatted_entry_key
+            #         break
+            #
+            # # print(existing_entry)
+            # # print("THIS QUERY RESULT IS")
+            # # print()
+            # # current_entry = convert_database_items_to_json_table(joined)
+            # # for temp_joined in current_entry:
+            # #     # temp_temp = convert_database_items_to_json_table(temp_joined)
+            # #     print(temp_joined)
+            # if existing_entry:
+            #     # Entry already exists
+            #
+            #     # print("Already exists")
+            #     # print(related_mixed_state)
+            #     # print(existing_entry)
+            #     if deconstructedId[0] == "low":
+            #         existing_entry.low_prob = request.form[user_input]
+            #     elif deconstructedId[0] == "med":
+            #         existing_entry.med_prob = request.form[user_input]
+            #     else:
+            #         existing_entry.high_prob = request.form[user_input]
+            #
+            #     # print("Not yet 2")
+            # else:
+            #     # print("NEW ENTRY")
+            #     # print(related_mixed_state)
+            #     # Entry doesnt exist create new one
+            #     # Create main entry
+            #     to_add_main = RepoObjectiveImpactRelationship(repo_objective_id=objective_id)
+            #     db.session.add(to_add_main)
+            #     db.session.flush()
+            #     # Create secondary entries
+            #
+            #     for single_impact in related_impact_state:
+            #         # Convert String to bool
+            #         # if single_impact["state"] == "low":
+            #         #     temp_bool = 0
+            #         # elif single_impact["state"] == "med":
+            #         #     temp_bool = 1
+            #         # else:
+            #         #     temp_bool = 2
+            #         to_add_secondary_imp = RepoObjectiveImpactRelationshipImpactManyToMany(
+            #             repo_impact_id=single_impact["imp_id"],
+            #             repo_impact_state=int(single_impact["state"])
+            #         )
+            #         print("ADDING")
+            #         print(to_add_secondary_imp)
+            #         print(to_add_main)
+            #         to_add_main.impacts.append(to_add_secondary_imp)
+            #         db.session.add(to_add_secondary_imp)
+            #         db.session.flush()
+            #
+            #     if deconstructedId[0] == "low":
+            #         to_add_main.low_prob = request.form[user_input]
+            #     elif deconstructedId[0] == "medium":
+            #         to_add_main.med_prob = request.form[user_input]
+            #     else:
+            #         to_add_main.high_prob = request.form[user_input]
 
         print("WILL SAVE NOW")
         db.session.commit()
@@ -1105,84 +1001,104 @@ def repo_risk_configuration_objective_risk(objective_id=1):
 
                 array_impact_calculation = array_impact_calculation + temp_impact_array + temp_impact_array_2
 
-        existing_values = db.session.query(RepoObjectiveImpactRelationship,
-                                           RepoObjectiveImpactRelationshipImpactManyToMany) \
-            .join(RepoObjectiveImpactRelationshipImpactManyToMany) \
-            .filter(
-            RepoObjectiveImpactRelationship.repo_objective_id == objective_id,
+        # If there are aready values
+        does_exist = RepoObjectiveImpactRelationship.query.filter_by(
+            repo_objective_id=objective_id,
         )
 
-        if existing_values.count() > 0:
-            joined = existing_values.all()
-
-            concatted = {}
-
-            for temp_joined in joined:
-                # print("Single Line")
-                # print("Inner Line")
-                if temp_joined[0] not in concatted:
-                    concatted[temp_joined[0]] = []
-                for inner_joined in temp_joined:
-                    if inner_joined is temp_joined[0]:
-                        continue
-                    # print(concatted[temp_joined[0]])
-                    if inner_joined.repo_impact_state == 0:
-                        temp_state = "low"
-                    elif inner_joined.repo_impact_state == 1:
-                        temp_state = "med"
-                    else:
-                        temp_state = "high"
-                    inner_joined_arrayed = {"impact": inner_joined.repo_impact,
-                                            "state": temp_state}
-                    # if type(inner_joined) is RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany:
-                    #     # inner_joined_arrayed = ['cons', inner_joined.repo_consequence_id, inner_joined.repo_consequence_state]
-                    #     inner_joined_arrayed = {"consequence": {'id': inner_joined.repo_consequence_id,
-                    #                                             'name': inner_joined.repo_consequence.name,
-                    #                                             'threat_id': inner_joined.repo_consequence.threat_id,
-                    #                                             'materialisation_id': inner_joined.repo_consequence.materialisation_id
-                    #                                             },
-                    #                             "state": inner_joined.repo_consequence_state}
-                    # else:
-                    #     # inner_joined_arrayed = ['serv', inner_joined.repo_service_id, inner_joined.repo_service_state]
-                    #     inner_joined_arrayed = {
-                    #         "service": {'id': inner_joined.repo_service_id, 'name': inner_joined.repo_service.name},
-                    #         "state": inner_joined.repo_service_state}
-                    if inner_joined_arrayed not in concatted[temp_joined[0]]:
-                        concatted[temp_joined[0]].append(inner_joined_arrayed)
-            print("------------ RESULTS ARE ----------")
-            print(concatted.items())
+        if does_exist.count() == 0:
             for to_send in array_impact_calculation:
-                for concatted_entry_key, concatted_entry_value in concatted.items():
-                    # print("------Comparison------")
-                    # print(to_send)
-                    # print(concatted_entry_value)
-                    ddiff = DeepDiff(to_send, concatted_entry_value, ignore_order=True)
-                    # print(ddiff)
-
-                    if ddiff == {}:
-                        print("SAMEEEEEEEEEEEEEEE")
-                        print(to_send)
-                        print(concatted_entry_value)
-                        to_send.append(concatted_entry_key.low_prob)
-                        to_send.append(concatted_entry_key.med_prob)
-                        to_send.append(concatted_entry_key.high_prob)
-                        # print(to_send)
-
-                    # if sorted(concatted_entry_value, key=lambda ele: sorted(ele.items())) == sorted(
-                    #         to_send, key=lambda ele: sorted(ele.items())):
-                #             print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSAAAAAAAAAAAAAAAAAAAAAAAAMMMMMMMMMMMMEEEEEEEEEE")
-                #     # print(related_mixed_state)
-                # #     # print(concatted_entry_value)
-                #  print("STOOOOOOOOOOOOOOOOOOOOOOOOOOOOPPPPPPPPPPPSSSSSSSSSSSSSSSSSSSSSSS")
-                # #             existing_entry = concatted_entry_key
-                #         break
+                to_send.append(50)
+                to_send.append(50)
+                to_send.append(50)
+            # to_score_entry = does_exist.first()
         else:
+            custom_it = 0
+            does_exist = does_exist.all()
             for to_send in array_impact_calculation:
-                to_send.append(50)
-                to_send.append(50)
-                to_send.append(50)
-                print(to_send)
-        # for
+                to_send.append(does_exist[custom_it].low_prob)
+                to_send.append(does_exist[custom_it].med_prob)
+                to_send.append(does_exist[custom_it].high_prob)
+                custom_it = custom_it + 1
+
+        # existing_values = db.session.query(RepoObjectiveImpactRelationship,
+        #                                    RepoObjectiveImpactRelationshipImpactManyToMany) \
+        #     .join(RepoObjectiveImpactRelationshipImpactManyToMany) \
+        #     .filter(
+        #     RepoObjectiveImpactRelationship.repo_objective_id == objective_id,
+        # )
+        #
+        # if existing_values.count() > 0:
+        #     joined = existing_values.all()
+        #
+        #     concatted = {}
+        #
+        #     for temp_joined in joined:
+        #         # print("Single Line")
+        #         # print("Inner Line")
+        #         if temp_joined[0] not in concatted:
+        #             concatted[temp_joined[0]] = []
+        #         for inner_joined in temp_joined:
+        #             if inner_joined is temp_joined[0]:
+        #                 continue
+        #             # print(concatted[temp_joined[0]])
+        #             if inner_joined.repo_impact_state == 0:
+        #                 temp_state = "low"
+        #             elif inner_joined.repo_impact_state == 1:
+        #                 temp_state = "med"
+        #             else:
+        #                 temp_state = "high"
+        #             inner_joined_arrayed = {"impact": inner_joined.repo_impact,
+        #                                     "state": temp_state}
+        #             # if type(inner_joined) is RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany:
+        #             #     # inner_joined_arrayed = ['cons', inner_joined.repo_consequence_id, inner_joined.repo_consequence_state]
+        #             #     inner_joined_arrayed = {"consequence": {'id': inner_joined.repo_consequence_id,
+        #             #                                             'name': inner_joined.repo_consequence.name,
+        #             #                                             'threat_id': inner_joined.repo_consequence.threat_id,
+        #             #                                             'materialisation_id': inner_joined.repo_consequence.materialisation_id
+        #             #                                             },
+        #             #                             "state": inner_joined.repo_consequence_state}
+        #             # else:
+        #             #     # inner_joined_arrayed = ['serv', inner_joined.repo_service_id, inner_joined.repo_service_state]
+        #             #     inner_joined_arrayed = {
+        #             #         "service": {'id': inner_joined.repo_service_id, 'name': inner_joined.repo_service.name},
+        #             #         "state": inner_joined.repo_service_state}
+        #             if inner_joined_arrayed not in concatted[temp_joined[0]]:
+        #                 concatted[temp_joined[0]].append(inner_joined_arrayed)
+        #     print("------------ RESULTS ARE ----------")
+        #     print(concatted.items())
+        #     for to_send in array_impact_calculation:
+        #         for concatted_entry_key, concatted_entry_value in concatted.items():
+        #             # print("------Comparison------")
+        #             # print(to_send)
+        #             # print(concatted_entry_value)
+        #             ddiff = DeepDiff(to_send, concatted_entry_value, ignore_order=True)
+        #             # print(ddiff)
+        #
+        #             if ddiff == {}:
+        #                 print("SAMEEEEEEEEEEEEEEE")
+        #                 print(to_send)
+        #                 print(concatted_entry_value)
+        #                 to_send.append(concatted_entry_key.low_prob)
+        #                 to_send.append(concatted_entry_key.med_prob)
+        #                 to_send.append(concatted_entry_key.high_prob)
+        #                 # print(to_send)
+        #
+        #             # if sorted(concatted_entry_value, key=lambda ele: sorted(ele.items())) == sorted(
+        #             #         to_send, key=lambda ele: sorted(ele.items())):
+        #         #             print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSAAAAAAAAAAAAAAAAAAAAAAAAMMMMMMMMMMMMEEEEEEEEEE")
+        #         #     # print(related_mixed_state)
+        #         # #     # print(concatted_entry_value)
+        #         #  print("STOOOOOOOOOOOOOOOOOOOOOOOOOOOOPPPPPPPPPPPSSSSSSSSSSSSSSSSSSSSSSS")
+        #         # #             existing_entry = concatted_entry_key
+        #         #         break
+        # else:
+        #     for to_send in array_impact_calculation:
+        #         to_send.append(50)
+        #         to_send.append(50)
+        #         to_send.append(50)
+        #         print(to_send)
+        # # for
 
         for to_send in array_impact_calculation:
             print(to_send)
@@ -1450,7 +1366,7 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
             unrelated_assets.remove(related_asset)
 
         if asset_id != "-1":
-            for related_asset_each in related_asset:
+            for related_asset_each in related_assets:
                 if this_asset[0] == related_asset_each:
                     asset_is_related = 1
         # array_objective_calculation = [[{}], [{}]                                       ]

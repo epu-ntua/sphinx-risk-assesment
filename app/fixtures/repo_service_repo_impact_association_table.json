@@ -1,0 +1,58 @@
+[
+    {
+        "repo_service_id": "2",
+        "repo_impact_id": "1"
+    },
+    {
+        "repo_service_id": "2",
+        "repo_impact_id": "2"
+    },
+    {
+        "repo_service_id": "2",
+        "repo_impact_id": "6"
+    },
+    {
+        "repo_service_id": "1",
+        "repo_impact_id": "2"
+    },
+    {
+        "repo_service_id": "1",
+        "repo_impact_id": "3"
+    },
+    {
+        "repo_service_id": "1",
+        "repo_impact_id": "6"
+    },
+    {
+        "repo_service_id": "3",
+        "repo_impact_id": "3"
+    },
+    {
+        "repo_service_id": "3",
+        "repo_impact_id": "4"
+    },
+    {
+        "repo_service_id": "4",
+        "repo_impact_id": "1"
+    },
+    {
+        "repo_service_id": "4",
+        "repo_impact_id": "2"
+    },
+    {
+        "repo_service_id": "4",
+        "repo_impact_id": "4"
+    },
+    {
+        "repo_service_id": "4",
+        "repo_impact_id": "6"
+    },
+    {
+        "repo_service_id": "5",
+        "repo_impact_id": "2"
+    },
+    {
+        "repo_service_id": "5",
+        "repo_impact_id": "3"
+    }
+]

@@ -1,0 +1,12 @@
+[
+    {
+        "id": "1",
+        "name": "Materialisation 1",
+        "threat_id": "1"
+    },
+    {
+        "id": "2",
+        "name": "Materialisation 2",
+        "threat_id": "1"
+    }
+]

@@ -1,0 +1,22 @@
+[
+    {
+        "repo_consequence_id": "1",
+        "repo_impact_id": "1"
+    },
+    {
+        "repo_consequence_id": "1",
+        "repo_impact_id": "2"
+    },
+    {
+        "repo_consequence_id": "2",
+        "repo_impact_id": "3"
+    },
+    {
+        "repo_consequence_id": "2",
+        "repo_impact_id": "4"
+    },
+    {
+        "repo_consequence_id": "3",
+        "repo_impact_id": "5"
+    }
+]

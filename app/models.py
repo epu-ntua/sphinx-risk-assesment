@@ -159,12 +159,15 @@ class RepoAssetThreatConsequenceServiceImpactRelationship(db.Model):
     high_prob = db.Column(db.Integer)
     med_prob = db.Column(db.Integer)
     low_prob = db.Column(db.Integer)
+    consequences_state = db.Column(db.String)
+    services_state = db.Column(db.String)
     consequences = db.relationship("RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany",
                                    back_populates="repo_this_entry")
     services = db.relationship("RepoAssetThreatConsequenceServiceImpactRelationshipServiceManyToMany",
                                back_populates="repo_this_entry")
 
 
+# Obsolete should be removed
 class RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany(db.Model):
     __tablename__ = 'repo_asset_threat_consequence_service_impact_relationship_consequence_many_to_many'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -176,7 +179,7 @@ class RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany(d
     repo_consequence = db.relationship("RepoConsequence", back_populates="impact_risk_relationship")
     repo_consequence_state = db.Column(db.Boolean())
 
-
+# Obsolete should be removed
 class RepoAssetThreatConsequenceServiceImpactRelationshipServiceManyToMany(db.Model):
     __tablename__ = 'repo_asset_threat_consequence_service_impact_relationship_service_many_to_many'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -203,6 +206,7 @@ class RepoObjectiveImpactRelationship(db.Model):
     high_prob = db.Column(db.Integer)
     med_prob = db.Column(db.Integer)
     low_prob = db.Column(db.Integer)
+    impacts_state = db.Column(db.String)
     impacts = db.relationship("RepoObjectiveImpactRelationshipImpactManyToMany",
                               back_populates="repo_this_entry")
 

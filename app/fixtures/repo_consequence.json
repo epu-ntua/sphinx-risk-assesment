@@ -1,0 +1,20 @@
+[
+    {
+        "id": "1",
+        "name": "Consequence 1",
+        "threat_id": "1",
+        "materialisation_id": "1"
+    },
+    {
+        "id": "2",
+        "name": "Consequence 2",
+        "threat_id": "1",
+        "materialisation_id": "2"
+    },
+    {
+        "id": "3",
+        "name": "Consequence 1",
+        "threat_id": "1",
+        "materialisation_id": "1"
+    }
+]
