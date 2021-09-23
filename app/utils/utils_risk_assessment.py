@@ -195,7 +195,6 @@ def start_risk_assessment(threat_id, asset_id):
             else:
                 occurance_bool_num = 0
 
-            # response shouldnt work like that this needs a bit of a rework
             for it in range(0, len(these_responses), 1):
                 if these_responses[it].id == node_value.repo_response_id:
                     response_bool_num = it
@@ -246,221 +245,149 @@ def start_risk_assessment(threat_id, asset_id):
         print(these_cosnequence_values)
 
     # Impact Node Values
-    # for impact in these_impacts:
-    #     nodeImpactId = "imp" + str(impact.id)
-    #
-    #     array_impact_calculation = []
-    #
-    #     print("Related services are")
-    #     print(these_services)
-    #
-    #     print("Related Consequence are")
-    #     print(these_consequences)
-    #
-    #     for repo_temp_service in these_services:
-    #         if not array_impact_calculation:
-    #             temp_to_add_1 = {"service": repo_temp_service, "state": True}
-    #             temp_to_add_2 = {"service": repo_temp_service, "state": False}
-    #             array_impact_calculation.append([temp_to_add_1])
-    #             array_impact_calculation.append([temp_to_add_2])
-    #         else:
-    #             temp_impact_array = deepcopy(array_impact_calculation)
-    #             for to_be_added in temp_impact_array:
-    #                 to_be_added.append({"service": repo_temp_service, "state": True})
-    #
-    #             for to_be_added in array_impact_calculation:
-    #                 to_be_added.append({"service": repo_temp_service, "state": False})
-    #
-    #             array_impact_calculation = array_impact_calculation + temp_impact_array
-    #
-    #     for repo_temp_consequence in these_consequences:
-    #         if not array_impact_calculation:
-    #             temp_to_add_1 = {"consequence": repo_temp_consequence, "state": True}
-    #             temp_to_add_2 = {"consequence": repo_temp_consequence, "state": False}
-    #             array_impact_calculation.append([temp_to_add_1])
-    #             array_impact_calculation.append([temp_to_add_2])
-    #         else:
-    #             temp_impact_array = deepcopy(array_impact_calculation)
-    #             for to_be_added in temp_impact_array:
-    #                 to_be_added.append({"consequence": repo_temp_consequence, "state": True})
-    #
-    #             for to_be_added in array_impact_calculation:
-    #                 to_be_added.append({"consequence": repo_temp_consequence, "state": False})
-    #
-    #             array_impact_calculation = array_impact_calculation + temp_impact_array
-    #
-    #     print("--- FINAL ARRAY ---")
-    #     for temp in array_impact_calculation:
-    #         print(temp)
-    #
-    #     joined = db.session.query(RepoAssetThreatConsequenceServiceImpactRelationship,
-    #                               RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany,
-    #                               RepoAssetThreatConsequenceServiceImpactRelationshipServiceManyToMany).join(
-    #         RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany,
-    #         RepoAssetThreatConsequenceServiceImpactRelationshipServiceManyToMany).filter(
-    #         RepoAssetThreatConsequenceServiceImpactRelationship.repo_threat_id == threat_id,
-    #         RepoAssetThreatConsequenceServiceImpactRelationship.repo_impact_id == impact.id,
-    #         RepoAssetThreatConsequenceServiceImpactRelationship.repo_asset_id == asset_id,
-    #     ).all()
-    #
-    #     concatted = {}
+    for impact in these_impacts:
+        asset_threat_impact_values = RepoAssetThreatConsequenceServiceImpactRelationship.query.filter_by(
+            repo_asset_id=asset_id,
+            repo_threat_id=threat_id,
+            repo_impact_id=impact.id
+            # repo_objective_id=objective.id,
+        )
+        for asset_threat_impact_value in asset_threat_impact_values:
+            nodeImpactId = "imp" + str(impact.id)
 
-    #     for temp_joined in joined:
-    #         # print("Single Line")
-    #         # print("Inner Line")
-    #         if temp_joined[0] not in concatted:
-    #             concatted[temp_joined[0]] = []
-    #         for inner_joined in temp_joined:
-    #             if inner_joined is temp_joined[0]:
-    #                 continue
-    #             # print(concatted[temp_joined[0]])
-    #             if type(inner_joined) is RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany:
-    #                 # inner_joined_arrayed = ['cons', inner_joined.repo_consequence_id, inner_joined.repo_consequence_state]
-    #                 inner_joined_arrayed = {"consequence": {'id': inner_joined.repo_consequence_id,
-    #                                                         'name': inner_joined.repo_consequence.name,
-    #                                                         'threat_id': inner_joined.repo_consequence.threat_id,
-    #                                                         'materialisation_id': inner_joined.repo_consequence.materialisation_id
-    #                                                         },
-    #                                         "state": inner_joined.repo_consequence_state}
-    #             else:
-    #                 # inner_joined_arrayed = ['serv', inner_joined.repo_service_id, inner_joined.repo_service_state]
-    #                 inner_joined_arrayed = {
-    #                     "service": {'id': inner_joined.repo_service_id, 'name': inner_joined.repo_service.name},
-    #                     "state": inner_joined.repo_service_state}
-    #             if inner_joined_arrayed not in concatted[temp_joined[0]]:
-    #                 concatted[temp_joined[0]].append(inner_joined_arrayed)
-    #     # print("------------ RESULTS ARE ----------")
-    #     # print(concatted.items())
-    #
-    #     for concatted_entry_key, concatted_entry_value in concatted.items():
-    #         # print("------Comparison------")
-    #         # print(concatted_entry_key)
-    #         # print(concatted_entry_value)
-    #         impact_node_value = []
-    #         impact_node_id = {}
-    #
-    #         for temp_entry in concatted_entry_value:
-    #             # state_int = 0
-    #             if temp_entry['state'] is False:
-    #                 state_int = 0
-    #             else:
-    #                 state_int = 1
-    #
-    #             if 'consequence' in temp_entry:
-    #                 nodeTempImpactId = "con" + str(temp_entry['consequence']['id'])
-    #             else:
-    #                 nodeTempImpactId = "serv" + str(temp_entry['service']['id'])
-    #
-    #             impact_node_id[nodeTempImpactId] = state_int
-    #
-    #         # print()
-    #         impact_node_value.append(concatted_entry_key.low_prob)
-    #         # objective_node_value.append(1 - concatted_entry_key.low_prob)
-    #         impact_node_value.append(concatted_entry_key.med_prob)
-    #         # objective_node_value.append(1 - concatted_entry_key.med_prob)
-    #         impact_node_value.append(concatted_entry_key.high_prob)
-    #         # objective_node_value.append(1 - concatted_entry_key.high_prob)
-    #
-    #         print("---------- TO ADD ERROR ----------------")
-    #         print(impact_node_id)
-    #         print(impact_node_value)
-    #         print(nodeImpactId)
-    #         diag.cpt(nodeImpactId)[impact_node_id] = impact_node_value
-    #
+            impact_node_value = []
+
+            impact_node_id = {}
+
+            print("JSON LOADS IS")
+            print(json.loads(asset_threat_impact_value.consequences_state))
+            print(json.loads(asset_threat_impact_value.services_state))
+            # Convert state of objective to correct one for the
+            consequence_state = json.loads(asset_threat_impact_value.consequences_state)
+            service_state = json.loads(asset_threat_impact_value.services_state)
+            for json_dict in consequence_state:
+                print("JSON_DICT")
+                print(json_dict)
+                nodeConsId = "con" + str(json_dict['cons_id'])
+                if json_dict['state'] == 'False':
+                    state_to_add = 0
+                elif json_dict['state'] == 'True':
+                    state_to_add = 1
+
+                impact_node_id[nodeConsId] = state_to_add
+
+            for json_dict in service_state:
+                nodeServId = "serv" +  str(json_dict['serv_id'])
+                if json_dict['state'] == 'False':
+                    state_to_add = 0
+                elif json_dict['state'] == 'True':
+                    state_to_add = 1
+
+                impact_node_id[nodeServId] = state_to_add
+
+            impact_node_value.append(asset_threat_impact_value.low_prob)
+            # objective_node_value.append(1 - concatted_entry_key.low_prob)
+            impact_node_value.append(asset_threat_impact_value.med_prob)
+            # objective_node_value.append(1 - concatted_entry_key.med_prob)
+            impact_node_value.append(asset_threat_impact_value.high_prob)
+            # objective_node_value.append(1 - concatted_entry_key.high_prob)
+
+            # print("-------- TO FIX ERROR --------")
+            # print(impact_node_id)
+            # print(impact_node_value)
+            # print(nodeImpactId)
+            # diag.cpt("imp1")[{'con3': 1, 'serv2': 0}] = [50,50,50]
+            # diag.cpt(nodeImpactId)[impact_node_id] = [50,50]
+            diag.cpt(nodeImpactId)[impact_node_id] = impact_node_value
+
     # Objective  Node Values
+    objective_it = 0
     for objective in these_objectives:
-        nodeObjectiveId = "obj" + str(objective.id)
+        objective_impact_values = RepoObjectiveImpactRelationship.query.filter_by(
+            repo_objective_id=objective.id,
+        )
+        for objective_impact_value in objective_impact_values:
+            nodeObjectiveId = "obj" + str(objective.id)
 
-        joined = db.session.query(RepoObjectiveImpactRelationship,
-                                  RepoObjectiveImpactRelationshipImpactManyToMany) \
-            .join(RepoObjectiveImpactRelationshipImpactManyToMany) \
-            .filter(
-            RepoObjectiveImpactRelationship.repo_objective_id == objective.id,
-        ).all()
-
-        concatted = {}
-
-        for temp_joined in joined:
-            # print("Single Line")
-            # print("Inner Line")
-            if temp_joined[0] not in concatted:
-                concatted[temp_joined[0]] = []
-            for inner_joined in temp_joined:
-                if inner_joined is temp_joined[0]:
-                    continue
-                # print(concatted[temp_joined[0]])
-                if inner_joined.repo_impact_state == 0:
-                    temp_state = "low"
-                elif inner_joined.repo_impact_state == 1:
-                    temp_state = "med"
-                else:
-                    temp_state = "high"
-                inner_joined_arrayed = {"impact": inner_joined.repo_impact,
-                                        "state": temp_state}
-
-                if inner_joined_arrayed not in concatted[temp_joined[0]]:
-                    concatted[temp_joined[0]].append(inner_joined_arrayed)
-
-        for concatted_entry_key, concatted_entry_value in concatted.items():
-            # print("------Comparison------")
-            # print(concatted_entry_key)
-            # print(concatted_entry_value)
             objective_node_value = []
             objective_node_id = {}
 
-            for temp_entry in concatted_entry_value:
-                # state_int = 0
-                if temp_entry['state'] == 'low':
-                    state_int = 0
-                if temp_entry['state'] == 'med':
-                    state_int = 1
-                if temp_entry['state'] == 'high':
-                    state_int = 2
+            print("JSON LOADS IS")
+            print(json.loads(objective_impact_value.impacts_state))
+            # Convert state of objective to correct one for the
+            objective_state = json.loads(objective_impact_value.impacts_state)
+            for json_dict in objective_state:
+                nodeImpactId = "imp" + str(json_dict['imp_id'])
+                objective_node_id[nodeImpactId] = json_dict['state']
 
-                nodeImpactId = "imp" + str(temp_entry['impact'].id)
-
-                objective_node_id[nodeImpactId] = state_int
-
-            # print()
-            objective_node_value.append(concatted_entry_key.low_prob)
+            objective_node_value.append(objective_impact_value.low_prob)
             # objective_node_value.append(1 - concatted_entry_key.low_prob)
-            objective_node_value.append(concatted_entry_key.med_prob)
+            objective_node_value.append(objective_impact_value.med_prob)
             # objective_node_value.append(1 - concatted_entry_key.med_prob)
-            objective_node_value.append(concatted_entry_key.high_prob)
+            objective_node_value.append(objective_impact_value.high_prob)
             # objective_node_value.append(1 - concatted_entry_key.high_prob)
+
+            # print("-------- TO LEARN ERROR --------")
+            # print(objective_node_id)
+            # print(objective_node_value)
 
             diag.cpt(nodeObjectiveId)[objective_node_id] = objective_node_value
 
+    # Utility Node Values
+    for utility in these_utils:
+        nodeUtilId = "util" + str(utility.id)
+        utility_objective_values = RepoUtilityObjectiveRelationship.query.filter_by(
+            repo_utility_id=utility.id,
+        )
+        for utility_objective_value in utility_objective_values:
+            # Get Related Objectives
+            utility_objective_states = RepoUtilityObjectiveRelationshipManyToMany.query.filter_by(repo_this_entry_id=utility_objective_value.id).all()
+
+            utility_node_value = []
+            utility_node_id = {}
+
+            for utility_objective_state in utility_objective_states:
+                nodeObjectiveId = "obj" + str(utility_objective_state.repo_objective_id)
+                utility_node_id[nodeObjectiveId] = str(utility_objective_state.repo_objective_state -1)
+
+            utility_node_value.append(utility_objective_value.utility_value)
+
+            print("------ Error -------")
+            print(nodeUtilId)
+            print(utility_node_id)
+            print(utility_node_value)
+            print(utility_objective_value.utility_value)
+            diag.utility(nodeUtilId)[utility_node_id] = utility_node_value
 
     # Print Diagram
     diag.saveBIFXML(os.path.join("out", "GiraDynamic.bifxml"))
 
-    # ie = gum.ShaferShenoyLIMIDInference(diag)
-    #
-    # no_forgetting_array = []
-    #
-    # no_forgetting_array.append("re")
-    #
-    # for service in these_services:
-    #     nodeServId = "serv" + str(service.id)
-    #     no_forgetting_array.append(nodeServId)
-    #
-    # # for response in these_responses:
-    #
-    # ie.addNoForgettingAssumption(no_forgetting_array)
-    #
-    # print("Is this solvable =" + str(ie.isSolvable()))
-    # ie.addEvidence('te1', 1)
-    # ie.addEvidence('re', 0)
-    #
-    # ie.makeInference()
-    #
-    # print("-------- INFERENCE RESULTS ----------")
-    # print(ie.posterior('obj1'))
-    # print(ie.posterior('obj2'))
-    # print(ie.posterior('obj3'))
-    # print(ie.posterior('obj4'))
-    # print(ie.posterior('obj5'))
+    ie = gum.ShaferShenoyLIMIDInference(diag)
+
+    no_forgetting_array = []
+
+    no_forgetting_array.append("re")
+
+    for service in these_services:
+        nodeServId = "serv" + str(service.id)
+        no_forgetting_array.append(nodeServId)
+
+    # for response in these_responses:
+
+    ie.addNoForgettingAssumption(no_forgetting_array)
+
+    print("Is this solvable =" + str(ie.isSolvable()))
+    ie.addEvidence('te1', 1)
+    ie.addEvidence('re', 0)
+
+    ie.makeInference()
+
+    print("-------- INFERENCE RESULTS ----------")
+    print(ie.posterior('obj1'))
+    print(ie.posterior('obj2'))
+    print(ie.posterior('obj3'))
+    print(ie.posterior('obj4'))
+    print(ie.posterior('obj5'))
 
 
 
