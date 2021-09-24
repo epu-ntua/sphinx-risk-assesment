@@ -30,58 +30,101 @@
     <hr/>
     <div class="row">
         <div class="col-10">
+            <div class="row">
+                <div class="col-6">
+                    <h3>Current Selected Threat:
+                        <div class="dropdown">
+                            <button class="btn btn-primary">{{ this_threat[0].name }}</button>
+                            <div class="dropdown-list">
+                                {% for threat in these_threats %}
+                                    <a href="/repo/dashboard/risk/objectives/threat/{{ threat.id }}/asset/-1/">{{ threat.name }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </h3>
+                </div>
+                <div class="col-6">
+                    <h3>Current Selected Asset:
+                        <div class="dropdown">
+                            <button class="btn btn-primary">
+                                {% if asset_id|string == "-1"|string %}
+                                    Please select an asset >
+                                {% else %}
+                                    {{ this_asset[0].name }} >
+                                {% endif %}
+                            </button>
+                            <div class="dropdown-list">
+                                {% for asset in these_assets %}
+                                    <a href="/repo/dashboard/risk/objectives/threat/{{ threat_id }}/asset/{{ asset.id }}/">{{ asset.name }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
 
-            <h3>Current Selected Threat: <select>
-                <option value="">Ransomware</option>
-                <option value="">Hijacking</option>
-                <option value="">DoS/DDoS</option>
-                <option value="">SQL Injection</option>
-                <option value="">Data integrity violation</option>
-            </select></h3>
-            <hr/>
+                    </h3>
+                </div>
+            </div>
 
-            {#    <a class="btn btn-primary" href="/repo/threats/"> Detailed Threat View </a>#}
-            <h4>Scenario #1 | Scenario Details</h4>
-            <h6>Affected Organisation Functions</h6>
             <hr/>
-            <div class="row dashboard-row">
-                <button type="button" class="btn btn-primary" style="margin-right: 3px; ">
-                    Blood Test: Normal Work
-                </button>
-                <button type="button" class="btn btn-primary" style="margin-right: 3px; ">
-                    Catering: Normal Work
-                </button>
-                <button type="button" class="btn btn-primary" style="margin-right: 3px; ">
-                    Pharmacy: Normal Work
-                </button>
-            </div>
-            <h6>User Response</h6>
-            <hr/>
-            <div class="row dashboard-row">
-                <button type="button" class="btn btn-primary" style="margin-right: 3px; ">
-                    Do Nothing
-                </button>
-            </div>
-            <div class="row dashboard-row">
-                <br/>
-                <table id="table">
-                    <thead>
-                    <tr>
-                        <th data-field="likelihood">Likelihood</th>
-                        <th data-field="monetary">Objective: Monetary</th>
-                        <th data-field="confidentiality">Objective: Confidentiality</th>
-                        <th data-field="integrity">Objective: Integrity</th>
-                        <th data-field="availability">Objective: Availability</th>
-                        <th data-field="safety">Objective: Safety</th>
-                    </tr>
-                    </thead>
-                </table>
-            </div>
-        </div>
-        <div class="col-2">
-            <h3>Alerts</h3>
-            No Alerts Triggered
-            <hr/>
-        </div>
+            {% if threat_id != '-1' and asset_id != '-1' %}
+                {#    <a class="btn btn-primary" href="/repo/threats/"> Detailed Threat View </a>#}
+                <h2>Scenario Static Information</h2>
+                <p>You can set any information about the scenario as static i.e. as having happened or not in order to
+                    explore different outcomes</p>
+                <h3>Threat Exposure</h3>
+                <hr/>
+                <h3>Response</h3>
+                <hr/>
+                <h3>Threat Materialisation</h3>
+                <hr/>
+                <h3>Threat Consequence</h3>
+                <hr/>
+                <h3>Service State</h3>
+                <hr/>
+                <h3>Threat Impact</h3>
+                <hr/>
+                <h3>Objective State</h3>
+                <hr/>
+                <div class="row dashboard-row">
+                    <button type="button" class="btn btn-primary" style="margin-right: 3px; ">
+                        Blood Test: Normal Work
+                    </button>
+                    <button type="button" class="btn btn-primary" style="margin-right: 3px; ">
+                        Catering: Normal Work
+                    </button>
+                    <button type="button" class="btn btn-primary" style="margin-right: 3px; ">
+                        Pharmacy: Normal Work
+                    </button>
+                </div>
+                <h6>User Response</h6>
+                <hr/>
+                <div class="row dashboard-row">
+                    <button type="button" class="btn btn-primary" style="margin-right: 3px; ">
+                        Do Nothing
+                    </button>
+                </div>
+                <div class="row dashboard-row">
+                    <br/>
+                    <table id="table">
+                        <thead>
+                        <tr>
+                            <th data-field="likelihood">Likelihood</th>
+                            <th data-field="monetary">Objective: Monetary</th>
+                            <th data-field="confidentiality">Objective: Confidentiality</th>
+                            <th data-field="integrity">Objective: Integrity</th>
+                            <th data-field="availability">Objective: Availability</th>
+                            <th data-field="safety">Objective: Safety</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+                </div>
+                <div class="col-2">
+                    <h3>Alerts</h3>
+                    No Alerts Triggered
+                    <hr/>
+                </div>
+            {% else %}
+                <h2>Please Select a threat to show its dashboard</h2>
+            {% endif %}
     </div>
 {% endblock %}
