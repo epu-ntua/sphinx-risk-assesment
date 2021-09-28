@@ -179,6 +179,7 @@ class RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany(d
     repo_consequence = db.relationship("RepoConsequence", back_populates="impact_risk_relationship")
     repo_consequence_state = db.Column(db.Boolean())
 
+
 # Obsolete should be removed
 class RepoAssetThreatConsequenceServiceImpactRelationshipServiceManyToMany(db.Model):
     __tablename__ = 'repo_asset_threat_consequence_service_impact_relationship_service_many_to_many'
@@ -230,6 +231,7 @@ class RepoUtilityObjectiveRelationship(db.Model):
     objectives = db.relationship("RepoUtilityObjectiveRelationshipManyToMany", back_populates="repo_this_entry")
     utility_value = db.Column(db.Integer)
 
+
 class RepoUtilityObjectiveRelationshipManyToMany(db.Model):
     __tablename__ = "repo_utility_objective_relationship_many_to_many"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -240,6 +242,7 @@ class RepoUtilityObjectiveRelationshipManyToMany(db.Model):
     repo_objective_id = db.Column(db.Integer, db.ForeignKey('repo_objective.id'))
     repo_objective = db.relationship("RepoObjective", back_populates='utility_risk_relationship')
     repo_objective_state = db.Column(db.Integer)
+
 
 class RepoRiskThreatAssetConsequence(db.Model):
     """Each entry at this table servers as an entry to the risk assessment matrix risk consequence node"""
@@ -475,7 +478,7 @@ class RepoObjective(db.Model):
     utilities = db.relationship("RepoUtility", secondary=repo_utility_repo_objective_association_table,
                                 back_populates="objectives")
     utility_risk_relationship = db.relationship("RepoUtilityObjectiveRelationshipManyToMany",
-                                                  back_populates="repo_objective")
+                                                back_populates="repo_objective")
     # status = db.relationship('modelObjectivesOptions', backref='objective', lazy=True)
     # instances = db.relationship("ModelObjectiveAssociation", back_populates="objective")
 
@@ -496,3 +499,21 @@ class RepoUtility(db.Model):
     name = db.Column(db.String, nullable=False)
     objectives = db.relationship("RepoObjective", secondary=repo_utility_repo_objective_association_table,
                                  back_populates="utilities")
+
+
+class RepoAssetReputation(db.Model):
+    __tablename__ = 'repo_asset_reputation'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    source_hospital_id = db.Column(db.Integer)
+    # This asset id is not the same as the above one, but these should be merged in some way
+    global_asset_id = db.Column(db.Integer)
+    global_asset_type = db.Column(db.String)
+    global_asset_ip = db.Column(db.String)
+    first_update = db.Column(db.String)
+    last_update = db.Column(db.String)
+    asset_value = db.Column(db.Integer)
+    count = db.Column(db.Integer)
+    reputation = db.Column(db.Integer)
+    reputation_speed = db.Column(db.Integer)
+    weighted_importance = db.Column(db.Integer)
+

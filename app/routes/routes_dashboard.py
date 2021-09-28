@@ -90,6 +90,13 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1):
         these_threats = convert_database_items_to_json_table(these_threats)
         these_assets = convert_database_items_to_json_table(these_assets)
 
+        this_exposure =[]
+        these_materialisations = []
+        these_consequences = []
+        these_services = []
+        these_impacts = []
+        these_objectives = []
+        these_utils = []
         if threat_id != -1 and asset_id != -1:
             try:
                 this_exposure = RepoAssetRepoThreatRelationship.query.filter_by(repo_threat_id=threat_id).first()
@@ -126,6 +133,13 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1):
             except SQLAlchemyError:
                 return "SQLAlchemyError"
 
+            this_exposure = convert_database_items_to_json_table(this_exposure)
+            these_materialisations = convert_database_items_to_json_table(these_materialisations)
+            these_consequences = convert_database_items_to_json_table(these_consequences)
+            these_services = convert_database_items_to_json_table(these_services)
+            these_impacts = convert_database_items_to_json_table(these_impacts)
+            these_objectives = convert_database_items_to_json_table(these_objectives)
+            these_utils = convert_database_items_to_json_table(these_utils)
 
         repo_threats = [
             {
@@ -173,7 +187,10 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1):
         print(this_threat)
         return render_template('templates_dashboard/repo_risk_objectives_dashboard.html', repo_threats=repo_threats,
                                these_threats=these_threats, threat_id=threat_id, asset_id=asset_id,
-                               this_threat=this_threat, these_assets=these_assets, this_asset=this_asset
+                               this_threat=this_threat, these_assets=these_assets, this_asset=this_asset,
+                               this_exposure =this_exposure,these_materialisations=these_materialisations,
+                               these_consequences=these_consequences,these_services=these_services,
+                               these_impacts=these_impacts,these_objectives=these_objectives,these_utils=these_utils
                                )
 
 

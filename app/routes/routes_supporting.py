@@ -35,6 +35,33 @@ def setup_database():
     rcra_db_init()
     return Response(status=200)
 
+
+@app.route('/asset/reputation/', methods=['POST'])
+def asset_reputation():
+    result = request.json
+    print("----- RESULT IS -----")
+    print(result)
+    print(type(result))
+    for asset_reputation_entry in result:
+        to_add_asset_reputation = RepoAssetReputation(
+            source_hospital_id= asset_reputation_entry["Source_hospital_id"],
+        global_asset_id = asset_reputation_entry["Asset_ID"],
+        global_asset_type = asset_reputation_entry["Asset_Type"],
+        global_asset_ip = asset_reputation_entry["Asset_IP"],
+        first_update = str(asset_reputation_entry["first_update"]),
+        last_update = str(asset_reputation_entry["last_update"]),
+        asset_value = asset_reputation_entry["Asset_Value"],
+        count = asset_reputation_entry["count"],
+        reputation = asset_reputation_entry["reputation"],
+        reputation_speed =asset_reputation_entry["reputation_speed"],
+        weighted_importance = asset_reputation_entry["weighted_importance"],
+        )
+
+        db.session.add(to_add_asset_reputation)
+        db.session.commit()
+    return Response(status=200)
+
+
 @app.errorhandler(404)
 def not_found_error(error):
     return render_template('templates_supporting/404.html', port=serverPort), 404
