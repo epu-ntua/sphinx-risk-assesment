@@ -9,7 +9,8 @@ from app.utils import *
 from app.forms import *
 from app import app
 from app.utils.utils_database import convert_database_items_to_json_table
-
+from app.utils.utils_risk_assessment import start_risk_assessment
+import pandas as pd
 
 @app.route('/repo/dashboard/asset/', methods=['GET', 'POST'])
 def repo_dashboard_asset():
@@ -90,7 +91,7 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1):
         these_threats = convert_database_items_to_json_table(these_threats)
         these_assets = convert_database_items_to_json_table(these_assets)
 
-        this_exposure =[]
+        this_exposure = []
         these_materialisations = []
         these_consequences = []
         these_services = []
@@ -99,7 +100,12 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1):
         these_utils = []
         if threat_id != -1 and asset_id != -1:
             try:
-                this_exposure = RepoAssetRepoThreatRelationship.query.filter_by(repo_threat_id=threat_id).first()
+                this_exposure = RepoAssetRepoThreatRelationship.query.filter_by(repo_threat_id=threat_id).all()
+            except SQLAlchemyError:
+                return "SQLAlchemyError"
+
+            try:
+                these_responses = RepoResponse.query.filter_by(threat_id=threat_id).all()
             except SQLAlchemyError:
                 return "SQLAlchemyError"
 
@@ -134,12 +140,23 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1):
                 return "SQLAlchemyError"
 
             this_exposure = convert_database_items_to_json_table(this_exposure)
+            these_responses = convert_database_items_to_json_table(these_responses)
             these_materialisations = convert_database_items_to_json_table(these_materialisations)
             these_consequences = convert_database_items_to_json_table(these_consequences)
             these_services = convert_database_items_to_json_table(these_services)
             these_impacts = convert_database_items_to_json_table(these_impacts)
             these_objectives = convert_database_items_to_json_table(these_objectives)
             these_utils = convert_database_items_to_json_table(these_utils)
+
+            print("---DASHBOARD DATA IS---")
+            print(this_exposure)
+            print(these_responses)
+            print(these_materialisations)
+            print(these_consequences)
+            print(these_services)
+            print(these_impacts)
+            print(these_objectives)
+            print(these_utils)
 
         repo_threats = [
             {
@@ -185,12 +202,25 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1):
         ]
         print(repo_threats)
         print(this_threat)
+#         test_variable = """
+#           obj5                       |
+# 0        |1        |2        |
+# ---------|---------|---------|
+#  0.0000  | 0.0000  | 0.0000  |
+#         """
+        risk_assessment_result=start_risk_assessment(1,1)
+        for key,value in risk_assessment_result.items():
+            risk_assessment_result[key] = pd.DataFrame(value).to_html()
+
+        # pd_results = pd.DataFrame(test_variable)
+        print(risk_assessment_result)
         return render_template('templates_dashboard/repo_risk_objectives_dashboard.html', repo_threats=repo_threats,
                                these_threats=these_threats, threat_id=threat_id, asset_id=asset_id,
+                               these_responses=these_responses, risk_assessment_result=risk_assessment_result,
                                this_threat=this_threat, these_assets=these_assets, this_asset=this_asset,
-                               this_exposure =this_exposure,these_materialisations=these_materialisations,
-                               these_consequences=these_consequences,these_services=these_services,
-                               these_impacts=these_impacts,these_objectives=these_objectives,these_utils=these_utils
+                               this_exposure=this_exposure, these_materialisations=these_materialisations,
+                               these_consequences=these_consequences, these_services=these_services,
+                               these_impacts=these_impacts, these_objectives=these_objectives, these_utils=these_utils
                                )
 
 

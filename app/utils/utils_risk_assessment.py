@@ -18,11 +18,11 @@ def start_risk_assessment(threat_id, asset_id):
                                                                   repo_asset_id=asset_id).first()
     except SQLAlchemyError:
         return "SQLAlchemyError"
-    ## Node creation
+    # Node creation
     this_asset = this_risk_assessment.asset
     this_threat = this_risk_assessment.threat
 
-    # # Node creation threat exposure
+    # Node creation threat exposure
     exposureNodeId = "te" + str(this_threat.id)
     diag.add(gum.LabelizedVariable(exposureNodeId, this_threat.name, 2))
 
@@ -389,9 +389,45 @@ def start_risk_assessment(threat_id, asset_id):
     print(ie.posterior('obj4'))
     print(ie.posterior('obj5'))
 
+    print(type(ie.posterior('obj1').topandas()))
+    # return ie.posterior('obj1').topandas()
 
+    results = {}
+    # Threat Exposure Posterior
+    to_result_exposure = ie.posterior("te" + str(this_threat.id)).topandas()
+    results["te" + str(this_threat.id)] = to_result_exposure
+    # Materialisation Posterior
+    for materialisation in these_materialisations:
+        nodeMatId = "mat" + str(materialisation.id)
+        to_result_materialisation = ie.posterior(nodeMatId).topandas()
+        results[nodeMatId] = to_result_materialisation
+    # Consequence Posterior
+    for consequence in these_consequences:
+        nodeConsId = "con" + str(consequence.id)
+        to_result_consequence = ie.posterior(nodeConsId).topandas()
+        results[nodeConsId] = to_result_consequence
+    # Service Posterior
+    for service in these_services:
+        nodeServId = "serv" + str(service.id)
+        to_result_service = ie.posterior(nodeServId).topandas()
+        results[nodeServId] = to_result_service
+    # Impact Posterior
+    for impact in these_impacts:
+        nodeImpId = "imp" + str(impact.id)
+        to_result_impact = ie.posterior(nodeImpId).topandas()
+        results[nodeImpId] = to_result_impact
+    # Objective Posterior
+    for objective in these_objectives:
+        nodeObjId = "obj" + str(objective.id)
+        to_result_objective = ie.posterior(nodeObjId).topandas()
+        results[nodeObjId] = to_result_objective
+    # Util Posterior
+    for utility in these_utils:
+        nodeUtilId = "util" + str(utility.id)
+        to_result_util = ie.posterior(nodeObjId).topandas()
+        results[nodeObjId] = to_result_util
 
-
+    return results
     # Print Graph
     with open(os.path.join("out", "GiraDynamic.bifxml"), "r") as out:
         print(out.read())

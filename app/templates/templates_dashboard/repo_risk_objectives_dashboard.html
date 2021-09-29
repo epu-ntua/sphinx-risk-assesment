@@ -66,42 +66,158 @@
 
             <hr/>
             {% if threat_id != '-1' and asset_id != '-1' %}
-                {#    <a class="btn btn-primary" href="/repo/threats/"> Detailed Threat View </a>#}
-                <h2>Scenario Static Information</h2>
-                <p>You can set any information about the scenario as static i.e. as having happened or not in order to
-                    explore different outcomes</p>
-                <h3>Threat Exposure</h3>
-                <hr/>
-                <h3>Response</h3>
-                <hr/>
-                <h3>Threat Materialisation</h3>
-                <hr/>
-                <h3>Threat Consequence</h3>
-                <hr/>
-                <h3>Service State</h3>
-                <hr/>
-                <h3>Threat Impact</h3>
-                <hr/>
-                <h3>Objective State</h3>
-                <hr/>
-                <div class="row dashboard-row">
-                    <button type="button" class="btn btn-primary" style="margin-right: 3px; ">
-                        Blood Test: Normal Work
-                    </button>
-                    <button type="button" class="btn btn-primary" style="margin-right: 3px; ">
-                        Catering: Normal Work
-                    </button>
-                    <button type="button" class="btn btn-primary" style="margin-right: 3px; ">
-                        Pharmacy: Normal Work
-                    </button>
-                </div>
-                <h6>User Response</h6>
-                <hr/>
-                <div class="row dashboard-row">
-                    <button type="button" class="btn btn-primary" style="margin-right: 3px; ">
-                        Do Nothing
-                    </button>
-                </div>
+                <form action="/repo/risk/configuration/impact/{{ impact_id }}/threat/{{ threat_id }}/asset/{{ asset_id }}/"
+                      method="post">
+                    {#    <a class="btn btn-primary" href="/repo/threats/"> Detailed Threat View </a>#}
+                    <div class="row">
+                        <div class="col-3"></div>
+                        <div class="col-3"></div>
+                    </div>
+                    <h2>Scenario Static Information</h2>
+                    <p>You can set any information about the scenario as static i.e. as having happened or not in order
+                        to
+                        explore different outcomes</p>
+                    <h3>Threat Exposure</h3>
+                    <hr/>
+                    <div class="row">
+                        <div class="col-3">
+                            <label for=""> Label</label>
+                        </div>
+                        <div class="col-3">
+                            <select
+                                    name="te{{ this_exposure[0].repo_threat_id }}"
+                                    id="te{{ this_exposure[0].repo_threat_id }}">
+                                <option value="none">Automatic</option>
+                                <option value="occurs">Occurs</option>
+                                <option value="nothing">Doesnt Occur</option>
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            {{ risk_assessment_result["te1"] | safe }}
+                        </div>
+
+                    </div>
+                    <h3>Response</h3>
+                    <hr/>
+                    {% for response in these_responses %}
+                        <div class="row">
+                            <div class="col-3">
+                                <label for="re{{ response.id }}"> {{ response.name }}</label>
+                            </div>
+                            <div class="col-3">
+                                <select name="re{{ response.id }}"
+                                        id="re{{ response.id }}">
+                                    <option value="automatic">Automatic</option>
+                                    <option value="occurs">Occurs</option>
+                                    <option value="nothing">Doesnt Occur</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+
+                                {{ risk_assessment_result["re" ] | safe }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <h3>Threat Materialisation</h3>
+                    <hr/>
+                    {% for materialisation in these_materialisations %}
+                        <div class="row">
+                            <div class="col-3"><label
+                                    for="mat{{ materialisation.id }}"> {{ materialisation.name }}</label></div>
+                            <div class="col-3"><select
+                                    name="mat{{ materialisation.id }}"
+                                    id="mat{{ materialisation.id }}">
+                                <option value="automatic">Automatic</option>
+                                <option value="occurs">Occurs</option>
+                                <option value="nothing">Doesnt Occur</option>
+                            </select></div>
+                        </div>
+                    {% endfor %}
+                    {#                    {{ test_variable | safe }}#}
+                    <h3>Threat Consequence</h3>
+                    <hr/>
+                    {% for consequence in these_consequences %}
+                        <div class="row">
+                            <div class="col-3"><label for="con{{ consequence.id }}"> {{ consequence.name }}</label>
+                            </div>
+                            <div class="col-3"><select
+                                    name="con{{ consequence.id }}"
+                                    id="con{{ consequence.id }}">
+                                <option value="automatic">Automatic</option>
+                                <option value="occurs">Occurs</option>
+                                <option value="nothing">Doesnt Occur</option>
+                            </select></div>
+                        </div>
+                    {% endfor %}
+                    <h3>Service State</h3>
+                    <hr/>
+                    {% for service in these_services %}
+                        <div class="row">
+                            <div class="col-3"><label for="serv{{ service.id }}"> {{ service.name }}</label></div>
+                            <div class="col-3"><select
+                                    name="serv{{ service.id }}"
+                                    id="serv{{ service.id }}">
+                                <option value="automatic">Automatic</option>
+                                <option value="occurs">Occurs</option>
+                                <option value="nothing">Doesnt Occur</option>
+                            </select></div>
+                        </div>
+                    {% endfor %}
+                    <h3>Threat Impact</h3>
+                    <hr/>
+                    {% for impact in these_impacts %}
+                        <div class="row">
+                            <div class="col-3"><label for="serv{{ impact.id }}"> {{ impact.name }}</label>
+                            </div>
+                            <div class="col-3"><select
+                                    name="serv{{ impact.id }}"
+                                    id="serv{{ impact.id }}">
+                                <option value="automatic">Automatic</option>
+                                <option value="none">No Impact</option>
+                                <option value="impact">Impact</option>
+                                <option value="high">High Impact</option>
+                            </select></div>
+                        </div>
+                    {% endfor %}
+                    <h3>Objective State</h3>
+                    <hr/>
+                    {% for objective in these_objectives %}
+                        <div class="row">
+                            <div class="col-3">
+                                <label for="serv{{ objective.id }}"> {{ objective.name }}</label>
+                            </div>
+                            <div class="col-3">
+                                <select name="serv{{ objective.id }}"
+                                        id="serv{{ objective.id }}">
+                                    <option value="automatic">Automatic</option>
+                                    <option value="low">Low</option>
+                                    <option value="med">Med</option>
+                                    <option value="high">High</option>
+                                </select>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <button type="submit" name="new_dashboard" class="btn btn-primary">Submit ></button>
+                    {#                <div class="row dashboard-row">#}
+                    {#                    <button type="button" class="btn btn-primary" style="margin-right: 3px; ">#}
+                    {#                        Blood Test: Normal Work#}
+                    {#                    </button>#}
+                    {#                    <button type="button" class="btn btn-primary" style="margin-right: 3px; ">#}
+                    {#                        Catering: Normal Work#}
+                    {#                    </button>#}
+                    {#                    <button type="button" class="btn btn-primary" style="margin-right: 3px; ">#}
+                    {#                        Pharmacy: Normal Work#}
+                    {#                    </button>#}
+                    {#                </div>#}
+                    {#                <h6>User Response</h6>#}
+                    {#                <hr/>#}
+                    {#                <div class="row dashboard-row">#}
+                    {#                    <button type="button" class="btn btn-primary" style="margin-right: 3px; ">#}
+                    {#                        Do Nothing#}
+                    {#                    </button>#}
+                    {#                </div>#}
+                </form>
+                <h1>Objective </h1>
                 <div class="row dashboard-row">
                     <br/>
                     <table id="table">
