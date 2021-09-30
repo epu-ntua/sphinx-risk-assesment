@@ -429,8 +429,8 @@ def start_risk_assessment(threat_id, asset_id):
 
     return results
     # Print Graph
-    with open(os.path.join("out", "GiraDynamic.bifxml"), "r") as out:
-        print(out.read())
+    # with open(os.path.join("out", "GiraDynamic.bifxml"), "r") as out:
+    #     print(out.read())
     # try:
     #     mat_nodes = RepoRiskThreatAssetMaterialisation.query.filter_by(repo_asset_id=asset_id,
     #                                                                                       repo_threat_id=threat_id,

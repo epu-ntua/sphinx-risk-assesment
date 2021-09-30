@@ -113,7 +113,6 @@
                                 </select>
                             </div>
                             <div class="col-6">
-
                                 {{ risk_assessment_result["re" ] | safe }}
                             </div>
                         </div>
@@ -131,6 +130,9 @@
                                 <option value="occurs">Occurs</option>
                                 <option value="nothing">Doesnt Occur</option>
                             </select></div>
+                            <div class="col-6">
+                                {{ risk_assessment_result["mat"+materialisation.id|string ] | safe }}
+                            </div>
                         </div>
                     {% endfor %}
                     {#                    {{ test_variable | safe }}#}
@@ -147,6 +149,9 @@
                                 <option value="occurs">Occurs</option>
                                 <option value="nothing">Doesnt Occur</option>
                             </select></div>
+                            <div class="col-6">
+                                {{ risk_assessment_result["con"+consequence.id|string ] | safe }}
+                            </div>
                         </div>
                     {% endfor %}
                     <h3>Service State</h3>
@@ -161,6 +166,9 @@
                                 <option value="occurs">Occurs</option>
                                 <option value="nothing">Doesnt Occur</option>
                             </select></div>
+                            <div class="col-6">
+                                {{ risk_assessment_result["serv"+service.id|string ] | safe }}
+                            </div>
                         </div>
                     {% endfor %}
                     <h3>Threat Impact</h3>
@@ -177,6 +185,9 @@
                                 <option value="impact">Impact</option>
                                 <option value="high">High Impact</option>
                             </select></div>
+                            <div class="col-6">
+                                {{ risk_assessment_result["imp"+impact.id|string ] | safe }}
+                            </div>
                         </div>
                     {% endfor %}
                     <h3>Objective State</h3>
@@ -194,6 +205,9 @@
                                     <option value="med">Med</option>
                                     <option value="high">High</option>
                                 </select>
+                            </div>
+                            <div class="col-6">
+                                {{ risk_assessment_result["obj"+objective.id|string ] | safe }}
                             </div>
                         </div>
                     {% endfor %}
@@ -217,18 +231,18 @@
                     {#                    </button>#}
                     {#                </div>#}
                 </form>
-                <h1>Objective </h1>
+                <h1>Objective Possibilities Matrix </h1>
                 <div class="row dashboard-row">
                     <br/>
                     <table id="table">
                         <thead>
                         <tr>
-                            <th data-field="likelihood">Likelihood</th>
-                            <th data-field="monetary">Objective: Monetary</th>
-                            <th data-field="confidentiality">Objective: Confidentiality</th>
-                            <th data-field="integrity">Objective: Integrity</th>
-                            <th data-field="availability">Objective: Availability</th>
-                            <th data-field="safety">Objective: Safety</th>
+                            <th data-field="Likelihood">Likelihood</th>
+                            <th data-field="Monetary">Objective: Monetary</th>
+                            <th data-field="Confidentiality">Objective: Confidentiality</th>
+                            <th data-field="Integrity">Objective: Integrity</th>
+                            <th data-field="Availability">Objective: Availability</th>
+                            <th data-field="Safety">Objective: Safety</th>
                         </tr>
                         </thead>
                     </table>
