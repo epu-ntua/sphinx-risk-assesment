@@ -10,6 +10,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from copy import deepcopy
 from deepdiff import DeepDiff
 
+from app.utils.utils_risk_assessment import start_risk_assessment
+
 
 @app.route('/repo/risk/configuration/threat/exposure/<threat_id>/', methods=['GET', 'POST'])
 @app.route('/repo/risk/configuration/threat/exposure/<threat_id>/asset/<asset_id>/', methods=['GET', 'POST'])
@@ -638,7 +640,6 @@ def repo_risk_configuration_impacts_risk(threat_id=1, asset_id=-1, impact_id=-1)
                 db.session.add(to_score_entry)
                 db.session.flush()
 
-
             if deconstructedId[0] == "low":
                 to_score_entry.low_prob = request.form[user_input]
             elif deconstructedId[0] == "medium":
@@ -767,13 +768,12 @@ def repo_risk_configuration_impacts_risk(threat_id=1, asset_id=-1, impact_id=-1)
             # to_score_entry = does_exist.first()
         else:
             custom_it = 0
-            does_exist=does_exist.all()
+            does_exist = does_exist.all()
             for to_send in array_impact_calculation:
                 to_send.append(does_exist[custom_it].low_prob)
                 to_send.append(does_exist[custom_it].med_prob)
                 to_send.append(does_exist[custom_it].high_prob)
-                custom_it = custom_it+1
-
+                custom_it = custom_it + 1
 
         return render_template("templates_risk_assessment/repo_risk_configuration_impacts_risk.html",
                                repo_impacts=repo_impacts, repo_threats=repo_threats, repo_assets=repo_assets,
@@ -829,7 +829,7 @@ def repo_risk_configuration_objective_risk(objective_id=1):
                 to_score_entry = does_exist.first()
             else:
                 to_score_entry = RepoObjectiveImpactRelationship(repo_objective_id=objective_id,
-                                                                                     impacts_state=json.dumps(related_impact_state))
+                                                                 impacts_state=json.dumps(related_impact_state))
                 db.session.add(to_score_entry)
                 db.session.flush()
 
@@ -839,7 +839,7 @@ def repo_risk_configuration_objective_risk(objective_id=1):
                 to_score_entry.med_prob = request.form[user_input]
             else:
                 to_score_entry.high_prob = request.form[user_input]
-             #     Find if this specific input exists
+            #     Find if this specific input exists
 
             # joined = db.session.query(RepoObjectiveImpactRelationship, RepoObjectiveImpactRelationshipImpactManyToMany) \
             #     .join(RepoObjectiveImpactRelationshipImpactManyToMany) \
@@ -1257,8 +1257,65 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
             return Response("SQLAlchemyError", 500)
 
         if this_risk_assessment.count() == 0:
+            # Save the new Valid Risk Assessment
             this_risk_assessment = RepoRiskAssessment(repo_threat_id=threat_id, repo_asset_id=asset_id)
             db.session.add(this_risk_assessment)
+            db.session.flush()
+
+            # Save the firs produced report
+            risk_assessment_result = start_risk_assessment(threat_id, asset_id)
+            print(risk_assessment_result)
+            print(type(risk_assessment_result))
+
+            exposure_set_values = ""
+            materialisations_set_values = ""
+            consequencess_set_values = ""
+            services_set_values = ""
+            impacts_set_values = ""
+            objectives_set_values = ""
+
+            for key, value in risk_assessment_result.items():
+                print("KEY IS")
+                print(key)
+                temp_key = "".join(i for i in key if not i.isdigit())
+                temp_digit = "".join(i for i in key if i.isdigit())
+
+                if temp_key == "te":
+                    exposure_set_values = exposure_set_values + str(temp_digit) + "|" + str(value.values[0]) + "|" + str(
+                        value.values[1]) + "|"
+                elif temp_key == "mat":
+                    materialisations_set_values = materialisations_set_values + str(temp_digit) + "|" + str(value.values[0]) + "|" + str(
+                        value.values[1]) + "|"
+                elif temp_key == "con":
+                    consequencess_set_values = consequencess_set_values + str(temp_digit) + "|" + str(value.values[0]) + "|" + str(
+                        value.values[1]) + "|"
+                elif temp_key == "serv":
+                    services_set_values = services_set_values + str(temp_digit) + "|" + str(value.values[0]) + "|" + str(
+                        value.values[1]) + "|"
+                elif temp_key == "imp":
+                    impacts_set_values = impacts_set_values + str(temp_digit) + "|" + str(value.values[0]) + "|" + str(
+                        value.values[1]) + "|" + str(value.values[2]) + "|"
+                elif temp_key == "obj":
+                    objectives_set_values = objectives_set_values + str(temp_digit) + "|" + str(value.values[0]) + "|" + str(
+                        value.values[1]) + "|" + str(value.values[2]) + "|"
+                # elif temp_key == "util":
+                #     materialisations_set_values = str(temp_digit)+ "|" + str(value.values(0)) + "|"
+                else:
+                    print("Ignore")
+
+            first_risk_assessment_result = RepoRiskAssessmentReports(
+                risk_assessment_id=this_risk_assessment.id,
+                type="initial",
+                exposure_set_values=exposure_set_values,
+                # responses_set_values = responses_set_values,
+                materialisations_set_values=materialisations_set_values,
+                consequencess_set_values=consequencess_set_values,
+                services_set_values=services_set_values,
+                impacts_set_values=impacts_set_values,
+                objectives_set_values=objectives_set_values,
+            )
+
+            db.session.add(first_risk_assessment_result)
             db.session.commit()
 
         flash('Assed "{}" Added Succesfully to risk assessment'.format(asset_id))

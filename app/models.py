@@ -299,6 +299,15 @@ class RepoRiskAssessmentReports(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     risk_assessment_id = db.Column(db.Integer, db.ForeignKey('repo_risk_assessment.id'))
     risk_assessment = db.relationship("RepoRiskAssessment", back_populates="reports")
+    date_time = db.Column(db.DateTime)
+    type = db.Column(db.String) # Possible values are Initial - Manual - Automatic - Incident
+    exposure_set_values = db.Column(db.String)
+    responses_set_values = db.Column(db.String)
+    materialisations_set_values = db.Column(db.String)
+    consequencess_set_values = db.Column(db.String)
+    services_set_values = db.Column(db.String)
+    impacts_set_values = db.Column(db.String)
+    objectives_set_values = db.Column(db.String)
 
 
 class RepoThreat(db.Model):

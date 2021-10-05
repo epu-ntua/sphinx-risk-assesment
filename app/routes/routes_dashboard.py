@@ -62,6 +62,9 @@ def repo_dashboard_threat():
 # @app.route('/repo/dashboard/risk/objectives/threat/<threat_id>/asset/<asset_id>/', methods=['GET', 'POST'])
 def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1):
     if request.method == 'POST':
+
+
+
         return redirect("/repo/dashboard/risk/objectives/")
     else:
         # assetsArray = get_assetsfromrepository()
@@ -159,48 +162,48 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1):
             # print(these_objectives)
             # print(these_utils)
 
-        repo_threats = [
-            {
-                "likelihood": "Certain",
-                "monetary": "(Low) No monetary loss",
-                "confidentiality": "(Low) No records leaked",
-                "integrity": "(Low) No records lost or altered",
-                "availability": "(Low) No disruption of services",
-                "safety": "-"
-            },
-            {
-                "likelihood": "Possible",
-                "monetary": "-",
-                "confidentiality": "-",
-                "integrity": "-",
-                "availability": "-",
-                "safety": "(Low) No injuries or fatalities likely"
-            },
-            {
-                "likelihood": "Rare",
-                "monetary": "-",
-                "confidentiality": "-",
-                "integrity": "(Medium) Some records lost or altered",
-                "availability": "(Medium) Some disruption of services",
-                "safety": "(Medium) Injuries are likely"
-            },
-            {
-                "likelihood": "Rare than Rare",
-                "monetary": "(High) Significant monetary loss",
-                "confidentiality": "(High) Many records leaked",
-                "integrity": "(High) Many records lost or altered",
-                "availability": "-",
-                "safety": "-"
-            },
-            {
-                "likelihood": "Oddness 3 or higher",
-                "monetary": "(Medium) Some monetary loss",
-                "confidentiality": "(Medium) Some records leaked",
-                "integrity": "-",
-                "availability": "(High) Significant disruption of services",
-                "safety": "(High) Fatalities are likley"
-            }
-        ]
+        # repo_threats = [
+        #     {
+        #         "likelihood": "Certain",
+        #         "monetary": "(Low) No monetary loss",
+        #         "confidentiality": "(Low) No records leaked",
+        #         "integrity": "(Low) No records lost or altered",
+        #         "availability": "(Low) No disruption of services",
+        #         "safety": "-"
+        #     },
+        #     {
+        #         "likelihood": "Possible",
+        #         "monetary": "-",
+        #         "confidentiality": "-",
+        #         "integrity": "-",
+        #         "availability": "-",
+        #         "safety": "(Low) No injuries or fatalities likely"
+        #     },
+        #     {
+        #         "likelihood": "Rare",
+        #         "monetary": "-",
+        #         "confidentiality": "-",
+        #         "integrity": "(Medium) Some records lost or altered",
+        #         "availability": "(Medium) Some disruption of services",
+        #         "safety": "(Medium) Injuries are likely"
+        #     },
+        #     {
+        #         "likelihood": "Rare than Rare",
+        #         "monetary": "(High) Significant monetary loss",
+        #         "confidentiality": "(High) Many records leaked",
+        #         "integrity": "(High) Many records lost or altered",
+        #         "availability": "-",
+        #         "safety": "-"
+        #     },
+        #     {
+        #         "likelihood": "Oddness 3 or higher",
+        #         "monetary": "(Medium) Some monetary loss",
+        #         "confidentiality": "(Medium) Some records leaked",
+        #         "integrity": "-",
+        #         "availability": "(High) Significant disruption of services",
+        #         "safety": "(High) Fatalities are likley"
+        #     }
+        # ]
 
         # print(repo_threats)
         # print(this_threat)
@@ -211,8 +214,10 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1):
         #  0.0000  | 0.0000  | 0.0000  |
         #         """
         risk_assessment_result = start_risk_assessment(1, 1)
-        print("RESSSSSSSSSSSSSSUUUUUUUUUUUUUUUUUUULLLLLLLLLLLLLLLLLTTTTTTTTT")
-        print(repo_threats)
+        print("--------------RESSSSSSSSSSSSSSUUUUUUUUUUUUUUUUUUULLLLLLLLLLLLLLLLLTTTTTTTTT-----------")
+        print(risk_assessment_result)
+        print("--------------RESSSSSSSSSSSSSSUUUUUUUUUUUUUUUUUUULLLLLLLLLLLLLLLLLTTTTTTTTT-----------")
+        # print(repo_threats)
 
         # Table showing objective results
         try:
