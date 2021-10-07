@@ -29,7 +29,7 @@
                 {#'<a class="edit" href="javascript:void(0)" title="Edit">',#}
                 {#'<i class="fa fa-edit"></i>',#}
                 {#'</a>  ',#}
-                '<button type="button" class="btn btn-primary fa fa-info-circle" data-toggle="modal" data-target="#reportModal">\n' +
+                '<button type="button" class="btn btn-primary fa fa-info-circle fa-edit" data-toggle="modal" data-target="#reportModal">\n' +
                 '<span class= "custom-font">Detailed View</span>' +
                 '</button>'
             ].join('')
@@ -43,60 +43,73 @@
         {#        '</a>'#}
         {#    ].join('')#}
         {# }#}
-
-        function populateEditFields(row) {
-            $("#editForm").find("#id").val(row.id)
-            $("#editForm").find("#name").val(row.name)
-        }
+        {##}
+        {#        function populateEditFields(row) {#}
+        {#            $("#editForm").find("#id").val(row.id)#}
+        {#            $("#editForm").find("#name").val(row.name)#}
+        {#        }#}
 
 
         window.operateEvents = {
             'click .fa-edit': function (e, value, row, index) {
-                populateEditFields(row)
+                {#populateEditFields(row)#}
+                console.log(row)
+                console.log(row.id)
+                {#console.log(row[0])#}
+                visualiseJSON(row.detailed)
                 {#alert('You click like action, row: ' + JSON.stringify(row))#}
             }
-        }
+         }
+
+        {#window.operateEvents['click .edit'] = (function (e, value, row, index) {#}
+        {#    console.log("hey")#}
+        {# });#}
 
 
         $(function () {
             var data = {{ repo_reports | safe }};
-            console.log(data)
+            {#console.log(data)#}
             $table.bootstrapTable({data: data});
         })
 
-        var jsonToVisualise = {
-            "header": {"version": "0.0.8", "status": 1, "message": ""},
-            "response": [{"product": "Classic Cars", "count": 38}, {
-                "product": "Motorcycles",
-                "count": 13
-            }, {"product": "Planes", "count": 12}, {"product": "Ships", "count": 9}, {
-                "product": "Trains",
-                "count": 3
-            }, {"product": "Trucks and Buses", "count": 11}, {"product": "Vintage Cars", "count": 24}]
-        };
+        function visualiseJSON(json) {
+            var _visualizer = new visualizer($("#output"));
+            _visualizer.visualize(json);
+            console.log("Im here")
+        }
+
+        {#var jsonToVisualise = {#}
+        {#    "header": {"version": "0.0.8", "status": 1, "message": ""},#}
+        {#    "response": [{"product": "Classic Cars", "count": 38}, {#}
+        {#        "product": "Motorcycles",#}
+        {#        "count": 13#}
+        {#    }, {"product": "Planes", "count": 12}, {"product": "Ships", "count": 9}, {#}
+        {#        "product": "Trains",#}
+        {#        "count": 3#}
+        {#    }, {"product": "Trucks and Buses", "count": 11}, {"product": "Vintage Cars", "count": 24}]#}
+        {# };#}
         var jsonToVisualise = {
             "type": "Initial",
-            "dateTime" : "12/04/2021 12:00:00",
-            "threat" : [{"name" : "Ransomware"}],
-            "asset" : [{"name" : "Asset 1"}],
-            "vulnerabilities" : [{"name" : "Asset 1"}],
-            "response" : [{}],
-            "confidentiality" : [{}],
-            "integrity" : [{}],
-            "availability" : [{}],
-            "monetary" : [{}],
-            "safety" : [{}],
-            "CIA Utility" : [{}],
-            "Evaluation Utility" : [{}],
-
+            "dateTime": "12/04/2021 12:00:00",
+            "threat": [{"name": "Ransomware"}],
+            "asset": [{"name": "Asset 1"}],
+            "vulnerabilities": [{"name": "Asset 1"}],
+            "response": [{}],
+            "confidentiality": [{}],
+            "integrity": [{}],
+            "availability": [{}],
+            "monetary": [{}],
+            "safety": [{}],
+            "CIA Utility": [{}],
+            "Evaluation Utility": [{}],
         };
         $(function () {
 
             //Create a new visualizer object
-            var _visualizer = new visualizer($("#output"));
+            {#var _visualizer = new visualizer($("#output"));#}
 
             //Visualize the demo json object
-            _visualizer.visualize(jsonToVisualise);
+            {#_visualizer.visualize(jsonToVisualise);#}
 
         });
     </script>
@@ -131,10 +144,10 @@
         <tr>
             <th data-field="id" data-sortable="true">ID</th>
             <th data-field="type" data-sortable="true">Report Type</th>
-            <th data-field="datetime" data-sortable="true">Date&Time of Occurance</th>
-            <th data-field="threat" data-sortable="true">Threat</th>
-            <th data-field="assetName" data-sortable="true">Asset Name</th>
-            <th data-field="assetIp" data-sortable="true">Asset Ip</th>
+            <th data-field="date_time" data-sortable="true">Date&Time of Occurance</th>
+            <th data-field="threat_name" data-sortable="true">Threat</th>
+            <th data-field="asset_name" data-sortable="true">Asset Name</th>
+            <th data-field="asset_ip" data-sortable="true">Asset Ip</th>
             <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents">-</th>
             {#            <th data-field="operate" data-formatter="operateFormatter1" data-events="operateEvents1"></th>#}
         </tr>

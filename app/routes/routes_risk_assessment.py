@@ -1267,12 +1267,12 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
             print(risk_assessment_result)
             print(type(risk_assessment_result))
 
-            exposure_set_values = ""
-            materialisations_set_values = ""
-            consequencess_set_values = ""
-            services_set_values = ""
-            impacts_set_values = ""
-            objectives_set_values = ""
+            exposure_inference = ""
+            materialisations_inference = ""
+            consequences_inference = ""
+            services_inference = ""
+            impacts_inference = ""
+            objectives_inference = ""
 
             for key, value in risk_assessment_result.items():
                 print("KEY IS")
@@ -1281,22 +1281,27 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
                 temp_digit = "".join(i for i in key if i.isdigit())
 
                 if temp_key == "te":
-                    exposure_set_values = exposure_set_values + str(temp_digit) + "|" + str(value.values[0]) + "|" + str(
+                    exposure_inference = exposure_inference + str(temp_digit) + "|" + str(
+                        value.values[0]) + "|" + str(
                         value.values[1]) + "|"
                 elif temp_key == "mat":
-                    materialisations_set_values = materialisations_set_values + str(temp_digit) + "|" + str(value.values[0]) + "|" + str(
+                    materialisations_inference = materialisations_inference + str(temp_digit) + "|" + str(
+                        value.values[0]) + "|" + str(
                         value.values[1]) + "|"
                 elif temp_key == "con":
-                    consequencess_set_values = consequencess_set_values + str(temp_digit) + "|" + str(value.values[0]) + "|" + str(
+                    consequences_inference = consequences_inference + str(temp_digit) + "|" + str(
+                        value.values[0]) + "|" + str(
                         value.values[1]) + "|"
                 elif temp_key == "serv":
-                    services_set_values = services_set_values + str(temp_digit) + "|" + str(value.values[0]) + "|" + str(
+                    services_inference = services_inference + str(temp_digit) + "|" + str(
+                        value.values[0]) + "|" + str(
                         value.values[1]) + "|"
                 elif temp_key == "imp":
-                    impacts_set_values = impacts_set_values + str(temp_digit) + "|" + str(value.values[0]) + "|" + str(
+                    impacts_inference = impacts_inference + str(temp_digit) + "|" + str(value.values[0]) + "|" + str(
                         value.values[1]) + "|" + str(value.values[2]) + "|"
                 elif temp_key == "obj":
-                    objectives_set_values = objectives_set_values + str(temp_digit) + "|" + str(value.values[0]) + "|" + str(
+                    objectives_inference = objectives_inference + str(temp_digit) + "|" + str(
+                        value.values[0]) + "|" + str(
                         value.values[1]) + "|" + str(value.values[2]) + "|"
                 # elif temp_key == "util":
                 #     materialisations_set_values = str(temp_digit)+ "|" + str(value.values(0)) + "|"
@@ -1306,13 +1311,13 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
             first_risk_assessment_result = RepoRiskAssessmentReports(
                 risk_assessment_id=this_risk_assessment.id,
                 type="initial",
-                exposure_set_values=exposure_set_values,
+                exposure_inference=exposure_inference,
                 # responses_set_values = responses_set_values,
-                materialisations_set_values=materialisations_set_values,
-                consequencess_set_values=consequencess_set_values,
-                services_set_values=services_set_values,
-                impacts_set_values=impacts_set_values,
-                objectives_set_values=objectives_set_values,
+                materialisations_inference=materialisations_inference,
+                consequences_inference=consequences_inference,
+                services_inference=services_inference,
+                impacts_inference=impacts_inference,
+                objectives_inference=objectives_inference,
             )
 
             db.session.add(first_risk_assessment_result)
@@ -1451,7 +1456,7 @@ def view_repo_risk_reports():
         return redirect("/repo/risk/reports/")
     else:
         try:
-            repo_services = RepoService.query.all()
+            repo_reports = RepoRiskAssessmentReports.query.all()
         except SQLAlchemyError:
             return Response("SQLAlchemyError", 500)
         # print("------------------------------")
@@ -1459,21 +1464,58 @@ def view_repo_risk_reports():
         #
         # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
 
-        json_services = convert_database_items_to_json_table(repo_services)
-        json_services = json.dumps(json_services)
-        repo_reports = [{"id": 1, "datetime": "12/04/2021 12:00:00", "threat": "Ransomware", "assetName": "Asset 1",
-                         "assetIp": "192.168.1.1", "type": "Initial"},
-                        {"id": 2, "datetime": "13/04/2021 12:00:00", "threat": "Hijacking", "assetName": "Asset 1",
-                         "assetIp": "192.168.1.1", "type": "Initial"},
-                        {"id": 3, "datetime": "14/04/2021 12:00:00", "threat": "Ransomware", "assetName": "Asset 1",
-                         "assetIp": "192.168.1.1", "type": "Incident"},
-                        {"id": 4, "datetime": "21/04/2021 12:00:00", "threat": "Hijacking", "assetName": "Asset 1",
-                         "assetIp": "192.168.1.1", "type": "Configuration Change"},
-                        ]
-        print("Example ARE --------")
-        print(json_services)
-        print("Proper is  --------")
-        print(repo_reports)
+        json_reports = convert_database_items_to_json_table(repo_reports)
+        json_detailed_reports = []
+        custom_it = 0
+        for each_report in repo_reports:
+            print("Example ARE --------")
+            print(json_reports[custom_it])
+            #  Add basic info to dashboard
+            this_risk_assessment = each_report.risk_assessment
+            json_reports[custom_it]["asset_name"] = this_risk_assessment.asset.name
+            json_reports[custom_it]["asset_ip"] = this_risk_assessment.asset.ip
+            json_reports[custom_it]["threat_name"] = this_risk_assessment.threat.name
+            # print(each_report)
+
+
+            # Create detailed report jsons
+            json_detailed_report_to_add = {}
+            json_detailed_report_to_add["type"] = each_report.type
+            json_detailed_report_to_add["date_time"] = each_report.date_time
+            materialisations_list = each_report.materialisations_inference.split("|")
+            materialisations_list.pop()
+            print(materialisations_list)
+            json_detailed_report_to_add["materialisations"] = []
+
+            for custom_it_mat in range(0, len(materialisations_list), 3):
+                this_mat_name = RepoMaterialisation.query.filter_by(id=materialisations_list[custom_it_mat]).first().name
+                json_detailed_report_to_add["materialisations"].append({"name": this_mat_name, "occurs" : materialisations_list[custom_it_mat+1], "Nothing" : materialisations_list[custom_it_mat+2] })
+
+            json_reports[custom_it]["detailed"] = json_detailed_report_to_add
+            custom_it = custom_it + 1
+
+            # {
+            #     "type": "Initial",
+            #     "dateTime": "12/04/2021 12:00:00",
+            #     "threat": [{"name": "Ransomware"}],
+            #     "asset": [{"name": "Asset 1"}],
+            #     "vulnerabilities": [{"name": "Asset 1"}],
+            #     "response": [{}],
+            #     "confidentiality": [{}],
+            #     "integrity": [{}],
+            #     "availability": [{}],
+            #     "monetary": [{}],
+            #     "safety": [{}],
+            #     "CIA Utility": [{}],
+            #     "Evaluation Utility": [{}],
+            #
+            # }
+
+        json_reports = json.dumps(json_reports)
+
+        # print("Proper is  --------")
+        # print(repo_reports)
         new_service_form = FormAddRepoService()
-        return render_template("templates_asset_repo/view_repo_reports.html", repo_reports=repo_reports,
+        return render_template("templates_asset_repo/view_repo_reports.html", repo_reports=json_reports,
+                               json_detailed_report_to_add = json_detailed_report_to_add,
                                new_service_form=new_service_form)

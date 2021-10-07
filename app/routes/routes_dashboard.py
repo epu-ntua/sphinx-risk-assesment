@@ -9,7 +9,7 @@ from app.utils import *
 from app.forms import *
 from app import app
 from app.utils.utils_database import convert_database_items_to_json_table
-from app.utils.utils_risk_assessment import start_risk_assessment
+from app.utils.utils_risk_assessment import start_risk_assessment, risk_assessment_manual
 import pandas as pd
 
 
@@ -59,13 +59,147 @@ def repo_dashboard_threat():
 
 
 @app.route('/repo/dashboard/risk/objectives/threat/<threat_id>/asset/<asset_id>/', methods=['GET', 'POST'])
+@app.route('/repo/dashboard/risk/objectives/threat/<threat_id>/asset/<asset_id>/assessment/<assessment_id>/',
+           methods=['GET', 'POST'])
 # @app.route('/repo/dashboard/risk/objectives/threat/<threat_id>/asset/<asset_id>/', methods=['GET', 'POST'])
-def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1):
+def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, assessment_id=-1):
     if request.method == 'POST':
+        results = request.form
+        print("NEW FORM IS-------------------")
+        print(results)
 
+        exposures_set = []
+        materialisations_set = []
+        responses_set = []
+        consequences_set = []
+        impacts_set = []
+        objectives_set = []
 
+        exposures_set_string = ""
+        materialisations_set_string = ""
+        responses_set_string = ""
+        consequences_set_string = ""
+        impacts_set_string = ""
+        objectives_set_string = ""
 
-        return redirect("/repo/dashboard/risk/objectives/")
+        for key, value in request.form.items():
+            print("KEY IS")
+            print(key)
+            temp_key = "".join(i for i in key if not i.isdigit())
+            temp_digit = "".join(i for i in key if i.isdigit())
+
+            if temp_key == "te":
+                exposures_set.append({"id": temp_digit, "value": value})
+                exposures_set_string = exposures_set_string + str(temp_digit) + "|" + str(
+                    value) + "|"
+            elif temp_key == "mat":
+                materialisations_set.append({"id": temp_digit, "value": value})
+                materialisations_set_string = materialisations_set_string + str(temp_digit) + "|" + str(
+                    value) + "|"
+            elif temp_key == "con":
+                responses_set.append({"id": temp_digit, "value": value})
+                responses_set_string = responses_set_string + str(temp_digit) + "|" + str(
+                    value) + "|"
+            elif temp_key == "serv":
+                consequences_set.append({"id": temp_digit, "value": value})
+                consequences_set_string = consequences_set_string + str(temp_digit) + "|" + str(
+                    value) + "|"
+            elif temp_key == "imp":
+                impacts_set.append({"id": temp_digit, "value": value})
+                impacts_set_string = impacts_set_string + str(temp_digit) + "|" + str(
+                    value) + "|"
+            elif temp_key == "obj":
+                objectives_set.append({"id": temp_digit, "value": value})
+                objectives_set_string = objectives_set_string + str(temp_digit) + "|" + str(
+                    value) + "|"
+                # elif temp_key == "util":
+            #     materialisations_set_values = str(temp_digit)+ "|" + str(value.values(0)) + "|"
+            else:
+                print("Ignore")
+
+        print("----------------Strings------------------")
+        print(exposures_set_string)
+        print(materialisations_set_string)
+        print(responses_set_string)
+        print(consequences_set_string)
+        print(impacts_set_string)
+        print(objectives_set_string)
+
+        risk_assessment_result = risk_assessment_manual(threat_id, asset_id, exposures_set, materialisations_set,
+                                                        responses_set,
+                                                        consequences_set,
+                                                        impacts_set, objectives_set)
+
+        print(risk_assessment_result)
+        print(type(risk_assessment_result))
+
+        exposure_inference = ""
+        materialisations_inference = ""
+        consequences_inference = ""
+        services_inference = ""
+        impacts_inference = ""
+        objectives_inference = ""
+
+        for key, value in risk_assessment_result.items():
+            print("KEY IS")
+            print(key)
+            temp_key = "".join(i for i in key if not i.isdigit())
+            temp_digit = "".join(i for i in key if i.isdigit())
+
+            if temp_key == "te":
+                exposure_inference = exposure_inference + str(temp_digit) + "|" + str(
+                    value.values[0]) + "|" + str(
+                    value.values[1]) + "|"
+            elif temp_key == "mat":
+                materialisations_inference = materialisations_inference + str(temp_digit) + "|" + str(
+                    value.values[0]) + "|" + str(
+                    value.values[1]) + "|"
+            elif temp_key == "con":
+                consequences_inference = consequences_inference + str(temp_digit) + "|" + str(
+                    value.values[0]) + "|" + str(
+                    value.values[1]) + "|"
+            elif temp_key == "serv":
+                services_inference = services_inference + str(temp_digit) + "|" + str(
+                    value.values[0]) + "|" + str(
+                    value.values[1]) + "|"
+            elif temp_key == "imp":
+                impacts_inference = impacts_inference + str(temp_digit) + "|" + str(value.values[0]) + "|" + str(
+                    value.values[1]) + "|" + str(value.values[2]) + "|"
+            elif temp_key == "obj":
+                objectives_inference = objectives_inference + str(temp_digit) + "|" + str(
+                    value.values[0]) + "|" + str(
+                    value.values[1]) + "|" + str(value.values[2]) + "|"
+            # elif temp_key == "util":
+            #     materialisations_set_values = str(temp_digit)+ "|" + str(value.values(0)) + "|"
+            else:
+                print("Ignore")
+
+        this_risk_assessment = RepoRiskAssessment.query.filter_by(repo_threat_id=threat_id,
+                                                                  repo_asset_id=asset_id).first()
+
+        manual_risk_assessment = RepoRiskAssessmentReports(
+            risk_assessment_id=this_risk_assessment.id,
+            type="manual",
+            exposure_set=exposures_set_string,
+            responses_set=responses_set_string,
+            materialisations_set=materialisations_set_string,
+            consequences_set=consequences_set_string,
+            # services_set=,
+            impacts_set=impacts_set_string,
+            objectives_set=objectives_set_string,
+            exposure_inference=exposure_inference,
+            # responses_set_values = responses_set_values,
+            materialisations_inference=materialisations_inference,
+            consequences_inference=consequences_inference,
+            services_inference=services_inference,
+            impacts_inference=impacts_inference,
+            objectives_inference=objectives_inference,
+        )
+
+        db.session.add(manual_risk_assessment)
+        db.session.commit()
+
+        return redirect("/repo/dashboard/risk/objectives/threat/" + threat_id + "/asset/" + asset_id + "/")
     else:
         # assetsArray = get_assetsfromrepository()
         # if assetsArray != -1:
@@ -152,7 +286,7 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1):
             these_objectives = convert_database_items_to_json_table(these_objectives)
             these_utils = convert_database_items_to_json_table(these_utils)
 
-            print("---DASHBOARD DATA IS---")
+            # print("---DASHBOARD DATA IS---")
             # print(this_exposure)
             # print(these_responses)
             # print(these_materialisations)
@@ -214,9 +348,9 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1):
         #  0.0000  | 0.0000  | 0.0000  |
         #         """
         risk_assessment_result = start_risk_assessment(1, 1)
-        print("--------------RESSSSSSSSSSSSSSUUUUUUUUUUUUUUUUUUULLLLLLLLLLLLLLLLLTTTTTTTTT-----------")
-        print(risk_assessment_result)
-        print("--------------RESSSSSSSSSSSSSSUUUUUUUUUUUUUUUUUUULLLLLLLLLLLLLLLLLTTTTTTTTT-----------")
+        # print("--------------RESSSSSSSSSSSSSSUUUUUUUUUUUUUUUUUUULLLLLLLLLLLLLLLLLTTTTTTTTT-----------")
+        # print(risk_assessment_result)
+        # print("--------------RESSSSSSSSSSSSSSUUUUUUUUUUUUUUUUUUULLLLLLLLLLLLLLLLLTTTTTTTTT-----------")
         # print(repo_threats)
 
         # Table showing objective results
@@ -270,24 +404,25 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1):
             value_med = risk_assessment_result["obj" + str(objective.id)].values[1]
             value_high = risk_assessment_result["obj" + str(objective.id)].values[2]
 
-            print(objective.name)
-            print(value_low)
-            print(value_med)
-            print(value_high)
+            # print(objective.name)
+            # print(value_low)
+            # print(value_med)
+            # print(value_high)
             if value_low < 0.00005:
                 repo_threats_values_rare_3[objective.name] = repo_threats_values_rare_3[objective.name] + "Low" + "|"
-                print("---------------------------------------------1")
+                # print("---------------------------------------------1")
             elif value_low < 0.0005:
                 repo_threats_values_rare_2[objective.name] = repo_threats_values_rare_2[objective.name] + "Low" + "|"
-                print("---------------------------------------------2")
+                # print("---------------------------------------------2")
             elif value_low < 0.10:
                 repo_threats_values_rare[objective.name] = repo_threats_values_rare[objective.name] + "Low" + "|"
-                print("---------------------------------------------3")
+                # print("---------------------------------------------3")
             elif value_low < 0.50:
-                repo_threats_values_possible[objective.name] = repo_threats_values_possible[objective.name] + "Low" + "|"
-                print("---------------------------------------------4")
+                repo_threats_values_possible[objective.name] = repo_threats_values_possible[
+                                                                   objective.name] + "Low" + "|"
+                # print("---------------------------------------------4")
             else:
-                print("---------------------------------------------5")
+                # print("---------------------------------------------5")
                 repo_threats_values_certain[objective.name] = repo_threats_values_certain[objective.name] + "Low" + "|"
 
             if value_med < 0.00005:
@@ -297,7 +432,8 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1):
             elif value_med < 0.10:
                 repo_threats_values_rare[objective.name] = repo_threats_values_rare[objective.name] + "med" + "|"
             elif value_med < 0.50:
-                repo_threats_values_possible[objective.name] = repo_threats_values_possible[objective.name] + "med" + "|"
+                repo_threats_values_possible[objective.name] = repo_threats_values_possible[
+                                                                   objective.name] + "med" + "|"
             else:
                 # print("============================================")
                 repo_threats_values_certain[objective.name] = repo_threats_values_certain[objective.name] + "med" + "|"
@@ -316,11 +452,11 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1):
 
         repo_threats = [repo_threats_values_certain, repo_threats_values_possible, repo_threats_values_rare,
                         repo_threats_values_rare_2, repo_threats_values_rare_3]
-        print("==================================================")
-        print(repo_threats)
-        # print(value_med)
-        # print(value_low)
-        print("==================================================")
+        # print("==================================================")
+        # print(repo_threats)
+        # # print(value_med)
+        # # print(value_low)
+        # print("==================================================")
         # repo_threats_values_certain
 
     for key, value in risk_assessment_result.items():

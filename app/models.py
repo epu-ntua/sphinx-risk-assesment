@@ -296,18 +296,31 @@ class RepoRiskAssessment(db.Model):
 
 class RepoRiskAssessmentReports(db.Model):
     __tablename__ = 'repo_risk_assessment_reports'
+    """ The inference strings are stored in the form id|value1|value2|id2|value1|value2...
+        Each different inference entry uses its as many values as many states it has during the risk asssessment
+        Right now these values are hardcoded 
+        The set string are in the form id|state|id2|state...
+    """
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     risk_assessment_id = db.Column(db.Integer, db.ForeignKey('repo_risk_assessment.id'))
     risk_assessment = db.relationship("RepoRiskAssessment", back_populates="reports")
     date_time = db.Column(db.DateTime)
     type = db.Column(db.String) # Possible values are Initial - Manual - Automatic - Incident
-    exposure_set_values = db.Column(db.String)
-    responses_set_values = db.Column(db.String)
-    materialisations_set_values = db.Column(db.String)
-    consequencess_set_values = db.Column(db.String)
-    services_set_values = db.Column(db.String)
-    impacts_set_values = db.Column(db.String)
-    objectives_set_values = db.Column(db.String)
+    exposure_set = db.Column(db.String)
+    responses_set = db.Column(db.String)
+    materialisations_set = db.Column(db.String)
+    consequences_set = db.Column(db.String)
+    services_set = db.Column(db.String)
+    impacts_set = db.Column(db.String)
+    objectives_set = db.Column(db.String)
+
+    exposure_inference = db.Column(db.String)
+    responses_inference = db.Column(db.String)
+    materialisations_inference = db.Column(db.String)
+    consequences_inference = db.Column(db.String)
+    services_inference = db.Column(db.String)
+    impacts_inference = db.Column(db.String)
+    objectives_inference = db.Column(db.String)
 
 
 class RepoThreat(db.Model):
