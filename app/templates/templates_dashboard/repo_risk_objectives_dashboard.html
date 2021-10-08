@@ -8,17 +8,33 @@
         var $table = $('#table')
 
         function operateFormatter(value, row, index) {
-            return [
-                '<a type="button" class="btn btn-primary fa fa-edit" href="/repo/assets/">\n' +
-                '<span class= "custom-font">Verify Asset</span>' +
-                '</a>'
-            ].join('')
+            if (row.id == {{ assessment_id|string }}) {
+                return [
+                    '<a type="button" class="btn btn-primary fa fa-check" href="/repo/dashboard/risk/objectives/threat/{{ threat_id }}/asset/{{ asset_id }}/assessment/' + row.id + '/">\n' +
+                    '<span class= "custom-font">Selected</span>' +
+                    '</a>'
+                ].join('')
+            }else{
+                return [
+                    '<a type="button" class="btn btn-primary fa fa-edit" href="/repo/dashboard/risk/objectives/threat/{{ threat_id }}/asset/{{ asset_id }}/assessment/' + row.id + '/">\n' +
+                    '<span class= "custom-font">Select specific manual assessment</span>' +
+                    '</a>'
+                ].join('')
+            }
+
         }
 
         $(function () {
             var data = {{ repo_threats | safe }};
-            console.log(data)
-            $table.bootstrapTable({data: data});
+            var data2 = {{ repo_reports | safe }};
+            {#console.log(data)#}
+            console.log(data2)
+            var $table = $("#table")
+            var $table2 = $("#table2")
+            $table.bootstrapTable({data: data})
+            $table2.bootstrapTable({data: data2})
+            {#$table.bootstrapTable({data: data});#}
+            {#$table2.bootstrapTable({data: data2});#}
         })
     </script>
 
@@ -63,7 +79,6 @@
                     </h3>
                 </div>
             </div>
-
             <hr/>
             {% if threat_id != '-1' and asset_id != '-1' %}
                 <form action="/repo/dashboard/risk/objectives/threat/{{ threat_id }}/asset/{{ asset_id }}/"
@@ -247,6 +262,39 @@
                         </thead>
                     </table>
                 </div>
+
+                <h3>Existing Manual Reports</h3>
+                <table
+                        id="table2"
+                        data-toolbar="#toolbar"
+                        data-search="true"
+                        data-search-on-enter-key="true"
+                        data-show-search-button="true"
+                        data-show-refresh="true"
+                        data-show-toggle="true"
+                        data-show-fullscreen="true"
+                        data-show-columns="true"
+                        data-show-columns-toggle-all="true"
+                        data-loading-template="loadingTemplate"
+                        data-pagination="true"
+                        data-page-list="[10, 25, 50, 100, all]"
+                        show-button-icons="true"
+                >
+                    <thead>
+                    <tr>
+                        <th data-field="id" data-sortable="true">ID</th>
+                        <th data-field="type" data-sortable="true">Report Type</th>
+                        <th data-field="date_time" data-sortable="true">Date&Time of Occurance</th>
+                        <th data-field="threat_name" data-sortable="true">Threat</th>
+                        <th data-field="asset_name" data-sortable="true">Asset Name</th>
+                        <th data-field="asset_ip" data-sortable="true">Asset Ip</th>
+                        <th data-field="operate" data-formatter="operateFormatter">-</th>
+                        {#                        <th data-field="operate" data-formatter="operateFormatter1" data-events="operateEvents1"></th>#}
+                    </tr>
+                    </thead>
+                </table>
+                <hr/>
+
                 </div>
                 <div class="col-2">
                     <h3>Alerts</h3>
