@@ -459,64 +459,69 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, assessment_id=-1):
         # print("==================================================")
         # repo_threats_values_certain
 
-    for key, value in risk_assessment_result.items():
-        risk_assessment_result[key] = pd.DataFrame(value).to_html()
-        # risk_assessment_result[key] = pd.DataFrame(value).to_html()
+        for key, value in risk_assessment_result.items():
+            risk_assessment_result[key] = pd.DataFrame(value).to_html()
+            # risk_assessment_result[key] = pd.DataFrame(value).to_html()
 
-    try:
-        repo_reports = RepoRiskAssessmentReports.query.filter(
-            RepoRiskAssessmentReports.risk_assessment.has(repo_asset_id=asset_id, repo_threat_id=threat_id)).all()
-    except SQLAlchemyError:
-        return Response("SQLAlchemyError", 500)
-        # print("------------------------------")
-        # print(repo_actors, flush=True)
-        #
-        # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
-    # print(repo_reports)
-    json_reports = convert_database_items_to_json_table(repo_reports)
-    json_detailed_reports = []
-    custom_it = 0
-    for each_report in repo_reports:
-        print("Example ARE --------")
-        print(json_reports[custom_it])
-        #  Add basic info to dashboard
-        this_risk_assessment = each_report.risk_assessment
-        json_reports[custom_it]["asset_name"] = this_risk_assessment.asset.name
-        json_reports[custom_it]["asset_ip"] = this_risk_assessment.asset.ip
-        json_reports[custom_it]["threat_name"] = this_risk_assessment.threat.name
-        # print(each_report)
+        try:
+            repo_reports = RepoRiskAssessmentReports.query.filter(
+                RepoRiskAssessmentReports.risk_assessment.has(repo_asset_id=asset_id, repo_threat_id=threat_id)).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+            # print("------------------------------")
+            # print(repo_actors, flush=True)
+            #
+            # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
+        # print(repo_reports)
+        json_reports = convert_database_items_to_json_table(repo_reports)
+        json_detailed_reports = []
+        custom_it = 0
+        for each_report in repo_reports:
+            print("Example ARE --------")
+            print(json_reports[custom_it])
+            #  Add basic info to dashboard
+            this_risk_assessment = each_report.risk_assessment
+            json_reports[custom_it]["asset_name"] = this_risk_assessment.asset.name
+            json_reports[custom_it]["asset_ip"] = this_risk_assessment.asset.ip
+            json_reports[custom_it]["threat_name"] = this_risk_assessment.threat.name
+            # print(each_report)
 
-        # Create detailed report jsons
-        json_detailed_report_to_add = {}
-        json_detailed_report_to_add["type"] = each_report.type
-        json_detailed_report_to_add["date_time"] = each_report.date_time
-        materialisations_list = each_report.materialisations_inference.split("|")
-        materialisations_list.pop()
-        print(materialisations_list)
-        json_detailed_report_to_add["materialisations"] = []
+            # Create detailed report jsons
+            json_detailed_report_to_add = {}
+            json_detailed_report_to_add["type"] = each_report.type
+            json_detailed_report_to_add["date_time"] = each_report.date_time
+            materialisations_list = each_report.materialisations_inference.split("|")
+            materialisations_list.pop()
+            print(materialisations_list)
+            json_detailed_report_to_add["materialisations"] = []
 
-        for custom_it_mat in range(0, len(materialisations_list), 3):
-            this_mat_name = RepoMaterialisation.query.filter_by(id=materialisations_list[custom_it_mat]).first().name
-            json_detailed_report_to_add["materialisations"].append(
-                {"name": this_mat_name, "occurs": materialisations_list[custom_it_mat + 1],
-                 "Nothing": materialisations_list[custom_it_mat + 2]})
+            for custom_it_mat in range(0, len(materialisations_list), 3):
+                this_mat_name = RepoMaterialisation.query.filter_by(
+                    id=materialisations_list[custom_it_mat]).first().name
+                json_detailed_report_to_add["materialisations"].append(
+                    {"name": this_mat_name, "occurs": materialisations_list[custom_it_mat + 1],
+                     "Nothing": materialisations_list[custom_it_mat + 2]})
 
-        json_reports[custom_it]["detailed"] = json_detailed_report_to_add
-        custom_it = custom_it + 1
-    json_reports = json.dumps(json_reports)
+            json_reports[custom_it]["detailed"] = json_detailed_report_to_add
+            custom_it = custom_it + 1
+        json_reports = json.dumps(json_reports)
 
+        # existing_report_data = {
+        # }
+        # if assessment_id != -1:
 
-    # pd_results = pd.DataFrame(test_variable)
-    # print(risk_assessment_result)
-    return render_template('templates_dashboard/repo_risk_objectives_dashboard.html', repo_threats=repo_threats,
-                           these_threats=these_threats, threat_id=threat_id, asset_id=asset_id,
-                           repo_reports=json_reports, assessment_id =assessment_id,
-                           these_responses=these_responses, risk_assessment_result=risk_assessment_result,
-                           this_threat=this_threat, these_assets=these_assets, this_asset=this_asset,
-                           this_exposure=this_exposure, these_materialisations=these_materialisations,
-                           these_consequences=these_consequences, these_services=these_services,
-                           these_impacts=these_impacts, these_objectives=these_objectives, these_utils=these_utils
-                           )
+        # pd_results = pd.DataFrame(test_variable)
+        # print(risk_assessment_result)
+        return render_template('templates_dashboard/repo_risk_objectives_dashboard.html', repo_threats=repo_threats,
+                               these_threats=these_threats, threat_id=threat_id, asset_id=asset_id,
+                               repo_reports=json_reports, assessment_id=assessment_id,
+                               this_risk_assessment=this_risk_assessment,
+                               these_responses=these_responses, risk_assessment_result=risk_assessment_result,
+                               this_threat=this_threat, these_assets=these_assets, this_asset=this_asset,
+                               this_exposure=this_exposure, these_materialisations=these_materialisations,
+                               these_consequences=these_consequences, these_services=these_services,
+                               these_impacts=these_impacts, these_objectives=these_objectives, these_utils=these_utils
+                               )
 
 
 @app.route('/repo/dashboard/vulnerability/', methods=['GET', 'POST'])

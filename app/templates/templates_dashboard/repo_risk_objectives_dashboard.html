@@ -14,7 +14,7 @@
                     '<span class= "custom-font">Selected</span>' +
                     '</a>'
                 ].join('')
-            }else{
+            } else {
                 return [
                     '<a type="button" class="btn btn-primary fa fa-edit" href="/repo/dashboard/risk/objectives/threat/{{ threat_id }}/asset/{{ asset_id }}/assessment/' + row.id + '/">\n' +
                     '<span class= "custom-font">Select specific manual assessment</span>' +
@@ -42,6 +42,14 @@
 
 
 {% block content %}
+    {% if assessment_id|string == -1|string %}
+        {% set responses_set_values = this_risk_assessment.responses_set.split("|") %}
+        {% set materialisations_set_values = this_risk_assessment.materialisations_set.split("|") %}
+        {% set consequences_set_values = this_risk_assessment.consequences_set.split("|") %}
+        {% set services_set_values = this_risk_assessment.services_set.split("|") %}
+        {% set impacts_set_values = this_risk_assessment.impacts_set.split("|") %}
+        {% set objectives_set_values = this_risk_assessment.objectives_set.split("|") %}
+    {% endif %}
     <h1>Risk - Objective Dashboard</h1>
     <hr/>
     <div class="row">
@@ -134,6 +142,7 @@
                     {% endfor %}
                     <h3>Threat Materialisation</h3>
                     <hr/>
+                    {% set mat_it = 0 %}
                     {% for materialisation in these_materialisations %}
                         <div class="row">
                             <div class="col-3"><label
