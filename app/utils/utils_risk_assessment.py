@@ -453,7 +453,7 @@ def start_risk_assessment(threat_id, asset_id):
 
 
 def risk_assessment_manual(threat_id, asset_id, exposures_set, materialisations_set, responses_set, consequences_set,
-                           impacts_set, objectives_set):
+                           services_set, impacts_set, objectives_set):
     """ Set Array are all the same: [{"id": "id_value", "value" : "value_value" }]
         where id is the current nodes id and values whether it occurs/doesn't occur or is automatic
     """
@@ -844,6 +844,7 @@ def risk_assessment_manual(threat_id, asset_id, exposures_set, materialisations_
             nodeTeId = "te" + str(exposure_set["id"])
             ie.addEvidence(nodeTeId, value_to_add)
 
+    # Responses NOT WORKING CURRENTLY DISABLED CAUSING ERRORS
     for response_set_set in responses_set:
         if response_set_set["value"] != "automatic":
             if response_set_set["value"] == "occurs":
@@ -855,8 +856,8 @@ def risk_assessment_manual(threat_id, asset_id, exposures_set, materialisations_
                 continue
 
             print("Responses are set")
-            nodeResId = "mat" + str(response_set_set["id"])
-            ie.addEvidence(nodeResId, value_to_add)
+            nodeResId = "re" + str(response_set_set["id"])
+            # ie.addEvidence(nodeResId, value_to_add)
 
     for materialisation_set in materialisations_set:
         if materialisation_set["value"] != "automatic":
@@ -884,6 +885,19 @@ def risk_assessment_manual(threat_id, asset_id, exposures_set, materialisations_
 
             nodeConsId = "con" + str(consequence_set["id"])
             ie.addEvidence(nodeConsId, value_to_add)
+
+    for service_set in services_set:
+        if service_set["value"] != "automatic":
+            if service_set["value"] == "occurs":
+                value_to_add = 1
+            elif service_set["value"] == "nothing":
+                value_to_add = 0
+            else:
+                print("Error passing values to risk assessment")
+                continue
+
+            nodeServId = "serv" + str(service_set["id"])
+            ie.addEvidence(nodeServId, value_to_add)
 
     for impact_set in impacts_set:
         if impact_set["value"] != "automatic":

@@ -8,6 +8,7 @@ from app.globals import *
 from app.utils import *
 from app.forms import *
 from app import app
+from app.utils.utils_communication import send_risk_report
 from app.utils.utils_database import convert_database_items_to_json_table
 from app.utils.utils_risk_assessment import start_risk_assessment, risk_assessment_manual
 import pandas as pd
@@ -59,10 +60,10 @@ def repo_dashboard_threat():
 
 
 @app.route('/repo/dashboard/risk/objectives/threat/<threat_id>/asset/<asset_id>/', methods=['GET', 'POST'])
-@app.route('/repo/dashboard/risk/objectives/threat/<threat_id>/asset/<asset_id>/assessment/<assessment_id>/',
+@app.route('/repo/dashboard/risk/objectives/threat/<threat_id>/asset/<asset_id>/assessment/<report_id>/',
            methods=['GET', 'POST'])
 # @app.route('/repo/dashboard/risk/objectives/threat/<threat_id>/asset/<asset_id>/', methods=['GET', 'POST'])
-def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, assessment_id=-1):
+def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, report_id=-1):
     if request.method == 'POST':
         results = request.form
         print("NEW FORM IS-------------------")
@@ -72,6 +73,7 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, assessment_id=-1):
         materialisations_set = []
         responses_set = []
         consequences_set = []
+        services_set = []
         impacts_set = []
         objectives_set = []
 
@@ -79,6 +81,7 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, assessment_id=-1):
         materialisations_set_string = ""
         responses_set_string = ""
         consequences_set_string = ""
+        services_set_string = ""
         impacts_set_string = ""
         objectives_set_string = ""
 
@@ -96,13 +99,18 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, assessment_id=-1):
                 materialisations_set.append({"id": temp_digit, "value": value})
                 materialisations_set_string = materialisations_set_string + str(temp_digit) + "|" + str(
                     value) + "|"
-            elif temp_key == "con":
+            elif temp_key == "re":
+                # Decision Nodes not working currently
                 responses_set.append({"id": temp_digit, "value": value})
                 responses_set_string = responses_set_string + str(temp_digit) + "|" + str(
                     value) + "|"
-            elif temp_key == "serv":
+            elif temp_key == "con":
                 consequences_set.append({"id": temp_digit, "value": value})
                 consequences_set_string = consequences_set_string + str(temp_digit) + "|" + str(
+                    value) + "|"
+            elif temp_key == "serv":
+                services_set.append({"id": temp_digit, "value": value})
+                services_set_string = services_set_string + str(temp_digit) + "|" + str(
                     value) + "|"
             elif temp_key == "imp":
                 impacts_set.append({"id": temp_digit, "value": value})
@@ -118,16 +126,25 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, assessment_id=-1):
                 print("Ignore")
 
         print("----------------Strings------------------")
+        print(exposures_set)
         print(exposures_set_string)
+        print(materialisations_set)
         print(materialisations_set_string)
+        print(responses_set)
         print(responses_set_string)
+        print(consequences_set)
         print(consequences_set_string)
+        print(services_set)
+        print(services_set_string)
+        print(impacts_set)
         print(impacts_set_string)
+        print(objectives_set)
         print(objectives_set_string)
 
         risk_assessment_result = risk_assessment_manual(threat_id, asset_id, exposures_set, materialisations_set,
                                                         responses_set,
                                                         consequences_set,
+                                                        services_set,
                                                         impacts_set, objectives_set)
 
         print(risk_assessment_result)
@@ -184,7 +201,7 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, assessment_id=-1):
             responses_set=responses_set_string,
             materialisations_set=materialisations_set_string,
             consequences_set=consequences_set_string,
-            # services_set=,
+            services_set=services_set_string,
             impacts_set=impacts_set_string,
             objectives_set=objectives_set_string,
             exposure_inference=exposure_inference,
@@ -198,7 +215,7 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, assessment_id=-1):
 
         db.session.add(manual_risk_assessment)
         db.session.commit()
-
+        send_risk_report(manual_risk_assessment.id, asset_id, threat_id)
         return redirect("/repo/dashboard/risk/objectives/threat/" + threat_id + "/asset/" + asset_id + "/")
     else:
         # assetsArray = get_assetsfromrepository()
@@ -236,6 +253,7 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, assessment_id=-1):
         these_impacts = []
         these_objectives = []
         these_utils = []
+        this_risk_assessment = None
         if threat_id != -1 and asset_id != -1:
             try:
                 this_exposure = RepoAssetRepoThreatRelationship.query.filter_by(repo_threat_id=threat_id).all()
@@ -277,6 +295,12 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, assessment_id=-1):
             except SQLAlchemyError:
                 return "SQLAlchemyError"
 
+            if report_id != -1:
+                try:
+                    this_risk_assessment = RepoRiskAssessmentReports.query.filter_by(id=report_id).all()
+                except SQLAlchemyError:
+                    return "SQLAlchemyError"
+
             this_exposure = convert_database_items_to_json_table(this_exposure)
             these_responses = convert_database_items_to_json_table(these_responses)
             these_materialisations = convert_database_items_to_json_table(these_materialisations)
@@ -285,8 +309,10 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, assessment_id=-1):
             these_impacts = convert_database_items_to_json_table(these_impacts)
             these_objectives = convert_database_items_to_json_table(these_objectives)
             these_utils = convert_database_items_to_json_table(these_utils)
+            this_risk_assessment = convert_database_items_to_json_table(this_risk_assessment)
 
-            # print("---DASHBOARD DATA IS---")
+            print("---DASHBOARD DATA IS---")
+            print(this_risk_assessment)
             # print(this_exposure)
             # print(these_responses)
             # print(these_materialisations)
@@ -480,10 +506,10 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, assessment_id=-1):
             print("Example ARE --------")
             print(json_reports[custom_it])
             #  Add basic info to dashboard
-            this_risk_assessment = each_report.risk_assessment
-            json_reports[custom_it]["asset_name"] = this_risk_assessment.asset.name
-            json_reports[custom_it]["asset_ip"] = this_risk_assessment.asset.ip
-            json_reports[custom_it]["threat_name"] = this_risk_assessment.threat.name
+            actual_risk_assessment = each_report.risk_assessment
+            json_reports[custom_it]["asset_name"] = actual_risk_assessment.asset.name
+            json_reports[custom_it]["asset_ip"] = actual_risk_assessment.asset.ip
+            json_reports[custom_it]["threat_name"] = actual_risk_assessment.threat.name
             # print(each_report)
 
             # Create detailed report jsons
@@ -514,7 +540,7 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, assessment_id=-1):
         # print(risk_assessment_result)
         return render_template('templates_dashboard/repo_risk_objectives_dashboard.html', repo_threats=repo_threats,
                                these_threats=these_threats, threat_id=threat_id, asset_id=asset_id,
-                               repo_reports=json_reports, assessment_id=assessment_id,
+                               repo_reports=json_reports, report_id=report_id,
                                this_risk_assessment=this_risk_assessment,
                                these_responses=these_responses, risk_assessment_result=risk_assessment_result,
                                this_threat=this_threat, these_assets=these_assets, this_asset=this_asset,
