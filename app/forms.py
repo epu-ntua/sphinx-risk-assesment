@@ -183,7 +183,8 @@ class FormAddRepoAsset(FlaskForm):
     customer_service = IntegerField("Customer Service", validators=[Optional()])
     goodwill = IntegerField("Goodwill", validators=[Optional()])
     last_touch_date = DateTimeField("Last Touch", validators=[Optional()])
-    type_fk = QuerySelectField(query_factory=query_generic_repo_type, allow_blank=True, get_label='name',
-                               validators=[Optional()])
-    # integrity = SelectField("Integrity", choices = {"0","1","2"}, validators = [InputRequired()])
+    type_fk = QuerySelectField(query_factory=query_generic_repo_type, allow_blank=False, get_label='name',
+                               validators=[InputRequired()])
+    dropdown_dictionary = [('1', 'a'), ('2' ,'b'), ('3','c')]
+    integrity = SelectField('Integrity', choices=dropdown_dictionary,default='1', validators = [InputRequired()])
     submit = SubmitField("Add new asset")

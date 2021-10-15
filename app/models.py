@@ -511,7 +511,9 @@ class RepoAssetsType(db.Model):
     __tablename__ = 'repo_assets_type'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String)
-
+    daily_start_time = db.column(db.DateTime)
+    daily_end_time = db.column(db.DateTime)
+    role = db.column(db.Integer) #1 low - 2 medium - 3 high
 
 class RepoActor(db.Model):
     __tablename__ = 'repo_actor'
