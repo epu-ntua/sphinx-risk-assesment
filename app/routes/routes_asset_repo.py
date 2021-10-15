@@ -61,6 +61,7 @@ def view_repo_assets():
                 to_edit_asset.goodwill = new_asset_form.goodwill.data
                 to_edit_asset.last_touch_date = new_asset_form.last_touch_date.data
                 to_edit_asset.type_fk = type_fk_id
+                to_edit_asset.integrity = new_asset_form.integrity.data
 
                 db.session.commit()
                 return redirect("/repo/assets/")
@@ -89,7 +90,7 @@ def view_repo_assets():
                                          owner=owner_id,
                                          location=new_asset_form.location.data,
                                          verified=new_asset_form.verified.data,
-                                         verified_by=verified_by_id,
+                                         verified_by=bool(verified_by_id),
                                          mac_address=new_asset_form.mac_address.data,
                                          has_static_ip=new_asset_form.has_static_ip.data,
                                          ip=new_asset_form.ip.data,
@@ -101,7 +102,8 @@ def view_repo_assets():
                                          customer_service=new_asset_form.customer_service.data,
                                          goodwill=new_asset_form.goodwill.data,
                                          last_touch_date=new_asset_form.last_touch_date.data,
-                                         type_fk=type_fk_id)
+                                         type_fk=type_fk_id,
+                                         integrity=new_asset_form.integrity.data)
                 db.session.add(to_add_asset)
                 db.session.commit()
 
