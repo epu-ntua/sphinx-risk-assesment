@@ -66,8 +66,8 @@ def repo_dashboard_threat():
 def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, report_id=-1):
     if request.method == 'POST':
         results = request.form
-        print("NEW FORM IS-------------------")
-        print(results)
+        # print("NEW FORM IS-------------------")
+        # print(results)
 
         exposures_set = []
         materialisations_set = []
@@ -86,8 +86,8 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, report_id=-1):
         objectives_set_string = ""
 
         for key, value in request.form.items():
-            print("KEY IS")
-            print(key)
+            # print("KEY IS")
+            # print(key)
             temp_key = "".join(i for i in key if not i.isdigit())
             temp_digit = "".join(i for i in key if i.isdigit())
 
@@ -125,21 +125,21 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, report_id=-1):
             else:
                 print("Ignore")
 
-        print("----------------Strings------------------")
-        print(exposures_set)
-        print(exposures_set_string)
-        print(materialisations_set)
-        print(materialisations_set_string)
-        print(responses_set)
-        print(responses_set_string)
-        print(consequences_set)
-        print(consequences_set_string)
-        print(services_set)
-        print(services_set_string)
-        print(impacts_set)
-        print(impacts_set_string)
-        print(objectives_set)
-        print(objectives_set_string)
+        # print("----------------Strings------------------")
+        # print(exposures_set)
+        # print(exposures_set_string)
+        # print(materialisations_set)
+        # print(materialisations_set_string)
+        # print(responses_set)
+        # print(responses_set_string)
+        # print(consequences_set)
+        # print(consequences_set_string)
+        # print(services_set)
+        # print(services_set_string)
+        # print(impacts_set)
+        # print(impacts_set_string)
+        # print(objectives_set)
+        # print(objectives_set_string)
 
         risk_assessment_result = risk_assessment_manual(threat_id, asset_id, exposures_set, materialisations_set,
                                                         responses_set,
@@ -147,8 +147,8 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, report_id=-1):
                                                         services_set,
                                                         impacts_set, objectives_set)
 
-        print(risk_assessment_result)
-        print(type(risk_assessment_result))
+        # print(risk_assessment_result)
+        # print(type(risk_assessment_result))
 
         exposure_inference = ""
         materialisations_inference = ""
@@ -158,8 +158,8 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, report_id=-1):
         objectives_inference = ""
 
         for key, value in risk_assessment_result.items():
-            print("KEY IS")
-            print(key)
+            # print("KEY IS")
+            # print(key)
             temp_key = "".join(i for i in key if not i.isdigit())
             temp_digit = "".join(i for i in key if i.isdigit())
 
@@ -311,8 +311,8 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, report_id=-1):
             these_utils = convert_database_items_to_json_table(these_utils)
             this_risk_assessment = convert_database_items_to_json_table(this_risk_assessment)
 
-            print("---DASHBOARD DATA IS---")
-            print(this_risk_assessment)
+            # print("---DASHBOARD DATA IS---")
+            # print(this_risk_assessment)
             # print(this_exposure)
             # print(these_responses)
             # print(these_materialisations)
@@ -503,8 +503,8 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, report_id=-1):
         json_detailed_reports = []
         custom_it = 0
         for each_report in repo_reports:
-            print("Example ARE --------")
-            print(json_reports[custom_it])
+            # print("Example ARE --------")
+            # print(json_reports[custom_it])
             #  Add basic info to dashboard
             actual_risk_assessment = each_report.risk_assessment
             json_reports[custom_it]["asset_name"] = actual_risk_assessment.asset.name
@@ -518,7 +518,7 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, report_id=-1):
             json_detailed_report_to_add["date_time"] = each_report.date_time
             materialisations_list = each_report.materialisations_inference.split("|")
             materialisations_list.pop()
-            print(materialisations_list)
+            # print(materialisations_list)
             json_detailed_report_to_add["materialisations"] = []
 
             for custom_it_mat in range(0, len(materialisations_list), 3):

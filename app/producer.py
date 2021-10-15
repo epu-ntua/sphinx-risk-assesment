@@ -207,8 +207,8 @@ def get_kafka_data_print_test(kafka_topic):
     print(TokenProvider())
     print("----------Consume Info End ""--------------------------------")
     consumer = KafkaConsumer(bootstrap_servers=BOOTSTRAP_SERVERS,
-                             auto_offset_reset='earliest',
-                             # enable_auto_commit=False,
+                             auto_offset_reset='latest',
+                             enable_auto_commit=True,
                              security_protocol='SASL_SSL',
                              sasl_mechanism='OAUTHBEARER',
                              sasl_oauth_token_provider=TokenProvider(),

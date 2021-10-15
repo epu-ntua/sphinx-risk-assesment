@@ -855,7 +855,7 @@ def risk_assessment_manual(threat_id, asset_id, exposures_set, materialisations_
                 print("Error passing values to risk assessment")
                 continue
 
-            print("Responses are set")
+            # print("Responses are set")
             nodeResId = "re" + str(response_set_set["id"])
             # ie.addEvidence(nodeResId, value_to_add)
 
@@ -869,7 +869,7 @@ def risk_assessment_manual(threat_id, asset_id, exposures_set, materialisations_
                 print("Error passing values to risk assessment")
                 continue
 
-            print("Materialisations are set")
+            # print("Materialisations are set")
             nodeMatId = "mat" + str(materialisation_set["id"])
             ie.addEvidence(nodeMatId, value_to_add)
 
