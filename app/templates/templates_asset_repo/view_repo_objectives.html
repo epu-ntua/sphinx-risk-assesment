@@ -173,23 +173,23 @@
         </thead>
     </table>
     <hr/>
-    <h2>Add New Objective</h2>
-    <form action="/repo/objectives/" method="post" novalidate>
-        {{ new_objective_form.csrf_token }}
-
-        {{ wtf.form_field(new_objective_form.name) }}
-        {{ wtf.form_field(new_objective_form.description) }}
+{#    <h2>Add New Objective</h2>#}
+{#    <form action="/repo/objectives/" method="post" novalidate>#}
+{#        {{ new_objective_form.csrf_token }}#}
+{##}
+{#        {{ wtf.form_field(new_objective_form.name) }}#}
+{#        {{ wtf.form_field(new_objective_form.description) }}#}
         {#                {{ wtf.form_field(new_asset_form.owner) }}#}
-        {{ wtf.form_field(new_objective_form.states[0]) }}
-        {{ wtf.form_field(new_objective_form.states[1]) }}
-        {{ wtf.form_field(new_objective_form.states[2]) }}
+{#        {{ wtf.form_field(new_objective_form.states[0]) }}#}
+{#        {{ wtf.form_field(new_objective_form.states[1]) }}#}
+{#        {{ wtf.form_field(new_objective_form.states[2]) }}#}
         {#        {{ wtf.form_field(new_objective_form.states[3]) }}#}
-
-        {{ wtf.form_field(new_objective_form.submit) }}
+{##}
+{#        {{ wtf.form_field(new_objective_form.submit) }}#}
         {#        {{ wtf.quick_form(new_objective_form) }}#}
         {#        <p>{{ wtf.form_field(new_asset_form.submit()) }}</p>#}
-        </p>
-    </form>
+{#        </p>#}
+{#    </form>#}
 
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
          aria-hidden="true">

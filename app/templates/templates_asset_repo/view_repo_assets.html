@@ -200,28 +200,29 @@
                 <div class="modal-body">
                     <form id="editForm" action="/repo/assets/" method="post" class="form form-horizontal" method="post"
                           role="form" novalidate>
-                        {{ new_asset_form.hidden_tag() }}
-
-                        {{ wtf.form_field(new_asset_form.name) }}
-                        {{ wtf.form_field(new_asset_form.description) }}
-                        {{ wtf.form_field(new_asset_form.owner) }}
-                        {{ wtf.form_field(new_asset_form.location) }}
-                        {{ wtf.form_field(new_asset_form.verified) }}
-                        {{ wtf.form_field(new_asset_form.verified_by) }}
-                        {{ wtf.form_field(new_asset_form.mac_address) }}
-                        {{ wtf.form_field(new_asset_form.has_static_ip) }}
-                        {{ wtf.form_field(new_asset_form.ip) }}
-                        {{ wtf.form_field(new_asset_form.net_group_fk) }}
-                        {{ wtf.form_field(new_asset_form.value) }}
-                        {{ wtf.form_field(new_asset_form.loss_of_revenue) }}
-                        {{ wtf.form_field(new_asset_form.additional_expenses) }}
-                        {{ wtf.form_field(new_asset_form.regulatory_legal) }}
-                        {{ wtf.form_field(new_asset_form.customer_service) }}
-                        {{ wtf.form_field(new_asset_form.goodwill) }}
-                        {{ wtf.form_field(new_asset_form.last_touch_date) }}
-                        {{ wtf.form_field(new_asset_form.type_fk) }}
-
-                        {{ wtf.form_field(new_asset_form.submit) }}
+                        {{ wtf.quick_form(new_asset_form) }}
+{#                        {{ new_asset_form.hidden_tag() }}#}
+{##}
+{#                        {{ wtf.form_field(new_asset_form.name) }}#}
+{#                        {{ wtf.form_field(new_asset_form.description) }}#}
+{#                        {{ wtf.form_field(new_asset_form.owner) }}#}
+{#                        {{ wtf.form_field(new_asset_form.location) }}#}
+{#                        {{ wtf.form_field(new_asset_form.verified) }}#}
+{#                        {{ wtf.form_field(new_asset_form.verified_by) }}#}
+{#                        {{ wtf.form_field(new_asset_form.mac_address) }}#}
+{#                        {{ wtf.form_field(new_asset_form.has_static_ip) }}#}
+{#                        {{ wtf.form_field(new_asset_form.ip) }}#}
+{#                        {{ wtf.form_field(new_asset_form.net_group_fk) }}#}
+{#                        {{ wtf.form_field(new_asset_form.value) }}#}
+{#                        {{ wtf.form_field(new_asset_form.loss_of_revenue) }}#}
+{#                        {{ wtf.form_field(new_asset_form.additional_expenses) }}#}
+{#                        {{ wtf.form_field(new_asset_form.regulatory_legal) }}#}
+{#                        {{ wtf.form_field(new_asset_form.customer_service) }}#}
+{#                        {{ wtf.form_field(new_asset_form.goodwill) }}#}
+{#                        {{ wtf.form_field(new_asset_form.last_touch_date) }}#}
+{#                        {{ wtf.form_field(new_asset_form.type_fk) }}#}
+{##}
+{#                        {{ wtf.form_field(new_asset_form.submit) }}#}
                     </form>
                     {#                    {{ wtf.quick_form(new_actor_form) }}#}
                 </div>
