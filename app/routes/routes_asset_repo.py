@@ -9,6 +9,7 @@ from app.forms import *
 from app import app
 import ast
 from sqlalchemy.exc import SQLAlchemyError
+from app.utils.utils_3rd_party_data_handling import v_report
 
 
 
@@ -564,6 +565,9 @@ def view_repo_net_groups():
 
 @app.route('/repo/vulnerabilities/', methods=['GET', 'POST'])
 def view_repo_vulnerabilities():
+    path_to_VAaaS_report = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)),
+                                        'Json_texts', 'report_example_stix.json')
+    x = v_report(path_to_VAaaS_report)
     if request.method == 'POST':
         new_vulnerability_form = FormAddVulnerabilityReportVulnerabilitiesLink()
 
@@ -586,6 +590,11 @@ def view_repo_vulnerabilities():
                 print("POST ACTOR", flush=True)
                 # print(new_actor_form.name.data, flush=True)
                 to_add_vulnerability = VulnerabilityReportVulnerabilitiesLink(name=new_vulnerability_form.name.data)
+                to_add_vulnerability = VulnerabilityReportVulnerabilitiesLink(VReport_id=new_vulnerability_form.VReport_id.data)
+                to_add_vulnerability = VulnerabilityReportVulnerabilitiesLink(
+                    VReport_CVSS_score=new_vulnerability_form.VReport_CVSS_score.data)
+                to_add_vulnerability = VulnerabilityReportVulnerabilitiesLink(
+                    VReport_assetIp=new_vulnerability_form.VReport_assetIp.data)
                 db.session.add(to_add_vulnerability)
                 db.session.commit()
 

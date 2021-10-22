@@ -37,7 +37,10 @@
 
         function populateEditFields(row){
             $("#editForm").find("#id").val(row.id)
-            $("#editForm").find("#name").val(row.name)
+            $("#editForm").find("#cve_id").val(row.cve_id)
+            $("#editForm").find("#VReport_id").val(row.VReport_id)
+            $("#editForm").find("#VReport_id").val(row.VReport_CVSS_score)
+            $("#editForm").find("#VReport_id").val(row.VReport_assetIp)
         }
 
 
@@ -84,8 +87,11 @@
         <thead>
         <tr>
             <th data-field="id" data-sortable="true">ID</th>
-            <th data-field="name" data-sortable="true">Name</th>
+            <th data-field="cve_id" data-sortable="true">cve_id</th>
             <th data-field="CVE_id" data-sortable="true">CVE</th>
+            <th data-field="VReport_id" data-sortable="true">VReport</th>
+            <th data-field="VReport_CVSS_score" data-sortable="true">VReport CVSS score</th>
+            <th data-field="VReport_assetIp" data-sortable="true">VReport assetIp</th>
             <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents">Edit</th>
             <th data-field="operate" data-formatter="operateFormatter1" data-events="operateEvents">View/Edit Controls</th>
         </tr>
@@ -114,9 +120,12 @@
                     <form id="editForm" action="/repo/vulnerabilities/" method="post" class="form form-horizontal" method="post" role="form" novalidate>
                         {{ new_vulnerability_form.hidden_tag() }}
 
-                        {{ wtf.form_field(new_vulnerability_form.name) }}
+                        {{ wtf.form_field(new_vulnerability_form.cve_id) }}
                         {{ wtf.form_field(new_vulnerability_form.submit)}}
                         {{ wtf.form_field(new_vulnerability_form.cve) }}
+                        {{ wtf.form_field(new_vulnerability_form.VReport_id) }}
+                        {{ wtf.form_field(new_vulnerability_form.VReport_CVSS_score) }}
+                        {{ wtf.form_field(new_vulnerability_form.VReport_assetIp) }}
                     </form>
 {#                    {{ wtf.quick_form(new_actor_form) }}#}
                 </div>

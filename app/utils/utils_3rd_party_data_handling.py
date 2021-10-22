@@ -1,5 +1,6 @@
 from copy import deepcopy
 
+from flask import flash
 from sqlalchemy.exc import SQLAlchemyError
 from app.models import *
 # from app.csv_to_json_converter_util import *
@@ -111,6 +112,7 @@ def v_report(fpath):
             db.session.add(my_json_report)
             try:
                 db.session.commit()
+                flash('Vulnerability Report "{}" Added Succesfully'.format(my_json_report.reportId))
             except SQLAlchemyError as e:
                 db.session.rollback()
                 return -1
@@ -121,7 +123,19 @@ def v_report(fpath):
                     continue
                 else:
                     my_asset_IP = item["value"]
-                print(my_asset_IP)
+                    if not db.session.query(exists().where(RepoAsset.ip == my_asset_IP)).scalar():
+                        my_repo_asset = RepoAsset(ip=my_asset_IP)
+                        db.session.add(my_repo_asset)
+                        try:
+                            db.session.commit()
+                            flash('Asset "{}" Added Succesfully'.format(my_repo_asset.ip))
+                            #TODO: Send alert for the new Asset to the EndUser
+                        except SQLAlchemyError as e:
+                            db.session.rollback()
+                            continue
+                    else:
+                        my_repo_asset = RepoAsset(ip=my_asset_IP)
+
             # Get CVE from the result nodes of the report
             for item in obj['objects']:
                 if item['type'] != "vulnerability":
@@ -144,15 +158,15 @@ def v_report(fpath):
                                     db.session.add(my_link)
                                 else:
                                     my_link = VulnerabilityReport.query.join(VulnerabilityReportVulnerabilitiesLink).join(CommonVulnerabilitiesAndExposures).filter((VulnerabilityReportVulnerabilitiesLink.vreport_id == my_json_report.id) & (VulnerabilityReportVulnerabilitiesLink.cve_id == my_cve.id)).first()
+                                my_link.asset_id = my_repo_asset.id
                                 my_link.VReport_assetID = obj['target_id'] if obj['target_id'] is not None else ""
                                 my_link.VReport_assetIp = my_asset_IP if my_asset_IP is not None else ""
                                 my_link.VReport_port = item['vulnerable_port'] if item['vulnerable_port'] is not None else ""
                                 my_link.VReport_CVSS_score = item['cvss'] if item['cvss'] is not None else ""
-                                my_link.date = datetime.date()
                                 my_link.comments = item['threat_level'] if item['threat_level'] is not None else ""
-                                print(my_cve.CVEId, my_link.VReport_CVSS_score)
                                 try:
                                     db.session.commit()
+                                    flash('Vulnerability "{}" Added Succesfully'.format(my_link.cve_id))
                                 except SQLAlchemyError as e:
                                     db.session.rollback()
                                     continue
@@ -353,8 +367,8 @@ def get_capec_recommendations(selected_cve_id):
 
 
 # region test Area
-path_to_VAaaS_report = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)), 'Json_texts', 'report_example_stix.json')
-x = v_report(path_to_VAaaS_report)
-
-print(x)
+# path_to_VAaaS_report = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)), 'Json_texts', 'report_example_stix.json')
+# x = v_report(path_to_VAaaS_report)
+#
+# print(x)
 # endregion test Area
