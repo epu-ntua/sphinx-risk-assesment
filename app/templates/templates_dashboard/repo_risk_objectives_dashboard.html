@@ -1,5 +1,9 @@
 {% extends "templates_supporting/sidebar_asset_management.html" %}
 
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/risk_dashboard.css') }}">
+
+{% endblock %}
 {% block script %}
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@3.2.0/dist/chart.min.js"></script>
 
@@ -90,7 +94,7 @@
         {% set objectives_set_values = None %}
         {% set exposure_set_values = None %}
     {% endif %}
-    <h1>Risk - Objective Dashboard</h1>
+    <h1>Risk Dashboard</h1>
     <hr/>
     <div class="row">
         <div class="col-10">
@@ -217,6 +221,7 @@
                                 {{ risk_assessment_result["re" ] | safe }}
                             </div>
                         </div>
+                        <br/>
                         {% set __ = res_it.append(1) %}
                         {% set __ = res_it.append(1) %}
                     {% endfor %}
@@ -261,6 +266,7 @@
                                 {{ risk_assessment_result["mat"+materialisation.id|string ] | safe }}
                             </div>
                         </div>
+                        <br/>
                         {% set __ = mat_it.append(1) %}
                         {% set __ = mat_it.append(1) %}
                         {#                        {% set mat_it = mat_it + 2 %}#}
@@ -302,6 +308,7 @@
                                 {{ risk_assessment_result["con"+consequence.id|string ] | safe }}
                             </div>
                         </div>
+                        <br/>
                         {% set __ = cons_it.append(1) %}
                         {% set __ = cons_it.append(1) %}
                     {% endfor %}
@@ -340,6 +347,7 @@
                                 {{ risk_assessment_result["serv"+service.id|string ] | safe }}
                             </div>
                         </div>
+                        <br/>
                         {% set __ = serv_it.append(1) %}
                         {% set __ = serv_it.append(1) %}
                     {% endfor %}
@@ -389,6 +397,7 @@
                                 {{ risk_assessment_result["imp"+impact.id|string ] | safe }}
                             </div>
                         </div>
+                        <br/>
                         {% set __ = imp_it.append(1) %}
                         {% set __ = imp_it.append(1) %}
                     {% endfor %}
@@ -441,6 +450,7 @@
                                 {{ risk_assessment_result["obj"+objective.id|string ] | safe }}
                             </div>
                         </div>
+                        <br/>
                         {% set __ = obj_it.append(1) %}
                         {% set __ = obj_it.append(1) %}
                     {% endfor %}
@@ -467,7 +477,9 @@
                 <h1>Objective Possibilities Matrix </h1>
                 <div class="row dashboard-row">
                     <br/>
-                    <table id="table">
+                    <table id="table"
+                           class="normal-table"
+                    >
                         <thead>
                         <tr>
                             <th data-field="Likelihood">Likelihood</th>
@@ -497,6 +509,7 @@
                         data-pagination="true"
                         data-page-list="[10, 25, 50, 100, all]"
                         show-button-icons="true"
+                        class="normal-table"
                 >
                     <thead>
                     <tr>

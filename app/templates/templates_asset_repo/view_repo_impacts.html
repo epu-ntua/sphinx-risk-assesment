@@ -56,15 +56,15 @@
         </thead>
     </table>
     <hr/>
-    <h2>Add New Impact</h2>
-    <form action="/repo/impacts/" method="post" novalidate>
-        {{ new_impact_form.csrf_token }}
-
-        {{ wtf.form_field(new_impact_form.name) }}
-        {{ wtf.form_field(new_impact_form.description) }}
-
-        {{ wtf.form_field(new_impact_form.submit) }}
-        </p>
-    </form>
+{#    <h2>Add New Impact</h2>#}
+{#    <form action="/repo/impacts/" method="post" novalidate>#}
+{#        {{ new_impact_form.csrf_token }}#}
+{##}
+{#        {{ wtf.form_field(new_impact_form.name) }}#}
+{#        {{ wtf.form_field(new_impact_form.description) }}#}
+{##}
+{#        {{ wtf.form_field(new_impact_form.submit) }}#}
+{#        </p>#}
+{#    </form>#}
 
 {% endblock %}

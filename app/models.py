@@ -53,6 +53,7 @@ class VulnerabilityReportVulnerabilitiesLink(db.Model):
     VReport_assetID = db.Column(db.String())
     VReport_assetIp = db.Column(db.String())
     VReport_port = db.Column(db.String())
+    VReport_CVSS_score = db.Column(db.String())
     comments = db.Column(db.String(50))
 
     #     cve_s = db.relationship("CVE", back_populates="VReports")
