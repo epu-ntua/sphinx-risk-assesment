@@ -55,6 +55,7 @@ class VulnerabilityReportVulnerabilitiesLink(db.Model):
     VReport_assetIp = db.Column(db.String())
     VReport_port = db.Column(db.String())
     VReport_CVSS_score = db.Column(db.String())
+    date = db.column(db.String())
     comments = db.Column(db.String(50))
 
     #     cve_s = db.relationship("CVE", back_populates="VReports")
@@ -375,11 +376,11 @@ class RepoConsequence(db.Model):
         "RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany", back_populates="repo_consequence")
 
 
-class RepoVulnerability(db.Model):
-    __tablename__ = 'repo_vulnerability'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String)
-    CVE_id = db.Column(db.Integer, db.ForeignKey('common_vulnerabilities_and_exposures.id'))
+# class RepoVulnerability(db.Model):
+#     __tablename__ = 'repo_vulnerability'
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     name = db.Column(db.String)
+#     CVE_id = db.Column(db.Integer, db.ForeignKey('common_vulnerabilities_and_exposures.id'))
 
 
 repo_asset_repo_service_association_table = db.Table('repo_asset_repo_service_association_table', db.Model.metadata,

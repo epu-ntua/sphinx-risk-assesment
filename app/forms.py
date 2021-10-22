@@ -61,10 +61,13 @@ class FormAddRepoService(FlaskForm):
     submit = SubmitField("Add new service")
 
 
-class FormAddRepoVulnerability(FlaskForm):
+class FormAddVulnerabilityReportVulnerabilitiesLink(FlaskForm):
     id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
     name = StringField('Name', validators=[DataRequired()])
     cve = QuerySelectField(query_factory=query_generic_cve, allow_blank=True, get_label='name')
+    VReport_id = StringField('Name', validators=[Optional()])
+    VReport_CVSS_score = StringField('Name', validators=[Optional()])
+    VReport_assetIp = StringField('Name', validators=[Optional()])
     submit = SubmitField("Add new Vulnerability")
 
 

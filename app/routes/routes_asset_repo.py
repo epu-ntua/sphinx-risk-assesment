@@ -565,14 +565,14 @@ def view_repo_net_groups():
 @app.route('/repo/vulnerabilities/', methods=['GET', 'POST'])
 def view_repo_vulnerabilities():
     if request.method == 'POST':
-        new_vulnerability_form = FormAddRepoVulnerability()
+        new_vulnerability_form = FormAddVulnerabilityReportVulnerabilitiesLink()
 
         if new_vulnerability_form.validate_on_submit():
             if new_vulnerability_form.id.data:
                 # print("PUT ACTOR", "|", new_vulnerability_form.id.data, "|", flush=True)
 
                 try:
-                    to_add_vulnerability = RepoVulnerability.query.filter_by(id=new_vulnerability_form.id.data).first()
+                    to_add_vulnerability = VulnerabilityReportVulnerabilitiesLink.query.filter_by(id=new_vulnerability_form.id.data).first()
                 except SQLAlchemyError:
                     return Response("SQLAlchemyError when editing records", 500)
 
@@ -585,7 +585,7 @@ def view_repo_vulnerabilities():
             else:
                 print("POST ACTOR", flush=True)
                 # print(new_actor_form.name.data, flush=True)
-                to_add_vulnerability = RepoVulnerability(name=new_vulnerability_form.name.data)
+                to_add_vulnerability = VulnerabilityReportVulnerabilitiesLink(name=new_vulnerability_form.name.data)
                 db.session.add(to_add_vulnerability)
                 db.session.commit()
 
@@ -593,7 +593,7 @@ def view_repo_vulnerabilities():
                 return redirect("/repo/vulnerabilities/")
     else:
         try:
-            repo_services = RepoVulnerability.query.all()
+            repo_services = VulnerabilityReportVulnerabilitiesLink.query.all()
         except SQLAlchemyError:
             return Response("SQLAlchemyError", 500)
         # print("------------------------------")
@@ -605,7 +605,7 @@ def view_repo_vulnerabilities():
         json_vulnerabilities = json.dumps(json_vulnerabilities)
         # print("ACTORS ARE --------")
         # print(json_actors)
-        new_vulnerability_form = FormAddRepoVulnerability()
+        new_vulnerability_form = FormAddVulnerabilityReportVulnerabilitiesLink()
         return render_template("templates_asset_repo/view_repo_vulnerabilities.html", repo_vulnerabilities=json_vulnerabilities,
                                new_vulnerability_form=new_vulnerability_form)
 
@@ -613,14 +613,14 @@ def view_repo_vulnerabilities():
 @app.route('/repo/vulnerability/<vulnerability_id>/controls/', methods=['GET', 'POST'])
 def view_repo_vulnerability_info(vulnerability_id):
     if request.method == 'POST':
-        new_vulnerability_form = FormAddRepoVulnerability()
+        new_vulnerability_form = FormAddVulnerabilityReportVulnerabilitiesLink()
 
         if new_vulnerability_form.validate_on_submit():
             if new_vulnerability_form.id.data:
                 # print("PUT ACTOR", "|", new_vulnerability_form.id.data, "|", flush=True)
 
                 try:
-                    to_add_vulnerability = RepoVulnerability.query.filter_by(id=new_vulnerability_form.id.data).first()
+                    to_add_vulnerability = VulnerabilityReportVulnerabilitiesLink.query.filter_by(id=new_vulnerability_form.id.data).first()
                 except SQLAlchemyError:
                     return Response("SQLAlchemyError when editing records", 500)
 
@@ -633,7 +633,7 @@ def view_repo_vulnerability_info(vulnerability_id):
             else:
                 print("POST ACTOR", flush=True)
                 # print(new_actor_form.name.data, flush=True)
-                to_add_vulnerability = RepoVulnerability(name=new_vulnerability_form.name.data)
+                to_add_vulnerability = VulnerabilityReportVulnerabilitiesLink(name=new_vulnerability_form.name.data)
                 db.session.add(to_add_vulnerability)
                 db.session.commit()
 
@@ -641,12 +641,12 @@ def view_repo_vulnerability_info(vulnerability_id):
                 return redirect("/repo/vulnerabilities/")
     else:
         try:
-            repo_services = RepoVulnerability.query.all()
+            repo_services = VulnerabilityReportVulnerabilitiesLink.query.all()
         except SQLAlchemyError:
             return Response("SQLAlchemyError", 500)
 
         try:
-            this_vulnerability = RepoVulnerability.query.filter_by(id=vulnerability_id).all()
+            this_vulnerability = VulnerabilityReportVulnerabilitiesLink.query.filter_by(id=vulnerability_id).all()
         except SQLAlchemyError:
             return Response("SQLAlchemyError", 500)
         # print("------------------------------")

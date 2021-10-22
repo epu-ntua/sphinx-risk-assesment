@@ -114,14 +114,14 @@ def v_report(fpath):
             except SQLAlchemyError as e:
                 db.session.rollback()
                 return -1
-
+            print(reprow_reportId)
             # Get asset IP
             for item in obj['objects']:
                 if item['type'] != "ipv4-addr":
                     continue
                 else:
                     my_asset_IP = item["value"]
-
+                print(my_asset_IP)
             # Get CVE from the result nodes of the report
             for item in obj['objects']:
                 if item['type'] != "vulnerability":
@@ -135,7 +135,7 @@ def v_report(fpath):
                                 reprow_cveId = subitem['external_id']
                                 if not db.session.query(exists().where(CommonVulnerabilitiesAndExposures.CVEId == reprow_cveId)).scalar():
                                     my_cve = CommonVulnerabilitiesAndExposures(CVEId=reprow_cveId)
-                                    db.session.add(my_json_report)
+                                    db.session.add(my_cve)
                                 else:
                                     my_cve = db.session.query(CommonVulnerabilitiesAndExposures).filter_by(CVEId=reprow_cveId).one()
 
@@ -148,8 +148,9 @@ def v_report(fpath):
                                 my_link.VReport_assetIp = my_asset_IP if my_asset_IP is not None else ""
                                 my_link.VReport_port = item['vulnerable_port'] if item['vulnerable_port'] is not None else ""
                                 my_link.VReport_CVSS_score = item['cvss'] if item['cvss'] is not None else ""
+                                my_link.date = datetime.date()
                                 my_link.comments = item['threat_level'] if item['threat_level'] is not None else ""
-
+                                print(my_cve.CVEId, my_link.VReport_CVSS_score)
                                 try:
                                     db.session.commit()
                                 except SQLAlchemyError as e:
@@ -349,7 +350,11 @@ def get_capec_recommendations(selected_cve_id):
 
 
 # endregion
+
+
+# region test Area
 path_to_VAaaS_report = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)), 'Json_texts', 'report_example_stix.json')
 x = v_report(path_to_VAaaS_report)
 
 print(x)
+# endregion test Area
