@@ -48,11 +48,13 @@ class CommonVulnerabilitiesAndExposures(db.Model):
 
 class VulnerabilityReportVulnerabilitiesLink(db.Model):
     __tablename__ = 'vulnerability_report_vulnerabilities_link'
-    vreport_id = db.Column(db.Integer, db.ForeignKey('vulnerability_report.id'), primary_key=True)
-    cve_id = db.Column(db.Integer, db.ForeignKey('common_vulnerabilities_and_exposures.id'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    vreport_id = db.Column(db.Integer, db.ForeignKey('vulnerability_report.id'), nullable=False)
+    cve_id = db.Column(db.Integer, db.ForeignKey('common_vulnerabilities_and_exposures.id'), nullable=False)
     VReport_assetID = db.Column(db.String())
     VReport_assetIp = db.Column(db.String())
     VReport_port = db.Column(db.String())
+    VReport_CVSS_score = db.Column(db.String())
     comments = db.Column(db.String(50))
 
     #     cve_s = db.relationship("CVE", back_populates="VReports")
