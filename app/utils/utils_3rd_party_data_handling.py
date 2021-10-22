@@ -13,7 +13,7 @@ import stix2
 import stix2validator
 import app.utils.stix2_custom as stix2_custom
 
-
+# region Insert all CAPEC records from Excel
 def CAPEC_excel_insertData(capecexcelpath):
     theFile = openpyxl.load_workbook(capecexcelpath)
     currentSheet = theFile.active
@@ -114,14 +114,14 @@ def v_report(fpath):
             except SQLAlchemyError as e:
                 db.session.rollback()
                 return -1
-
+            print(reprow_reportId)
             # Get asset IP
             for item in obj['objects']:
                 if item['type'] != "ipv4-addr":
                     continue
                 else:
                     my_asset_IP = item["value"]
-
+                print(my_asset_IP)
             # Get CVE from the result nodes of the report
             for item in obj['objects']:
                 if item['type'] != "vulnerability":
@@ -130,35 +130,34 @@ def v_report(fpath):
                     if item["cvss"] == "0.0":
                         continue
                     else:
-                        for subitem in obj['external_references']:
+                        for subitem in item['external_references']:
                             if subitem['source_name'] == "cve":
-                                reprow_cveId = subitem['source_name']
-                                if not db.session.query(
-                                        exists().where(CommonVulnerabilitiesAndExposures.CVEId == reprow_cveId)).scalar():
+                                reprow_cveId = subitem['external_id']
+                                if not db.session.query(exists().where(CommonVulnerabilitiesAndExposures.CVEId == reprow_cveId)).scalar():
                                     my_cve = CommonVulnerabilitiesAndExposures(CVEId=reprow_cveId)
+                                    db.session.add(my_cve)
                                 else:
                                     my_cve = db.session.query(CommonVulnerabilitiesAndExposures).filter_by(CVEId=reprow_cveId).one()
-                                if VulnerabilityReport.query.join(VulnerabilityReportVulnerabilitiesLink).join(
-                                        CommonVulnerabilitiesAndExposures).filter(
-                                    (VulnerabilityReportVulnerabilitiesLink.vreport_id == my_json_report.id) & (
-                                            VulnerabilityReportVulnerabilitiesLink.cve_id == my_cve.id)).first() is None:
+
+                                if VulnerabilityReport.query.join(VulnerabilityReportVulnerabilitiesLink).join(CommonVulnerabilitiesAndExposures).filter((VulnerabilityReportVulnerabilitiesLink.vreport_id == my_json_report.id) & (VulnerabilityReportVulnerabilitiesLink.cve_id == my_cve.id)).first() is None:
                                     my_link = VulnerabilityReportVulnerabilitiesLink(vreport_id=my_json_report.id, cve_id=my_cve.id)
+                                    db.session.add(my_link)
                                 else:
-                                    my_link = VulnerabilityReport.query.join(VulnerabilityReportVulnerabilitiesLink).join(
-                                        CommonVulnerabilitiesAndExposures).filter(
-                                        (VulnerabilityReportVulnerabilitiesLink.vreport_id == my_json_report.id) & (
-                                                VulnerabilityReportVulnerabilitiesLink.cve_id == my_cve.id)).first()
+                                    my_link = VulnerabilityReport.query.join(VulnerabilityReportVulnerabilitiesLink).join(CommonVulnerabilitiesAndExposures).filter((VulnerabilityReportVulnerabilitiesLink.vreport_id == my_json_report.id) & (VulnerabilityReportVulnerabilitiesLink.cve_id == my_cve.id)).first()
                                 my_link.VReport_assetID = obj['target_id'] if obj['target_id'] is not None else ""
                                 my_link.VReport_assetIp = my_asset_IP if my_asset_IP is not None else ""
                                 my_link.VReport_port = item['vulnerable_port'] if item['vulnerable_port'] is not None else ""
+                                my_link.VReport_CVSS_score = item['cvss'] if item['cvss'] is not None else ""
+                                my_link.date = datetime.date()
                                 my_link.comments = item['threat_level'] if item['threat_level'] is not None else ""
-                                db.session.add(my_link)
+                                print(my_cve.CVEId, my_link.VReport_CVSS_score)
                                 try:
                                     db.session.commit()
                                 except SQLAlchemyError as e:
                                     db.session.rollback()
                                     continue
-                                update_cve_scores(reprow_cveId)
+                                # update_cve_scores(reprow_cveId)
+                                # TODO: It's not needed to call the update CVE and CWE functions
 
             return 1
 
@@ -351,3 +350,11 @@ def get_capec_recommendations(selected_cve_id):
 
 
 # endregion
+
+
+# region test Area
+path_to_VAaaS_report = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)), 'Json_texts', 'report_example_stix.json')
+x = v_report(path_to_VAaaS_report)
+
+print(x)
+# endregion test Area
