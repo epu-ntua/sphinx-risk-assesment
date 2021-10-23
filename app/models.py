@@ -1,5 +1,5 @@
 from app import db
-
+from datetime import datetime
 
 # from app.mixins import ModelMixin
 
@@ -49,15 +49,14 @@ class CommonVulnerabilitiesAndExposures(db.Model):
 class VulnerabilityReportVulnerabilitiesLink(db.Model):
     __tablename__ = 'vulnerability_report_vulnerabilities_link'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    vreport_id = db.Column(db.Integer, db.ForeignKey('vulnerability_report.id'))
-    # vreport_id = db.Column(db.Integer, db.ForeignKey('vulnerability_report.id'), """nullable=False""")
-    cve_id = db.Column(db.Integer, db.ForeignKey('common_vulnerabilities_and_exposures.id'))
-    # cve_id = db.Column(db.Integer, db.ForeignKey('common_vulnerabilities_and_exposures.id'), """"nullable=False""")
+    vreport_id = db.Column(db.Integer, db.ForeignKey('vulnerability_report.id'), nullable=False)
+    cve_id = db.Column(db.Integer, db.ForeignKey('common_vulnerabilities_and_exposures.id'), nullable=False)
+    asset_id = db.Column(db.Integer, db.ForeignKey('repo_asset.id'), nullable=False)
     VReport_assetID = db.Column(db.String())
     VReport_assetIp = db.Column(db.String())
     VReport_port = db.Column(db.String())
     VReport_CVSS_score = db.Column(db.String())
-    date = db.column(db.String())
+    # date = db.Column(db.DateTime,default=datetime.utcnow())
     comments = db.Column(db.String(50))
     controls = db.relationship("RepoControl", uselist=False, back_populates="vulnerabilities")
 
@@ -319,7 +318,7 @@ class RepoRiskAssessmentReports(db.Model):
     risk_assessment_id = db.Column(db.Integer, db.ForeignKey('repo_risk_assessment.id'))
     risk_assessment = db.relationship("RepoRiskAssessment", back_populates="reports")
     date_time = db.Column(db.DateTime)
-    type = db.Column(db.String) # Possible values are Initial - Manual - Automatic - Incident
+    type = db.Column(db.String)  # Possible values are Initial - Manual - Automatic - Incident
     exposure_set = db.Column(db.String)
     responses_set = db.Column(db.String)
     materialisations_set = db.Column(db.String)
@@ -462,7 +461,7 @@ class RepoAssetsType(db.Model):
     name = db.Column(db.String)
     daily_start_time = db.column(db.DateTime)
     daily_end_time = db.column(db.DateTime)
-    role = db.column(db.Integer) #1 low - 2 medium - 3 high
+    role = db.column(db.Integer)  # 1 low - 2 medium - 3 high
 
 
 class RepoActor(db.Model):
