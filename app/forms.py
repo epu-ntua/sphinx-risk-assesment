@@ -31,6 +31,10 @@ def query_generic_repo_type():
     return RepoAssetsType.query
 
 
+def query_generic_repo_vulnerability():
+    return VulnerabilityReportVulnerabilitiesLink.query
+
+
 def query_generic_repo_materialisation():
     return RepoMaterialisation.query
 
@@ -59,6 +63,14 @@ class FormAddRepoService(FlaskForm):
     id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
     name = StringField('Name', validators=[DataRequired()])
     submit = SubmitField("Add new service")
+
+
+class FormAddRepoControl(FlaskForm):
+    id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
+    name = StringField('Name', validators=[DataRequired()])
+    vulnerability = QuerySelectField(query_factory=query_generic_repo_vulnerability, allow_blank=True, get_label='comments')
+    description = StringField('Description')
+    submit = SubmitField("Add new control")
 
 
 class FormAddVulnerabilityReportVulnerabilitiesLink(FlaskForm):

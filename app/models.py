@@ -49,14 +49,17 @@ class CommonVulnerabilitiesAndExposures(db.Model):
 class VulnerabilityReportVulnerabilitiesLink(db.Model):
     __tablename__ = 'vulnerability_report_vulnerabilities_link'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    vreport_id = db.Column(db.Integer, db.ForeignKey('vulnerability_report.id'), nullable=False)
-    cve_id = db.Column(db.Integer, db.ForeignKey('common_vulnerabilities_and_exposures.id'), nullable=False)
+    vreport_id = db.Column(db.Integer, db.ForeignKey('vulnerability_report.id'))
+    # vreport_id = db.Column(db.Integer, db.ForeignKey('vulnerability_report.id'), """nullable=False""")
+    cve_id = db.Column(db.Integer, db.ForeignKey('common_vulnerabilities_and_exposures.id'))
+    # cve_id = db.Column(db.Integer, db.ForeignKey('common_vulnerabilities_and_exposures.id'), """"nullable=False""")
     VReport_assetID = db.Column(db.String())
     VReport_assetIp = db.Column(db.String())
     VReport_port = db.Column(db.String())
     VReport_CVSS_score = db.Column(db.String())
     date = db.column(db.String())
     comments = db.Column(db.String(50))
+    controls = db.relationship("RepoControl", uselist=False, back_populates="vulnerabilities")
 
     #     cve_s = db.relationship("CVE", back_populates="VReports")
     #     vreport_s = db.relationship("VReport", back_populates="CVEs")
@@ -64,6 +67,14 @@ class VulnerabilityReportVulnerabilitiesLink(db.Model):
     def __repr__(self):
         return '<VulnerabilityReportVulnerabilitiesLink {}>'.format(self.vreport_id)
 
+
+class RepoControl(db.Model):
+    __tablename__ = 'repo_control'
+    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    name = db.Column(db.String())
+    description = db.Column(db.String())
+    vulnerability_id = db.Column(db.Integer, db.ForeignKey('vulnerability_report_vulnerabilities_link.id'))
+    vulnerabilities = db.relationship("VulnerabilityReportVulnerabilitiesLink", back_populates="controls")
 
 class CommonWeaknessEnumeration(db.Model):
     __tablename__ = 'common_weakness_enumeration'

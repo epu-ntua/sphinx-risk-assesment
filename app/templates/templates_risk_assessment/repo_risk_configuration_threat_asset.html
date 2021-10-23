@@ -8,7 +8,18 @@
 {#{% endblock %}#}
 {% block script %}
     <script>
-
+        $(function () {
+            var data_vulnerabilities = {{ json_controls | safe }};
+            var data_controls = {{ json_vulnerabilities | safe }};
+            {#console.log(data)#}
+            {#console.log(data2)#}
+            var $table = $("#table_vulnerabilities")
+            var $table2 = $("#table_controls")
+            $table.bootstrapTable({data: data_vulnerabilities})
+            $table2.bootstrapTable({data: data_controls})
+            {#$table.bootstrapTable({data: data});#}
+            {#$table2.bootstrapTable({data: data2});#}
+        })
     </script>
 {% endblock %}
 
@@ -38,35 +49,35 @@
                 {#                {% endfor %}#}
             </h3>
             <br/>
-{#            <h4>Threat Exposure</h4>#}
-{#            <h6> This value is the user estimation about the specific threat and is optional.</h6>#}
-{#            <h6>The final value is calculated in conjuction with#}
-{#                threat forecasting</h6>#}
-{#            <hr/>#}
-{#            <div class="row dashboard-row">#}
-{#                <div class="col-2">#}
-{#                    |None#}
-{#                </div>#}
-{#                <div class="col-2">#}
-{#                    |Very Low#}
-{#                </div>#}
-{#                <div class="col-2">#}
-{#                    |Low#}
-{#                </div>#}
-{#                <div class="col-2 ">#}
-{#                    |Medium#}
-{#                </div>#}
-{#                <div class="col-2">#}
-{#                    |High#}
-{#                </div>#}
-{#                <div class="col-2">#}
-{#                    |Critical#}
-{#                </div>#}
-{#            </div>#}
-{#            <input type="range" class="form-control-range" id="objective_state_alert_3" step="1"#}
-{#                   min="0"#}
-{#                   max="5" value="0" , name="objective_state_alert_3">#}
-{#            <br/>#}
+            {#            <h4>Threat Exposure</h4>#}
+            {#            <h6> This value is the user estimation about the specific threat and is optional.</h6>#}
+            {#            <h6>The final value is calculated in conjuction with#}
+            {#                threat forecasting</h6>#}
+            {#            <hr/>#}
+            {#            <div class="row dashboard-row">#}
+            {#                <div class="col-2">#}
+            {#                    |None#}
+            {#                </div>#}
+            {#                <div class="col-2">#}
+            {#                    |Very Low#}
+            {#                </div>#}
+            {#                <div class="col-2">#}
+            {#                    |Low#}
+            {#                </div>#}
+            {#                <div class="col-2 ">#}
+            {#                    |Medium#}
+            {#                </div>#}
+            {#                <div class="col-2">#}
+            {#                    |High#}
+            {#                </div>#}
+            {#                <div class="col-2">#}
+            {#                    |Critical#}
+            {#                </div>#}
+            {#            </div>#}
+            {#            <input type="range" class="form-control-range" id="objective_state_alert_3" step="1"#}
+            {#                   min="0"#}
+            {#                   max="5" value="0" , name="objective_state_alert_3">#}
+            {#            <br/>#}
             {#    <a class="btn btn-primary" href="/repo/threats/"> Detailed Threat View </a>#}
             <h4>Assets</h4>
             <h6>Select each asset to setup the relation between the assetand the threat. This process needs to be
@@ -92,6 +103,41 @@
 
             </div>
             {% if asset_id != '-1' %}
+                <hr/>
+                <div class="row dashboard-row">
+                    <div class="col-6">
+                        <h5>Vulnerabilities</h5>
+                        <table
+                                id="table_vulnerabilities"
+                                data-show-columns="true"
+                                data-show-columns-toggle-all="true"
+                        >
+                            <thead>
+                            <tr>
+                                <th data-field="id" data-sortable="true">Vulnerability</th>
+                                <th data-field="type" data-sortable="true">Description</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="col-6">
+                        <h5>Controls</h5>
+                        <table
+                                id="table_controls"
+                                data-show-columns="true"
+                                data-show-columns-toggle-all="true"
+                        >
+                            <thead>
+                            <tr>
+                                <th data-field="id" data-sortable="true">Control</th>
+                                <th data-field="type" data-sortable="true">Description</th>
+                                <th data-field="type" data-sortable="true">Related Vulnerability</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+                <hr/>
                 <form action="/repo/risk/configuration/threat/{{ threat_id }}/asset/{{ asset_id }}/" method="post">
                     <div class="row dashboard-row">
                         <div class="col-6">

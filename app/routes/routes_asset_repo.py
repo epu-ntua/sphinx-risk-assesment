@@ -11,7 +11,6 @@ import ast
 from sqlalchemy.exc import SQLAlchemyError
 
 
-
 @app.route('/repo/assets/', methods=['GET', 'POST'])
 def view_repo_assets():
     if request.method == 'POST':
@@ -394,7 +393,8 @@ def view_repo_utilities():
         for utility in json_utilities:
             print(utility["id"])
             try:
-                repo_objectives_related = RepoObjective.query.filter(RepoObjective.utilities.any(id=utility["id"])).all()
+                repo_objectives_related = RepoObjective.query.filter(
+                    RepoObjective.utilities.any(id=utility["id"])).all()
             except SQLAlchemyError:
                 return Response("SQLAlchemyError", 500)
 
@@ -403,7 +403,7 @@ def view_repo_utilities():
                 utility["objectives"] += repo_objective_related.name + "|"
 
                 # Passing this to add edit functionality at a later date
-                utility["Objective"+str(repo_objective_related.id)] = repo_objective_related.name
+                utility["Objective" + str(repo_objective_related.id)] = repo_objective_related.name
 
         print(json_utilities)
         json_utilities = json.dumps(json_utilities)
@@ -463,7 +463,8 @@ def view_repo_actors():
         # print("ACTORS ARE --------")
         print(json_actors)
         new_actor_form = FormAddRepoActor()
-        return render_template("templates_asset_repo/view_repo_actors.html", repo_actors=json_actors, new_actor_form=new_actor_form)
+        return render_template("templates_asset_repo/view_repo_actors.html", repo_actors=json_actors,
+                               new_actor_form=new_actor_form)
 
 
 @app.route('/repo/services/', methods=['GET', 'POST'])
@@ -572,7 +573,8 @@ def view_repo_vulnerabilities():
                 # print("PUT ACTOR", "|", new_vulnerability_form.id.data, "|", flush=True)
 
                 try:
-                    to_add_vulnerability = VulnerabilityReportVulnerabilitiesLink.query.filter_by(id=new_vulnerability_form.id.data).first()
+                    to_add_vulnerability = VulnerabilityReportVulnerabilitiesLink.query.filter_by(
+                        id=new_vulnerability_form.id.data).first()
                 except SQLAlchemyError:
                     return Response("SQLAlchemyError when editing records", 500)
 
@@ -606,7 +608,8 @@ def view_repo_vulnerabilities():
         # print("ACTORS ARE --------")
         # print(json_actors)
         new_vulnerability_form = FormAddVulnerabilityReportVulnerabilitiesLink()
-        return render_template("templates_asset_repo/view_repo_vulnerabilities.html", repo_vulnerabilities=json_vulnerabilities,
+        return render_template("templates_asset_repo/view_repo_vulnerabilities.html",
+                               repo_vulnerabilities=json_vulnerabilities,
                                new_vulnerability_form=new_vulnerability_form)
 
 
@@ -620,7 +623,8 @@ def view_repo_vulnerability_info(vulnerability_id):
                 # print("PUT ACTOR", "|", new_vulnerability_form.id.data, "|", flush=True)
 
                 try:
-                    to_add_vulnerability = VulnerabilityReportVulnerabilitiesLink.query.filter_by(id=new_vulnerability_form.id.data).first()
+                    to_add_vulnerability = VulnerabilityReportVulnerabilitiesLink.query.filter_by(
+                        id=new_vulnerability_form.id.data).first()
                 except SQLAlchemyError:
                     return Response("SQLAlchemyError when editing records", 500)
 
@@ -670,7 +674,8 @@ def view_repo_vulnerability_info(vulnerability_id):
         ]
 
         new_vulnerability_form = FormAddRepoVulnerabilityControl()
-        return render_template("templates_asset_repo/view_repo_vulnerability_info.html", repo_vulnerabilities=json_vulnerabilities,
+        return render_template("templates_asset_repo/view_repo_vulnerability_info.html",
+                               repo_vulnerabilities=json_vulnerabilities,
                                this_vulnerability=this_vulnerability,
                                new_vulnerability_form=new_vulnerability_form)
 
@@ -864,7 +869,8 @@ def view_repo_threat_info_consequence_info(threat_id, consequence_id):
 
         new_consequence_impact_form = FormAddRepoConsequenceImpact()
 
-        return render_template("templates_asset_repo/view_repo_threat_info_consequence_info.html", this_threat=this_threat,
+        return render_template("templates_asset_repo/view_repo_threat_info_consequence_info.html",
+                               this_threat=this_threat,
                                this_threat_dict=this_threat_dict,
                                this_consequence=this_consequence,
                                this_consequence_dict=this_consequence_dict,
@@ -931,7 +937,8 @@ def view_repo_serivce_info(service_id):
         # new_materialisation_consequence_form = FormAddRepoMaterialisationConsequence()
         new_service_impact_form = FormAddRepoServiceImpact()
 
-        return render_template("templates_asset_repo/view_repo_service_info.html", repo_impacts=repo_impacts, service_id=service_id,
+        return render_template("templates_asset_repo/view_repo_service_info.html", repo_impacts=repo_impacts,
+                               service_id=service_id,
                                this_service=this_service,
                                repo_impacts_service_connected=repo_impacts_service_connected,
                                new_service_impact_form=new_service_impact_form)
@@ -1055,3 +1062,74 @@ def view_repo_asset_services_relation(asset_id):
         return render_template("templates_asset_repo/view_repo_assets_services_relation.html", repo_assets=repo_asset,
                                related_services=related_services, unrelated_services=unrelated_services,
                                asset_id=asset_id)
+
+
+@app.route('/repo/controls/', methods=['GET', 'POST'])
+def view_repo_controls():
+    if request.method == 'POST':
+        new_control_form = FormAddRepoControl()
+
+        if new_control_form.validate_on_submit():
+            if new_control_form.id.data:
+                # print("PUT ACTOR", "|", new_vulnerability_form.id.data, "|", flush=True)
+
+                try:
+                    to_add_control = RepoControl.query.filter_by(id=new_control_form.id.data).first()
+                except SQLAlchemyError:
+                    return Response("SQLAlchemyError when editing records", 500)
+
+                # print("---------------------")
+                # print(to_edit_actor.id.data)
+                # print(to_edit_actor.name.data)
+                to_add_control.name = new_control_form.name.data
+                db.session.commit()
+                return redirect("/repo/control/")
+            else:
+                # print("POST ACTOR", flush=True)
+                # print(new_actor_form.name.data, flush=True)
+                to_add_control = RepoControl(name=new_control_form.name.data,
+                                             description=new_control_form.description.data,
+                                             vulnerability_id=new_control_form.vulnerability.data.id)
+                db.session.add(to_add_control)
+                db.session.commit()
+
+                print("DATA_________________")
+                print(new_control_form.vulnerability.data.id)
+                print(to_add_control.name)
+                print(to_add_control.vulnerabilities.id)
+                # try:
+                #     to_relate_vulnerability = VulnerabilityReportVulnerabilitiesLink.query.filter_by(
+                #         id=new_control_form.vulnerability.data.id).first()
+                # except SQLAlchemyError:
+                #     return Response("SQLAlchemyError", 500)
+
+                # to_add_control.vulnerabilities.append(to_relate_vulnerability)
+
+                # db.session.commit()
+
+                flash('Control "{}" Added Succesfully'.format(to_add_control.name))
+                return redirect("/repo/controls/")
+    else:
+        try:
+            repo_controls = RepoControl.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+        # print("------------------------------")
+        # print(repo_actors, flush=True)
+        #
+        # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
+
+        json_controls = convert_database_items_to_json_table(repo_controls)
+        print("Controls ARE --------")
+        for it, control in enumerate(json_controls):
+            control["vulnerability"] = repo_controls[it].vulnerabilities.comments
+            control["vulnerability_id"] = {"id": control["vulnerability_id"],
+                                           "name": repo_controls[it].vulnerabilities.comments}
+            # print(type(control))
+            print(control)
+
+        json_controls = json.dumps(json_controls)
+        # print(json_controls)
+        new_control_form = FormAddRepoControl()
+        return render_template("templates_asset_repo/view_repo_controls.html", repo_controls=json_controls,
+                               new_control_form=new_control_form)

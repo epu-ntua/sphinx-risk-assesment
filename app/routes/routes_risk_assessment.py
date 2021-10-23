@@ -554,10 +554,31 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
         #
         # for toprint in array_threat_consequence_calculation:
         #     print("Consequences are: ", toprint)
+        try:
+            repo_controls = RepoControl.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+
+        try:
+            repo_services = VulnerabilityReportVulnerabilitiesLink.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+            # print("------------------------------")
+            # print(repo_actors, flush=True)
+            #
+            # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
+
+        json_controls = convert_database_items_to_json_table(repo_controls)
+        json_vulnerabilities = convert_database_items_to_json_table(repo_services)
+
+        json_controls = json.dumps(json_controls)
+        json_vulnerabilities = json.dumps(json_vulnerabilities)
 
         print("Threat id is" + str(threat_id))
         return render_template("templates_risk_assessment/repo_risk_configuration_threat_asset.html",
-                               threat_id=threat_id, asset_id=asset_id,
+                               threat_id=threat_id, asset_id=asset_id, json_controls =json_controls,
+                               json_vulnerabilities =json_vulnerabilities,
                                repo_threats=repo_threats, this_threat=this_threat, repo_assets=repo_assets,
                                array_threat_consequence_calculation=array_threat_consequence_calculation,
                                array_threat_materialisation_calculation=array_threat_materialisation_calculation)
