@@ -258,10 +258,15 @@ def get_kafka_data_print_test(kafka_topic):
                 print("--------------Kafka Received: vaaas-reports -------------------------")
                 # print(dat)
                 print("-------------------------------------------------------------------------", flush=True)
+            elif msg.topic == "dtm-asset":
+                print("--------------Kafka Received: dtm-asset -------------------------")
+                # print(dat)
+                print("-------------------------------------------------------------------------", flush=True)
             else:
                 print("--------------Kafka Received: other topic -------------------------")
                 #print(dat)
                 print("-------------------------------------------------------------------------", flush = True)
+
 
             # print("Kafka output:", json.loads(msg.value.decode()))
 

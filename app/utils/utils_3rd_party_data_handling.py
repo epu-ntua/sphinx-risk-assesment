@@ -116,7 +116,6 @@ def v_report(fpath):
             except SQLAlchemyError as e:
                 db.session.rollback()
                 return -1
-            print(reprow_reportId)
             # Get asset IP
             for item in obj['objects']:
                 if item['type'] != "ipv4-addr":
@@ -172,8 +171,28 @@ def v_report(fpath):
                                     continue
                                 # update_cve_scores(reprow_cveId)
                                 # TODO: It's not needed to call the update CVE and CWE functions
-
             return 1
+
+
+def getAssetsfromDTM(fpath):
+    with open(fpath, "r") as fp:
+        obj = json.load(fp)
+        if obj["ip"] is not None:
+            reprow_DTM_assetId = obj["ip"]
+            if db.session.query(exists().where(RepoAsset.ip == reprow_DTM_assetId)).scalar():
+                my_db_asset = db.session.query(RepoAsset).filter_by(ip=reprow_DTM_assetId).one()
+            else:
+                my_db_asset = RepoAsset(ip=reprow_DTM_assetId)
+            my_db_asset.mac_address = obj["physicalAddress"] if obj["physicalAddress"] is not None else ""
+            my_db_asset.last_touch_date = obj["lastTouch"] if obj["lastTouch"] is not None else ""
+            db.session.add(my_db_asset)
+            try:
+                db.session.commit()
+                flash('Asset "{}" Added Succesfully'.format(my_db_asset.ip))
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                return -1
+        return 1
 
 # region Call NVD API to update CVE scores and get CWEs
 # region Call NVD API to update CVE scores
