@@ -112,14 +112,17 @@
                     {#            <h3> Likelihood &lt Medium 50% &gt </h3>#}
                     <h4> Threat Agent Factory </h4>
                     <label for="formControlRange">Skill Level</label>
+                    <output>0</output>
                     <input type="range" class="form-control-range" id="formControlRange" min="0" max="100" step="1"
-                           name="risk_skill" value="{{ risk_skill_level }}">
+                           name="risk_skill" value="{{ risk_skill_level }}" oninput="this.previousElementSibling.value = this.value">
                     <label for="formControlRange">Motive</label>
+                    <output>0</output>
                     <input type="range" class="form-control-range" id="formControlRange" min="0" max="100" step="1"
-                           name="risk_motive" value="{{ risk_motive }}">
+                           name="risk_motive" value="{{ risk_motive }}" oninput="this.previousElementSibling.value = this.value">
                     <label for="formControlRange">Source</label>
+                    <output>0</output>
                     <input type="range" class="form-control-range" id="formControlRange" min="0" max="100" step="1"
-                           name="risk_source" value="{{ risk_source }}">
+                           name="risk_source" value="{{ risk_source }}" oninput="this.previousElementSibling.value = this.value">
                     {#            </div>#}
 
                 </div>
@@ -129,11 +132,13 @@
                     <br/>
                     <br/>
                     <label for="formControlRange">Actor</label>
+                    <output>0</output>
                     <input type="range" class="form-control-range" id="formControlRange" min="0" max="100" step="1"
-                           name="risk_actor" value="{{ risk_actor }}">
+                           name="risk_actor" value="{{ risk_actor }}" oninput="this.previousElementSibling.value = this.value">
                     <label for="formControlRange">Opportunity</label>
+                    <output>0</output>
                     <input type="range" class="form-control-range" id="formControlRange" min="0" max="100" step="1"
-                           name="risk_opportunity" value="{{ risk_opportunity }}">
+                           name="risk_opportunity" value="{{ risk_opportunity }}" oninput="this.previousElementSibling.value = this.value">
                     {#            <label for="formControlRange">Awareness</label>#}
                     {#            <input type="range" class="form-control-range" id="formControlRange">#}
                     {#            </div>#}

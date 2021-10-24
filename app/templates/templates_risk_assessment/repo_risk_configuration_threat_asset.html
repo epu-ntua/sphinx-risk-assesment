@@ -13,8 +13,8 @@
             var data_controls = {{ json_vulnerabilities | safe }};
             {#console.log(data)#}
             {#console.log(data2)#}
-            var $table = $("#table_vulnerabilities")
-            var $table2 = $("#table_controls")
+            var $table = $("#table_controls")
+            var $table2 = $("#table_vulnerabilities")
             $table.bootstrapTable({data: data_vulnerabilities})
             $table2.bootstrapTable({data: data_controls})
             {#$table.bootstrapTable({data: data});#}
@@ -102,7 +102,7 @@
                 {% endfor %}
 
             </div>
-            {% if asset_id != '-1' %}
+            {% if asset_id != -1 %}
                 <hr/>
                 <div class="row dashboard-row">
                     <div class="col-6">
@@ -115,7 +115,10 @@
                             <thead>
                             <tr>
                                 <th data-field="id" data-sortable="true">Vulnerability</th>
-                                <th data-field="type" data-sortable="true">Description</th>
+                                <th data-field="cve_id" data-sortable="true">CVE</th>
+                                <th data-field="VReport_CVSS_score" data-sortable="true">CVSS</th>
+                                <th data-field="VReport_CVSS_score" data-sortable="true">CVSS</th>
+                                <th data-field="comments" data-sortable="true">Comments</th>
                             </tr>
                             </thead>
                         </table>
@@ -130,8 +133,9 @@
                             <thead>
                             <tr>
                                 <th data-field="id" data-sortable="true">Control</th>
-                                <th data-field="type" data-sortable="true">Description</th>
-                                <th data-field="type" data-sortable="true">Related Vulnerability</th>
+                                <th data-field="name" data-sortable="true">Name</th>
+                                <th data-field="description" data-sortable="true">Description</th>
+                                <th data-field="vulnerability_id" data-sortable="true">Related Vulnerabilities</th>
                             </tr>
                             </thead>
                         </table>
@@ -171,13 +175,14 @@
                                             </div>
                                             <div class="row dashboard-row">
                                                 <div class="col-10">
+                                                    <output>0</output>
                                                     <input type="range" class="form-control-range"
                                                            name="mat|{{ materialisation_calculation.materialisation.id }}|{{ materialisation_calculation.response.id }}|{{ materialisation_calculation.threat_occurrence }}"
                                                            id="mat|{{ materialisation_calculation.materialisation.id }}|{{ materialisation_calculation.response.id }}|{{ materialisation_calculation.threat_occurrence }}"
                                                            step="1"
                                                            min="0"
                                                            max="100" value="{{ materialisation_calculation.prob }}" ,
-                                                           name="objective_state_alert_3">
+                                                           name="objective_state_alert_3" oninput="this.previousElementSibling.value = this.value">
                                                 </div>
                                             </div>
                                         </div>
@@ -215,13 +220,14 @@
                                             </div>
                                             <div class="row dashboard-row">
                                                 <div class="col-10">
+                                                    <output>0</output>
                                                     <input type="range" class="form-control-range"
                                                            name="cons|{{ consequence_calculation.consequence.id }}|{{ consequence_calculation.response.id }}|{{ consequence_calculation.threat_occurrence }}"
                                                            id="cons|{{ consequence_calculation.consequence.id }}|{{ consequence_calculation.response.id }}|{{ consequence_calculation.threat_occurrence }}"
                                                            step="1"
                                                            min="0"
                                                            max="100" value="{{ consequence_calculation.prob }}" ,
-                                                           name="objective_state_alert_3">
+                                                           name="objective_state_alert_3" oninput="this.previousElementSibling.value = this.value">
                                                 </div>
                                             </div>
                                         </div>

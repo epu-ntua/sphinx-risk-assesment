@@ -89,34 +89,34 @@
             {#            <th data-field="likelihood" data-sortable="true">Likelihood</th>#}
             {#            <th data-field="impact" data-sortable="true">Impact</th>#}
 
-            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents">Edit</th>
+{#            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents">Edit</th>#}
             <th data-field="operate" data-formatter="operateFormatter1" data-events="operateEvents1"></th>
         </tr>
         </thead>
     </table>
     <hr/>
-    <h2>Add New Threat</h2>
-    <div class="row dashboard-row">
-        <div class="col-6">
+{#    <h2>Add New Threat</h2>#}
+{#    <div class="row dashboard-row">#}
+{#        <div class="col-6">#}
             {#            <div class="row flex-grow custom-select-column-header">#}
-            <h3> Likelihood &lt Medium 50% &gt </h3>
-            <h4> Threat Agent Factory </h4>
-            <label for="formControlRange">Skill Level</label>
-            <input type="range" class="form-control-range" id="formControlRange">
-            <label for="formControlRange">Motive</label>
-            <input type="range" class="form-control-range" id="formControlRange">
-            <label for="formControlRange">Opportunity</label>
-            <input type="range" class="form-control-range" id="formControlRange">
-            <h4> Vulnerability Factors</h4>
-            <label for="formControlRange">Ease of discovery</label>
-            <input type="range" class="form-control-range" id="formControlRange">
-            <label for="formControlRange">Ease of exploit</label>
-            <input type="range" class="form-control-range" id="formControlRange">
-            <label for="formControlRange">Awareness</label>
-            <input type="range" class="form-control-range" id="formControlRange">
+{#            <h3> Likelihood &lt Medium 50% &gt </h3>#}
+{#            <h4> Threat Agent Factory </h4>#}
+{#            <label for="formControlRange">Skill Level</label>#}
+{#            <input type="range" class="form-control-range" id="formControlRange">#}
+{#            <label for="formControlRange">Motive</label>#}
+{#            <input type="range" class="form-control-range" id="formControlRange">#}
+{#            <label for="formControlRange">Opportunity</label>#}
+{#            <input type="range" class="form-control-range" id="formControlRange">#}
+{#            <h4> Vulnerability Factors</h4>#}
+{#            <label for="formControlRange">Ease of discovery</label>#}
+{#            <input type="range" class="form-control-range" id="formControlRange">#}
+{#            <label for="formControlRange">Ease of exploit</label>#}
+{#            <input type="range" class="form-control-range" id="formControlRange">#}
+{#            <label for="formControlRange">Awareness</label>#}
+{#            <input type="range" class="form-control-range" id="formControlRange">#}
             {#            </div>#}
-
-        </div>
+{##}
+{#        </div>#}
 {#        <div class="col-6">#}
 {#            <form action="/repo/threats/" method="post" novalidate>#}
 {#                {{ wtf.quick_form(new_threat_form) }}#}
@@ -142,53 +142,53 @@
             {#            </div>#}
 {##}
 {#        </div>#}
+{##}
+{#    </div>#}
 
-    </div>
 
 
-
-    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Edit Actor Entry</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="row dashboard-row">
-                        <div class="col-6">
+{#    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"#}
+{#         aria-hidden="true">#}
+{#        <div class="modal-dialog" role="document">#}
+{#            <div class="modal-content">#}
+{#                <div class="modal-header">#}
+{#                    <h5 class="modal-title" id="editModalLabel">Edit Actor Entry</h5>#}
+{#                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">#}
+{#                        <span aria-hidden="true">&times;</span>#}
+{#                    </button>#}
+{#                </div>#}
+{#                <div class="modal-body">#}
+{#                    <div class="row dashboard-row">#}
+{#                        <div class="col-6">#}
                             {#            <div class="row flex-grow custom-select-column-header">#}
-                            <h3> Likelihood &lt Medium 50% &gt </h3>
-                            <h4> Threat Agent Factory </h4>
-                            <label for="formControlRange">Skill Level</label>
-                            <input type="range" class="form-control-range" id="formControlRange">
-                            <label for="formControlRange">Motive</label>
-                            <input type="range" class="form-control-range" id="formControlRange">
-                            <label for="formControlRange">Opportunity</label>
-                            <input type="range" class="form-control-range" id="formControlRange">
-                            <h4> Vulnerability Factors</h4>
-                            <label for="formControlRange">Ease of discovery</label>
-                            <input type="range" class="form-control-range" id="formControlRange">
-                            <label for="formControlRange">Ease of exploit</label>
-                            <input type="range" class="form-control-range" id="formControlRange">
-                            <label for="formControlRange">Awareness</label>
-                            <input type="range" class="form-control-range" id="formControlRange">
+{#                            <h3> Likelihood &lt Medium 50% &gt </h3>#}
+{#                            <h4> Threat Agent Factory </h4>#}
+{#                            <label for="formControlRange">Skill Level</label>#}
+{#                            <input type="range" class="form-control-range" id="formControlRange">#}
+{#                            <label for="formControlRange">Motive</label>#}
+{#                            <input type="range" class="form-control-range" id="formControlRange">#}
+{#                            <label for="formControlRange">Opportunity</label>#}
+{#                            <input type="range" class="form-control-range" id="formControlRange">#}
+{#                            <h4> Vulnerability Factors</h4>#}
+{#                            <label for="formControlRange">Ease of discovery</label>#}
+{#                            <input type="range" class="form-control-range" id="formControlRange">#}
+{#                            <label for="formControlRange">Ease of exploit</label>#}
+{#                            <input type="range" class="form-control-range" id="formControlRange">#}
+{#                            <label for="formControlRange">Awareness</label>#}
+{#                            <input type="range" class="form-control-range" id="formControlRange">#}
                             {#            </div>#}
-
-                        </div>
-                        <div class="col-6">
-                            <form id="editForm" action="/repo/threats/" method="post" class="form form-horizontal"
-                                  method="post"
-                                  role="form" novalidate>
-                                {{ new_threat_form.hidden_tag() }}
-
-                                {{ wtf.form_field(new_threat_form.name) }}
-                                {{ wtf.form_field(new_threat_form.capec) }}
-                                {{ wtf.form_field(new_threat_form.submit) }}
-                            </form>
+{##}
+{#                        </div>#}
+{#                        <div class="col-6">#}
+{#                            <form id="editForm" action="/repo/threats/" method="post" class="form form-horizontal"#}
+{#                                  method="post"#}
+{#                                  role="form" novalidate>#}
+{#                                {{ new_threat_form.hidden_tag() }}#}
+{##}
+{#                                {{ wtf.form_field(new_threat_form.name) }}#}
+{#                                {{ wtf.form_field(new_threat_form.capec) }}#}
+{#                                {{ wtf.form_field(new_threat_form.submit) }}#}
+{#                            </form>#}
                             {#            <div class="row flex-grow custom-select-column-header">#}
                             {#                            <h3> Impact &lt Medium 59% &gt </h3>#}
                             {#                            <h4> Technical Impact Factor</h4>#}
@@ -206,19 +206,19 @@
                             {#                            <label for="formControlRange">Non-compliance</label>#}
                             {#                            <input type="range" class="form-control-range" id="formControlRange">#}
                             {#            </div>#}
-
-                        </div>
-
-                    </div>
-
+{##}
+{#                        </div>#}
+{##}
+{#                    </div>#}
+{##}
                     {#                    {{ wtf.quick_form(new_actor_form) }}#}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+{#                </div>#}
+{#                <div class="modal-footer">#}
+{#                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>#}
                     {#                    <button type="button" class="btn btn-primary">Save changes</button>#}
-                </div>
-            </div>
-        </div>
-    </div>
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
 
 {% endblock %}

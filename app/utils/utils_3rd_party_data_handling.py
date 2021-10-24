@@ -112,7 +112,7 @@ def v_report(fpath):
             db.session.add(my_json_report)
             try:
                 db.session.commit()
-                flash('Vulnerability Report "{}" Added Succesfully'.format(my_json_report.reportId))
+                # flash('Vulnerability Report "{}" Added Succesfully'.format(my_json_report.reportId))
             except SQLAlchemyError as e:
                 db.session.rollback()
                 return -1
@@ -127,7 +127,7 @@ def v_report(fpath):
                         db.session.add(my_repo_asset)
                         try:
                             db.session.commit()
-                            flash('Asset "{}" Added Succesfully'.format(my_repo_asset.ip))
+                            # flash('Asset "{}" Added Succesfully'.format(my_repo_asset.ip))
                             #TODO: Send alert for the new Asset to the EndUser
                         except SQLAlchemyError as e:
                             db.session.rollback()
@@ -165,7 +165,8 @@ def v_report(fpath):
                                 my_link.comments = item['threat_level'] if item['threat_level'] is not None else ""
                                 try:
                                     db.session.commit()
-                                    flash('Vulnerability "{}" Added Succesfully'.format(my_link.cve_id))
+                                    # flash('Vulnerability "" Added Succesfully')
+                                    # flash('Vulnerability "{}" Added Succesfully'.format(my_link.cve_id))
                                 except SQLAlchemyError as e:
                                     db.session.rollback()
                                     continue
@@ -188,7 +189,7 @@ def getAssetsfromDTM(fpath):
             db.session.add(my_db_asset)
             try:
                 db.session.commit()
-                flash('Asset "{}" Added Succesfully'.format(my_db_asset.ip))
+                # flash('Asset "{}" Added Succesfully'.format(my_db_asset.ip))
             except SQLAlchemyError as e:
                 db.session.rollback()
                 return -1

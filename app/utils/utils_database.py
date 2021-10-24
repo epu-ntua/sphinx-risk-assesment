@@ -148,4 +148,10 @@ def rcra_db_init():
         impact_to_link = RepoImpact.query.filter_by(id=consequence_impact_relation_json["repo_impact_id"]).first()
         consequence_to_link.impacts.append(impact_to_link)
 
+    # Adding Repo Assets Type
+    to_add_assets_type = import_fixture_from_file("repo_assets_type")
+    for assets_type_json in to_add_assets_type:
+        to_add_asset_type = RepoAssetsType(**assets_type_json)
+        db.session.add(to_add_asset_type)
+
     db.session.commit()

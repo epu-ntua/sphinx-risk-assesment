@@ -604,7 +604,7 @@ def view_repo_vulnerabilities():
                 return redirect("/repo/vulnerabilities/")
     else:
         try:
-            repo_services = VulnerabilityReportVulnerabilitiesLink.query.all()
+            repo_vulnerabilities = VulnerabilityReportVulnerabilitiesLink.query.all()
         except SQLAlchemyError:
             return Response("SQLAlchemyError", 500)
         # print("------------------------------")
@@ -612,7 +612,12 @@ def view_repo_vulnerabilities():
         #
         # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
 
-        json_vulnerabilities = convert_database_items_to_json_table(repo_services)
+        json_vulnerabilities = convert_database_items_to_json_table(repo_vulnerabilities)
+        for it,json_vulnerability in enumerate(json_vulnerabilities):
+            print(json_vulnerability)
+            json_vulnerability["asset_id"] = repo_vulnerabilities[it].asset.name
+            json_vulnerability["cve_id"] = repo_vulnerabilities[it].cve.CVEId
+
         json_vulnerabilities = json.dumps(json_vulnerabilities)
         # print("ACTORS ARE --------")
         # print(json_actors)
@@ -730,8 +735,8 @@ def view_repo_threats():
 
         json_threats = convert_database_items_to_json_table(repo_threats)
         json_threats = json.dumps(json_threats)
-        print("Threats ARE --------")
-        print(json_threats)
+        # print("Threats ARE --------")
+        # print(json_threats)
         new_threat_form = FormAddRepoThreat()
         return render_template("templates_asset_repo/view_repo_threats.html", repo_threats=json_threats,
                                new_threat_form=new_threat_form)

@@ -74,7 +74,8 @@
 
                 </div>
                 {% if impact_id|string != '-1'|string %}
-                    <form action="/repo/risk/configuration/impact/{{ impact_id }}/threat/{{ threat_id }}/asset/{{ asset_id }}/" method="post">
+                    <form action="/repo/risk/configuration/impact/{{ impact_id }}/threat/{{ threat_id }}/asset/{{ asset_id }}/"
+                          method="post">
                         <div class="row dashboard-row">
                             <div class="col-12">
                                 <h4>Threat Impact Calculation </h4>
@@ -119,13 +120,20 @@
                                             </div>
                                             <div class="row dashboard-row">
                                                 <div class="col-10">
+                                                    <output>0</output>
                                                     <input type="range" class="form-control-range"
-                                                           name="low{% for temp_header in impact_calculation_wrapper[:-3] %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}|{{ temp_header.state }}{% else %}|cons|{{ temp_header.consequence.id }}|{{ temp_header.state }}{% endif %}{% endfor %}"
-                                                           id="low{% for temp_header in impact_calculation_wrapper[:-3] %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}|{{ temp_header.state }}{% else %}|cons|{{ temp_header.consequence.id }}|{{ temp_header.state }}{% endif %}{% endfor %}"
+                                                           name="low
+                                                                   {% for temp_header in impact_calculation_wrapper[:-3] %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}|
+                                                                       {{ temp_header.state }}{% else %}|cons|{{ temp_header.consequence.id }}|{{ temp_header.state }}{% endif %}{% endfor %}"
+                                                           id="low
+                                                                   {% for temp_header in impact_calculation_wrapper[:-3] %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}|
+                                                                       {{ temp_header.state }}{% else %}|cons|{{ temp_header.consequence.id }}|{{ temp_header.state }}{% endif %}{% endfor %}"
                                                            step="1"
                                                            min="0"
                                                            max="100"
-                                                           value="{{impact_calculation_wrapper[-3]}}" >
+                                                           value="{{ impact_calculation_wrapper[-3] }}"
+                                                           oninput="this.previousElementSibling.value = this.value"
+                                                    >
                                                 </div>
                                             </div>
                                         </div>
@@ -152,15 +160,21 @@
                                             </div>
                                             <div class="row dashboard-row">
                                                 <div class="col-10">
+                                                    <output>0</output>
                                                     <input type="range" class="form-control-range"
-                                                           name="medium{% for temp_header in impact_calculation_wrapper[:-3] %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}|{{ temp_header.state }}{% else %}|cons|{{ temp_header.consequence.id }}|{{ temp_header.state }}{% endif %}{% endfor %}"
-                                                           id="medium{% for temp_header in impact_calculation_wrapper[:-3] %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}|{{ temp_header.state }}{% else %}|cons|{{ temp_header.consequence.id }}|{{ temp_header.state }}{% endif %}{% endfor %}"
+                                                           name="medium
+                                                                   {% for temp_header in impact_calculation_wrapper[:-3] %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}|
+                                                                       {{ temp_header.state }}{% else %}|cons|{{ temp_header.consequence.id }}|{{ temp_header.state }}{% endif %}{% endfor %}"
+                                                           id="medium
+                                                                   {% for temp_header in impact_calculation_wrapper[:-3] %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}|
+                                                                       {{ temp_header.state }}{% else %}|cons|{{ temp_header.consequence.id }}|{{ temp_header.state }}{% endif %}{% endfor %}"
                                                            step="1"
                                                            min="0"
                                                            max="100"
-                                                           value="{{impact_calculation_wrapper[-2]}}"
+                                                           value="{{ impact_calculation_wrapper[-2] }}"
                                                            ,
-                                                           name="objective_state_alert_3">
+                                                           name="objective_state_alert_3"
+                                                           oninput="this.previousElementSibling.value = this.value">
                                                 </div>
                                             </div>
                                         </div>
@@ -187,15 +201,21 @@
                                             </div>
                                             <div class="row dashboard-row">
                                                 <div class="col-10">
+                                                    <output>0</output>
                                                     <input type="range" class="form-control-range"
-                                                           name="high{% for temp_header in impact_calculation_wrapper[:-3] %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}|{{ temp_header.state }}{% else %}|cons|{{ temp_header.consequence.id }}|{{ temp_header.state }}{% endif %}{% endfor %}"
-                                                           id="high{% for temp_header in impact_calculation_wrapper[:-3] %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}|{{ temp_header.state }}{% else %}|cons|{{ temp_header.consequence.id }}|{{ temp_header.state }}{% endif %}{% endfor %}"
+                                                           name="high
+                                                                   {% for temp_header in impact_calculation_wrapper[:-3] %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}|
+                                                                       {{ temp_header.state }}{% else %}|cons|{{ temp_header.consequence.id }}|{{ temp_header.state }}{% endif %}{% endfor %}"
+                                                           id="high
+                                                                   {% for temp_header in impact_calculation_wrapper[:-3] %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}|
+                                                                       {{ temp_header.state }}{% else %}|cons|{{ temp_header.consequence.id }}|{{ temp_header.state }}{% endif %}{% endfor %}"
                                                            step="1"
                                                            min="0"
                                                            max="100"
-                                                           value="{{impact_calculation_wrapper[-1]}}"
+                                                           value="{{ impact_calculation_wrapper[-1] }}"
                                                            ,
-                                                           name="objective_state_alert_3">
+                                                           name="objective_state_alert_3"
+                                                           oninput="this.previousElementSibling.value = this.value">
                                                 </div>
                                             </div>
                                         </div>

@@ -76,7 +76,7 @@ class FormAddRepoControl(FlaskForm):
 class FormAddVulnerabilityReportVulnerabilitiesLink(FlaskForm):
     id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
     cve_id = StringField('cve_id', validators=[DataRequired()])
-    cve = QuerySelectField(query_factory=query_generic_cve, allow_blank=True, get_label='name')
+    cve = QuerySelectField(query_factory=query_generic_cve, allow_blank=True, get_label='CVEId')
     VReport_id = StringField('VReport_id', validators=[Optional()])
     VReport_CVSS_score = StringField('VReport_CVSS_score', validators=[Optional()])
     VReport_assetIp = StringField('VReport_assetIp', validators=[Optional()])

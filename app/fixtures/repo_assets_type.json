@@ -1,0 +1,54 @@
+[
+    {
+        "id": "1",
+        "name": "E.Other"
+    },
+    {
+        "id": "2",
+        "name": "E.Telematics"
+    },
+    {
+        "id": "3",
+        "name": "E.Temetry"
+    },
+    {
+        "id": "4",
+        "name": "E.Uknown"
+    },
+    {
+        "id": "5",
+        "name": "M.Disk Drive"
+    },
+    {
+        "id": "6",
+        "name": "M.Disk Media"
+    },
+    {
+        "id": "7",
+        "name": "M.Documents"
+    },
+    {
+        "id": "8",
+        "name": "M.Fax"
+    },
+    {
+        "id": "9",
+        "name": "M.Flash Drive"
+    },
+    {
+        "id": "10",
+        "name": "Payment Card"
+    },
+    {
+        "id": "11",
+        "name": "M.Payment Card"
+    },
+    {
+        "id": "12",
+        "name": "M.Smart Card"
+    },
+    {
+        "id": "13",
+        "name": "M.Tapes"
+    }
+]

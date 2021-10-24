@@ -555,13 +555,12 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
         # for toprint in array_threat_consequence_calculation:
         #     print("Consequences are: ", toprint)
         try:
-            repo_controls = RepoControl.query.all()
+            repo_controls = RepoControl.query.join(VulnerabilityReportVulnerabilitiesLink).filter(VulnerabilityReportVulnerabilitiesLink.asset_id == asset_id).all()
         except SQLAlchemyError:
             return Response("SQLAlchemyError", 500)
 
-
         try:
-            repo_services = VulnerabilityReportVulnerabilitiesLink.query.all()
+            repo_vulnerabilities = VulnerabilityReportVulnerabilitiesLink.query.filter_by(asset_id=asset_id).all()
         except SQLAlchemyError:
             return Response("SQLAlchemyError", 500)
             # print("------------------------------")
@@ -570,15 +569,17 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
             # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
 
         json_controls = convert_database_items_to_json_table(repo_controls)
-        json_vulnerabilities = convert_database_items_to_json_table(repo_services)
+        json_vulnerabilities = convert_database_items_to_json_table(repo_vulnerabilities)
 
         json_controls = json.dumps(json_controls)
         json_vulnerabilities = json.dumps(json_vulnerabilities)
 
         print("Threat id is" + str(threat_id))
+        print(json_controls)
+        print(json_vulnerabilities)
         return render_template("templates_risk_assessment/repo_risk_configuration_threat_asset.html",
-                               threat_id=threat_id, asset_id=asset_id, json_controls =json_controls,
-                               json_vulnerabilities =json_vulnerabilities,
+                               threat_id=threat_id, asset_id=asset_id, json_controls=json_controls,
+                               json_vulnerabilities=json_vulnerabilities,
                                repo_threats=repo_threats, this_threat=this_threat, repo_assets=repo_assets,
                                array_threat_consequence_calculation=array_threat_consequence_calculation,
                                array_threat_materialisation_calculation=array_threat_materialisation_calculation)
@@ -1488,6 +1489,7 @@ def view_repo_risk_reports():
         json_reports = convert_database_items_to_json_table(repo_reports)
         json_detailed_reports = []
         custom_it = 0
+        json_detailed_report_to_add = {}
         for each_report in repo_reports:
             print("Example ARE --------")
             print(json_reports[custom_it])
@@ -1497,7 +1499,6 @@ def view_repo_risk_reports():
             json_reports[custom_it]["asset_ip"] = this_risk_assessment.asset.ip
             json_reports[custom_it]["threat_name"] = this_risk_assessment.threat.name
             # print(each_report)
-
 
             # Create detailed report jsons
             json_detailed_report_to_add = {}
@@ -1509,8 +1510,11 @@ def view_repo_risk_reports():
             json_detailed_report_to_add["materialisations"] = []
 
             for custom_it_mat in range(0, len(materialisations_list), 3):
-                this_mat_name = RepoMaterialisation.query.filter_by(id=materialisations_list[custom_it_mat]).first().name
-                json_detailed_report_to_add["materialisations"].append({"name": this_mat_name, "occurs" : materialisations_list[custom_it_mat+1], "Nothing" : materialisations_list[custom_it_mat+2] })
+                this_mat_name = RepoMaterialisation.query.filter_by(
+                    id=materialisations_list[custom_it_mat]).first().name
+                json_detailed_report_to_add["materialisations"].append(
+                    {"name": this_mat_name, "occurs": materialisations_list[custom_it_mat + 1],
+                     "Nothing": materialisations_list[custom_it_mat + 2]})
 
             json_reports[custom_it]["detailed"] = json_detailed_report_to_add
             custom_it = custom_it + 1
@@ -1538,5 +1542,5 @@ def view_repo_risk_reports():
         # print(repo_reports)
         new_service_form = FormAddRepoService()
         return render_template("templates_asset_repo/view_repo_reports.html", repo_reports=json_reports,
-                               json_detailed_report_to_add = json_detailed_report_to_add,
+                               json_detailed_report_to_add=json_detailed_report_to_add,
                                new_service_form=new_service_form)

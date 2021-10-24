@@ -88,13 +88,15 @@
                                     </div>
                                     <div class="row dashboard-row">
                                         <div class="col-10">
+                                            <output>0</output>
                                             <input type="range" class="form-control-range"
-                                                   name="low{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state}}{% endfor %}"
-                                                   id="low{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state}}{% endfor %}"
+                                                   name="low{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"
+                                                   id="low{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"
                                                    step="1"
                                                    min="0"
                                                    max="100"
-                                                   value="{{ objective_calculation_wrapper[-3] }}">
+                                                   value="{{ objective_calculation_wrapper[-3] }}"
+                                                   oninput="this.previousElementSibling.value = this.value">
                                         </div>
                                     </div>
                                 </div>
@@ -121,15 +123,18 @@
                                     </div>
                                     <div class="row dashboard-row">
                                         <div class="col-10">
+                                            <output>0</output>
+
                                             <input type="range" class="form-control-range"
-                                                   name="med{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state}}{% endfor %}"
-                                                   id="med{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state}}{% endfor %}"
-                                                  step="1"
+                                                   name="med{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"
+                                                   id="med{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"
+                                                   step="1"
                                                    min="0"
                                                    max="100"
                                                    value="{{ objective_calculation_wrapper[-2] }}"
                                                    ,
-                                                   name="objective_state_alert_3">
+                                                   name="objective_state_alert_3"
+                                                   oninput="this.previousElementSibling.value = this.value">
                                         </div>
                                     </div>
                                 </div>
@@ -156,14 +161,17 @@
                                     </div>
                                     <div class="row dashboard-row">
                                         <div class="col-10">
+                                            <output>0</output>
                                             <input type="range" class="form-control-range"
-                                                   name="high{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state}}{% endfor %}"
-                                                   id="high{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state}}{% endfor %}"                                         step="1"
+                                                   name="high{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"
+                                                   id="high{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"
+                                                   step="1"
                                                    min="0"
                                                    max="100"
                                                    value="{{ objective_calculation_wrapper[-1] }}"
                                                    ,
-                                                   name="objective_state_alert_3">
+                                                   name="objective_state_alert_3"
+                                                   oninput="this.previousElementSibling.value = this.value">
                                         </div>
                                     </div>
                                 </div>

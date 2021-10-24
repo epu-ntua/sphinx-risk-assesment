@@ -382,8 +382,8 @@ def start_risk_assessment(threat_id, asset_id):
     ie.addNoForgettingAssumption(no_forgetting_array)
 
     # print("Is this solvable =" + str(ie.isSolvable()))
-    ie.addEvidence('te1', 1)
-    ie.addEvidence('re', 0)
+    # ie.addEvidence('te1', 1)
+    # ie.addEvidence('re', 0)
 
     ie.makeInference()
 
