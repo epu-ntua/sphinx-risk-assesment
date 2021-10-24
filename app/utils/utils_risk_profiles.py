@@ -1,9 +1,10 @@
+from app.models import *
+from sqlalchemy import exists
+import json
+
 # region Threat Estimation calls  @@@@@@@@@@@@@
     # 1 RiskML, 2 Reputation, 3 DB, 4 DSS forecasting
 # region 1 RiskML
-import json
-
-
 def get_RiskML_value(asset_type, threat,estimation_type):
     # action = {Hacking, Social, Malware, Physical, Error}
     # action.variety = {M.Ransomware, H.DoS, H.SQL, H Brute force, H.Use of backdoor or C2}
@@ -78,6 +79,15 @@ def get_RiskML_value(asset_type, threat,estimation_type):
 #     TODO: "provide API to get the estimation"
 # endregion 2 Reputation
 # region 3 DB
+def get_ThreatFactorsvaluesfromDB(assetID, threatID):
+    if db.session.query(exists().where((RepoAssetRepoThreatRelationship.repo_asset_id == assetID) and (RepoAssetRepoThreatRelationship.repo_threat_id == threatID))).scalar():
+        my_asset_threat = db.session.query(RepoAssetRepoThreatRelationship).filter(RepoAssetRepoThreatRelationship.repo_asset_id == assetID, RepoAssetRepoThreatRelationship.repo_threat_id == threatID).first()
+        if isinstance(my_asset_threat.risk_skill_level, (int, float)) and isinstance(my_asset_threat.risk_motive, (int, float)) and isinstance(my_asset_threat.risk_source, (int, float)) and isinstance(my_asset_threat.risk_actor, (int, float)) and isinstance(my_asset_threat.risk_opportunity, (int, float)):
+            result = (my_asset_threat.risk_skill_level + my_asset_threat.risk_motive + my_asset_threat.risk_source + my_asset_threat.risk_actor + my_asset_threat.risk_opportunity) / 500
+        return result
+    else:
+        return -1
+
 #     TODO: "get factors from DB and calculate the value"
 # endregion 3 DB
 # region 4 DSS forecasting
@@ -90,12 +100,8 @@ def get_RiskML_value(asset_type, threat,estimation_type):
 # endregion Threat Estimation calls
 
 # region Test area
-# db.create_all()
-# x= v_report("Json_texts/report1.json")# for x in v_report("Json_texts/report1.json"):
-# for xx in CommonVulnerabilitiesAndExposures.query.all():
-#     print(xx.id, xx.CVEId, xx.status)
 
-
-x = get_RiskML_value(["asset.variety.Server"],"Malware",'action')
+x = get_ThreatFactorsvaluesfromDB(1, 1)
+# x = get_RiskML_value(["asset.variety.Server"],"Malware",'action')
 print(x)
 # endregion
