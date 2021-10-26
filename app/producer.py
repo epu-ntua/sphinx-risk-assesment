@@ -18,6 +18,8 @@ import threading, time
 
 # check this too : https://pypi.org/project/javaproperties/
 # 8080
+from app.utils.utils_3rd_party_data_handling import v_report_json
+
 path_to_kafka_cert = os.path.join(os.path.abspath(os.getcwd()), 'app', 'auth_files', 'for_clients.crt')
 # path_to_kafka_cert = sys.path[0] + "\""
 # os.environ["SM_IP"] = "http://sphinx-kubernetes.intracom-telecom.com/SMPlatform/manager/rst"
@@ -34,9 +36,9 @@ KAFKA_USERNAME = os.environ.get('KAFKA_USERNAME') if os.environ.get('KAFKA_USERN
 KAFKA_PASSWORD = os.environ.get('KAFKA_PASSWORD') if os.environ.get('KAFKA_PASSWORD') else "kafkauser123"
 OAUTH_CLIENT_ID = os.environ.get('OAUTH_CLIENT_ID') if os.environ.get('OAUTH_CLIENT_ID') else "SIEM"
 OAUTH_TOKEN_ENDPOINT_URI = os.environ.get('OAUTH_TOKEN_ENDPOINT_URI') if os.environ.get(
-    'OAUTH_TOKEN_ENDPOINT_URI') else "http://sphinx-kubernetes.intracom-telecom.com/SMPlatform/manager/rst/getKafkaToken"
+    'OAUTH_TOKEN_ENDPOINT_URI') else "http://sphinx-toolkit.intracom-telecom.com/SMPlatform/manager/rst/getKafkaToken"
 BOOTSTRAP_SERVERS = os.environ.get('BOOTSTRAP_SERVERS') if os.environ.get(
-    'BOOTSTRAP_SERVERS') else "bootstrap.146.124.106.170.nip.io:443"
+    'BOOTSTRAP_SERVERS') else "'bootstrap.146.124.106.181.nip.io:443"
 KAFKA_CERT = os.environ.get('KAFKA_CERT')  # FULL PATH OF THE CERTIFICATE LOCATION
 
 
@@ -253,6 +255,8 @@ def get_kafka_data_print_test(kafka_topic):
             elif msg.topic == "vaaas-report":
                 print("--------------Kafka Received: vaaas-report -------------------------")
                 # print(dat)
+                vuln_report_dict = json.load(dat)
+                v_report_json(vuln_report_dict)
                 print("-------------------------------------------------------------------------", flush=True)
             elif msg.topic == "vaaas-reports":
                 print("--------------Kafka Received: vaaas-reports -------------------------")
