@@ -31,7 +31,7 @@ path_to_kafka_cert = os.path.join(os.path.abspath(os.getcwd()), 'app', 'auth_fil
 os.environ["KAFKA_CERT"] = path_to_kafka_cert
 
 SM_IP = os.environ.get('SM_IP') if os.environ.get(
-    'SM_IP') else "http://sphinx-kubernetes.intracom-telecom.com/SMPlatform/manager/rst"
+    'SM_IP') else "http://sphinx-toolkit.intracom-telecom.com/SMPlatform/manager/rst"
 KAFKA_USERNAME = os.environ.get('KAFKA_USERNAME') if os.environ.get('KAFKA_USERNAME') else "kafkauser"
 KAFKA_PASSWORD = os.environ.get('KAFKA_PASSWORD') if os.environ.get('KAFKA_PASSWORD') else "kafkauser123"
 OAUTH_CLIENT_ID = os.environ.get('OAUTH_CLIENT_ID') if os.environ.get('OAUTH_CLIENT_ID') else "SIEM"
