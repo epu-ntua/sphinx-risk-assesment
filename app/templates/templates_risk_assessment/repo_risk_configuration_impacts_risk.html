@@ -122,11 +122,9 @@
                                                 <div class="col-10">
                                                     <output>0</output>
                                                     <input type="range" class="form-control-range"
-                                                           name="low
-                                                                   {% for temp_header in impact_calculation_wrapper[:-3] %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}|
+                                                           name="low{% for temp_header in impact_calculation_wrapper[:-3] %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}|
                                                                        {{ temp_header.state }}{% else %}|cons|{{ temp_header.consequence.id }}|{{ temp_header.state }}{% endif %}{% endfor %}"
-                                                           id="low
-                                                                   {% for temp_header in impact_calculation_wrapper[:-3] %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}|
+                                                           id="low{% for temp_header in impact_calculation_wrapper[:-3] %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}|
                                                                        {{ temp_header.state }}{% else %}|cons|{{ temp_header.consequence.id }}|{{ temp_header.state }}{% endif %}{% endfor %}"
                                                            step="1"
                                                            min="0"
@@ -162,11 +160,9 @@
                                                 <div class="col-10">
                                                     <output>0</output>
                                                     <input type="range" class="form-control-range"
-                                                           name="medium
-                                                                   {% for temp_header in impact_calculation_wrapper[:-3] %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}|
+                                                           name="medium{% for temp_header in impact_calculation_wrapper[:-3] %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}|
                                                                        {{ temp_header.state }}{% else %}|cons|{{ temp_header.consequence.id }}|{{ temp_header.state }}{% endif %}{% endfor %}"
-                                                           id="medium
-                                                                   {% for temp_header in impact_calculation_wrapper[:-3] %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}|
+                                                           id="medium{% for temp_header in impact_calculation_wrapper[:-3] %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}|
                                                                        {{ temp_header.state }}{% else %}|cons|{{ temp_header.consequence.id }}|{{ temp_header.state }}{% endif %}{% endfor %}"
                                                            step="1"
                                                            min="0"
@@ -203,11 +199,9 @@
                                                 <div class="col-10">
                                                     <output>0</output>
                                                     <input type="range" class="form-control-range"
-                                                           name="high
-                                                                   {% for temp_header in impact_calculation_wrapper[:-3] %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}|
+                                                           name="high{% for temp_header in impact_calculation_wrapper[:-3] %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}|
                                                                        {{ temp_header.state }}{% else %}|cons|{{ temp_header.consequence.id }}|{{ temp_header.state }}{% endif %}{% endfor %}"
-                                                           id="high
-                                                                   {% for temp_header in impact_calculation_wrapper[:-3] %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}|
+                                                           id="high{% for temp_header in impact_calculation_wrapper[:-3] %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}|
                                                                        {{ temp_header.state }}{% else %}|cons|{{ temp_header.consequence.id }}|{{ temp_header.state }}{% endif %}{% endfor %}"
                                                            step="1"
                                                            min="0"
