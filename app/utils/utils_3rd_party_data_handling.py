@@ -189,9 +189,12 @@ def v_report_json(report_name, report_details):
             my_json_report = db.session.query(VulnerabilityReport).filter_by(reportId=reprow_reportId).one()
         else:
             my_json_report = VulnerabilityReport(reportId=reprow_reportId)
-        my_json_report.scan_start_time = obj["scan_start_time"] if obj["scan_start_time"] is not None else ""
-        my_json_report.scan_end_time = obj["scan_end_time"] if obj["scan_end_time"] is not None else ""
-        my_json_report.target_name = obj["target_name"] if obj["target_name"] is not None else ""
+        my_json_report.scan_start_time = obj["start"] if obj["start"] is not None else ""
+        my_json_report.scan_end_time = obj["stop"] if obj["stop"] is not None else ""
+        my_json_report.target_name = obj["task_name"] if obj["task_name"] is not None else ""
+        my_json_report.target_name = obj["assessment_date"] if obj["assessment_date"] is not None else ""
+        my_json_report.target_name = obj["cvss_score"] if obj["cvss_score"] is not None else ""
+        my_json_report.target_name = obj["total_services"] if obj["total_services"] is not None else ""
         db.session.add(my_json_report)
         try:
             db.session.commit()
@@ -199,36 +202,39 @@ def v_report_json(report_name, report_details):
         except SQLAlchemyError as e:
             db.session.rollback()
             return -1
+
         # Get asset IP
+        my_asset_IP = None
+        my_asset_MAC = None
         for item in obj['objects']:
-            if item['type'] != "ipv4-addr":
-                continue
-            else:
+            if item['type'] == "ipv4-addr":
                 my_asset_IP = item["value"]
-                if not db.session.query(exists().where(RepoAsset.ip == my_asset_IP)).scalar():
-                    my_repo_asset = RepoAsset(ip=my_asset_IP)
-                    db.session.add(my_repo_asset)
-                    try:
-                        db.session.commit()
-                        # flash('Asset "{}" Added Succesfully'.format(my_repo_asset.ip))
-                        #TODO: Send alert for the new Asset to the EndUser
-                    except SQLAlchemyError as e:
-                        db.session.rollback()
-                        continue
-                else:
-                    my_repo_asset = RepoAsset(ip=my_asset_IP)
+            elif item[''] != "":
+                my_asset_MAC = item["value"]
+            else:
+                continue
+
+        if not db.session.query(exists().where(RepoAsset.ip == my_asset_IP)).scalar():
+            my_repo_asset = RepoAsset(ip=my_asset_IP)
+            my_repo_asset.mac_address = my_asset_MAC if my_asset_MAC is not None else ""
+            db.session.add(my_repo_asset)
+            try:
+                db.session.commit()
+                # flash('Asset "{}" Added Succesfully'.format(my_repo_asset.ip))
+                # TODO: Send alert for the new Asset to the EndUser
+            except SQLAlchemyError as e:
+                db.session.rollback()
+        else:
+            my_repo_asset = db.session.query(exists().where(RepoAsset.ip == my_asset_IP)).first()
+            my_repo_asset.mac_address = my_asset_MAC if my_asset_MAC is not None else ""
 
         # Get CVE from the result nodes of the report
         for item in obj['objects']:
-            if item['type'] != "vulnerability":
-                continue
-            else:
-                if item["cvss"] == "0.0":
-                    continue
-                else:
-                    for subitem in item['external_references']:
-                        if subitem['source_name'] == "cve":
-                            reprow_cveId = subitem['external_id']
+            if item['type'] == "x-discovered-service":
+                for service_attr, service_data in item['service_vulnerabilities'].items():
+                    for vulnerability_item in service_data['null']:
+                        if vulnerability_item['type'] == "cve":
+                            reprow_cveId = vulnerability_item['id']
                             if not db.session.query(exists().where(CommonVulnerabilitiesAndExposures.CVEId == reprow_cveId)).scalar():
                                 my_cve = CommonVulnerabilitiesAndExposures(CVEId=reprow_cveId)
                                 db.session.add(my_cve)
@@ -255,6 +261,9 @@ def v_report_json(report_name, report_details):
                                 continue
                             # update_cve_scores(reprow_cveId)
                             # TODO: It's not needed to call the update CVE and CWE functions
+
+            else:
+                continue
         return 1
 
 def getAssetsfromDTM(fpath):
