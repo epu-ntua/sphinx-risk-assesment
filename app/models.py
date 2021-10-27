@@ -7,9 +7,12 @@ class VulnerabilityReport(db.Model):
     __tablename__ = 'vulnerability_report'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     reportId = db.Column(db.String(), index=True, unique=True)
+    assessment_date = db.Column(db.String())
     scan_start_time = db.Column(db.String())
     scan_end_time = db.Column(db.String())
     target_name = db.Column(db.String())
+    cvss_score = db.Column(db.String())
+    total_services = db.Column(db.String())
     comments = db.Column(db.String())
 
     # CVEs = db.relationship("VReportCVELink", back_populates="vreport_s")
@@ -68,6 +71,18 @@ class VulnerabilityReportVulnerabilitiesLink(db.Model):
     def __repr__(self):
         return '<VulnerabilityReportVulnerabilitiesLink {}>'.format(self.vreport_id)
 
+class RepoAssetService(db.Model):
+    __tablename__ = 'repo_asset_service'
+    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    asset_id = db.Column(db.Integer, db.ForeignKey('repo_asset.id'), nullable=False)
+    asset = db.relationship("RepoAsset", back_populates="asset_services")
+    vreport_id = db.Column(db.Integer, db.ForeignKey('vulnerability_report.id'), nullable=False)
+    port = db.Column(db.String())
+    protocol = db.Column(db.String())
+    state = db.Column(db.String())
+    service_name = db.Column(db.String())
+    service_product = db.Column(db.String())
+    service_product_version = db.Column(db.String())
 
 class RepoControl(db.Model):
     __tablename__ = 'repo_control'
@@ -455,7 +470,7 @@ class RepoAsset(db.Model):
     threats = db.relationship("RepoAssetRepoThreatRelationship",
                               back_populates="asset")
     risk_assessment = db.relationship("RepoRiskAssessment", back_populates="asset")
-
+    asset_services = db.relationship("RepoAssetService", back_populates="asset")
 
 class RepoAssetsType(db.Model):
     __tablename__ = 'repo_assets_type'
