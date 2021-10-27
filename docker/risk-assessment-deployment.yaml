@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   annotations:
     kompose.cmd: kompose convert
-    kompose.version: 1.21.0 (992df58d8)
+    kompose.version: 1.25.0 (a70f80cc)
   creationTimestamp: null
   labels:
     io.kompose.service: risk-assessment
@@ -18,63 +18,24 @@ spec:
     metadata:
       annotations:
         kompose.cmd: kompose convert
-        kompose.version: 1.21.0 (992df58d8)
+        kompose.version: 1.25.0 (a70f80cc)
       creationTimestamp: null
       labels:
+        io.kompose.network/backend: "true"
+        io.kompose.network/frontend: "true"
         io.kompose.service: risk-assessment
     spec:
       containers:
-      - image: registry.sphinx-repo.intracom-telecom.com/sphinx-project/real-time-cyber-risk-assessment/riskassessmentflask ##?
-        name: risk-assessment
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: SM_IP
-          value: "http://service-manager:8080/SMPlatform/manager/rst"
-        - name: BOOTSTRAP_SERVERS
-          value: "test-cluster-kafka-bootstrap:9093"
-        - name: OAUTH_TOKEN_ENDPOINT_URI
-          value: "https://service-manager:8181/SMPlatform/manager/rst/getKafkaToken"
-        - name: OAUTH_CLIENT_ID
-          value: RCRA
-        - name: USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: sphinx-credentials                                       #??
-              key: testR1
-        - name: PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: sphinx-credentials                                       #??
-              key: testR1123!@
-        - name: TRUSTSTORE_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: ca-truststorepassword                                    #??
-              key: password                                                  #??
-        - name: TRUSTSTORE_PATH
-          value: "/opt/kafka/certificates/kafka-client-truststore.p12"
-        - name: KAFKA_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: kafka-credentials                                        #??
-              key: password                                                  #??
-        - name: KAFKA_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: kafka-credentials                                        #??
-              key: password                                                  #??
-        volumeMounts:
-        - name: truststore
-          mountPath: /opt/kafka/certificates #can be changed if the app requires
-          readOnly: true
-        ports:
-        - containerPort: 5002
-        resources: {}
-      volumes:
-      - name: truststore
-        secret:
-          secretName: kafka-client-truststore
-      hostname: risk_assessment
+        - args:
+            - bash
+            - -c
+            - chmod +x ./docker/launch.sh && ./docker/launch.sh
+          image: risk-assessment
+          name: risk-assessment
+          ports:
+            - containerPort: 5002
+            - containerPort: 3005
+          resources: {}
+      hostname: risk-assessment
       restartPolicy: Always
-      serviceAccountName: ""
 status: {}

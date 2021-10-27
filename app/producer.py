@@ -215,7 +215,8 @@ def get_kafka_data_print_test(kafka_topic):
                              sasl_mechanism='OAUTHBEARER',
                              sasl_oauth_token_provider=TokenProvider(),
                              ssl_cafile=path_to_kafka_cert,
-                             api_version=(2, 5, 0)
+                             api_version=(2, 5, 0),
+                             value_deserializer=lambda m: json.loads(m.decode('ascii'))
                              )
     # 'python-topic' default kafka topic
     consumer.subscribe([
@@ -260,7 +261,21 @@ def get_kafka_data_print_test(kafka_topic):
                 print("-------------------------------------------------------------------------", flush=True)
             elif msg.topic == "vaaas-reports":
                 print("--------------Kafka Received: vaaas-reports -------------------------")
-                # print(dat)
+                # print(msg)
+                result = msg.value
+                # print(result["data"])
+                # print(type(result["data"]))
+                # print(type(result["data"]["vaaas-reports"]))
+                print(json.loads(result["data"]["vaaas-reports"]))
+                result_json = json.loads(result["data"]["vaaas-reports"])
+                for attribute, value in result_json.items():
+                    print(attribute)
+                    print("---")
+                    print(value)
+                    print(type(attribute))
+                    print(type(value))
+                    # v_report_json(attribute,value)
+                # utils.handle_kafka_input(msg, "vaaas-reports")
                 print("-------------------------------------------------------------------------", flush=True)
             elif msg.topic == "dtm-asset":
                 print("--------------Kafka Received: dtm-asset -------------------------")
