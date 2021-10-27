@@ -177,9 +177,9 @@ def v_report(fpath):
                                 # TODO: It's not needed to call the update CVE and CWE functions
             return 1
 
-def v_report_json(repo_json):
+def v_report_json(report_name, report_details):
     # obj = json.load(fp)
-    obj = repo_json
+    obj = report_details
     print("VRERPORT")
     print(obj)
     print(type(obj))
