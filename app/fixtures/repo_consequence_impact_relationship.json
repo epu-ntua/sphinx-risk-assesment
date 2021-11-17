@@ -8,6 +8,14 @@
         "repo_impact_id": "2"
     },
     {
+        "repo_consequence_id": "1",
+        "repo_impact_id": "6"
+    },
+    {
+        "repo_consequence_id": "2",
+        "repo_impact_id": "1"
+    },
+    {
         "repo_consequence_id": "2",
         "repo_impact_id": "3"
     },
@@ -17,6 +25,218 @@
     },
     {
         "repo_consequence_id": "3",
+        "repo_impact_id": "2"
+    },
+    {
+        "repo_consequence_id": "3",
+        "repo_impact_id": "3"
+    },
+    {
+        "repo_consequence_id": "4",
+        "repo_impact_id": "3"
+    },
+    {
+        "repo_consequence_id": "4",
+        "repo_impact_id": "4"
+    },
+    {
+        "repo_consequence_id": "4",
+        "repo_impact_id": "6"
+    },
+    {
+        "repo_consequence_id": "5",
         "repo_impact_id": "5"
+    },
+    {
+        "repo_consequence_id": "5",
+        "repo_impact_id": "6"
+    },
+    {
+        "repo_consequence_id": "6",
+        "repo_impact_id": "1"
+    },
+    {
+        "repo_consequence_id": "6",
+        "repo_impact_id": "2"
+    },
+    {
+        "repo_consequence_id": "6",
+        "repo_impact_id": "6"
+    },
+    {
+        "repo_consequence_id": "7",
+        "repo_impact_id": "1"
+    },
+    {
+        "repo_consequence_id": "7",
+        "repo_impact_id": "2"
+    },
+    {
+        "repo_consequence_id": "7",
+        "repo_impact_id": "6"
+    },
+    {
+        "repo_consequence_id": "11",
+        "repo_impact_id": "1"
+    },
+    {
+        "repo_consequence_id": "11",
+        "repo_impact_id": "2"
+    },
+    {
+        "repo_consequence_id": "11",
+        "repo_impact_id": "6"
+    },
+    {
+        "repo_consequence_id": "8",
+        "repo_impact_id": "2"
+    },
+    {
+        "repo_consequence_id": "8",
+        "repo_impact_id": "3"
+    },
+    {
+        "repo_consequence_id": "9",
+        "repo_impact_id": "3"
+    },
+    {
+        "repo_consequence_id": "9",
+        "repo_impact_id": "4"
+    },
+    {
+        "repo_consequence_id": "9",
+        "repo_impact_id": "6"
+    },
+    {
+        "repo_consequence_id": "10",
+        "repo_impact_id": "5"
+    },
+    {
+        "repo_consequence_id": "10",
+        "repo_impact_id": "6"
+    },
+    {
+        "repo_consequence_id": "12",
+        "repo_impact_id": "1"
+    },
+    {
+        "repo_consequence_id": "12",
+        "repo_impact_id": "2"
+    },
+    {
+        "repo_consequence_id": "12",
+        "repo_impact_id": "6"
+    },
+    {
+        "repo_consequence_id": "13",
+        "repo_impact_id": "3"
+    },
+    {
+        "repo_consequence_id": "13",
+        "repo_impact_id": "4"
+    },
+    {
+        "repo_consequence_id": "13",
+        "repo_impact_id": "6"
+    },
+    {
+        "repo_consequence_id": "14",
+        "repo_impact_id": "1"
+    },
+    {
+        "repo_consequence_id": "14",
+        "repo_impact_id": "2"
+    },
+    {
+        "repo_consequence_id": "14",
+        "repo_impact_id": "6"
+    },
+    {
+        "repo_consequence_id": "15",
+        "repo_impact_id": "1"
+    },
+    {
+        "repo_consequence_id": "15",
+        "repo_impact_id": "2"
+    },
+    {
+        "repo_consequence_id": "15",
+        "repo_impact_id": "6"
+    },
+    {
+        "repo_consequence_id": "17",
+        "repo_impact_id": "1"
+    },
+    {
+        "repo_consequence_id": "17",
+        "repo_impact_id": "2"
+    },
+    {
+        "repo_consequence_id": "17",
+        "repo_impact_id": "6"
+    },
+    {
+        "repo_consequence_id": "16",
+        "repo_impact_id": "3"
+    },
+    {
+        "repo_consequence_id": "16",
+        "repo_impact_id": "4"
+    },
+    {
+        "repo_consequence_id": "16",
+        "repo_impact_id": "6"
+    },
+    {
+        "repo_consequence_id": "18",
+        "repo_impact_id": "2"
+    },
+    {
+        "repo_consequence_id": "18",
+        "repo_impact_id": "3"
+    },
+    {
+        "repo_consequence_id": "19",
+        "repo_impact_id": "1"
+    },
+    {
+        "repo_consequence_id": "19",
+        "repo_impact_id": "2"
+    },
+    {
+        "repo_consequence_id": "19",
+        "repo_impact_id": "6"
+    },
+    {
+        "repo_consequence_id": "22",
+        "repo_impact_id": "1"
+    },
+    {
+        "repo_consequence_id": "22",
+        "repo_impact_id": "2"
+    },
+    {
+        "repo_consequence_id": "22",
+        "repo_impact_id": "6"
+    },
+    {
+        "repo_consequence_id": "20",
+        "repo_impact_id": "2"
+    },
+    {
+        "repo_consequence_id": "20",
+        "repo_impact_id": "3"
+    },
+    {
+        "repo_consequence_id": "21",
+        "repo_impact_id": "3"
+    },
+    {
+        "repo_consequence_id": "21",
+        "repo_impact_id": "4"
+    },
+    {
+        "repo_consequence_id": "21",
+        "repo_impact_id": "6"
     }
 ]

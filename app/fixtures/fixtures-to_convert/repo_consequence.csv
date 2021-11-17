@@ -1,4 +1,23 @@
 id,name,threat_id,materialisation_id
-1,Consequence 1,1,1
-2,Consequence 2,1,2
-3,Consequence 1,1,1
+1,Disruption of operations,1,1
+2,Unauthorised access/control,1,1
+3,Unauthorised disclosure of data,1,1
+4,Unauthorised modifications of data,1,1
+5,Infrastructure malfunction/damage,1,1
+6,Under maintenance,1,1
+7,Disruption of operations,2,2
+8,Unauthorised disclosure of data,2,2
+9,Unauthorised modifications of data,2,2
+10,Infrastructure malfunction/damage,2,2
+11,Under maintenance,2,2
+12,Disruption of operations,3,3
+13,Unauthorised modifications of data,3,3
+14,Under maintenance,3,3
+15,Disruption of operations,4,4
+16,Unauthorised modifications of data,4,4
+17,Under maintenance,4,4
+18,Unauthorised disclosure of data,5,5
+19,Under maintenance,5,5
+20,Unauthorised disclosure of data,6,6
+21,Unauthorised modifications of data,6,6
+22,Under maintenance,6,6

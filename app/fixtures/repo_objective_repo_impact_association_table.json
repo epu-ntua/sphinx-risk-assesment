@@ -1,23 +1,7 @@
 [
     {
         "repo_objective_id": "1",
-        "repo_impact_id": "1"
-    },
-    {
-        "repo_objective_id": "1",
-        "repo_impact_id": "2"
-    },
-    {
-        "repo_objective_id": "1",
         "repo_impact_id": "3"
-    },
-    {
-        "repo_objective_id": "2",
-        "repo_impact_id": "1"
-    },
-    {
-        "repo_objective_id": "2",
-        "repo_impact_id": "2"
     },
     {
         "repo_objective_id": "2",
@@ -32,23 +16,35 @@
         "repo_impact_id": "1"
     },
     {
-        "repo_objective_id": "3",
+        "repo_objective_id": "4",
+        "repo_impact_id": "1"
+    },
+    {
+        "repo_objective_id": "4",
         "repo_impact_id": "2"
     },
     {
-        "repo_objective_id": "3",
+        "repo_objective_id": "4",
         "repo_impact_id": "3"
+    },
+    {
+        "repo_objective_id": "5",
+        "repo_impact_id": "4"
+    },
+    {
+        "repo_objective_id": "5",
+        "repo_impact_id": "5"
     },
     {
         "repo_objective_id": "5",
         "repo_impact_id": "6"
     },
     {
-        "repo_objective_id": "5",
-        "repo_impact_id": "4"
+        "repo_objective_id": "3",
+        "repo_impact_id": "3"
     },
     {
-        "repo_objective_id": "5",
+        "repo_objective_id": "3",
         "repo_impact_id": "5"
     }
 ]

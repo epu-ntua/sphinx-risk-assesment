@@ -1,20 +1,134 @@
 [
     {
         "id": "1",
-        "name": "Consequence 1",
+        "name": "Disruption of operations",
         "threat_id": "1",
         "materialisation_id": "1"
     },
     {
         "id": "2",
-        "name": "Consequence 2",
+        "name": "Unauthorised access/control",
         "threat_id": "1",
-        "materialisation_id": "2"
+        "materialisation_id": "1"
     },
     {
         "id": "3",
-        "name": "Consequence 1",
+        "name": "Unauthorised disclosure of data",
         "threat_id": "1",
         "materialisation_id": "1"
+    },
+    {
+        "id": "4",
+        "name": "Unauthorised modifications of data",
+        "threat_id": "1",
+        "materialisation_id": "1"
+    },
+    {
+        "id": "5",
+        "name": "Infrastructure malfunction/damage",
+        "threat_id": "1",
+        "materialisation_id": "1"
+    },
+    {
+        "id": "6",
+        "name": "Under maintenance",
+        "threat_id": "1",
+        "materialisation_id": "1"
+    },
+    {
+        "id": "7",
+        "name": "Disruption of operations",
+        "threat_id": "2",
+        "materialisation_id": "2"
+    },
+    {
+        "id": "8",
+        "name": "Unauthorised disclosure of data",
+        "threat_id": "2",
+        "materialisation_id": "2"
+    },
+    {
+        "id": "9",
+        "name": "Unauthorised modifications of data",
+        "threat_id": "2",
+        "materialisation_id": "2"
+    },
+    {
+        "id": "10",
+        "name": "Infrastructure malfunction/damage",
+        "threat_id": "2",
+        "materialisation_id": "2"
+    },
+    {
+        "id": "11",
+        "name": "Under maintenance",
+        "threat_id": "2",
+        "materialisation_id": "2"
+    },
+    {
+        "id": "12",
+        "name": "Disruption of operations",
+        "threat_id": "3",
+        "materialisation_id": "3"
+    },
+    {
+        "id": "13",
+        "name": "Unauthorised modifications of data",
+        "threat_id": "3",
+        "materialisation_id": "3"
+    },
+    {
+        "id": "14",
+        "name": "Under maintenance",
+        "threat_id": "3",
+        "materialisation_id": "3"
+    },
+    {
+        "id": "15",
+        "name": "Disruption of operations",
+        "threat_id": "4",
+        "materialisation_id": "4"
+    },
+    {
+        "id": "16",
+        "name": "Unauthorised modifications of data",
+        "threat_id": "4",
+        "materialisation_id": "4"
+    },
+    {
+        "id": "17",
+        "name": "Under maintenance",
+        "threat_id": "4",
+        "materialisation_id": "4"
+    },
+    {
+        "id": "18",
+        "name": "Unauthorised disclosure of data",
+        "threat_id": "5",
+        "materialisation_id": "5"
+    },
+    {
+        "id": "19",
+        "name": "Under maintenance",
+        "threat_id": "5",
+        "materialisation_id": "5"
+    },
+    {
+        "id": "20",
+        "name": "Unauthorised disclosure of data",
+        "threat_id": "6",
+        "materialisation_id": "6"
+    },
+    {
+        "id": "21",
+        "name": "Unauthorised modifications of data",
+        "threat_id": "6",
+        "materialisation_id": "6"
+    },
+    {
+        "id": "22",
+        "name": "Under maintenance",
+        "threat_id": "6",
+        "materialisation_id": "6"
     }
 ]

@@ -1,3 +1,7 @@
 id,name,threat_id
-1,Materialisation 1,1
-2,Materialisation 2,1
+1,Malware executed successfully ,1
+2,Ransomware is executed successfully ,2
+3,DoS/DDoS is executed successfully,3
+4,SQL Injection is executed successfully,4
+5,Port Scanning is executed successfully,5
+6,MiTM is executed successfully,6
