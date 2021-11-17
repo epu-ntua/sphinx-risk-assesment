@@ -1,6 +1,7 @@
 from app import db
 from datetime import datetime
 
+
 # from app.mixins import ModelMixin
 
 class VulnerabilityReport(db.Model):
@@ -71,6 +72,7 @@ class VulnerabilityReportVulnerabilitiesLink(db.Model):
     def __repr__(self):
         return '<VulnerabilityReportVulnerabilitiesLink {}>'.format(self.vreport_id)
 
+
 class RepoAssetService(db.Model):
     __tablename__ = 'repo_asset_service'
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
@@ -84,6 +86,7 @@ class RepoAssetService(db.Model):
     service_product = db.Column(db.String())
     service_product_version = db.Column(db.String())
 
+
 class RepoControl(db.Model):
     __tablename__ = 'repo_control'
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
@@ -91,6 +94,7 @@ class RepoControl(db.Model):
     description = db.Column(db.String())
     vulnerability_id = db.Column(db.Integer, db.ForeignKey('vulnerability_report_vulnerabilities_link.id'))
     vulnerabilities = db.relationship("VulnerabilityReportVulnerabilitiesLink", back_populates="controls")
+
 
 class CommonWeaknessEnumeration(db.Model):
     __tablename__ = 'common_weakness_enumeration'
@@ -462,6 +466,7 @@ class RepoAsset(db.Model):
     goodwill = db.Column(db.Integer)
     last_touch_date = db.Column(db.DateTime)
     type_fk = db.Column(db.Integer, db.ForeignKey('repo_assets_type.id'))
+    type = db.relationship("RepoAssetsType", back_populates="assets")
     integrity = db.Column(db.Integer)
     services = db.relationship("RepoService", secondary=repo_asset_repo_service_association_table,
                                back_populates="assets")
@@ -472,6 +477,7 @@ class RepoAsset(db.Model):
     risk_assessment = db.relationship("RepoRiskAssessment", back_populates="asset")
     asset_services = db.relationship("RepoAssetService", back_populates="asset")
 
+
 class RepoAssetsType(db.Model):
     __tablename__ = 'repo_assets_type'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -479,6 +485,7 @@ class RepoAssetsType(db.Model):
     daily_start_time = db.column(db.DateTime)
     daily_end_time = db.column(db.DateTime)
     role = db.column(db.Integer)  # 1 low - 2 medium - 3 high
+    assets = db.relationship("RepoAsset", back_populates="type")
 
 
 class RepoActor(db.Model):
@@ -571,4 +578,3 @@ class RepoAssetReputation(db.Model):
     reputation = db.Column(db.Integer)
     reputation_speed = db.Column(db.Integer)
     weighted_importance = db.Column(db.Integer)
-

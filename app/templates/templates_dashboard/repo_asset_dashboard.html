@@ -2,39 +2,59 @@
 
 {% block script %}
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@3.2.0/dist/chart.min.js"></script>
+    <script type="text/javascript" href="{{ url_for('static',filename='js/utils.js') }}"></script>
 
     <script>
+
         {#var ctx = document.getElementById('myChart').getContext('2d');#}
         var ctx1 = document.getElementById('piePerType').getContext('2d');
         var ctx2 = document.getElementById('piePerOwnedStatus').getContext('2d');
         var ctx3 = document.getElementById('pieAssetsPerServices').getContext('2d');
-
+        {#const COLORS = [#}
+        {#    '#4dc9f6',#}
+        {#    '#f67019',#}
+        {#    '#f53794',#}
+        {#    '#537bc4',#}
+        {#    '#acc236',#}
+        {#    '#166a8f',#}
+        {#    '#00a950',#}
+        {#    '#58595b',#}
+        {#    '#8549ba'#}
+        {#];#}
         const dataPiePerType = {
             labels:
-                ['Server',
-                    'Media',
-                    'User Dev',
-                    'Person',
-                    'Kiosk/Term',
-                    'Network',
-                    'Embedded',
-                    'Facilities',
-                    'Other'],
+                {{ asset_types_list | safe }},
+                {#['Server',#}
+                {#    'Media',#}
+                {#    'User Dev',#}
+                {#    'Person',#}
+                {#    'Kiosk/Term',#}
+                {#    'Network',#}
+                {#    'Embedded',#}
+                {#    'Facilities',#}
+                {#    'Other'],#}
 
             datasets: [
                 {
                     label: 'Dataset 1',
-                    data: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                    data: {{ asset_type_values_list | safe}},
+                    {#data: [1, 2, 3, 4, 5, 6, 7, 8, 9],#}
                     color: '#ffffff',
-                    backgroundColor: ['#003f5c',
-                        '#2f4b7c',
-                        '#665191',
-                        '#a05195',
-                        '#d45087',
-                        '#f95d6a',
-                        '#ff7c43',
-                        '#ffa600',
-                        '#e6e600']
+                    backgroundColor:
+                    ['#33cc33',
+                    '#00ffcc',
+                    '#3399ff',
+                    '#aa00ff',
+                    '#ff0000',
+                    '#e68a00',
+                    '#ffff00',
+                    '#666633',
+                    '#000066',
+                    '#cc0000',
+                    '#660066',
+                    '#000000',
+                    '#ffffff'
+                    ]
                 }
             ]
         };

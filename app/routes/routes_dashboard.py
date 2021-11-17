@@ -23,6 +23,36 @@ def repo_dashboard_asset():
         # if assetsArray != -1:
         #     return render_template('asset_dashboard.html', assets=assetsArray)
         # else:
+
+        # Get all asset types
+        try:
+            repo_assets_type = RepoAssetsType.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        try:
+            repo_asset = RepoAsset.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        # repo_asset = convert_database_items_to_json_table(repo_asset)
+        repo_assets_type = convert_database_items_to_json_table(repo_assets_type)
+
+        # Create dict of asset types so we can count all assets types and put values in appropriate order
+        dict_assets_type = {}
+        for type_object in repo_assets_type:
+            dict_assets_type[type_object['name']] = 0
+
+        for type_asset in repo_asset:
+            dict_assets_type[type_asset.type.name] = dict_assets_type[type_asset.type.name] + 1
+        asset_type_values_list = list(dict_assets_type.values())
+        asset_types_list = list(dict_assets_type.keys())
+        # for asset in repo_asset:
+        print(asset_type_values_list)
+        print(asset_types_list)
+
+        # repo_assets_type = json.dumps(repo_assets_type)
+
         repo_assets = [
             {
                 "id": "1",
@@ -35,7 +65,8 @@ def repo_dashboard_asset():
             }
         ]
         print(repo_assets)
-        return render_template('templates_dashboard/repo_asset_dashboard.html', repo_assets=repo_assets)
+        return render_template('templates_dashboard/repo_asset_dashboard.html', repo_assets=repo_assets,
+                               asset_type_values_list = asset_type_values_list, asset_types_list =asset_types_list)
 
 
 @app.route('/repo/dashboard/threat/', methods=['GET', 'POST'])
