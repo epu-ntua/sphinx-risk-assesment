@@ -76,7 +76,7 @@ class RepoAssetService(db.Model):
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     asset_id = db.Column(db.Integer, db.ForeignKey('repo_asset.id'), nullable=False)
     asset = db.relationship("RepoAsset", back_populates="asset_services")
-    vreport_id = db.Column(db.Integer, db.ForeignKey('vulnerability_report.id'), nullable=False)
+    vreport_id = db.Column(db.Integer, db.ForeignKey('vulnerability_report.id'), nullable=True)
     port = db.Column(db.String())
     protocol = db.Column(db.String())
     state = db.Column(db.String())
