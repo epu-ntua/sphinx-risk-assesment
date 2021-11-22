@@ -87,8 +87,8 @@
         function rowStyle(row, index) {
             console.log(row)
             console.log(row.has_static_ip)
-            if (typeof row.has_static_ip !== "undefined") {
-                if (row.has_static_ip === true) {
+            if (typeof row.verified !== "undefined") {
+                if (row.verified === true) {
                     console.log("Is false")
                     return {
                         css: {
@@ -157,7 +157,7 @@
             <th data-field="description" data-sortable="true">Description</th>
             <th data-field="owner" data-sortable="true">Owner</th>
             <th data-field="location" data-sortable="true">Location</th>
-            <th data-field="Verified" data-sortable="true">Verified</th>
+            <th data-field="verified" data-sortable="true">Verified</th>
             <th data-field="verified_by" data-sortable="true">Verified by</th>
             <th data-field="mac_address" data-sortable="true">Mac_address</th>
             <th data-field="has_static_ip" data-sortable="true">Has static IP</th>

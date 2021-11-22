@@ -457,7 +457,7 @@ class RepoAsset(db.Model):
     description = db.Column(db.String)
     owner = db.Column(db.Integer, db.ForeignKey('repo_actor.id'))
     location = db.Column(db.String)
-    verified = db.Column(db.Boolean)
+    verified = db.Column(db.Boolean, default=False)
     verified_by = db.Column(db.Integer, db.ForeignKey('repo_actor.id'))
     mac_address = db.Column(db.String)
     has_static_ip = db.Column(db.Boolean)
@@ -470,7 +470,8 @@ class RepoAsset(db.Model):
     customer_service = db.Column(db.Integer)
     goodwill = db.Column(db.Integer)
     last_touch_date = db.Column(db.DateTime)
-    type_fk = db.Column(db.Integer, db.ForeignKey('repo_assets_type.id'))
+    type_fk = db.Column(db.Integer, db.ForeignKey('repo_assets_type.id'), default=1)
+    # TODO Maybe remove the default, and ensure that type is always applied instead another way
     type = db.relationship("RepoAssetsType", back_populates="assets")
     integrity = db.Column(db.Integer)
     services = db.relationship("RepoService", secondary=repo_asset_repo_service_association_table,

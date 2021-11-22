@@ -138,10 +138,12 @@ def send_risk_report(report_id, asset_id, threat_id):
         }
     }
 
-    # print("----- THE REPORT IS -----")
+    print("----- THE REPORT IS -----")
+    print(report_to_send)
+    print(json.dumps(report_to_send))
     report_to_send = json.dumps(report_to_send)
     # print(report_to_send)
-    SendKafkaReport(report_to_send, "rcra-report-topic")
+    #SendKafkaReport(report_to_send, "rcra-report-topic")
 
 
 def sendDSSScore():

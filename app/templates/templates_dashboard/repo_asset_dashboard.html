@@ -2,7 +2,6 @@
 
 {% block script %}
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@3.2.0/dist/chart.min.js"></script>
-    <script type="text/javascript" href="{{ url_for('static',filename='js/utils.js') }}"></script>
 
     <script>
 
@@ -10,6 +9,20 @@
         var ctx1 = document.getElementById('piePerType').getContext('2d');
         var ctx2 = document.getElementById('piePerOwnedStatus').getContext('2d');
         var ctx3 = document.getElementById('pieAssetsPerServices').getContext('2d');
+        const COLORS = ['#33cc33',
+                    '#00ffcc',
+                    '#3399ff',
+                    '#aa00ff',
+                    '#ff0000',
+                    '#e68a00',
+                    '#ffff00',
+                    '#666633',
+                    '#000066',
+                    '#cc0000',
+                    '#660066',
+                    '#000000',
+                    '#ffffff'
+                    ]
         {#const COLORS = [#}
         {#    '#4dc9f6',#}
         {#    '#f67019',#}
@@ -41,88 +54,55 @@
                     {#data: [1, 2, 3, 4, 5, 6, 7, 8, 9],#}
                     color: '#ffffff',
                     backgroundColor:
-                    ['#33cc33',
-                    '#00ffcc',
-                    '#3399ff',
-                    '#aa00ff',
-                    '#ff0000',
-                    '#e68a00',
-                    '#ffff00',
-                    '#666633',
-                    '#000066',
-                    '#cc0000',
-                    '#660066',
-                    '#000000',
-                    '#ffffff'
-                    ]
+                    COLORS
                 }
             ]
         };
 
         const dataPiePerOwnedStatus = {
             labels:
-                ['Owned',
-                    'Uknown',
+                ['Verified',
+                    'Unverified',
                 ],
 
             datasets: [
                 {
-                    label: 'Dataset Owned Assets',
-                    data: [10, 5],
-                    backgroundColor: ['#003f5c',
-                        '#2f4b7c']
+                    label: 'Dataset Verified Assets',
+                    data: {{ assets_verified_list | safe }},
+                    backgroundColor: [ "#33cc33" , "#ff0000"]
                 }
             ]
         };
 
         const dataPieAssetsPerServices = {
             labels:
-                ['VDSL Modem',
-                    'Fortigate 200E firewall',
-                    'Cisco Catalyst 2960 Plus switch',
-                    'Domain Controller, DHCP, DNS (VM)',
-                    'HIS App server',
-                    'DB server',
-                    'LIS App server',
-                    'DB server',
-                    'master VM',
-                    'worker VM1',
-                    'worker VM2',
-                    'Lexmark printer B2236dw',
-                    'client VM',
-                    'Pathological Anatomy Lab user',
-                    'Blood test Lab user',
-                    'Pharmacy user',
-                    'Doctor PC',
-                    'Nurse PC',
-                    'Clerk PC',
-                ],
+            {{ assets_name_list | safe}},
+                {#['VDSL Modem',#}
+                {#    'Fortigate 200E firewall',#}
+                {#    'Cisco Catalyst 2960 Plus switch',#}
+                {#    'Domain Controller, DHCP, DNS (VM)',#}
+                {#    'HIS App server',#}
+                {#    'DB server',#}
+                {#    'LIS App server',#}
+                {#    'DB server',#}
+                {#    'master VM',#}
+                {#    'worker VM1',#}
+                {#    'worker VM2',#}
+                {#    'Lexmark printer B2236dw',#}
+                {#    'client VM',#}
+                {#    'Pathological Anatomy Lab user',#}
+                {#    'Blood test Lab user',#}
+                {#    'Pharmacy user',#}
+                {#    'Doctor PC',#}
+                {#    'Nurse PC',#}
+                {#    'Clerk PC',#}
+                {#],#}
 
             datasets: [
                 {
                     label: 'Dataset Owned Assets',
-                    data: [10, 1, 1, 7, 4, 4, 5, 4, 2, 1, 4, 15, 15, 4, 5, 1, 5, 2, 4, 6],
-                    backgroundColor: [
-                        '#e5029d',
-                        '#345cba',
-                        '#67e6ef',
-                        '#fc7671',
-                        '#c6af00',
-                        '#dd5646',
-                        '#07915e',
-                        '#5d55cc',
-                        '#3fc1a7',
-                        '#d8261a',
-                        '#55fc87',
-                        '#af3615',
-                        '#2fbcb5',
-                        '#4ee075',
-                        '#eddf65',
-                        '#db393b',
-                        '#eae43f',
-                        '#59d69a',
-                        '#f268b8'
-                    ]
+                    data: {{ assets_services_counted_list | safe }},
+                    backgroundColor: COLORS
                 }
             ]
         };
@@ -243,7 +223,7 @@
         }
 
         $(function () {
-            var data = {{ repo_assets | safe }};
+            var data = {{ repo_asset_unverified | safe }};
             console.log(data)
             $table.bootstrapTable({data: data});
         })

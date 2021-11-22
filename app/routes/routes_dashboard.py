@@ -35,18 +35,43 @@ def repo_dashboard_asset():
         except SQLAlchemyError:
             return Response("SQLAlchemyError", 500)
 
+        try:
+            repo_asset_unverified = RepoAsset.query.filter_by(verified=False).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
         # repo_asset = convert_database_items_to_json_table(repo_asset)
         repo_assets_type = convert_database_items_to_json_table(repo_assets_type)
 
         # Create dict of asset types so we can count all assets types and put values in appropriate order
         dict_assets_type = {}
+        dict_assets_verified = {"verified": 0, "unverified": 0}
+        dict_assets_services = {}
         for type_object in repo_assets_type:
             dict_assets_type[type_object['name']] = 0
 
         for type_asset in repo_asset:
+            # Count asset types
             dict_assets_type[type_asset.type.name] = dict_assets_type[type_asset.type.name] + 1
+
+            # Count verified assets
+            if type_asset.verified:
+                dict_assets_verified["verified"] += 1
+            else:
+                dict_assets_verified["unverified"] += 1
+
+            # Count services per asset
+            dict_assets_services[type_asset.name] = 0
+            for service_type in type_asset.services:
+                dict_assets_services[type_asset.name] += 1
+
+                # dict_assets_verified[type_asset.verified]
+        # Transfer data to list that can be displayed by front end technology
         asset_type_values_list = list(dict_assets_type.values())
         asset_types_list = list(dict_assets_type.keys())
+        assets_verified_list = list(dict_assets_verified.values())
+        assets_services_counted_list = list(dict_assets_services.values())
+        assets_name_list = list(dict_assets_services.keys())
         # for asset in repo_asset:
         print(asset_type_values_list)
         print(asset_types_list)
@@ -64,9 +89,14 @@ def repo_dashboard_asset():
                 "last_touch_date": "today",
             }
         ]
+        repo_asset_unverified = convert_database_items_to_json_table(repo_asset_unverified)
+        repo_asset_unverified = json.dumps(repo_asset_unverified)
         print(repo_assets)
-        return render_template('templates_dashboard/repo_asset_dashboard.html', repo_assets=repo_assets,
-                               asset_type_values_list = asset_type_values_list, asset_types_list =asset_types_list)
+        return render_template('templates_dashboard/repo_asset_dashboard.html',
+                               repo_asset_unverified=repo_asset_unverified,
+                               asset_type_values_list=asset_type_values_list, asset_types_list=asset_types_list,
+                               assets_verified_list=assets_verified_list, assets_name_list=assets_name_list,
+                               assets_services_counted_list=assets_services_counted_list)
 
 
 @app.route('/repo/dashboard/threat/', methods=['GET', 'POST'])
@@ -74,10 +104,7 @@ def repo_dashboard_threat():
     if request.method == 'POST':
         return redirect("/repo/dashboard/threat/")
     else:
-        # assetsArray = get_assetsfromrepository()
-        # if assetsArray != -1:
-        #     return render_template('asset_dashboard.html', assets=assetsArray)
-        # else:
+
         repo_threats = [
             {
                 "id": "1",
@@ -87,7 +114,8 @@ def repo_dashboard_threat():
             }
         ]
         print(repo_threats)
-        return render_template('templates_dashboard/repo_threat_dashboard.html', repo_threats=repo_threats)
+        return render_template('templates_dashboard/repo_threat_dashboard.html', repo_threats=repo_threats,
+                               )
 
 
 @app.route('/repo/dashboard/risk/objectives/threat/<threat_id>/asset/<asset_id>/', methods=['GET', 'POST'])
@@ -590,6 +618,46 @@ def repo_dashboard_vulnerability():
         # if assetsArray != -1:
         #     return render_template('asset_dashboard.html', assets=assetsArray)
         # else:
+        try:
+            repo_assets_type = RepoAssetsType.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        try:
+            repo_asset = RepoAsset.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        try:
+            repo_vulnerabilities = VulnerabilityReportVulnerabilitiesLink.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        dict_assets_type = {}
+
+        #For vuln occurance we only care about associated CVE ids
+        dict_vulnerabilities_occurrence = {}
+
+        # Set entries for all asset types regardless if they have any associated vulnerabilties or not
+        for asset_type_object in repo_assets_type:
+            dict_assets_type[asset_type_object.name] = 0
+
+        for vulnerability_object in repo_vulnerabilities:
+            # Count asset types
+            print(vulnerability_object.asset)
+            dict_assets_type[vulnerability_object.asset.type.name] += 1
+            print(vulnerability_object.cve.CVEId)
+            print(dict_vulnerabilities_occurrence)
+            if vulnerability_object.cve.CVEId:
+                if vulnerability_object.cve.CVEId in dict_vulnerabilities_occurrence:
+                    dict_vulnerabilities_occurrence[vulnerability_object.cve.CVEId] += 1
+                else:
+                    dict_vulnerabilities_occurrence[vulnerability_object.cve.CVEId] = 1
+
+        asset_types_list = list(dict_assets_type.keys())
+        asset_types_vulnerability_occurrence = list(dict_assets_type.values())
+        vulnerability_cve_id_list = list(dict_vulnerabilities_occurrence.keys())
+        vulnerability_cve_id_occurrence = list(dict_vulnerabilities_occurrence.values())
         repo_vulnerabilities = [
             {
                 "id": "1",
@@ -601,6 +669,11 @@ def repo_dashboard_vulnerability():
                 "last_touch_date": "1",
             }
         ]
-        print(repo_vulnerabilities)
+        print("--------- Vuln Dashboard Data is -----------")
+        print(asset_types_list)
+        print(asset_types_vulnerability_occurrence)
         return render_template('templates_dashboard/repo_vulnerability_dashboard.html',
-                               repo_vulnerabilities=repo_vulnerabilities)
+                               repo_vulnerabilities=repo_vulnerabilities,
+                               asset_types_vulnerability_occurrence=asset_types_vulnerability_occurrence,
+                               asset_types_list=asset_types_list, vulnerability_cve_id_list =vulnerability_cve_id_list,
+                               vulnerability_cve_id_occurrence=vulnerability_cve_id_occurrence)
