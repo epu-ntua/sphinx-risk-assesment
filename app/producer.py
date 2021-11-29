@@ -18,7 +18,7 @@ import threading, time
 
 # check this too : https://pypi.org/project/javaproperties/
 # 8080
-from app.utils.utils_3rd_party_data_handling import v_report_json
+from app.utils.utils_3rd_party_data_handling import v_report_json, certification_report_json, getAssetsfromDTM
 
 path_to_kafka_cert = os.path.join(os.path.abspath(os.getcwd()), 'app', 'auth_files', 'for_clients.crt')
 # path_to_kafka_cert = sys.path[0] + "\""
@@ -227,6 +227,9 @@ def get_kafka_data_print_test(kafka_topic):
         "vaaas-reports",
         "siem-alerts",
         "siem-input-events"
+        "siem-certification-vulnerabilities"
+        "siem-acs-sca-detailed"
+
     ])
     # except KafkaError:
     #   print("KafkaConsumer error when initialising")
@@ -280,6 +283,13 @@ def get_kafka_data_print_test(kafka_topic):
             elif msg.topic == "dtm-asset":
                 print("--------------Kafka Received: dtm-asset -------------------------")
                 # print(dat)
+                result = msg.value
+                getAssetsfromDTM(result)
+                print("-------------------------------------------------------------------------", flush=True)
+            elif msg.topic == "siem-certification-vulnerabilities":
+                print("--------------Kafka Received: siem-certification-vulnerabilities -------------------------")
+                result = msg.value
+                certification_report_json(result)
                 print("-------------------------------------------------------------------------", flush=True)
             else:
                 print("--------------Kafka Received: other topic -------------------------")

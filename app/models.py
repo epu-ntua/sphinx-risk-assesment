@@ -8,12 +8,17 @@ class VulnerabilityReport(db.Model):
     __tablename__ = 'vulnerability_report'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     reportId = db.Column(db.String(), index=True, unique=True)
-    assessment_date = db.Column(db.String())
+    assessment_date = db.Column(db.String())    # only from VAaaS report
     scan_start_time = db.Column(db.String())
     scan_end_time = db.Column(db.String())
-    target_name = db.Column(db.String())
-    cvss_score = db.Column(db.String())
-    total_services = db.Column(db.String())
+    source_component = db.Column(db.Integer)    # 1 for VAaaS, 2 for Certification
+    target_name = db.Column(db.String())    # only from VAaaS report
+    cvss_score = db.Column(db.String())     # only from VAaaS report
+    total_services = db.Column(db.String())     # only from VAaaS report
+    source_attackType = db.Column(db.String())  # only from Certification report
+    source_eventsCount = db.Column(db.String())    # only from Certification report
+    source_riskScore = db.Column(db.String())    # only from Certification report
+    source_severity = db.Column(db.String())  # only from Certification report
     comments = db.Column(db.String())
 
     # CVEs = db.relationship("VReportCVELink", back_populates="vreport_s")
@@ -78,7 +83,7 @@ class RepoAssetService(db.Model):
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     asset_id = db.Column(db.Integer, db.ForeignKey('repo_asset.id'), nullable=False)
     asset = db.relationship("RepoAsset", back_populates="asset_services")
-    vreport_id = db.Column(db.Integer, db.ForeignKey('vulnerability_report.id'), nullable=False)
+    vreport_id = db.Column(db.Integer, db.ForeignKey('vulnerability_report.id'), nullable=True)
     port = db.Column(db.String())
     protocol = db.Column(db.String())
     state = db.Column(db.String())

@@ -40,40 +40,6 @@ def get_RiskML_value(asset_type, threat,estimation_type):
         return -1
 
 
-# url = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/Authentication"
-#     payload = {
-#         'username': 'testR1',
-#         'password': 'testR1123!@'
-#     }
-#     response = requests.request("POST", url, data=payload)
-#     selectedticket = response.json()
-#     requestedTicket = selectedticket["data"]
-#
-#     print("---------------------------------------", flush=True)
-#     print("Login ticket is: ", requestedTicket, flush=True)
-#     print("---------------------------------------", flush=True)
-
-    # # this step was omitted in D6.2
-    # url1 = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/ServiceInfo"
-    # params = {
-    #     'reqservicename': 'DEMOCOMPONENT2'
-    # }
-    # response2 = requests.request("GET", url1, params=params)
-    # selected_service = response2.json()
-    # serviceid =selected_service['service']['aaainfo']['id'][0]
-
-    # This is called in FCDEgetversion
-    # urlx = "http://forensic-engine:5003/FCDEgetversion"
-    # params = {
-    #     'requestedservice': 'FDCE',
-    #     'requestedTicket': requestedTicket
-    # }
-    # responsex = requests.request("GET", urlx, params=params)
-    # reqdata = responsex.json()
-    #
-    # print("---------------------------------------", flush=True)
-    # print("FDCE response is: ", reqdata, flush=True)
-    # print("---------------------------------------", flush=True)
 # endregion 1 RiskML
 # region 2 Reputation
 #     TODO: "provide API to get the estimation"
@@ -95,6 +61,19 @@ def get_ThreatFactorsvaluesfromDB(assetID, threatID):
 # endregion 4 DSS forecasting
 # region return final estimation
 #     TODO: "call functions"
+
+
+ # url = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/Authentication"
+    url = "http://127.0.0.1:5030/invocations"
+    payload = {
+        'username': 'testR1',
+        'password': 'testR1123!@'
+    }
+    headers = {
+      'Content-Type': 'application/json'
+    }
+    response = requests.request("POST", url, headers=headers, data=payload)
+#
 # endregion return final estimation
 
 # endregion Threat Estimation calls
