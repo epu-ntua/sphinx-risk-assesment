@@ -154,4 +154,10 @@ def rcra_db_init():
         to_add_asset_type = RepoAssetsType(**assets_type_json)
         db.session.add(to_add_asset_type)
 
+    # Adding Repo Assets Variety
+    to_add_assets_varieties = import_fixture_from_file("repo_assets_variety")
+    for asset_variety_json in to_add_assets_varieties:
+        to_add_assets_variety = RepoAssetsVariety(**asset_variety_json)
+        db.session.add(to_add_assets_varieties)
+
     db.session.commit()

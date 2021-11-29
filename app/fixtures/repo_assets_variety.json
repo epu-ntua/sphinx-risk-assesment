@@ -1,0 +1,34 @@
+[
+    {
+        "id": "1",
+        "name": "Server"
+    },
+    {
+        "id": "2",
+        "name": "Media"
+    },
+    {
+        "id": "3",
+        "name": "User Dev"
+    },
+    {
+        "id": "4",
+        "name": "Kiosk/Term"
+    },
+    {
+        "id": "5",
+        "name": "Network"
+    },
+    {
+        "id": "6",
+        "name": "Embedded"
+    },
+    {
+        "id": "7",
+        "name": "Facilities"
+    },
+    {
+        "id": "8",
+        "name": "Other"
+    }
+]
