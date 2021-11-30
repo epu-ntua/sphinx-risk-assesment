@@ -67,7 +67,7 @@ class VulnerabilityReportVulnerabilitiesLink(db.Model):
     VReport_assetIp = db.Column(db.String())
     VReport_port = db.Column(db.String())
     VReport_CVSS_score = db.Column(db.String())
-    # date = db.Column(db.DateTime,default=datetime.utcnow())
+    date = db.Column(db.DateTime, default=datetime.utcnow(), nullable=True)
     comments = db.Column(db.String(50))
     controls = db.relationship("RepoControl", uselist=False, back_populates="vulnerabilities")
 
@@ -344,7 +344,7 @@ class RepoRiskAssessmentReports(db.Model):
     risk_assessment_id = db.Column(db.Integer, db.ForeignKey('repo_risk_assessment.id'))
     risk_assessment = db.relationship("RepoRiskAssessment", back_populates="reports")
     date_time = db.Column(db.DateTime)
-    type = db.Column(db.String)  # Possible values are Initial - Manual - Automatic - Incident
+    type = db.Column(db.String)  # Possible values are Initial - Manual - Baseline - Incident
     exposure_set = db.Column(db.String)
     responses_set = db.Column(db.String)
     materialisations_set = db.Column(db.String)
@@ -492,6 +492,15 @@ class RepoAssetsType(db.Model):
     daily_end_time = db.column(db.DateTime)
     role = db.column(db.Integer)  # 1 low - 2 medium - 3 high
     assets = db.relationship("RepoAsset", back_populates="type")
+    variety_fk = db.Column(db.Integer, db.ForeignKey('repo_assets_variety.id'))
+    variety = db.relationship('RepoAssetsVariety', back_populates ="types")
+
+class RepoAssetsVariety(db.Model):
+    __tablename__ = 'repo_assets_variety'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String)
+    types = db.relationship('RepoAssetsType', back_populates ="variety")
+
 
 
 class RepoActor(db.Model):
