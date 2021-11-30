@@ -168,7 +168,15 @@ def view_repo_assets():
         except SQLAlchemyError:
             return Response("SQLAlchemyError", 500)
 
+
         json_assets = convert_database_items_to_json_table(repo_assets)
+        # Add new columns for type and subytpe to de displayed in table
+        # Uses both the object and converted dict list for ease of access
+        for index,json_asset_instance in enumerate(json_assets):
+            json_asset_instance["subtype"] = repo_assets[index].type.name
+            json_asset_instance["type"] = repo_assets[index].type.variety.name
+
+        print(json_assets)
         json_assets = json.dumps(json_assets)
 
         new_asset_form = FormAddRepoAsset()

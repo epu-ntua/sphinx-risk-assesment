@@ -78,20 +78,14 @@ def repo_dashboard_asset():
 
         # repo_assets_type = json.dumps(repo_assets_type)
 
-        repo_assets = [
-            {
-                "id": "1",
-                "name": "Asset1",
-                "location": "Group1",
-                "Verified": "false",
-                "mac_address": "xx:xx:xx:xx",
-                "ip": "xxx.xxx.xxx.xxx",
-                "last_touch_date": "today",
-            }
-        ]
-        repo_asset_unverified = convert_database_items_to_json_table(repo_asset_unverified)
-        repo_asset_unverified = json.dumps(repo_asset_unverified)
-        print(repo_assets)
+        repo_asset_unverified_dict = convert_database_items_to_json_table(repo_asset_unverified)
+        # Add new columns for type and subytpe to de displayed in table
+        # Uses both the object and converted dict list for ease of access
+        for index,json_asset_instance in enumerate(repo_asset_unverified_dict):
+            json_asset_instance["subtype"] = repo_asset_unverified[index].type.name
+            json_asset_instance["type"] = repo_asset_unverified[index].type.variety.name
+
+        repo_asset_unverified = json.dumps(repo_asset_unverified_dict)
         return render_template('templates_dashboard/repo_asset_dashboard.html',
                                repo_asset_unverified=repo_asset_unverified,
                                asset_type_values_list=asset_type_values_list, asset_types_list=asset_types_list,
