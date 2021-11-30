@@ -23,7 +23,7 @@
         $valueBubble[0].style.left = Math.ceil(position) + 'px';
         $valueBubble[0].innerHTML = value;
       }
-    }
+     }
 
     $('input[type="range"]').rangeslider({
       polyfill: false,
@@ -34,7 +34,7 @@
       onSlide: function(pos, value) {
         updateValueBubble(pos, value, this);
       }
-    });
+     });
 
     /*
     * Function to ensure all values always add up to 100
@@ -43,47 +43,83 @@
     *  */
     $('input').change(
         function (){
-            {# Get old and new value#}
-            let oldValue = $(this).attr('oldValue');
-            let currentValue = $(this).val();
+            if ($(this).attr('shouldChange') == "true") {
+                {# Get old and new value#}
+                let oldValue = $(this).attr('oldValue');
+                let currentValue = $(this).val();
 
-            console.log(oldValue)
-            console.log(currentValue)
+                console.log(oldValue)
+                console.log(currentValue)
 
-            let difference = oldValue -currentValue
-            difference = Math.abs(difference)
-            console.log(difference)
-            {# Get the other sliders#}
-            var myId = $(this).attr('id')
-            let idDetails = myId.substr(myId.indexOf("|"))
-            let idLevel = myId.substr(0,myId.indexOf("|"))
-            let otherSlider1Id = ""
-            let otherSlider2Id = ""
-            if (idLevel == "low"){
-                otherSlider1Id = "medium" + idDetails
-                otherSlider2Id = "high" + idDetails
-            }else if (idLevel == "medium") {
-                otherSlider1Id = "low" + idDetails
-                otherSlider2Id = "high" + idDetails
-            } else {
-                otherSlider1Id = "low" + idDetails
-                otherSlider2Id = "medium" + idDetails
+                let difference = oldValue - currentValue
+                difference = Math.abs(difference)
+                console.log(difference)
+                {# Get the other sliders#}
+                var myId = $(this).attr('id')
+                let idDetails = myId.substr(myId.indexOf("|"))
+                let idLevel = myId.substr(0, myId.indexOf("|"))
+                let otherSlider1Id = ""
+                let otherSlider2Id = ""
+                if (idLevel == "low") {
+                    console.log("low")
+                    otherSlider1Id = "medium" + idDetails
+                    otherSlider2Id = "high" + idDetails
+                } else if (idLevel == "medium") {
+                    console.log("medium")
+                    otherSlider1Id = "low" + idDetails
+                    otherSlider2Id = "high" + idDetails
+                } else {
+                    console.log("high")
+                    otherSlider1Id = "low" + idDetails
+                    otherSlider2Id = "medium" + idDetails
+                }
+
+
+                var quotient1 = Math.floor(difference / 2);
+                var quotient2 = Math.ceil(difference / 2);
+                console.log(quotient1)
+                console.log(otherSlider1Id)
+                console.log(otherSlider2Id)
+                console.log(quotient2)
+
+                {# Add attr to avoid endless recursion#}
+                $("#" + $.escapeSelector(otherSlider1Id)).attr("shouldChange", 'false')
+                $("#" + $.escapeSelector(otherSlider2Id)).attr("shouldChange", 'false')
+                {# Check if new value should be added or deleted#}
+                if (oldValue < currentValue) {
+                    {#document.getElementById(otherSlider1Id).value = document.getElementById(otherSlider1Id).value  - quotient1#}
+                    {#document.getElementById(otherSlider2Id).value = document.getElementById(otherSlider2Id).value  - quotient2#}
+                    $("#" + $.escapeSelector(otherSlider1Id)).val( parseInt( $("#" + $.escapeSelector(otherSlider1Id))) - quotient1).change()
+                    {#$("#" + $.escapeSelector(otherSlider1Id)).val( parseInt( $("#" + $.escapeSelector(otherSlider1Id))) - quotient1)#}
+                    $("#" + $.escapeSelector(otherSlider2Id)).val( parseInt( $("#" + $.escapeSelector(otherSlider2Id))) - quotient2).change()
+                    {#$("#" + $.escapeSelector(otherSlider2Id)).val( parseInt( $("#" + $.escapeSelector(otherSlider2Id))) - quotient2)#}
+                    {#$("#" + $.escapeSelector(otherSlider2Id)).val(document.getElementById(otherSlider2Id).value - quotient2).change()#}
+                } else {
+                    $("#" + $.escapeSelector(otherSlider1Id)).val( parseInt( $("#" + $.escapeSelector(otherSlider1Id))) + quotient1).change()
+                    {#$("#" + $.escapeSelector(otherSlider1Id)).val( parseInt( $("#" + $.escapeSelector(otherSlider1Id))) + quotient1)#}
+                    $("#" + $.escapeSelector(otherSlider2Id)).val( parseInt( $("#" + $.escapeSelector(otherSlider2Id))) + quotient2).change()
+                    {#$("#" + $.escapeSelector(otherSlider2Id)).val( parseInt( $("#" + $.escapeSelector(otherSlider2Id))) + quotient2)#}
+                }
+                console.log(document.getElementById(otherSlider1Id).value + quotient1)
+                console.log(document.getElementById(otherSlider1Id).value)
+                {#console.log(document.getElementById(otherSlider1Id).value + quotient1)#}
+                console.log("-----------------------------------")
+                {#document.getElementById(otherSlider1Id).value = quotient1#}
+                {#document.getElementById(otherSlider2Id).value = quotient2#}
+                {#$("#" + myId).val(quotient1)#}
+                {#$("#"+ otherSlider1Id).val(quotient1);#}
+                {#$("#"+ otherSlider2Id).val(quotient2);#}
+                {#var otherSlider1 = #}
+                {#var otherSlider2 = #}
+
+                {#console.log(oldValue)#}
+                {#console.log(currentValue)#}
+                {#  Update Value #}
+                $(this).attr('oldValue', $(this).val());
+            }else {
+                $(this).attr('shouldChange', "true")
+                $(this).attr('oldValue', $(this).val());
             }
-
-
-            var quotient1 = Math.floor( difference/2);
-            var quotient2 = Math.ceil( difference/2);
-            console.log(quotient1)
-            console.log(quotient2)
-            $("#" + myId).val(quotient1)
-            $("#"+ otherSlider1Id).val(quotient1);
-            $("#"+ otherSlider2Id).val(quotient2);
-            {#var otherSlider1 = #}
-            {#var otherSlider2 = #}
-
-            {#console.log(oldValue)#}
-            {#console.log(currentValue)#}
-             $(this).attr('oldValue',$(this).val());
         }
     );
     </script>
@@ -208,6 +244,7 @@
                                                            max="100"
                                                            value="{{ impact_calculation_wrapper[-3] }}"
                                                            oldValue = "{{ impact_calculation_wrapper[-3] }}"
+                                                           shouldChange = "true"
 {#                                                           oninput="this.previousElementSibling.value = this.value"#}
                                                     >
 
@@ -249,6 +286,7 @@
                                                            value="{{ impact_calculation_wrapper[-2] }}"
                                                            oldValue = "{{ impact_calculation_wrapper[-3] }}"
                                                            name="objective_state_alert_3"
+                                                           shouldChange = "true"
 {#                                                           oninput="this.previousElementSibling.value = this.value"#}
                                                     >
                                                 </div>
@@ -288,6 +326,7 @@
                                                            max="100"
                                                            value="{{ impact_calculation_wrapper[-1] }}"
                                                            oldValue = "{{ impact_calculation_wrapper[-3] }}"
+                                                           shouldChange = "true"
                                                            name="objective_state_alert_3"/>
 {#                                                           oninput="this.previousElementSibling.value = this.value">#}
                                                 </div>

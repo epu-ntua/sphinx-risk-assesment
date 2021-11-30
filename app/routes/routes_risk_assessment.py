@@ -785,9 +785,9 @@ def repo_risk_configuration_impacts_risk(threat_id=1, asset_id=-1, impact_id=-1)
         )
         if does_exist.count() == 0:
             for to_send in array_impact_calculation:
-                to_send.append(50)
-                to_send.append(50)
-                to_send.append(50)
+                to_send.append(34)
+                to_send.append(33)
+                to_send.append(33)
             # to_score_entry = does_exist.first()
         else:
             custom_it = 0
