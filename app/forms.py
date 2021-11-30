@@ -80,6 +80,7 @@ class FormAddVulnerabilityReportVulnerabilitiesLink(FlaskForm):
     VReport_id = StringField('VReport_id', validators=[Optional()])
     VReport_CVSS_score = StringField('VReport_CVSS_score', validators=[Optional()])
     VReport_assetIp = StringField('VReport_assetIp', validators=[Optional()])
+    date = DateTimeField('date', validators=[Optional()])
     submit = SubmitField("Add new Vulnerability")
 
 

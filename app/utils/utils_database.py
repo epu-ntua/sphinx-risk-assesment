@@ -158,6 +158,12 @@ def rcra_db_init():
     to_add_assets_varieties = import_fixture_from_file("repo_assets_variety")
     for asset_variety_json in to_add_assets_varieties:
         to_add_assets_variety = RepoAssetsVariety(**asset_variety_json)
-        db.session.add(to_add_assets_varieties)
+        db.session.add(to_add_assets_variety)
+
+    # Adding Repo Net Group
+    to_add_net_groups = import_fixture_from_file("repo_net_group")
+    for net_group_json in to_add_net_groups:
+        to_add_net_group = RepoNetGroup(**net_group_json)
+        db.session.add(to_add_net_group)
 
     db.session.commit()

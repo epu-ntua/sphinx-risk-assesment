@@ -362,7 +362,7 @@ def certification_report_json(report_details):
                     my_link = VulnerabilityReport.query.join(VulnerabilityReportVulnerabilitiesLink).join(CommonVulnerabilitiesAndExposures).filter((VulnerabilityReportVulnerabilitiesLink.vreport_id == my_json_report.id) & (VulnerabilityReportVulnerabilitiesLink.cve_id == my_cve.id)).first()
                 my_link.asset_id = my_repo_asset.id
                 my_link.VReport_assetIp = item['agent.ip'] if item['agent.ip'] is not None else ""
-                my_link.VReport_CVSS_score = item['cvss3'] if item['cvss3'] is not None else ""
+                my_link.VReport_CVSS_score = '{0:.2f}'.format(float(item['cvss3'])) if item['cvss3'] is not None else ""
                 my_link.comments = item['rule.description'] if item['rule.description'] is not None else ""
                 try:
                     db.session.commit()
