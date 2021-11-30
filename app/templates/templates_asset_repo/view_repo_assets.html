@@ -58,8 +58,37 @@
         }
 
         function populateEditFields(row) {
-            $("#editForm").find("#id").val(row.id)
-            $("#editForm").find("#name").val(row.name)
+            console.log(row)
+            $("#editForm").find("#edit_id").val(row.id)
+            $("#editForm").find("#edit_name").val(row.name)
+            $("#editForm").find("#edit_description").val(row.description)
+            $("#editForm").find("#edit_owner").val(row.owner)
+            $("#editForm").find("#edit_location").val(row.location)
+            if (row.verified == true) {
+                $("#editForm").find("#edit_verified").prop('checked', true)
+            }else {
+                $("#editForm").find("#edit_verified").prop('checked', false)
+            }
+            $("#editForm").find("#edit_verified_by").val(row.verified_by)
+            $("#editForm").find("#edit_mac_address").val(row.mac_address)
+             if (row.has_static_ip == true) {
+                $("#editForm").find("#edit_has_static_ip").prop('checked', true)
+            }else {
+                $("#editForm").find("#edit_has_static_ip").prop('checked', false)
+            }
+            $("#editForm").find("#edit_ip").val(row.ip)
+            $("#editForm").find("#edit_net_group_fk").val(row.net_group_fk)
+            $("#editForm").find("#edit_value").val(row.value)
+            $("#editForm").find("#edit_loss_of_revenue").val(row.loss_of_revenue)
+            $("#editForm").find("#edit_additional_expenses").val(row.additional_expenses)
+            $("#editForm").find("#edit_regulatory_legal").val(row.regulatory_legal)
+            $("#editForm").find("#edit_customer_service").val(row.customer_service)
+            $("#editForm").find("#edit_goodwill").val(row.goodwill)
+            $("#editForm").find("#edit_last_touch_date").val(row.last_touch_date)
+            $("#editForm").find("#edit_type_fk").val(row.type_fk)
+            $("#editForm").find("#edit_integrity").val(row.integrity)
+            $("#editForm").find("#edit_type").val(row.type)
+            $("#editForm").find("#edit_subtype").val(row.subtype)
         }
 
 
@@ -70,33 +99,33 @@
             }
         }
 
-        window.operateEvents1 = {
-            'click .fa-edit': function (e, value, row, index) {
-                populateEditFields(row)
+        {#window.operateEvents1 = {#}
+        {#    'click .fa-edit': function (e, value, row, index) {#}
+                {#populateEditFields(row)#}
                 {#alert('You click like action, row: ' + JSON.stringify(row))#}
-            }
-        }
-
-        window.operateEvents2 = {
-            'click .fa-edit': function (e, value, row, index) {
-                populateEditFields(row)
+        {#    }#}
+        {# }#}
+        {##}
+        {#window.operateEvents2 = {#}
+        {#    'click .fa-edit': function (e, value, row, index) {#}
+        {#        populateEditFields(row)#}
                 {#alert('You click like action, row: ' + JSON.stringify(row))#}
-            }
-        }
+        {#    }#}
+        {# }#}
 
         function rowStyle(row, index) {
-            console.log(row)
-            console.log(row.has_static_ip)
+            {#console.log(row)#}
+            {#console.log(row.has_static_ip)#}
             if (typeof row.verified !== "undefined") {
                 if (row.verified === true) {
-                    console.log("Is false")
+                    {#console.log("Is false")#}
                     return {
                         css: {
                             color: 'green'
                         }
                     }
                 } else {
-                    console.log("Is true")
+                    {#console.log("Is true")#}
                     return {
                         css: {
                             color: 'red'
@@ -104,7 +133,7 @@
                     }
                 }
             } else {
-                console.log("Is undefined")
+                {#console.log("Is undefined")#}
                 return {
                     css: {
                         color: 'red'
@@ -120,11 +149,11 @@
         * If it doesnt start with x. it will default to other
         * */
         function setFormTypeNames() {
-            console.log("start")
+            {#console.log("start")#}
             const optionToChange = $("#type_fk").children('option')
-            console.log(optionToChange)
+            {#console.log(optionToChange)#}
             for (let it=0; it < optionToChange.length; it++) {
-                console.log("loop")
+                {#console.log("loop")#}
                 let typeToAdd = "Other"
                 if (optionToChange[it].innerHTML[1] == ".") {
                     if (optionToChange[it].innerHTML[0] == "S") {
@@ -140,6 +169,27 @@
                     }
                 }
                 optionToChange[it].innerHTML = "Subtype: " + optionToChange[it].innerHTML + " | Type: " + typeToAdd
+            }
+
+            const optionEditToChange = $("#edit_type_fk").children('option')
+            {#console.log(optionToChange)#}
+            for (let it=0; it < optionEditToChange.length; it++) {
+                {#console.log("loop")#}
+                let typeToAdd = "Other"
+                if (optionEditToChange[it].innerHTML[1] == ".") {
+                    if (optionEditToChange[it].innerHTML[0] == "S") {
+                        typeToAdd = "Server"
+                    } else if (optionEditToChange[it].innerHTML[0] == "U") {
+                        typeToAdd = "User"
+                    } else if (optionEditToChange[it].innerHTML[0] == "D") {
+                        typeToAdd = "Device"
+                    } else if (optionEditToChange[it].innerHTML[0] == "P") {
+                        typeToAdd = "Person"
+                    } else if (optionEditToChange[it].innerHTML[0] == "M") {
+                        typeToAdd = "Media"
+                    }
+                }
+                optionEditToChange[it].innerHTML = "Subtype: " + optionEditToChange[it].innerHTML + " | Type: " + typeToAdd
             }
         }
 
@@ -183,8 +233,8 @@
         <thead>
         <tr>
             <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents"></th>
-            <th data-field="operate" data-formatter="operateFormatter1" data-events="operateEvents1"></th>
-            <th data-field="operate" data-formatter="operateFormatter2" data-events="operateEvents2"></th>
+            <th data-field="operate" data-formatter="operateFormatter1" ></th>
+            <th data-field="operate" data-formatter="operateFormatter2" ></th>
             <th data-field="id" data-sortable="true">ID</th>
             <th data-field="name" data-sortable="true">Name</th>
             <th data-field="description" data-sortable="true">Description</th>
@@ -236,7 +286,7 @@
                 <div class="modal-body">
                     <form id="editForm" action="/repo/assets/" method="post" class="form form-horizontal" method="post"
                           role="form" novalidate>
-                        {{ wtf.quick_form(new_asset_form) }}
+                        {{ wtf.quick_form(edit_asset_form) }}
                         {#                        {{ new_asset_form.hidden_tag() }}#}
                         {##}
                         {#                        {{ wtf.form_field(new_asset_form.name) }}#}
