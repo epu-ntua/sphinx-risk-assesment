@@ -1010,7 +1010,7 @@ def view_repo_serivce_info(service_id):
                                new_service_impact_form=new_service_impact_form)
 
 
-# DONT THIS THIS IS VALID ANYMORE
+# DONT THINK THIS IS VALID ANYMORE
 @app.route('/repo/assets/threats-relations/<asset_id>/', methods=['GET', 'POST'])
 def view_repo_asset_threats_relation(asset_id):
     if request.method == 'POST':

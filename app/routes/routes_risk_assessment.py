@@ -555,7 +555,8 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
         # for toprint in array_threat_consequence_calculation:
         #     print("Consequences are: ", toprint)
         try:
-            repo_controls = RepoControl.query.join(VulnerabilityReportVulnerabilitiesLink).filter(VulnerabilityReportVulnerabilitiesLink.asset_id == asset_id).all()
+            repo_controls = RepoControl.query.join(VulnerabilityReportVulnerabilitiesLink).filter(
+                VulnerabilityReportVulnerabilitiesLink.asset_id == asset_id).all()
         except SQLAlchemyError:
             return Response("SQLAlchemyError", 500)
 
@@ -1379,6 +1380,7 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
         check_asset_impact_exists = 0
         check_objectives_impact_exists = 0
         check_utility_conf_exists = 0
+        check_asset_service_exists = 0
         asset_is_related = 0
         if asset_id != -1:
             try:
@@ -1407,30 +1409,39 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
             try:
                 asset_threat_impact_relationship = RepoAssetThreatConsequenceServiceImpactRelationship.query.filter_by(
                     repo_asset_id=asset_id,
-                    repo_threat_id=threat_id)
+                    repo_threat_id=threat_id).group_by(
+                    RepoAssetThreatConsequenceServiceImpactRelationship.repo_impact_id)
             except SQLAlchemyError:
                 return Response("SQLAlchemyError", 500)
 
-            if asset_threat_impact_relationship.count() > 0:
+            # print("GROUP BY COUNT IS--", asset_threat_impact_relationship.count())
+            asset_threat_impact_count = asset_threat_impact_relationship.count()
+            if asset_threat_impact_count >= 6:
                 check_asset_impact_exists = 1
 
             try:
-                objective_impact_relationship = RepoObjectiveImpactRelationship.query
+                objective_impact_relationship = RepoObjectiveImpactRelationship.query.group_by(
+                    RepoObjectiveImpactRelationship.repo_objective_id)
             except SQLAlchemyError:
                 return Response("SQLAlchemyError", 500)
 
-            if objective_impact_relationship.count() > 0:
+            objective_impact_count = objective_impact_relationship.count()
+            if objective_impact_count >= 5:
                 check_objectives_impact_exists = 1
 
             try:
-                utility_conf = RepoUtilityObjectiveRelationship.query
+                utility_conf = RepoUtilityObjectiveRelationship.query.group_by(RepoUtilityObjectiveRelationship.repo_utility_id)
             except SQLAlchemyError:
                 return Response("SQLAlchemyError", 500)
 
-            if utility_conf.count() > 0:
+            utility_count = utility_conf.count()
+            if utility_count >= 2:
                 check_utility_conf_exists = 1
 
-
+            # Check if asset has been assigned any service
+            print("GROUP BY COUNT IS--", this_asset[0].services)
+            if len(this_asset[0].services) > 0:
+                check_asset_service_exists = 1
         else:
             this_asset = []
 
@@ -1467,7 +1478,11 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
                                check_asset_impact_exists=check_asset_impact_exists,
                                check_objectives_impact_exists=check_objectives_impact_exists,
                                check_utility_conf_exists=check_utility_conf_exists,
-                               asset_is_related=asset_is_related
+                               check_asset_service_exists = check_asset_service_exists,
+                               asset_is_related=asset_is_related,
+                               asset_threat_impact_count=asset_threat_impact_count,
+                               objective_impact_count=objective_impact_count,
+                               utility_count=utility_count
                                )
 
 

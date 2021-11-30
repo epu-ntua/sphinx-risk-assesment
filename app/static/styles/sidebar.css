@@ -1,70 +1,161 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat');
 
 /*-------------------------------- END ----*/
-    #body-row {
-        margin-left: 0;
-        margin-right: 0;
-    }
+#body-row {
+    margin-left: 0;
+    margin-right: 0;
+}
 
-    #sidebar-container {
-        min-height: 100vh;
-        background-color: #132644;
-        padding: 0;
-        /* flex: unset; */
-    }
+#sidebar-container {
+    min-height: 100vh;
+    background-color: #132644;
+    padding: 0;
+    /* flex: unset; */
+}
 
-    .sidebar-expanded {
-        width: 230px;
-    }
+.sidebar-expanded {
+    width: 230px;
+}
 
-    .sidebar-collapsed {
-        /*width: 60px;*/
-        width: 100px;
-    }
+.sidebar-collapsed {
+    /*width: 60px;*/
+    width: 100px;
+}
 
-    /* ----------| Menu item*/
-    #sidebar-container .list-group a {
-        height: 50px;
-        color: white;
-    }
+/* ----------| Menu item*/
+#sidebar-container .list-group a {
+    height: 50px;
+    color: white;
+}
 
-    /* ----------| Submenu item*/
-    #sidebar-container .list-group li.list-group-item {
-        background-color: #132644;
-    }
+/* ----------| Submenu item*/
+#sidebar-container .list-group li.list-group-item {
+    background-color: #132644;
+}
 
-    #sidebar-container .list-group .sidebar-submenu a {
-        height: 45px;
-        padding-left: 30px;
-    }
+#sidebar-container .list-group .sidebar-submenu a {
+    height: 45px;
+    padding-left: 30px;
+}
 
-    .sidebar-submenu {
-        font-size: 0.9rem;
-    }
+.sidebar-submenu {
+    font-size: 0.9rem;
+}
 
-    /* ----------| Separators */
-    .sidebar-separator-title {
-        background-color: #132644;
-        height: 35px;
-    }
+/* ----------| Separators */
+.sidebar-separator-title {
+    background-color: #132644;
+    height: 35px;
+}
 
-    .sidebar-separator {
-        background-color: #132644;
-        height: 25px;
-    }
+.sidebar-separator {
+    background-color: #132644;
+    height: 25px;
+}
 
-    .logo-separator {
-        background-color: #132644;
-        height: 60px;
-    }
+.logo-separator {
+    background-color: #132644;
+    height: 60px;
+}
 
-    a.bg-dark {
-        background-color: #132644 !important;
-    }
+a.bg-dark {
+    background-color: #132644 !important;
+}
 
-    .btn-table-percentage{
-        width: auto;
-        background-color: white;
-        color: #4f4f4f;
-        border-color: #4f4f4f;
-    }
+.btn-table-percentage {
+    width: auto;
+    background-color: white;
+    color: #4f4f4f;
+    border-color: #4f4f4f;
+}
+
+/*input[type="range"]::-moz-range-track {*/
+/*  padding: 0 10px;*/
+/*  background: repeating-linear-gradient(to right,*/
+/*    #ccc,*/
+/*    #ccc 10%,*/
+/*    #000 10%,*/
+/*    #000 11%,*/
+/*    #ccc 11%,*/
+/*    #ccc 20%);*/
+/*}*/
+
+@import "https://fonts.googleapis.com/css?family=Ubuntu+Mono";
+
+
+wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    padding: 15rem;
+}
+
+.rangeslider {
+    background-color: #fff;
+    border-radius: 0;
+    height: 0.2rem;
+}
+
+.rangeslider__fill {
+    background-color: #f01f14;
+    border-radius: 0;
+}
+
+.rangeslider__handle {
+    width: 1.5rem;
+    height: 1.5rem;
+    position: absolute;
+    transition: transform 0.3s ease-in-out;
+    -moz-transition: transform 0.3s ease-in-out;
+    -webkit-transition: transform 0.3s ease-in-out;
+}
+
+.rangeslider__handle::after {
+    display: none;
+}
+
+.rangeslider__handle:hover, .rangeslider__handle:active {
+    -ms-transform: scale(1.2, 1.2);
+    /* IE 9 */
+    -webkit-transform: scale(1.2, 1.2);
+    /* Safari */
+    transform: scale(1.2, 1.2);
+    transition: transform 0.1s ease-in-out;
+    -moz-transition: transform 0.1s ease-in-out;
+    -webkit-transition: transform 0.1s ease-in-out;
+}
+
+.rangeslider__value-bubble {
+    position: absolute;
+    top: auto;
+    left: 50%;
+    bottom: 2.5rem;
+    transform: translate(-50%, 0);
+    -webkit-transform: translate(-50%, 0);
+    -ms-transform: translate(-50%, 0);
+    text-align: center;
+    background-color: #00a79d;
+    padding: 0.60rem;
+    color: #fff;
+    width: auto;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.rangeslider__value-bubble::before {
+    content: "";
+    width: 0;
+    height: 0;
+    border-left: 1rem solid transparent;
+    border-right: 1rem solid transparent;
+    border-top: 1rem solid #00a79d;
+    position: absolute;
+    top: auto;
+    left: 50%;
+    bottom: -1rem;
+    transform: translate(-50%, -45%);
+    -webkit-transform: translate(-50%, -45%);
+    -ms-transform: translate(-50%, -45%);
+}
