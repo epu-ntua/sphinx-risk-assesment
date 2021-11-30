@@ -284,12 +284,14 @@ def get_kafka_data_print_test(kafka_topic):
                 print("--------------Kafka Received: dtm-asset -------------------------")
                 # print(dat)
                 result = msg.value
-                getAssetsfromDTM(result)
+                result_json = json.load(result)
+                getAssetsfromDTM(result_json)
                 print("-------------------------------------------------------------------------", flush=True)
             elif msg.topic == "siem-certification-vulnerabilities":
                 print("--------------Kafka Received: siem-certification-vulnerabilities -------------------------")
                 result = msg.value
-                certification_report_json(result)
+                result_json = json.load(result)
+                certification_report_json(result_json)
                 print("-------------------------------------------------------------------------", flush=True)
             else:
                 print("--------------Kafka Received: other topic -------------------------")

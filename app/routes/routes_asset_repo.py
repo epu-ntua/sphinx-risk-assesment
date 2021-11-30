@@ -614,7 +614,13 @@ def view_repo_net_groups():
 def view_repo_vulnerabilities():
     path_to_VAaaS_report = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)),
                                         'Json_texts', 'report_example_stix.json')
+    path_to_SIEM_report = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)),
+                                        'Json_texts', 'siem-certification-vulnerabilities.json')
     x = v_report(path_to_VAaaS_report)
+    with open(path_to_SIEM_report, "r") as fp:
+        obj = json.load(fp)
+        y = certification_report_json(obj)
+
     if request.method == 'POST':
         new_vulnerability_form = FormAddVulnerabilityReportVulnerabilitiesLink()
 
