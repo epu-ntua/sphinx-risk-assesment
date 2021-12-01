@@ -1,23 +1,30 @@
 from app import db
 from datetime import datetime
 
-
 # from app.mixins import ModelMixin
+repo_asset_common_vulnerabilities_and_exposures_association_table = db.Table(
+    'repo_asset_common_vulnerabilities_and_exposures_association_table',
+    db.Model.metadata,
+    db.Column('repo_asset_id', db.Integer, db.ForeignKey('repo_asset.id')),
+    db.Column('common_vulnerabilities_and_exposures_id', db.Integer,
+              db.ForeignKey('common_vulnerabilities_and_exposures.id'))
+)
+
 
 class VulnerabilityReport(db.Model):
     __tablename__ = 'vulnerability_report'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     reportId = db.Column(db.String(), index=True, unique=True)
-    assessment_date = db.Column(db.String())    # only from VAaaS report
+    assessment_date = db.Column(db.String())  # only from VAaaS report
     scan_start_time = db.Column(db.String())
     scan_end_time = db.Column(db.String())
-    source_component = db.Column(db.Integer)    # 1 for VAaaS, 2 for Certification
-    target_name = db.Column(db.String())    # only from VAaaS report
-    cvss_score = db.Column(db.String())     # only from VAaaS report
-    total_services = db.Column(db.String())     # only from VAaaS report
+    source_component = db.Column(db.Integer)  # 1 for VAaaS, 2 for Certification
+    target_name = db.Column(db.String())  # only from VAaaS report
+    cvss_score = db.Column(db.String())  # only from VAaaS report
+    total_services = db.Column(db.String())  # only from VAaaS report
     source_attackType = db.Column(db.String())  # only from Certification report
-    source_eventsCount = db.Column(db.String())    # only from Certification report
-    source_riskScore = db.Column(db.String())    # only from Certification report
+    source_eventsCount = db.Column(db.String())  # only from Certification report
+    source_riskScore = db.Column(db.String())  # only from Certification report
     source_severity = db.Column(db.String())  # only from Certification report
     comments = db.Column(db.String())
 
@@ -47,6 +54,9 @@ class CommonVulnerabilitiesAndExposures(db.Model):
     obtainUserPrivilege = db.Column(db.Boolean)
     obtainOtherPrivilege = db.Column(db.Boolean)
     userInteractionRequired = db.Column(db.Boolean)
+    assets = db.relationship("RepoAsset",
+                             secondary=repo_asset_common_vulnerabilities_and_exposures_association_table,
+                             back_populates="cves")
 
     # # Relationships
     # VReports = db.relationship("VReportCVELink", back_populates="cve_s")
@@ -479,6 +489,9 @@ class RepoAsset(db.Model):
     confidentiality = db.Column(db.Integer)
     services = db.relationship("RepoService", secondary=repo_asset_repo_service_association_table,
                                back_populates="assets")
+    cves = db.relationship("CommonVulnerabilitiesAndExposures",
+                           secondary=repo_asset_common_vulnerabilities_and_exposures_association_table,
+                           back_populates="assets")
     # risk_assessment = db.relationship("RepoRiskAssessment", secondary=repo_risk_assessment_repo_asset_association_table,
     #                            back_populates="assets")
     threats = db.relationship("RepoAssetRepoThreatRelationship",
@@ -496,14 +509,14 @@ class RepoAssetsType(db.Model):
     role = db.Column(db.Integer)  # 1 low - 2 medium - 3 high
     assets = db.relationship("RepoAsset", back_populates="type")
     variety_fk = db.Column(db.Integer, db.ForeignKey('repo_assets_variety.id'))
-    variety = db.relationship('RepoAssetsVariety', back_populates ="types")
+    variety = db.relationship('RepoAssetsVariety', back_populates="types")
+
 
 class RepoAssetsVariety(db.Model):
     __tablename__ = 'repo_assets_variety'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String)
-    types = db.relationship('RepoAssetsType', back_populates ="variety")
-
+    types = db.relationship('RepoAssetsType', back_populates="variety")
 
 
 class RepoActor(db.Model):

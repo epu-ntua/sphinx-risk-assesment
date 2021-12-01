@@ -727,7 +727,7 @@ def view_repo_vulnerability_info(vulnerability_id):
         # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
 
         json_vulnerabilities = convert_database_items_to_json_table(repo_services)
-        json_vulnerabilities = json.dumps(json_vulnerabilities)
+        json_vulnerabilities = json.dumps(json_vulnerabilities, default=str)
 
         this_vulnerability = convert_database_items_to_json_table(this_vulnerability)
         this_vulnerability = json.dumps(this_vulnerability)
@@ -884,6 +884,97 @@ def view_repo_threat_info(threat_id):
                                new_materialisation_form=new_materialisation_form,
                                new_consequence_form=new_consequence_form,
                                repo_responses=repo_responses, new_response_form=new_response_form)
+
+
+@app.route('/repo/threat/<threat_id>/cve/', methods=['GET', 'POST'])
+def view_repo_threat_cve(threat_id):
+    if request.method == 'POST':
+        # new_materialisation_consequence_form = FormAddRepoMaterialisationConsequence()
+
+        new_materialisation_form = FormAddRepoMaterialisation()
+        new_consequence_form = FormAddRepoConsequence()
+
+        new_response_form = FormAddRepoResponse()
+
+        if new_materialisation_form.validate_on_submit():
+            print("SAVING MATERIALISATION")
+            to_add_materialisation = RepoMaterialisation(
+                name=new_materialisation_form.name_materialisation.data,
+                threat_id=new_materialisation_form.threat_id.data)
+
+            db.session.add(to_add_materialisation)
+            db.session.commit()
+        else:
+            print("Form Materialisation Error :", new_materialisation_form.errors)
+
+        if new_consequence_form.validate_on_submit():
+            print("SAVING CONSEQUENCE")
+            to_add_consequences = RepoConsequence(name=new_consequence_form.name_consequence.data,
+                                                  threat_id=new_consequence_form.threat_id.data,
+                                                  materialisation_id=new_consequence_form.materialisation_fk.data.id)
+
+            db.session.add(to_add_consequences)
+            db.session.commit()
+        else:
+            print("Form Materialisation Error :", new_materialisation_form.errors)
+
+        if new_response_form.validate_on_submit():
+            print("SAVING RESPONSE")
+            to_add_response = RepoResponse(name=new_response_form.name.data, threat_id=new_response_form.threat_id.data)
+
+            db.session.add(to_add_response)
+            db.session.commit()
+        else:
+            print("Form Response :", new_response_form.errors)
+
+        return redirect("/repo/threat/" + threat_id + "/info/")
+    else:
+        try:
+            repo_threat = RepoThreat.query.filter_by(id=threat_id).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        try:
+            repo_materialisations = RepoMaterialisation.query.filter_by(threat_id=threat_id).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        try:
+            repo_consequences = RepoConsequence.query.filter_by(threat_id=threat_id).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        try:
+            repo_responses = RepoResponse.query.filter_by(threat_id=threat_id).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        repo_threat = convert_database_items_to_json_table(repo_threat)
+        repo_threat_dict = repo_threat
+        repo_threat = json.dumps(repo_threat)
+
+        repo_materialisations = convert_database_items_to_json_table(repo_materialisations)
+        repo_materialisations = json.dumps(repo_materialisations)
+
+        repo_consequences = convert_database_items_to_json_table(repo_consequences)
+        repo_consequences = json.dumps(repo_consequences)
+
+        repo_responses = convert_database_items_to_json_table(repo_responses)
+        repo_responses = json.dumps(repo_responses)
+
+        # new_materialisation_consequence_form = FormAddRepoMaterialisationConsequence()
+        new_materialisation_form = FormAddRepoMaterialisation()
+        new_consequence_form = FormAddRepoConsequence()
+
+        new_response_form = FormAddRepoResponse()
+        print("Mats here is: ", repo_materialisations)
+        return render_template("templates_asset_repo/view_repo_threat_cve.html", repo_threat=repo_threat,
+                               repo_threat_dict=repo_threat_dict,
+                               repo_materialisations=repo_materialisations, repo_consequences=repo_consequences,
+                               new_materialisation_form=new_materialisation_form,
+                               new_consequence_form=new_consequence_form,
+                               repo_responses=repo_responses, new_response_form=new_response_form)
+
 
 
 @app.route('/repo/threat/<threat_id>/info/consequence/<consequence_id>/info/', methods=['GET', 'POST'])
