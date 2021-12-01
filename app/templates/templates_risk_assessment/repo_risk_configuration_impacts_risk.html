@@ -45,21 +45,25 @@
         function (){
             if ($(this).attr('shouldChange') == "true") {
                 {# Get old and new value#}
-                let oldValue = $(this).attr('oldValue');
-                let currentValue = $(this).val();
+                let oldValue = parseInt($(this).attr('oldValue'));
+                let currentValue = parseInt($(this).val());
 
                 console.log(oldValue)
                 console.log(currentValue)
 
+                {#Find the difference between new and old values#}
                 let difference = oldValue - currentValue
                 difference = Math.abs(difference)
                 console.log(difference)
+
                 {# Get the other sliders#}
                 var myId = $(this).attr('id')
                 let idDetails = myId.substr(myId.indexOf("|"))
                 let idLevel = myId.substr(0, myId.indexOf("|"))
                 let otherSlider1Id = ""
                 let otherSlider2Id = ""
+
+                {# Find which slider was changed and select the other two#}
                 if (idLevel == "low") {
                     console.log("low")
                     otherSlider1Id = "medium" + idDetails
@@ -75,35 +79,108 @@
                 }
 
 
-                var quotient1 = Math.floor(difference / 2);
-                var quotient2 = Math.ceil(difference / 2);
-                console.log(quotient1)
-                console.log(otherSlider1Id)
-                console.log(otherSlider2Id)
-                console.log(quotient2)
+                {#console.log(quotient1)#}
+                {#console.log(otherSlider1Id)#}
+                {#console.log(otherSlider2Id)#}
+                {#console.log(quotient2)#}
 
                 {# Add attr to avoid endless recursion#}
                 $("#" + $.escapeSelector(otherSlider1Id)).attr("shouldChange", 'false')
                 $("#" + $.escapeSelector(otherSlider2Id)).attr("shouldChange", 'false')
                 {# Check if new value should be added or deleted#}
                 if (oldValue < currentValue) {
+                    let quotient1 = 0;
+                    let quotient2 = 0;
+                     {#Put higher value to the slide with the highest previous value#}
+                    if( parseInt($("#" + $.escapeSelector(otherSlider1Id)).val()) > parseInt($("#" + $.escapeSelector(otherSlider2Id)).val())){
+                        quotient1 = Math.ceil(difference / 2);
+                        quotient2 = Math.floor(difference / 2);
+                    }else if (parseInt($("#" + $.escapeSelector(otherSlider1Id)).val()) < parseInt($("#" + $.escapeSelector(otherSlider2Id)).val())){
+                        quotient1 = Math.floor(difference / 2);
+                        quotient2 = Math.ceil(difference / 2);
+                    }else{
+                        {# They are equal so it doesnt matter#}
+                        quotient1 = Math.floor(difference / 2);
+                        quotient2 = Math.ceil(difference / 2);
+                    }
+                    {#Check any of the other sliders overflow and transfer the amount to the other slider#}
+                    let potentialNewValue1 = parseInt($("#" + $.escapeSelector(otherSlider1Id)).val())- quotient1
+                    let potentialNewValue2 = parseInt($("#" + $.escapeSelector(otherSlider2Id)).val()) - quotient2
+                    {# Only one of these values will be overflowing, if both are there is an error#}
+                    {# Check if any of the potential values overflows below zero#}
+                    if( potentialNewValue1 < 0 ){
+                        {#Find how much the value overflows#}
+                        let overflowDifference = Math.abs(potentialNewValue1)
+                        {#overflowing value should stay at 0 and the other value should absorb the overflow#}
+                        potentialNewValue1 += overflowDifference //Should always be 0
+                        potentialNewValue2 -= overflowDifference //Should always be >=0
+                    } else if (potentialNewValue2 < 0){
+                        {#Find how much the value overflows#}
+                        let overflowDifference = Math.abs(potentialNewValue2)
+                        {#overflowing value should stay at 0 and the other value should absorb the overflow#}
+                        potentialNewValue2 += overflowDifference //Should always be 0
+                        potentialNewValue1 -= overflowDifference //Should always be >=0
+                    }
+
                     {#document.getElementById(otherSlider1Id).value = document.getElementById(otherSlider1Id).value  - quotient1#}
                     {#document.getElementById(otherSlider2Id).value = document.getElementById(otherSlider2Id).value  - quotient2#}
-                    $("#" + $.escapeSelector(otherSlider1Id)).val( parseInt( $("#" + $.escapeSelector(otherSlider1Id))) - quotient1).change()
+                    console.log("------Values of changes--------")
+                    console.log("------old Values of slider 1--------")
+                    console.log(parseInt( $("#" + $.escapeSelector(otherSlider1Id)).val()))
+                    console.log(quotient1)
+                    console.log(parseInt( $("#" + $.escapeSelector(otherSlider2Id)).val()))
+                    console.log(quotient2)
+                    $("#" + $.escapeSelector(otherSlider1Id)).val(potentialNewValue1).change()
                     {#$("#" + $.escapeSelector(otherSlider1Id)).val( parseInt( $("#" + $.escapeSelector(otherSlider1Id))) - quotient1)#}
-                    $("#" + $.escapeSelector(otherSlider2Id)).val( parseInt( $("#" + $.escapeSelector(otherSlider2Id))) - quotient2).change()
+                    $("#" + $.escapeSelector(otherSlider2Id)).val(potentialNewValue2).change()
+                    console.log("------new Values of slider 1--------")
+                    console.log(parseInt( $("#" + $.escapeSelector(otherSlider1Id)).val()))
                     {#$("#" + $.escapeSelector(otherSlider2Id)).val( parseInt( $("#" + $.escapeSelector(otherSlider2Id))) - quotient2)#}
                     {#$("#" + $.escapeSelector(otherSlider2Id)).val(document.getElementById(otherSlider2Id).value - quotient2).change()#}
                 } else {
-                    $("#" + $.escapeSelector(otherSlider1Id)).val( parseInt( $("#" + $.escapeSelector(otherSlider1Id))) + quotient1).change()
+                    let quotient1 = 0;
+                    let quotient2 = 0;
+                     {#Put lowest value to the slide with the lowest previous value#}
+                    if( parseInt($("#" + $.escapeSelector(otherSlider1Id)).val()) > parseInt($("#" + $.escapeSelector(otherSlider2Id)).val())){
+                        quotient1 = Math.floor(difference / 2);
+                        quotient2 = Math.ceil(difference / 2);
+                    }else if (parseInt($("#" + $.escapeSelector(otherSlider1Id)).val()) < parseInt($("#" + $.escapeSelector(otherSlider2Id)).val())){
+                        quotient1 = Math.ceil(difference / 2);
+                        quotient2 = Math.floor(difference / 2);
+                    }else{
+                        {# They are equal so it doesnt matter#}
+                        quotient1 = Math.floor(difference / 2);
+                        quotient2 = Math.ceil(difference / 2);
+                    }
+
+                    {#Check any of the other sliders overflow and transfer the amount to the other slider#}
+                    let potentialNewValue1 = parseInt($("#" + $.escapeSelector(otherSlider1Id)).val()) + quotient1
+                    let potentialNewValue2 = parseInt($("#" + $.escapeSelector(otherSlider2Id)).val()) + quotient2
+                    {# Only one of these values will be overflowing, if both are there is an error#}
+                    {# Check if any of the potential values overflows below zero#}
+                    if( potentialNewValue1 > 100 ){
+                        {#Find how much the value overflows#}
+                        let overflowDifference = potentialNewValue1 - 100
+                        {#overflowing value should stay at 0 and the other value should absorb the overflow#}
+                        potentialNewValue1 -= overflowDifference //Should always be 100
+                        potentialNewValue2 += overflowDifference //Should always be <=100
+                    } else if (potentialNewValue2 > 100){
+                        {#Find how much the value overflows#}
+                        let overflowDifference = potentialNewValue2 - 100
+                        {#overflowing value should stay at 0 and the other value should absorb the overflow#}
+                        potentialNewValue2 -= overflowDifference //Should always be 100
+                        potentialNewValue1 += overflowDifference //Should always be <=100
+                    }
+
+                    $("#" + $.escapeSelector(otherSlider1Id)).val( potentialNewValue1).change()
                     {#$("#" + $.escapeSelector(otherSlider1Id)).val( parseInt( $("#" + $.escapeSelector(otherSlider1Id))) + quotient1)#}
-                    $("#" + $.escapeSelector(otherSlider2Id)).val( parseInt( $("#" + $.escapeSelector(otherSlider2Id))) + quotient2).change()
+                    $("#" + $.escapeSelector(otherSlider2Id)).val( potentialNewValue2).change()
                     {#$("#" + $.escapeSelector(otherSlider2Id)).val( parseInt( $("#" + $.escapeSelector(otherSlider2Id))) + quotient2)#}
                 }
-                console.log(document.getElementById(otherSlider1Id).value + quotient1)
-                console.log(document.getElementById(otherSlider1Id).value)
                 {#console.log(document.getElementById(otherSlider1Id).value + quotient1)#}
-                console.log("-----------------------------------")
+                {#console.log(document.getElementById(otherSlider1Id).value)#}
+                {#console.log(document.getElementById(otherSlider1Id).value + quotient1)#}
+                {#console.log("-----------------------------------")#}
                 {#document.getElementById(otherSlider1Id).value = quotient1#}
                 {#document.getElementById(otherSlider2Id).value = quotient2#}
                 {#$("#" + myId).val(quotient1)#}
