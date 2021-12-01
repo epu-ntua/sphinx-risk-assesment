@@ -8,7 +8,197 @@
 {#{% endblock %}#}
 {% block script %}
     <script>
+    var valueBubble = '<output class="rangeslider__value-bubble" />';
 
+    var unit = $('input[type="range"]').attr('unit');
+
+    function updateValueBubble(pos, value, context) {
+      pos = pos || context.position;
+      value = value || context.value;
+      var $valueBubble = $('.rangeslider__value-bubble', context.$range);
+      var tempPosition = pos + context.grabPos;
+      var position = (tempPosition <= context.handleDimension) ? context.handleDimension : (tempPosition >= context.maxHandlePos) ? context.maxHandlePos : tempPosition;
+
+      if ($valueBubble.length) {
+        $valueBubble[0].style.left = Math.ceil(position) + 'px';
+        $valueBubble[0].innerHTML = value;
+      }
+     }
+
+    $('input[type="range"]').rangeslider({
+      polyfill: false,
+      onInit: function() {
+        this.$range.append($(valueBubble));
+        updateValueBubble(null, null, this);
+      },
+      onSlide: function(pos, value) {
+        updateValueBubble(pos, value, this);
+      }
+     });
+
+    /*
+    * Function to ensure all values always add up to 100
+    *
+    *
+    *  */
+    $('input').change(
+        function (){
+            if ($(this).attr('shouldChange') == "true") {
+                {# Get old and new value#}
+                let oldValue = parseInt($(this).attr('oldValue'));
+                let currentValue = parseInt($(this).val());
+
+                console.log(oldValue)
+                console.log(currentValue)
+
+                {#Find the difference between new and old values#}
+                let difference = oldValue - currentValue
+                difference = Math.abs(difference)
+                console.log(difference)
+
+                {# Get the other sliders#}
+                var myId = $(this).attr('id')
+                let idDetails = myId.substr(myId.indexOf("|"))
+                let idLevel = myId.substr(0, myId.indexOf("|"))
+                let otherSlider1Id = ""
+                let otherSlider2Id = ""
+
+                {# Find which slider was changed and select the other two#}
+                if (idLevel == "low") {
+                    console.log("low")
+                    otherSlider1Id = "medium" + idDetails
+                    otherSlider2Id = "high" + idDetails
+                } else if (idLevel == "medium") {
+                    console.log("medium")
+                    otherSlider1Id = "low" + idDetails
+                    otherSlider2Id = "high" + idDetails
+                } else {
+                    console.log("high")
+                    otherSlider1Id = "low" + idDetails
+                    otherSlider2Id = "medium" + idDetails
+                }
+
+
+                {#console.log(quotient1)#}
+                {#console.log(otherSlider1Id)#}
+                {#console.log(otherSlider2Id)#}
+                {#console.log(quotient2)#}
+
+                {# Add attr to avoid endless recursion#}
+                $("#" + $.escapeSelector(otherSlider1Id)).attr("shouldChange", 'false')
+                $("#" + $.escapeSelector(otherSlider2Id)).attr("shouldChange", 'false')
+                {# Check if new value should be added or deleted#}
+                if (oldValue < currentValue) {
+                    let quotient1 = 0;
+                    let quotient2 = 0;
+                     {#Put higher value to the slide with the highest previous value#}
+                    if( parseInt($("#" + $.escapeSelector(otherSlider1Id)).val()) > parseInt($("#" + $.escapeSelector(otherSlider2Id)).val())){
+                        quotient1 = Math.ceil(difference / 2);
+                        quotient2 = Math.floor(difference / 2);
+                    }else if (parseInt($("#" + $.escapeSelector(otherSlider1Id)).val()) < parseInt($("#" + $.escapeSelector(otherSlider2Id)).val())){
+                        quotient1 = Math.floor(difference / 2);
+                        quotient2 = Math.ceil(difference / 2);
+                    }else{
+                        {# They are equal so it doesnt matter#}
+                        quotient1 = Math.floor(difference / 2);
+                        quotient2 = Math.ceil(difference / 2);
+                    }
+                    {#Check any of the other sliders overflow and transfer the amount to the other slider#}
+                    let potentialNewValue1 = parseInt($("#" + $.escapeSelector(otherSlider1Id)).val())- quotient1
+                    let potentialNewValue2 = parseInt($("#" + $.escapeSelector(otherSlider2Id)).val()) - quotient2
+                    {# Only one of these values will be overflowing, if both are there is an error#}
+                    {# Check if any of the potential values overflows below zero#}
+                    if( potentialNewValue1 < 0 ){
+                        {#Find how much the value overflows#}
+                        let overflowDifference = Math.abs(potentialNewValue1)
+                        {#overflowing value should stay at 0 and the other value should absorb the overflow#}
+                        potentialNewValue1 += overflowDifference //Should always be 0
+                        potentialNewValue2 -= overflowDifference //Should always be >=0
+                    } else if (potentialNewValue2 < 0){
+                        {#Find how much the value overflows#}
+                        let overflowDifference = Math.abs(potentialNewValue2)
+                        {#overflowing value should stay at 0 and the other value should absorb the overflow#}
+                        potentialNewValue2 += overflowDifference //Should always be 0
+                        potentialNewValue1 -= overflowDifference //Should always be >=0
+                    }
+
+                    {#document.getElementById(otherSlider1Id).value = document.getElementById(otherSlider1Id).value  - quotient1#}
+                    {#document.getElementById(otherSlider2Id).value = document.getElementById(otherSlider2Id).value  - quotient2#}
+                    console.log("------Values of changes--------")
+                    console.log("------old Values of slider 1--------")
+                    console.log(parseInt( $("#" + $.escapeSelector(otherSlider1Id)).val()))
+                    console.log(quotient1)
+                    console.log(parseInt( $("#" + $.escapeSelector(otherSlider2Id)).val()))
+                    console.log(quotient2)
+                    $("#" + $.escapeSelector(otherSlider1Id)).val(potentialNewValue1).change()
+                    {#$("#" + $.escapeSelector(otherSlider1Id)).val( parseInt( $("#" + $.escapeSelector(otherSlider1Id))) - quotient1)#}
+                    $("#" + $.escapeSelector(otherSlider2Id)).val(potentialNewValue2).change()
+                    console.log("------new Values of slider 1--------")
+                    console.log(parseInt( $("#" + $.escapeSelector(otherSlider1Id)).val()))
+                    {#$("#" + $.escapeSelector(otherSlider2Id)).val( parseInt( $("#" + $.escapeSelector(otherSlider2Id))) - quotient2)#}
+                    {#$("#" + $.escapeSelector(otherSlider2Id)).val(document.getElementById(otherSlider2Id).value - quotient2).change()#}
+                } else {
+                    let quotient1 = 0;
+                    let quotient2 = 0;
+                     {#Put lowest value to the slide with the lowest previous value#}
+                    if( parseInt($("#" + $.escapeSelector(otherSlider1Id)).val()) > parseInt($("#" + $.escapeSelector(otherSlider2Id)).val())){
+                        quotient1 = Math.floor(difference / 2);
+                        quotient2 = Math.ceil(difference / 2);
+                    }else if (parseInt($("#" + $.escapeSelector(otherSlider1Id)).val()) < parseInt($("#" + $.escapeSelector(otherSlider2Id)).val())){
+                        quotient1 = Math.ceil(difference / 2);
+                        quotient2 = Math.floor(difference / 2);
+                    }else{
+                        {# They are equal so it doesnt matter#}
+                        quotient1 = Math.floor(difference / 2);
+                        quotient2 = Math.ceil(difference / 2);
+                    }
+
+                    {#Check any of the other sliders overflow and transfer the amount to the other slider#}
+                    let potentialNewValue1 = parseInt($("#" + $.escapeSelector(otherSlider1Id)).val()) + quotient1
+                    let potentialNewValue2 = parseInt($("#" + $.escapeSelector(otherSlider2Id)).val()) + quotient2
+                    {# Only one of these values will be overflowing, if both are there is an error#}
+                    {# Check if any of the potential values overflows below zero#}
+                    if( potentialNewValue1 > 100 ){
+                        {#Find how much the value overflows#}
+                        let overflowDifference = potentialNewValue1 - 100
+                        {#overflowing value should stay at 0 and the other value should absorb the overflow#}
+                        potentialNewValue1 -= overflowDifference //Should always be 100
+                        potentialNewValue2 += overflowDifference //Should always be <=100
+                    } else if (potentialNewValue2 > 100){
+                        {#Find how much the value overflows#}
+                        let overflowDifference = potentialNewValue2 - 100
+                        {#overflowing value should stay at 0 and the other value should absorb the overflow#}
+                        potentialNewValue2 -= overflowDifference //Should always be 100
+                        potentialNewValue1 += overflowDifference //Should always be <=100
+                    }
+
+                    $("#" + $.escapeSelector(otherSlider1Id)).val( potentialNewValue1).change()
+                    {#$("#" + $.escapeSelector(otherSlider1Id)).val( parseInt( $("#" + $.escapeSelector(otherSlider1Id))) + quotient1)#}
+                    $("#" + $.escapeSelector(otherSlider2Id)).val( potentialNewValue2).change()
+                    {#$("#" + $.escapeSelector(otherSlider2Id)).val( parseInt( $("#" + $.escapeSelector(otherSlider2Id))) + quotient2)#}
+                }
+                {#console.log(document.getElementById(otherSlider1Id).value + quotient1)#}
+                {#console.log(document.getElementById(otherSlider1Id).value)#}
+                {#console.log(document.getElementById(otherSlider1Id).value + quotient1)#}
+                {#console.log("-----------------------------------")#}
+                {#document.getElementById(otherSlider1Id).value = quotient1#}
+                {#document.getElementById(otherSlider2Id).value = quotient2#}
+                {#$("#" + myId).val(quotient1)#}
+                {#$("#"+ otherSlider1Id).val(quotient1);#}
+                {#$("#"+ otherSlider2Id).val(quotient2);#}
+                {#var otherSlider1 = #}
+                {#var otherSlider2 = #}
+
+                {#console.log(oldValue)#}
+                {#console.log(currentValue)#}
+                {#  Update Value #}
+                $(this).attr('oldValue', $(this).val());
+            }else {
+                $(this).attr('shouldChange', "true")
+                $(this).attr('oldValue', $(this).val());
+            }
+        }
+    );
     </script>
 {% endblock %}
 
@@ -102,25 +292,25 @@
                                                 <h5>Low</h5>
                                             </div>
                                             <div class="row dashboard-row">
-                                                <div class="col-2">
-                                                    0%
-                                                </div>
-                                                <div class="col-2">
-                                                    25%
-                                                </div>
-                                                <div class="col-2">
-                                                    50%
-                                                </div>
-                                                <div class="col-2 ">
-                                                    75%
-                                                </div>
-                                                <div class="col-2">
-                                                    100%
-                                                </div>
+{#                                                <div class="col-2">#}
+{#                                                    0%#}
+{#                                                </div>#}
+{#                                                <div class="col-2">#}
+{#                                                    25%#}
+{#                                                </div>#}
+{#                                                <div class="col-2">#}
+{#                                                    50%#}
+{#                                                </div>#}
+{#                                                <div class="col-2 ">#}
+{#                                                    75%#}
+{#                                                </div>#}
+{#                                                <div class="col-2">#}
+{#                                                    100%#}
+{#                                                </div>#}
                                             </div>
                                             <div class="row dashboard-row">
                                                 <div class="col-10">
-                                                    <output>0</output>
+{#                                                    <output>0</output>#}
                                                     <input type="range" class="form-control-range"
                                                            name="low{% for temp_header in impact_calculation_wrapper[:-3] %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}|
                                                                        {{ temp_header.state }}{% else %}|cons|{{ temp_header.consequence.id }}|{{ temp_header.state }}{% endif %}{% endfor %}"
@@ -130,8 +320,11 @@
                                                            min="0"
                                                            max="100"
                                                            value="{{ impact_calculation_wrapper[-3] }}"
-                                                           oninput="this.previousElementSibling.value = this.value"
+                                                           oldValue = "{{ impact_calculation_wrapper[-3] }}"
+                                                           shouldChange = "true"
+{#                                                           oninput="this.previousElementSibling.value = this.value"#}
                                                     >
+
                                                 </div>
                                             </div>
                                         </div>
@@ -140,25 +333,25 @@
                                                 <h5>Medium</h5>
                                             </div>
                                             <div class="row dashboard-row">
-                                                <div class="col-2">
-                                                    0%
-                                                </div>
-                                                <div class="col-2">
-                                                    25%
-                                                </div>
-                                                <div class="col-2">
-                                                    50%
-                                                </div>
-                                                <div class="col-2 ">
-                                                    75%
-                                                </div>
-                                                <div class="col-2">
-                                                    100%
-                                                </div>
+{#                                                <div class="col-2">#}
+{#                                                    0%#}
+{#                                                </div>#}
+{#                                                <div class="col-2">#}
+{#                                                    25%#}
+{#                                                </div>#}
+{#                                                <div class="col-2">#}
+{#                                                    50%#}
+{#                                                </div>#}
+{#                                                <div class="col-2 ">#}
+{#                                                    75%#}
+{#                                                </div>#}
+{#                                                <div class="col-2">#}
+{#                                                    100%#}
+{#                                                </div>#}
                                             </div>
                                             <div class="row dashboard-row">
                                                 <div class="col-10">
-                                                    <output>0</output>
+{#                                                    <output>0</output>#}
                                                     <input type="range" class="form-control-range"
                                                            name="medium{% for temp_header in impact_calculation_wrapper[:-3] %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}|
                                                                        {{ temp_header.state }}{% else %}|cons|{{ temp_header.consequence.id }}|{{ temp_header.state }}{% endif %}{% endfor %}"
@@ -168,9 +361,11 @@
                                                            min="0"
                                                            max="100"
                                                            value="{{ impact_calculation_wrapper[-2] }}"
-                                                           ,
+                                                           oldValue = "{{ impact_calculation_wrapper[-3] }}"
                                                            name="objective_state_alert_3"
-                                                           oninput="this.previousElementSibling.value = this.value">
+                                                           shouldChange = "true"
+{#                                                           oninput="this.previousElementSibling.value = this.value"#}
+                                                    >
                                                 </div>
                                             </div>
                                         </div>
@@ -179,25 +374,25 @@
                                                 <h5>High</h5>
                                             </div>
                                             <div class="row dashboard-row">
-                                                <div class="col-2">
-                                                    0%
-                                                </div>
-                                                <div class="col-2">
-                                                    25%
-                                                </div>
-                                                <div class="col-2">
-                                                    50%
-                                                </div>
-                                                <div class="col-2 ">
-                                                    75%
-                                                </div>
-                                                <div class="col-2">
-                                                    100%
-                                                </div>
+{#                                                <div class="col-2">#}
+{#                                                    0%#}
+{#                                                </div>#}
+{#                                                <div class="col-2">#}
+{#                                                    25%#}
+{#                                                </div>#}
+{#                                                <div class="col-2">#}
+{#                                                    50%#}
+{#                                                </div>#}
+{#                                                <div class="col-2 ">#}
+{#                                                    75%#}
+{#                                                </div>#}
+{#                                                <div class="col-2">#}
+{#                                                    100%#}
+{#                                                </div>#}
                                             </div>
                                             <div class="row dashboard-row">
                                                 <div class="col-10">
-                                                    <output>0</output>
+{#                                                    <output>0</output>#}
                                                     <input type="range" class="form-control-range"
                                                            name="high{% for temp_header in impact_calculation_wrapper[:-3] %}{% if 'service' in temp_header %}|serv|{{ temp_header.service.id }}|
                                                                        {{ temp_header.state }}{% else %}|cons|{{ temp_header.consequence.id }}|{{ temp_header.state }}{% endif %}{% endfor %}"
@@ -207,9 +402,10 @@
                                                            min="0"
                                                            max="100"
                                                            value="{{ impact_calculation_wrapper[-1] }}"
-                                                           ,
-                                                           name="objective_state_alert_3"
-                                                           oninput="this.previousElementSibling.value = this.value">
+                                                           oldValue = "{{ impact_calculation_wrapper[-3] }}"
+                                                           shouldChange = "true"
+                                                           name="objective_state_alert_3"/>
+{#                                                           oninput="this.previousElementSibling.value = this.value">#}
                                                 </div>
                                             </div>
                                         </div>

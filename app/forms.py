@@ -220,3 +220,31 @@ class FormAddRepoAsset(FlaskForm):
     availability = SelectField('Integrity', choices=dropdown_dictionary, default='1', validators=[Optional()])
     confidentiality = SelectField('Integrity', choices=dropdown_dictionary, default='1', validators=[Optional()])
     submit = SubmitField("Add new asset")
+
+
+class FormEditRepoAsset(FlaskForm):
+    edit_id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
+    edit_name = StringField('Name', validators=[InputRequired()])
+    edit_description = StringField('Description', validators=[Optional()])
+    edit_owner = QuerySelectField(query_factory=query_generic_repo_actor, allow_blank=True, get_label='name')
+    edit_location = StringField('Location', validators=[Optional()])
+    edit_verified = BooleanField('Verified', validators=[Optional()])
+    edit_verified_by = QuerySelectField(query_factory=query_generic_repo_actor, allow_blank=True, get_label='name',
+                                   validators=[Optional()])
+    edit_mac_address = StringField("Mac Address", validators=[Optional()])
+    edit_has_static_ip = BooleanField('Has Static IP', validators=[Optional()])
+    edit_ip = StringField('IP', validators=[Optional()])
+    edit_net_group_fk = QuerySelectField(query_factory=query_generic_repo_net_group, allow_blank=True, get_label='name',
+                                    validators=[Optional()])
+    edit_value = IntegerField("Value", validators=[Optional()])
+    edit_loss_of_revenue = IntegerField("Loss of revenue", validators=[Optional()])
+    edit_additional_expenses = IntegerField("Additional Expenses", validators=[Optional()])
+    edit_regulatory_legal = IntegerField("Regulatory Legal", validators=[Optional()])
+    edit_customer_service = IntegerField("Customer Service", validators=[Optional()])
+    edit_goodwill = IntegerField("Goodwill", validators=[Optional()])
+    edit_last_touch_date = DateTimeField("Last Touch", validators=[Optional()])
+    edit_type_fk = QuerySelectField(query_factory=query_generic_repo_type, allow_blank=False, get_label='name',
+                               validators=[Optional()])
+    edit_dropdown_dictionary = [('1', 'a'), ('2', 'b'), ('3', 'c')]
+    edit_integrity = SelectField('Integrity', choices=edit_dropdown_dictionary, default='1', validators=[Optional()])
+    edit_submit = SubmitField("Edit asset")

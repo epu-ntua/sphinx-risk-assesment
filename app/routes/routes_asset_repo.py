@@ -16,85 +16,114 @@ from app.utils.utils_3rd_party_data_handling import v_report
 def view_repo_assets():
     if request.method == 'POST':
         new_asset_form = FormAddRepoAsset()
+        new_edit_form = FormEditRepoAsset()
 
-        if new_asset_form.validate_on_submit():
-            if new_asset_form.id.data:
-                print("PUT ACTOR", "|", new_asset_form.id.data, "|", flush=True)
+        # If edit form has been submitted
+        # Distinction can only be made by the id of the submit button
+        if 'edit_submit' in request.form:
+            if new_edit_form.validate_on_submit():
+                print("PUT ACTOR", "|", new_edit_form.edit_id.data, "|", flush=True)
 
                 try:
-                    to_edit_asset = RepoAsset.query.filter_by(id=new_asset_form.id.data).first()
+                    to_edit_asset = RepoAsset.query.filter_by(id=new_edit_form.edit_id.data).first()
                 except SQLAlchemyError:
                     return Response("SQLAlchemyError when editing records", 500)
 
-                owner_id = None
-                verified_by_id = None
-                net_group_fk_id = None
-                type_fk_id = None
+                edit_owner_id = None
+                edit_verified_by_id = None
+                edit_net_group_fk_id = None
+                edit_type_fk_id = None
+                edit_verified = None
+                edit_static_ip = None
 
-                if new_asset_form.owner.data:
-                    owner_id = new_asset_form.owner.data.id
+                if new_edit_form.edit_owner.data:
+                    edit_owner_id = new_edit_form.edit_owner.data.id
 
-                if new_asset_form.type_fk.data:
-                    type_fk_id = new_asset_form.type_fk.data.id
+                if new_edit_form.edit_type_fk.data:
+                    edit_type_fk_id = new_edit_form.edit_type_fk.data.id
 
-                if new_asset_form.verified_by.data:
-                    verified_by_id = new_asset_form.verified_by.data.id
+                if new_edit_form.edit_verified_by.data:
+                    edit_verified_by_id = new_edit_form.edit_verified_by.data.id
 
-                if new_asset_form.net_group_fk.data:
-                    net_group_fk_id = new_asset_form.net_group_fk.id
+                if new_edit_form.edit_net_group_fk.data:
+                    edit_net_group_fk_id = new_edit_form.edit_net_group_fk.id
 
-                to_edit_asset.name = new_asset_form.name.data
-                to_edit_asset.description = new_asset_form.description.data
-                to_edit_asset.owner = owner_id
-                to_edit_asset.location = new_asset_form.location.data
-                to_edit_asset.verified = new_asset_form.verified.data
-                to_edit_asset.verified_by = verified_by_id
-                to_edit_asset.mac_address = new_asset_form.mac_address.data
-                to_edit_asset.has_static_ip = new_asset_form.has_static_ip.data
-                to_edit_asset.ip = new_asset_form.ip.data
-                to_edit_asset.net_group_fk = net_group_fk_id
-                to_edit_asset.value = new_asset_form.value.data
-                to_edit_asset.loss_of_revenue = new_asset_form.loss_of_revenue.data
-                to_edit_asset.additional_expenses = new_asset_form.additional_expenses.data
-                to_edit_asset.regulatory_legal = new_asset_form.regulatory_legal.data
-                to_edit_asset.customer_service = new_asset_form.customer_service.data
-                to_edit_asset.operating_zone = new_asset_form.operating_zone.data
-                to_edit_asset.last_touch_date = new_asset_form.last_touch_date.data
-                to_edit_asset.type_fk = type_fk_id
-                to_edit_asset.integrity = new_asset_form.integrity.data
+                if new_edit_form.edit_verified:
+                    # print("I Go HERE ", new_edit_form.edit_verified.data)
+                    if new_edit_form.edit_verified.data:
+                        edit_verified = 1
+                    else:
+                        edit_verified = 0
+
+                if new_edit_form.edit_has_static_ip:
+                    # print("I Go HERE ", new_edit_form.edit_verified.data)
+                    if new_edit_form.edit_has_static_ip.data:
+                        edit_static_ip = 1
+                    else:
+                        edit_static_ip = 0
+
+                # print(new_edit_form.edit_verified)
+                # print("----------here--------------")
+                to_edit_asset.name = new_edit_form.edit_name.data
+                to_edit_asset.description = new_edit_form.edit_description.data
+                to_edit_asset.owner = edit_owner_id
+                to_edit_asset.location = new_edit_form.edit_location.data
+                to_edit_asset.verified = edit_verified
+                to_edit_asset.verified_by = edit_verified_by_id
+                to_edit_asset.mac_address = new_edit_form.edit_mac_address.data
+                to_edit_asset.has_static_ip = edit_static_ip
+                to_edit_asset.ip = new_edit_form.edit_ip.data
+                to_edit_asset.net_group_fk = edit_net_group_fk_id
+                to_edit_asset.value = new_edit_form.edit_value.data
+                to_edit_asset.loss_of_revenue = new_edit_form.edit_loss_of_revenue.data
+                to_edit_asset.additional_expenses = new_edit_form.edit_additional_expenses.data
+                to_edit_asset.regulatory_legal = new_edit_form.edit_regulatory_legal.data
+                to_edit_asset.customer_service = new_edit_form.edit_customer_service.data
+                to_edit_asset.operating_zone = new_edit_form.edit_goodwill.data
+                to_edit_asset.last_touch_date = new_edit_form.edit_last_touch_date.data
+                to_edit_asset.type_fk = edit_type_fk_id
+                to_edit_asset.integrity = new_edit_form.edit_integrity.data
 
                 db.session.commit()
                 return redirect("/repo/assets/")
             else:
+                # If error in validation, then error
+                print(new_edit_form.errors)
+                flash('Error: Validation Error - Couldn\'t edit asset, ')
+                return redirect("/repo/assets/")
+
+        elif "submit" in request.form:
+            # If new asset form has been submitted
+            if new_asset_form.validate_on_submit():
                 print("POST ACTOR", flush=True)
-                owner_id = None
-                verified_by_id = None
-                net_group_fk_id = None
-                type_fk_id = None
+                edit_owner_id = None
+                edit_verified_by_id = None
+                edit_net_group_fk_id = None
+                edit_type_fk_id = None
 
                 if new_asset_form.owner.data:
-                    owner_id = new_asset_form.owner.data.id
+                    edit_owner_id = new_asset_form.owner.data.id
 
                 if new_asset_form.type_fk.data:
-                    type_fk_id = new_asset_form.type_fk.data.id
+                    edit_type_fk_id = new_asset_form.type_fk.data.id
 
                 if new_asset_form.verified_by.data:
-                    verified_by_id = new_asset_form.verified_by.data.id
+                    edit_verified_by_id = new_asset_form.verified_by.data.id
 
                 if new_asset_form.net_group_fk.data:
-                    net_group_fk_id = new_asset_form.net_group_fk.id
+                    edit_net_group_fk_id = new_asset_form.net_group_fk.id
 
                 # print(new_actor_form.name.data, flush=True)
                 to_add_asset = RepoAsset(name=new_asset_form.name.data,
                                          description=new_asset_form.description.data,
-                                         owner=owner_id,
+                                         owner=edit_owner_id,
                                          location=new_asset_form.location.data,
                                          verified=new_asset_form.verified.data,
-                                         verified_by=bool(verified_by_id),
+                                         verified_by=bool(edit_verified_by_id),
                                          mac_address=new_asset_form.mac_address.data,
                                          has_static_ip=new_asset_form.has_static_ip.data,
                                          ip=new_asset_form.ip.data,
-                                         net_group_fk=net_group_fk_id,
+                                         net_group_fk=edit_net_group_fk_id,
                                          value=new_asset_form.value.data,
                                          loss_of_revenue=new_asset_form.loss_of_revenue.data,
                                          additional_expenses=new_asset_form.additional_expenses.data,
@@ -102,17 +131,26 @@ def view_repo_assets():
                                          customer_service=new_asset_form.customer_service.data,
                                          operating_zone=new_asset_form.operating_zone.data,
                                          last_touch_date=new_asset_form.last_touch_date.data,
-                                         type_fk=type_fk_id,
+                                         type_fk=edit_type_fk_id,
                                          integrity=new_asset_form.integrity.data)
                 db.session.add(to_add_asset)
                 db.session.commit()
 
                 flash('Actor "{}" Added Succesfully'.format(new_asset_form.name.data))
                 return redirect("/repo/assets/")
+            else:
+                # If error in validation, then error
+                print(new_asset_form.errors)
+                flash('Error: Validation Error - Couldn\'t add asset, ')
+                return redirect("/repo/assets/")
         else:
+            # If none of them, then error
             print(new_asset_form.errors)
-            flash('Error: Validation Error - Couldn\'t add asset, ')
+            print(new_edit_form.errors)
+            flash('Error: No correct form submitted - Couldn\'t add asset, ')
             return redirect("/repo/assets/")
+
+
 
         # new_asset_form = FormAddRepoAsset()
         # print(new_asset_form.errors)
@@ -168,14 +206,22 @@ def view_repo_assets():
         except SQLAlchemyError:
             return Response("SQLAlchemyError", 500)
 
+
         json_assets = convert_database_items_to_json_table(repo_assets)
+        # Add new columns for type and subytpe to de displayed in table
+        # Uses both the object and converted dict list for ease of access
+        for index,json_asset_instance in enumerate(json_assets):
+            json_asset_instance["subtype"] = repo_assets[index].type.name
+            json_asset_instance["type"] = repo_assets[index].type.variety.name
+
+        print(json_assets)
         json_assets = json.dumps(json_assets)
 
         new_asset_form = FormAddRepoAsset()
-
+        edit_asset_form = FormEditRepoAsset()
         print("REPO ASSETS", json_assets)
         return render_template("templates_asset_repo/view_repo_assets.html", repo_assets=json_assets,
-                               new_asset_form=new_asset_form)
+                               new_asset_form=new_asset_form, edit_asset_form=edit_asset_form)
 
 
 @app.route('/repo/impacts/', methods=['GET', 'POST', 'PUT'])
@@ -966,7 +1012,7 @@ def view_repo_serivce_info(service_id):
                                new_service_impact_form=new_service_impact_form)
 
 
-# DONT THIS THIS IS VALID ANYMORE
+# DONT THINK THIS IS VALID ANYMORE
 @app.route('/repo/assets/threats-relations/<asset_id>/', methods=['GET', 'POST'])
 def view_repo_asset_threats_relation(asset_id):
     if request.method == 'POST':
