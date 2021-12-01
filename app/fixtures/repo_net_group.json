@@ -1,0 +1,18 @@
+[
+    {
+        "id": "1",
+        "name": "VLAN2 (HIS): 10.10.2"
+    },
+    {
+        "id": "2",
+        "name": "VLAN48 (SERVERS): 10.10.48"
+    },
+    {
+        "id": "3",
+        "name": "VLAN50 (CLIENTS): 10.10.50"
+    },
+    {
+        "id": "4",
+        "name": "VLAN255 (Management): 10.10.255"
+    }
+]

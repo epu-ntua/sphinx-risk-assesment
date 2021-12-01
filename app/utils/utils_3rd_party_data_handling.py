@@ -105,13 +105,14 @@ def v_report(fpath):
         print(type(obj))
         if obj["id"] is not None:
             reprow_reportId = obj["id"]
-            if db.session.query(exists().where(VulnerabilityReport.reportId == reprow_reportId)).scalar():
+            if db.session.query(VulnerabilityReport.id).filter_by(reportId=reprow_reportId).first() is not None:
                 my_json_report = db.session.query(VulnerabilityReport).filter_by(reportId=reprow_reportId).one()
             else:
                 my_json_report = VulnerabilityReport(reportId=reprow_reportId)
             my_json_report.scan_start_time = obj["scan_start_time"] if obj["scan_start_time"] is not None else ""
             my_json_report.scan_end_time = obj["scan_end_time"] if obj["scan_end_time"] is not None else ""
             my_json_report.target_name = obj["target_name"] if obj["target_name"] is not None else ""
+            my_json_report.source_component = 1
             db.session.add(my_json_report)
             try:
                 db.session.commit()
@@ -125,7 +126,7 @@ def v_report(fpath):
                     continue
                 else:
                     my_asset_IP = item["value"]
-                    if not db.session.query(exists().where(RepoAsset.ip == my_asset_IP)).scalar():
+                    if db.session.query(RepoAsset.id).filter_by(ip=my_asset_IP).first() is None:
                         my_repo_asset = RepoAsset(ip=my_asset_IP)
                         db.session.add(my_repo_asset)
                         try:
@@ -136,7 +137,7 @@ def v_report(fpath):
                             db.session.rollback()
                             continue
                     else:
-                        my_repo_asset = RepoAsset(ip=my_asset_IP)
+                        my_repo_asset = db.session.query(RepoAsset).filter_by(ip=my_asset_IP).first()
 
             # Get CVE from the result nodes of the report
             for item in obj['objects']:
@@ -149,7 +150,7 @@ def v_report(fpath):
                         for subitem in item['external_references']:
                             if subitem['source_name'] == "cve":
                                 reprow_cveId = subitem['external_id']
-                                if not db.session.query(exists().where(CommonVulnerabilitiesAndExposures.CVEId == reprow_cveId)).scalar():
+                                if db.session.query(CommonVulnerabilitiesAndExposures.id).filter_by(CVEId=reprow_cveId).first() is None:
                                     my_cve = CommonVulnerabilitiesAndExposures(CVEId=reprow_cveId)
                                     db.session.add(my_cve)
                                 else:
@@ -185,7 +186,7 @@ def v_report_json(report_name, report_details):
     print(type(obj))
     if obj["id"] is not None:
         reprow_reportId = obj["id"]
-        if db.session.query(exists().where(VulnerabilityReport.reportId == reprow_reportId)).scalar():
+        if db.session.query(VulnerabilityReport.id).filter_by(reportId = reprow_reportId).first() is not None:
             my_json_report = db.session.query(VulnerabilityReport).filter_by(reportId=reprow_reportId).one()
         else:
             my_json_report = VulnerabilityReport(reportId=reprow_reportId)
@@ -215,7 +216,7 @@ def v_report_json(report_name, report_details):
             else:
                 continue
         # TODO: Change to search with MAC address???
-        if not db.session.query(exists().where(RepoAsset.ip == my_asset_IP)).scalar():
+        if not db.session.query(RepoAsset.id).filter_by(ip = my_asset_IP).first() in None:
             my_repo_asset = RepoAsset(ip=my_asset_IP)
             my_repo_asset.mac_address = my_asset_MAC if my_asset_MAC is not None else ""
             db.session.add(my_repo_asset)
@@ -226,15 +227,14 @@ def v_report_json(report_name, report_details):
             except SQLAlchemyError as e:
                 db.session.rollback()
         else:
-            my_repo_asset = db.session.query(exists().where(RepoAsset.ip == my_asset_IP)).first()
+            my_repo_asset = db.session.query(RepoAsset).filter_by(ip = my_asset_IP).first()
             my_repo_asset.mac_address = my_asset_MAC if my_asset_MAC is not None else ""
 
         # Get CVE from the result nodes of the report
         for item in obj['objects']:
             if item['type'] == "x-discovered-service":
                 reprow_service_name = item['service_name']
-                if not db.session.query(exists().where((RepoAssetService.asset_id == my_repo_asset.ip)) & (
-                        RepoAssetService.service_name == reprow_service_name)).scalar():
+                if db.session.query(RepoAssetService.id).filter_by(asset_id = my_repo_asset.ip, service_name = reprow_service_name).first() is None:
                     my_asset_service = RepoAssetService(asset_id=my_repo_asset.id, service_name=reprow_service_name)
                     db.session.add(my_asset_service)
                 else:
@@ -250,7 +250,7 @@ def v_report_json(report_name, report_details):
                     for vulnerability_item in service_data['null']:
                         if vulnerability_item['type'] == "cve":
                             reprow_cveId = vulnerability_item['id']
-                            if not db.session.query(exists().where(CommonVulnerabilitiesAndExposures.CVEId == reprow_cveId)).scalar():
+                            if db.session.query(CommonVulnerabilitiesAndExposures.id).filter_by(CVEId = reprow_cveId).first() is None:
                                 my_cve = CommonVulnerabilitiesAndExposures(CVEId=reprow_cveId)
                                 db.session.add(my_cve)
                             else:
@@ -362,7 +362,7 @@ def certification_report_json(report_details):
                     my_link = VulnerabilityReport.query.join(VulnerabilityReportVulnerabilitiesLink).join(CommonVulnerabilitiesAndExposures).filter((VulnerabilityReportVulnerabilitiesLink.vreport_id == my_json_report.id) & (VulnerabilityReportVulnerabilitiesLink.cve_id == my_cve.id)).first()
                 my_link.asset_id = my_repo_asset.id
                 my_link.VReport_assetIp = item['agent.ip'] if item['agent.ip'] is not None else ""
-                my_link.VReport_CVSS_score = item['cvss3'] if item['cvss3'] is not None else ""
+                my_link.VReport_CVSS_score = '{0:.2f}'.format(float(item['cvss3'])) if item['cvss3'] is not None else ""
                 my_link.comments = item['rule.description'] if item['rule.description'] is not None else ""
                 try:
                     db.session.commit()

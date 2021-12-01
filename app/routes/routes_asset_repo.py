@@ -79,7 +79,7 @@ def view_repo_assets():
                 to_edit_asset.additional_expenses = new_edit_form.edit_additional_expenses.data
                 to_edit_asset.regulatory_legal = new_edit_form.edit_regulatory_legal.data
                 to_edit_asset.customer_service = new_edit_form.edit_customer_service.data
-                to_edit_asset.goodwill = new_edit_form.edit_goodwill.data
+                to_edit_asset.operating_zone = new_edit_form.edit_goodwill.data
                 to_edit_asset.last_touch_date = new_edit_form.edit_last_touch_date.data
                 to_edit_asset.type_fk = edit_type_fk_id
                 to_edit_asset.integrity = new_edit_form.edit_integrity.data
@@ -129,7 +129,7 @@ def view_repo_assets():
                                          additional_expenses=new_asset_form.additional_expenses.data,
                                          regulatory_legal=new_asset_form.regulatory_legal.data,
                                          customer_service=new_asset_form.customer_service.data,
-                                         goodwill=new_asset_form.goodwill.data,
+                                         operating_zone=new_asset_form.operating_zone.data,
                                          last_touch_date=new_asset_form.last_touch_date.data,
                                          type_fk=edit_type_fk_id,
                                          integrity=new_asset_form.integrity.data)
@@ -190,7 +190,7 @@ def view_repo_assets():
         #                              additional_expenses=new_asset_form.additional_expenses.data,
         #                              regulatory_legal=new_asset_form.regulatory_legal.data,
         #                              customer_service=new_asset_form.customer_service.data,
-        #                              goodwill=new_asset_form.goodwill.data,
+        #                              operating_zone=new_asset_form.operating_zone.data,
         #                              last_touch_date=new_asset_form.last_touch_date.data,
         #                              type_fk=type_fk_id)
         #     db.session.add(to_add_asset)
@@ -669,6 +669,8 @@ def view_repo_vulnerabilities():
             print(json_vulnerability)
             json_vulnerability["asset_id"] = repo_vulnerabilities[it].asset.name
             json_vulnerability["cve_id"] = repo_vulnerabilities[it].cve.CVEId
+            json_vulnerability["VReport_id"] = repo_vulnerabilities[it].vreport.reportId
+            json_vulnerability["VReport_source_component"] = repo_vulnerabilities[it].vreport.source_component
 
         json_vulnerabilities = json.dumps(json_vulnerabilities, default=str)
         # print("ACTORS ARE --------")

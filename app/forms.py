@@ -78,8 +78,10 @@ class FormAddVulnerabilityReportVulnerabilitiesLink(FlaskForm):
     cve_id = StringField('cve_id', validators=[DataRequired()])
     cve = QuerySelectField(query_factory=query_generic_cve, allow_blank=True, get_label='CVEId')
     VReport_id = StringField('VReport_id', validators=[Optional()])
+    VReport_source_component = StringField('VReport_source_component', validators=[Optional()])
     VReport_CVSS_score = StringField('VReport_CVSS_score', validators=[Optional()])
     VReport_assetIp = StringField('VReport_assetIp', validators=[Optional()])
+    date = DateTimeField('date', validators=[Optional()])
     submit = SubmitField("Add new Vulnerability")
 
 
@@ -208,12 +210,15 @@ class FormAddRepoAsset(FlaskForm):
     additional_expenses = IntegerField("Additional Expenses", validators=[Optional()])
     regulatory_legal = IntegerField("Regulatory Legal", validators=[Optional()])
     customer_service = IntegerField("Customer Service", validators=[Optional()])
-    goodwill = IntegerField("Goodwill", validators=[Optional()])
+    dropdown_zone = [('1', 'Corporate Intranet'), ('2', 'Business Partners/Clients'), ('3', 'Employee Private networks'), ('4', 'Public space')]
+    operating_zone = IntegerField("operating_zone", validators=[Optional()])
     last_touch_date = DateTimeField("Last Touch", validators=[Optional()])
     type_fk = QuerySelectField(query_factory=query_generic_repo_type, allow_blank=False, get_label='name',
                                validators=[Optional()])
-    dropdown_dictionary = [('1', 'a'), ('2', 'b'), ('3', 'c')]
+    dropdown_dictionary = [('1', 'Low'), ('2', 'Medium'), ('3', 'High')]
     integrity = SelectField('Integrity', choices=dropdown_dictionary, default='1', validators=[Optional()])
+    availability = SelectField('Integrity', choices=dropdown_dictionary, default='1', validators=[Optional()])
+    confidentiality = SelectField('Integrity', choices=dropdown_dictionary, default='1', validators=[Optional()])
     submit = SubmitField("Add new asset")
 
 
