@@ -61,9 +61,9 @@ def repo_dashboard_asset():
                 dict_assets_verified["unverified"] += 1
 
             # Count services per asset
-            dict_assets_services[type_asset.name] = 0
+            dict_assets_services[str(type_asset.name or "no_name") + "|" + str(type_asset.ip or "no_ip")] = 0
             for service_type in type_asset.services:
-                dict_assets_services[type_asset.name] += 1
+                dict_assets_services[str(type_asset.name or "no_name") + "|" + str(type_asset.ip or "no_ip")] += 1
 
                 # dict_assets_verified[type_asset.verified]
         # Transfer data to list that can be displayed by front end technology
@@ -72,6 +72,12 @@ def repo_dashboard_asset():
         assets_verified_list = list(dict_assets_verified.values())
         assets_services_counted_list = list(dict_assets_services.values())
         assets_name_list = list(dict_assets_services.keys())
+
+        for it,assets_name_list_instance in enumerate(assets_name_list):
+            if assets_name_list_instance is None:
+                assets_name_list[it] = "No_name"
+
+        print("-----------------------------------------------------", assets_name_list)
         # for asset in repo_asset:
         print(asset_type_values_list)
         print(asset_types_list)
