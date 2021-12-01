@@ -59,6 +59,7 @@ class VulnerabilityReportVulnerabilitiesLink(db.Model):
     __tablename__ = 'vulnerability_report_vulnerabilities_link'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     vreport_id = db.Column(db.Integer, db.ForeignKey('vulnerability_report.id'), nullable=False)
+    vreport = db.relationship("VulnerabilityReport")
     cve_id = db.Column(db.Integer, db.ForeignKey('common_vulnerabilities_and_exposures.id'), nullable=False)
     cve = db.relationship("CommonVulnerabilitiesAndExposures")
     asset_id = db.Column(db.Integer, db.ForeignKey('repo_asset.id'), nullable=False)
@@ -468,12 +469,14 @@ class RepoAsset(db.Model):
     additional_expenses = db.Column(db.Integer)
     regulatory_legal = db.Column(db.Integer)
     customer_service = db.Column(db.Integer)
-    goodwill = db.Column(db.Integer)
+    operating_zone = db.Column(db.Integer)
     last_touch_date = db.Column(db.DateTime)
     type_fk = db.Column(db.Integer, db.ForeignKey('repo_assets_type.id'), default=1)
     # TODO Maybe remove the default, and ensure that type is always applied instead another way
     type = db.relationship("RepoAssetsType", back_populates="assets")
     integrity = db.Column(db.Integer)
+    availability = db.Column(db.Integer)
+    confidentiality = db.Column(db.Integer)
     services = db.relationship("RepoService", secondary=repo_asset_repo_service_association_table,
                                back_populates="assets")
     # risk_assessment = db.relationship("RepoRiskAssessment", secondary=repo_risk_assessment_repo_asset_association_table,
@@ -488,9 +491,9 @@ class RepoAssetsType(db.Model):
     __tablename__ = 'repo_assets_type'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String)
-    daily_start_time = db.column(db.DateTime)
-    daily_end_time = db.column(db.DateTime)
-    role = db.column(db.Integer)  # 1 low - 2 medium - 3 high
+    daily_start_time = db.Column(db.DateTime, nullable=True)
+    daily_end_time = db.Column(db.DateTime, nullable=True)
+    role = db.Column(db.Integer)  # 1 low - 2 medium - 3 high
     assets = db.relationship("RepoAsset", back_populates="type")
     variety_fk = db.Column(db.Integer, db.ForeignKey('repo_assets_variety.id'))
     variety = db.relationship('RepoAssetsVariety', back_populates ="types")
