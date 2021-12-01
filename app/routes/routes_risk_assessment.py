@@ -572,8 +572,8 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
         json_controls = convert_database_items_to_json_table(repo_controls)
         json_vulnerabilities = convert_database_items_to_json_table(repo_vulnerabilities)
 
-        json_controls = json.dumps(json_controls)
-        json_vulnerabilities = json.dumps(json_vulnerabilities)
+        json_controls = json.dumps(json_controls, default=str)
+        json_vulnerabilities = json.dumps(json_vulnerabilities, default=str)
 
         print("Threat id is" + str(threat_id))
         print(json_controls)

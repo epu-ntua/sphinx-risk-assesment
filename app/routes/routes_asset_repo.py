@@ -670,7 +670,7 @@ def view_repo_vulnerabilities():
             json_vulnerability["asset_id"] = repo_vulnerabilities[it].asset.name
             json_vulnerability["cve_id"] = repo_vulnerabilities[it].cve.CVEId
 
-        json_vulnerabilities = json.dumps(json_vulnerabilities)
+        json_vulnerabilities = json.dumps(json_vulnerabilities, default=str)
         # print("ACTORS ARE --------")
         # print(json_actors)
         new_vulnerability_form = FormAddVulnerabilityReportVulnerabilitiesLink()
