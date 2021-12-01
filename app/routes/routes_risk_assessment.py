@@ -1382,7 +1382,10 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
         check_utility_conf_exists = 0
         check_asset_service_exists = 0
         asset_is_related = 0
-        if asset_id != -1:
+        asset_threat_impact_count = 0
+        objective_impact_count = 0
+        utility_count = 0
+        if int(asset_id) != -1:
             try:
                 this_asset = RepoAsset.query.filter_by(id=asset_id).all()
             except SQLAlchemyError:
@@ -1439,7 +1442,8 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
                 check_utility_conf_exists = 1
 
             # Check if asset has been assigned any service
-            print("GROUP BY COUNT IS--", this_asset[0].services)
+            # print("GROUP BY COUNT IS--", this_asset[0].services)
+
             if len(this_asset[0].services) > 0:
                 check_asset_service_exists = 1
         else:
@@ -1460,7 +1464,7 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
         for related_asset in related_assets:
             unrelated_assets.remove(related_asset)
 
-        if asset_id != "-1":
+        if int(asset_id) != -1:
             for related_asset_each in related_assets:
                 if this_asset[0] == related_asset_each:
                     asset_is_related = 1

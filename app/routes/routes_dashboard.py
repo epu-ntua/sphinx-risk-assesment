@@ -81,7 +81,7 @@ def repo_dashboard_asset():
         repo_asset_unverified_dict = convert_database_items_to_json_table(repo_asset_unverified)
         # Add new columns for type and subytpe to de displayed in table
         # Uses both the object and converted dict list for ease of access
-        for index,json_asset_instance in enumerate(repo_asset_unverified_dict):
+        for index, json_asset_instance in enumerate(repo_asset_unverified_dict):
             json_asset_instance["subtype"] = repo_asset_unverified[index].type.name
             json_asset_instance["type"] = repo_asset_unverified[index].type.variety.name
 
@@ -280,8 +280,9 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, report_id=-1):
         except SQLAlchemyError:
             return Response("SQLAlchemyError", 500)
 
+        # Select assets that have active risk assessments with this threat
         try:
-            these_assets = RepoAsset.query.all()
+            these_assets = RepoAsset.query.filter(RepoAsset.risk_assessment.any(RepoRiskAssessment.repo_threat_id == threat_id)).all()
         except SQLAlchemyError:
             return Response("SQLAlchemyError", 500)
 
@@ -307,7 +308,12 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, report_id=-1):
         these_objectives = []
         these_utils = []
         this_risk_assessment = None
-        if threat_id != -1 and asset_id != -1:
+
+        repo_threats = []
+        json_reports = ""
+        these_responses = []
+        risk_assessment_result = []
+        if int(threat_id) != -1 and int(asset_id) != -1:
             try:
                 this_exposure = RepoAssetRepoThreatRelationship.query.filter_by(repo_threat_id=threat_id).all()
             except SQLAlchemyError:
@@ -375,215 +381,222 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, report_id=-1):
             # print(these_objectives)
             # print(these_utils)
 
-        # repo_threats = [
-        #     {
-        #         "likelihood": "Certain",
-        #         "monetary": "(Low) No monetary loss",
-        #         "confidentiality": "(Low) No records leaked",
-        #         "integrity": "(Low) No records lost or altered",
-        #         "availability": "(Low) No disruption of services",
-        #         "safety": "-"
-        #     },
-        #     {
-        #         "likelihood": "Possible",
-        #         "monetary": "-",
-        #         "confidentiality": "-",
-        #         "integrity": "-",
-        #         "availability": "-",
-        #         "safety": "(Low) No injuries or fatalities likely"
-        #     },
-        #     {
-        #         "likelihood": "Rare",
-        #         "monetary": "-",
-        #         "confidentiality": "-",
-        #         "integrity": "(Medium) Some records lost or altered",
-        #         "availability": "(Medium) Some disruption of services",
-        #         "safety": "(Medium) Injuries are likely"
-        #     },
-        #     {
-        #         "likelihood": "Rare than Rare",
-        #         "monetary": "(High) Significant monetary loss",
-        #         "confidentiality": "(High) Many records leaked",
-        #         "integrity": "(High) Many records lost or altered",
-        #         "availability": "-",
-        #         "safety": "-"
-        #     },
-        #     {
-        #         "likelihood": "Oddness 3 or higher",
-        #         "monetary": "(Medium) Some monetary loss",
-        #         "confidentiality": "(Medium) Some records leaked",
-        #         "integrity": "-",
-        #         "availability": "(High) Significant disruption of services",
-        #         "safety": "(High) Fatalities are likley"
-        #     }
-        # ]
+            # repo_threats = [
+            #     {
+            #         "likelihood": "Certain",
+            #         "monetary": "(Low) No monetary loss",
+            #         "confidentiality": "(Low) No records leaked",
+            #         "integrity": "(Low) No records lost or altered",
+            #         "availability": "(Low) No disruption of services",
+            #         "safety": "-"
+            #     },
+            #     {
+            #         "likelihood": "Possible",
+            #         "monetary": "-",
+            #         "confidentiality": "-",
+            #         "integrity": "-",
+            #         "availability": "-",
+            #         "safety": "(Low) No injuries or fatalities likely"
+            #     },
+            #     {
+            #         "likelihood": "Rare",
+            #         "monetary": "-",
+            #         "confidentiality": "-",
+            #         "integrity": "(Medium) Some records lost or altered",
+            #         "availability": "(Medium) Some disruption of services",
+            #         "safety": "(Medium) Injuries are likely"
+            #     },
+            #     {
+            #         "likelihood": "Rare than Rare",
+            #         "monetary": "(High) Significant monetary loss",
+            #         "confidentiality": "(High) Many records leaked",
+            #         "integrity": "(High) Many records lost or altered",
+            #         "availability": "-",
+            #         "safety": "-"
+            #     },
+            #     {
+            #         "likelihood": "Oddness 3 or higher",
+            #         "monetary": "(Medium) Some monetary loss",
+            #         "confidentiality": "(Medium) Some records leaked",
+            #         "integrity": "-",
+            #         "availability": "(High) Significant disruption of services",
+            #         "safety": "(High) Fatalities are likley"
+            #     }
+            # ]
 
-        # print(repo_threats)
-        # print(this_threat)
-        #         test_variable = """
-        #           obj5                       |
-        # 0        |1        |2        |
-        # ---------|---------|---------|
-        #  0.0000  | 0.0000  | 0.0000  |
-        #         """
-        risk_assessment_result = start_risk_assessment(1, 1)
-        # print("--------------RESSSSSSSSSSSSSSUUUUUUUUUUUUUUUUUUULLLLLLLLLLLLLLLLLTTTTTTTTT-----------")
-        # print(risk_assessment_result)
-        # print("--------------RESSSSSSSSSSSSSSUUUUUUUUUUUUUUUUUUULLLLLLLLLLLLLLLLLTTTTTTTTT-----------")
-        # print(repo_threats)
+            # print(repo_threats)
+            # print(this_threat)
+            #         test_variable = """
+            #           obj5                       |
+            # 0        |1        |2        |
+            # ---------|---------|---------|
+            #  0.0000  | 0.0000  | 0.0000  |
+            #         """
+            risk_assessment_result = start_risk_assessment(threat_id, asset_id)
+            # print("--------------RESSSSSSSSSSSSSSUUUUUUUUUUUUUUUUUUULLLLLLLLLLLLLLLLLTTTTTTTTT-----------")
+            # print(risk_assessment_result)
+            # print("--------------RESSSSSSSSSSSSSSUUUUUUUUUUUUUUUUUUULLLLLLLLLLLLLLLLLTTTTTTTTT-----------")
+            # print(repo_threats)
 
-        # Table showing objective results
-        try:
-            these_objectives = RepoObjective.query.all()
-        except SQLAlchemyError:
-            return "SQLAlchemyError"
+            # Table showing objective results
+            try:
+                these_objectives = RepoObjective.query.all()
+            except SQLAlchemyError:
+                return "SQLAlchemyError"
 
-        repo_threats_values_certain = {
-            "Likelihood": "Certain",
-            "Monetary": "",
-            "Confidentiality": "",
-            "Integrity": "",
-            "Availability": "",
-            "Safety": ""
-        }
-        repo_threats_values_possible = {
-            "Likelihood": "Possible",
-            "Monetary": "",
-            "Confidentiality": "",
-            "Integrity": "",
-            "Availability": "",
-            "Safety": ""
-        }
-        repo_threats_values_rare = {
-            "Likelihood": "Rare",
-            "Monetary": "",
-            "Confidentiality": "",
-            "Integrity": "",
-            "Availability": "",
-            "Safety": ""
-        }
-        repo_threats_values_rare_2 = {
-            "Likelihood": "Rare than Rare",
-            "Monetary": "",
-            "Confidentiality": "",
-            "Integrity": "",
-            "Availability": "",
-            "Safety": ""
-        }
-        repo_threats_values_rare_3 = {
-            "Likelihood": "Oddness 3 or higher",
-            "Monetary": "",
-            "Confidentiality": "",
-            "Integrity": "",
-            "Availability": "",
-            "Safety": ""
-        }
-        for objective in these_objectives:
-            value_low = risk_assessment_result["obj" + str(objective.id)].values[0]
-            value_med = risk_assessment_result["obj" + str(objective.id)].values[1]
-            value_high = risk_assessment_result["obj" + str(objective.id)].values[2]
+            repo_threats_values_certain = {
+                "Likelihood": "Certain",
+                "Monetary": "",
+                "Confidentiality": "",
+                "Integrity": "",
+                "Availability": "",
+                "Safety": ""
+            }
+            repo_threats_values_possible = {
+                "Likelihood": "Possible",
+                "Monetary": "",
+                "Confidentiality": "",
+                "Integrity": "",
+                "Availability": "",
+                "Safety": ""
+            }
+            repo_threats_values_rare = {
+                "Likelihood": "Rare",
+                "Monetary": "",
+                "Confidentiality": "",
+                "Integrity": "",
+                "Availability": "",
+                "Safety": ""
+            }
+            repo_threats_values_rare_2 = {
+                "Likelihood": "Rare than Rare",
+                "Monetary": "",
+                "Confidentiality": "",
+                "Integrity": "",
+                "Availability": "",
+                "Safety": ""
+            }
+            repo_threats_values_rare_3 = {
+                "Likelihood": "Oddness 3 or higher",
+                "Monetary": "",
+                "Confidentiality": "",
+                "Integrity": "",
+                "Availability": "",
+                "Safety": ""
+            }
+            for objective in these_objectives:
+                value_low = risk_assessment_result["obj" + str(objective.id)].values[0]
+                value_med = risk_assessment_result["obj" + str(objective.id)].values[1]
+                value_high = risk_assessment_result["obj" + str(objective.id)].values[2]
 
-            # print(objective.name)
-            # print(value_low)
-            # print(value_med)
-            # print(value_high)
-            if value_low < 0.00005:
-                repo_threats_values_rare_3[objective.name] = repo_threats_values_rare_3[objective.name] + "Low" + "|"
-                # print("---------------------------------------------1")
-            elif value_low < 0.0005:
-                repo_threats_values_rare_2[objective.name] = repo_threats_values_rare_2[objective.name] + "Low" + "|"
-                # print("---------------------------------------------2")
-            elif value_low < 0.10:
-                repo_threats_values_rare[objective.name] = repo_threats_values_rare[objective.name] + "Low" + "|"
-                # print("---------------------------------------------3")
-            elif value_low < 0.50:
-                repo_threats_values_possible[objective.name] = repo_threats_values_possible[
-                                                                   objective.name] + "Low" + "|"
-                # print("---------------------------------------------4")
-            else:
-                # print("---------------------------------------------5")
-                repo_threats_values_certain[objective.name] = repo_threats_values_certain[objective.name] + "Low" + "|"
+                # print(objective.name)
+                # print(value_low)
+                # print(value_med)
+                # print(value_high)
+                if value_low < 0.00005:
+                    repo_threats_values_rare_3[objective.name] = repo_threats_values_rare_3[
+                                                                     objective.name] + "Low" + "|"
+                    # print("---------------------------------------------1")
+                elif value_low < 0.0005:
+                    repo_threats_values_rare_2[objective.name] = repo_threats_values_rare_2[
+                                                                     objective.name] + "Low" + "|"
+                    # print("---------------------------------------------2")
+                elif value_low < 0.10:
+                    repo_threats_values_rare[objective.name] = repo_threats_values_rare[objective.name] + "Low" + "|"
+                    # print("---------------------------------------------3")
+                elif value_low < 0.50:
+                    repo_threats_values_possible[objective.name] = repo_threats_values_possible[
+                                                                       objective.name] + "Low" + "|"
+                    # print("---------------------------------------------4")
+                else:
+                    # print("---------------------------------------------5")
+                    repo_threats_values_certain[objective.name] = repo_threats_values_certain[
+                                                                      objective.name] + "Low" + "|"
 
-            if value_med < 0.00005:
-                repo_threats_values_rare_3[objective.name] = repo_threats_values_rare_3[objective.name] + "med" + "|"
-            elif value_med < 0.0005:
-                repo_threats_values_rare_2[objective.name] = repo_threats_values_rare_2[objective.name] + "med" + "|"
-            elif value_med < 0.10:
-                repo_threats_values_rare[objective.name] = repo_threats_values_rare[objective.name] + "med" + "|"
-            elif value_med < 0.50:
-                repo_threats_values_possible[objective.name] = repo_threats_values_possible[
-                                                                   objective.name] + "med" + "|"
-            else:
-                # print("============================================")
-                repo_threats_values_certain[objective.name] = repo_threats_values_certain[objective.name] + "med" + "|"
+                if value_med < 0.00005:
+                    repo_threats_values_rare_3[objective.name] = repo_threats_values_rare_3[
+                                                                     objective.name] + "med" + "|"
+                elif value_med < 0.0005:
+                    repo_threats_values_rare_2[objective.name] = repo_threats_values_rare_2[
+                                                                     objective.name] + "med" + "|"
+                elif value_med < 0.10:
+                    repo_threats_values_rare[objective.name] = repo_threats_values_rare[objective.name] + "med" + "|"
+                elif value_med < 0.50:
+                    repo_threats_values_possible[objective.name] = repo_threats_values_possible[
+                                                                       objective.name] + "med" + "|"
+                else:
+                    # print("============================================")
+                    repo_threats_values_certain[objective.name] = repo_threats_values_certain[
+                                                                      objective.name] + "med" + "|"
 
-            if value_high < 0.00005:
-                repo_threats_values_rare_3[objective.name] = repo_threats_values_rare_3[objective.name] + "high"
-            elif value_high < 0.0005:
-                repo_threats_values_rare_2[objective.name] = repo_threats_values_rare_2[objective.name] + "high"
-            elif value_high < 0.10:
-                repo_threats_values_rare[objective.name] = repo_threats_values_rare[objective.name] + "high"
-            elif value_high < 0.50:
-                repo_threats_values_possible[objective.name] = repo_threats_values_possible[objective.name] + "high"
-            else:
-                # print("++++++++++++++++++++++++++++++++++++++++++++++")
-                repo_threats_values_certain[objective.name] = repo_threats_values_certain[objective.name] + "high"
+                if value_high < 0.00005:
+                    repo_threats_values_rare_3[objective.name] = repo_threats_values_rare_3[objective.name] + "high"
+                elif value_high < 0.0005:
+                    repo_threats_values_rare_2[objective.name] = repo_threats_values_rare_2[objective.name] + "high"
+                elif value_high < 0.10:
+                    repo_threats_values_rare[objective.name] = repo_threats_values_rare[objective.name] + "high"
+                elif value_high < 0.50:
+                    repo_threats_values_possible[objective.name] = repo_threats_values_possible[objective.name] + "high"
+                else:
+                    # print("++++++++++++++++++++++++++++++++++++++++++++++")
+                    repo_threats_values_certain[objective.name] = repo_threats_values_certain[objective.name] + "high"
 
-        repo_threats = [repo_threats_values_certain, repo_threats_values_possible, repo_threats_values_rare,
-                        repo_threats_values_rare_2, repo_threats_values_rare_3]
-        # print("==================================================")
-        # print(repo_threats)
-        # # print(value_med)
-        # # print(value_low)
-        # print("==================================================")
-        # repo_threats_values_certain
+            repo_threats = [repo_threats_values_certain, repo_threats_values_possible, repo_threats_values_rare,
+                            repo_threats_values_rare_2, repo_threats_values_rare_3]
+            # print("==================================================")
+            # print(repo_threats)
+            # # print(value_med)
+            # # print(value_low)
+            # print("==================================================")
+            # repo_threats_values_certain
 
-        for key, value in risk_assessment_result.items():
-            risk_assessment_result[key] = pd.DataFrame(value).to_html()
-            # risk_assessment_result[key] = pd.DataFrame(value).to_html()
+            for key, value in risk_assessment_result.items():
+                risk_assessment_result[key] = pd.DataFrame(value).to_html()
+                # risk_assessment_result[key] = pd.DataFrame(value).to_html()
 
-        try:
-            repo_reports = RepoRiskAssessmentReports.query.filter(
-                RepoRiskAssessmentReports.risk_assessment.has(repo_asset_id=asset_id, repo_threat_id=threat_id)).all()
-        except SQLAlchemyError:
-            return Response("SQLAlchemyError", 500)
-            # print("------------------------------")
-            # print(repo_actors, flush=True)
-            #
-            # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
-        # print(repo_reports)
-        json_reports = convert_database_items_to_json_table(repo_reports)
-        json_detailed_reports = []
-        custom_it = 0
-        for each_report in repo_reports:
-            # print("Example ARE --------")
-            # print(json_reports[custom_it])
-            #  Add basic info to dashboard
-            actual_risk_assessment = each_report.risk_assessment
-            json_reports[custom_it]["asset_name"] = actual_risk_assessment.asset.name
-            json_reports[custom_it]["asset_ip"] = actual_risk_assessment.asset.ip
-            json_reports[custom_it]["threat_name"] = actual_risk_assessment.threat.name
-            # print(each_report)
+            try:
+                repo_reports = RepoRiskAssessmentReports.query.filter(
+                    RepoRiskAssessmentReports.risk_assessment.has(repo_asset_id=asset_id,
+                                                                  repo_threat_id=threat_id)).all()
+            except SQLAlchemyError:
+                return Response("SQLAlchemyError", 500)
+                # print("------------------------------")
+                # print(repo_actors, flush=True)
+                #
+                # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
+            # print(repo_reports)
+            json_reports = convert_database_items_to_json_table(repo_reports)
+            json_detailed_reports = []
+            custom_it = 0
+            for each_report in repo_reports:
+                # print("Example ARE --------")
+                # print(json_reports[custom_it])
+                #  Add basic info to dashboard
+                actual_risk_assessment = each_report.risk_assessment
+                json_reports[custom_it]["asset_name"] = actual_risk_assessment.asset.name
+                json_reports[custom_it]["asset_ip"] = actual_risk_assessment.asset.ip
+                json_reports[custom_it]["threat_name"] = actual_risk_assessment.threat.name
+                # print(each_report)
 
-            # Create detailed report jsons
-            json_detailed_report_to_add = {}
-            json_detailed_report_to_add["type"] = each_report.type
-            json_detailed_report_to_add["date_time"] = each_report.date_time
-            materialisations_list = each_report.materialisations_inference.split("|")
-            materialisations_list.pop()
-            # print(materialisations_list)
-            json_detailed_report_to_add["materialisations"] = []
+                # Create detailed report jsons
+                json_detailed_report_to_add = {}
+                json_detailed_report_to_add["type"] = each_report.type
+                json_detailed_report_to_add["date_time"] = each_report.date_time
+                materialisations_list = each_report.materialisations_inference.split("|")
+                materialisations_list.pop()
+                # print(materialisations_list)
+                json_detailed_report_to_add["materialisations"] = []
 
-            for custom_it_mat in range(0, len(materialisations_list), 3):
-                this_mat_name = RepoMaterialisation.query.filter_by(
-                    id=materialisations_list[custom_it_mat]).first().name
-                json_detailed_report_to_add["materialisations"].append(
-                    {"name": this_mat_name, "occurs": materialisations_list[custom_it_mat + 1],
-                     "Nothing": materialisations_list[custom_it_mat + 2]})
+                for custom_it_mat in range(0, len(materialisations_list), 3):
+                    this_mat_name = RepoMaterialisation.query.filter_by(
+                        id=materialisations_list[custom_it_mat]).first().name
+                    json_detailed_report_to_add["materialisations"].append(
+                        {"name": this_mat_name, "occurs": materialisations_list[custom_it_mat + 1],
+                         "Nothing": materialisations_list[custom_it_mat + 2]})
 
-            json_reports[custom_it]["detailed"] = json_detailed_report_to_add
-            custom_it = custom_it + 1
-        json_reports = json.dumps(json_reports)
+                json_reports[custom_it]["detailed"] = json_detailed_report_to_add
+                custom_it = custom_it + 1
+            json_reports = json.dumps(json_reports)
 
         # existing_report_data = {
         # }
@@ -629,7 +642,7 @@ def repo_dashboard_vulnerability():
 
         dict_assets_type = {}
 
-        #For vuln occurance we only care about associated CVE ids
+        # For vuln occurance we only care about associated CVE ids
         dict_vulnerabilities_occurrence = {}
 
         # Set entries for all asset types regardless if they have any associated vulnerabilties or not
@@ -669,5 +682,5 @@ def repo_dashboard_vulnerability():
         return render_template('templates_dashboard/repo_vulnerability_dashboard.html',
                                repo_vulnerabilities=repo_vulnerabilities,
                                asset_types_vulnerability_occurrence=asset_types_vulnerability_occurrence,
-                               asset_types_list=asset_types_list, vulnerability_cve_id_list =vulnerability_cve_id_list,
+                               asset_types_list=asset_types_list, vulnerability_cve_id_list=vulnerability_cve_id_list,
                                vulnerability_cve_id_occurrence=vulnerability_cve_id_occurrence)
