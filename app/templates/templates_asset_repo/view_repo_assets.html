@@ -81,12 +81,15 @@
             $("#editForm").find("#edit_value").val(row.value)
             $("#editForm").find("#edit_loss_of_revenue").val(row.loss_of_revenue)
             $("#editForm").find("#edit_additional_expenses").val(row.additional_expenses)
-            $("#editForm").find("#edit_regulatory_legal").val(row.regulatory_legal)
+            $("#editForm").find("#edit_security_levels").val(row.security_levels)
             $("#editForm").find("#edit_customer_service").val(row.customer_service)
-            $("#editForm").find("#edit_goodwill").val(row.goodwill)
+            $("#editForm").find("#operating_zone").val(row.operating_zone)
             $("#editForm").find("#edit_last_touch_date").val(row.last_touch_date)
             $("#editForm").find("#edit_type_fk").val(row.type_fk)
             $("#editForm").find("#edit_integrity").val(row.integrity)
+            $("#editForm").find("#edit_availability").val(row.availability)
+            $("#editForm").find("#edit_confidentiality").val(row.confidentiality)
+            $("#editForm").find("#edit_current_status").val(row.current_status)
             $("#editForm").find("#edit_type").val(row.type)
             $("#editForm").find("#edit_subtype").val(row.subtype)
         }
@@ -248,15 +251,17 @@
             <th data-field="net_group_fk" data-sortable="true">Name</th>
             <th data-field="value" data-sortable="true">Value</th>
             <th data-field="loss_of_revenue" data-sortable="true">Loss of Revenue</th>
-            <th data-field="additional_expenses" data-sortable="true">Additional Expenses</th>
-            <th data-field="regulatory_legal" data-sortable="true">Regulatory Legal</th>
+            <th data-field="additional_expenses" data-sortable="true">Repair time</th>
+            <th data-field="security_levels" data-sortable="true">Security Levels</th>
             <th data-field="customer_service" data-sortable="true">Customer_service</th>
             <th data-field="operating_zone" data-sortable="true">operating_zone</th>
             <th data-field="last_touch_date" data-sortable="true">Last Touch Date</th>
+            <th data-field="integrity" data-sortable="true">Integrity</th>
+            <th data-field="availability" data-sortable="true">Availability</th>
+            <th data-field="confidentiality" data-sortable="true">Confidentiality</th>
             {#            <th data-field="type_fk" data-sortable="true">Type</th>#}
             <th data-field="type" data-sortable="true">Type</th>
             <th data-field="subtype" data-sortable="true">Subtype</th>
-
         </tr>
         </thead>
     </table>
@@ -302,7 +307,7 @@
                         {#                        {{ wtf.form_field(new_asset_form.value) }}#}
                         {#                        {{ wtf.form_field(new_asset_form.loss_of_revenue) }}#}
                         {#                        {{ wtf.form_field(new_asset_form.additional_expenses) }}#}
-                        {#                        {{ wtf.form_field(new_asset_form.regulatory_legal) }}#}
+                        {#                        {{ wtf.form_field(new_asset_form.security_levels) }}#}
                         {#                        {{ wtf.form_field(new_asset_form.customer_service) }}#}
                         {#                        {{ wtf.form_field(new_asset_form.goodwill) }}#}
                         {#                        {{ wtf.form_field(new_asset_form.last_touch_date) }}#}

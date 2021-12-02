@@ -465,11 +465,11 @@ class RepoAsset(db.Model):
     ip = db.Column(db.String)
     net_group_fk = db.Column(db.Integer, db.ForeignKey('repo_net_group.id'))
     value = db.Column(db.Integer)
-    loss_of_revenue = db.Column(db.Integer)
-    additional_expenses = db.Column(db.Integer)
-    regulatory_legal = db.Column(db.Integer)
-    customer_service = db.Column(db.Integer)
-    operating_zone = db.Column(db.Integer)
+    loss_of_revenue = db.Column(db.Integer)     # this is related to Cost(revenue)
+    additional_expenses = db.Column(db.Integer)     # this is related to Repair time
+    security_levels = db.Column(db.Integer)
+    customer_service = db.Column(db.Integer)        # this is yet to be related
+    operating_zone = db.Column(db.Integer)      # this is yet to be related. It might help in cons2
     last_touch_date = db.Column(db.DateTime)
     type_fk = db.Column(db.Integer, db.ForeignKey('repo_assets_type.id'), default=1)
     # TODO Maybe remove the default, and ensure that type is always applied instead another way
@@ -477,6 +477,7 @@ class RepoAsset(db.Model):
     integrity = db.Column(db.Integer)
     availability = db.Column(db.Integer)
     confidentiality = db.Column(db.Integer)
+    current_status = db.Column(db.Integer)      # this is active, Inactive, Unknown, etc.
     services = db.relationship("RepoService", secondary=repo_asset_repo_service_association_table,
                                back_populates="assets")
     # risk_assessment = db.relationship("RepoRiskAssessment", secondary=repo_risk_assessment_repo_asset_association_table,

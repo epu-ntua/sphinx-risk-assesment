@@ -77,12 +77,15 @@ def view_repo_assets():
                 to_edit_asset.value = new_edit_form.edit_value.data
                 to_edit_asset.loss_of_revenue = new_edit_form.edit_loss_of_revenue.data
                 to_edit_asset.additional_expenses = new_edit_form.edit_additional_expenses.data
-                to_edit_asset.regulatory_legal = new_edit_form.edit_regulatory_legal.data
+                to_edit_asset.security_levels = new_edit_form.edit_security_levels.data
                 to_edit_asset.customer_service = new_edit_form.edit_customer_service.data
-                to_edit_asset.operating_zone = new_edit_form.edit_goodwill.data
+                to_edit_asset.operating_zone = new_edit_form.edit_operating_zone.data
                 to_edit_asset.last_touch_date = new_edit_form.edit_last_touch_date.data
                 to_edit_asset.type_fk = edit_type_fk_id
                 to_edit_asset.integrity = new_edit_form.edit_integrity.data
+                to_edit_asset.availability = new_edit_form.edit_availability.data
+                to_edit_asset.confidentiality = new_edit_form.edit_confidentiality.data
+                to_edit_asset.current_status = new_edit_form.edit_current_status.data
 
                 db.session.commit()
                 return redirect("/repo/assets/")
@@ -127,12 +130,15 @@ def view_repo_assets():
                                          value=new_asset_form.value.data,
                                          loss_of_revenue=new_asset_form.loss_of_revenue.data,
                                          additional_expenses=new_asset_form.additional_expenses.data,
-                                         regulatory_legal=new_asset_form.regulatory_legal.data,
+                                         security_levels=new_asset_form.security_levels.data,
                                          customer_service=new_asset_form.customer_service.data,
                                          operating_zone=new_asset_form.operating_zone.data,
                                          last_touch_date=new_asset_form.last_touch_date.data,
                                          type_fk=edit_type_fk_id,
-                                         integrity=new_asset_form.integrity.data)
+                                         integrity=new_asset_form.integrity.data,
+                                         availability=new_asset_form.availability.data,
+                                         confidentiality=new_asset_form.confidentiality.data,
+                                         current_status=new_asset_form.current_status.data)
                 db.session.add(to_add_asset)
                 db.session.commit()
 
@@ -188,7 +194,7 @@ def view_repo_assets():
         #                              value=new_asset_form.value.data,
         #                              loss_of_revenue=new_asset_form.loss_of_revenue.data,
         #                              additional_expenses=new_asset_form.additional_expenses.data,
-        #                              regulatory_legal=new_asset_form.regulatory_legal.data,
+        #                              security_levels=new_asset_form.security_levels.data,
         #                              customer_service=new_asset_form.customer_service.data,
         #                              operating_zone=new_asset_form.operating_zone.data,
         #                              last_touch_date=new_asset_form.last_touch_date.data,
@@ -213,6 +219,14 @@ def view_repo_assets():
         for index,json_asset_instance in enumerate(json_assets):
             json_asset_instance["subtype"] = repo_assets[index].type.name
             json_asset_instance["type"] = repo_assets[index].type.variety.name
+            json_asset_instance["integrity"] = 'Low' if json_asset_instance["integrity"] == 1 else 'Medium' if json_asset_instance["integrity"] == 2 else 'High'
+            json_asset_instance["availability"] = 'Low' if json_asset_instance["availability"] == 1 else 'Medium' if json_asset_instance["availability"] == 2 else 'High'
+            json_asset_instance["confidentiality"] = 'Low' if json_asset_instance["confidentiality"] == 1 else 'Medium' if json_asset_instance["confidentiality"] == 2 else 'High'
+            json_asset_instance["loss_of_revenue"] = 'Low' if json_asset_instance["loss_of_revenue"] == 1 else 'Medium' if json_asset_instance["loss_of_revenue"] == 2 else 'High'
+            json_asset_instance["additional_expenses"] = 'Low' if json_asset_instance["additional_expenses"] == 1 else 'Medium' if json_asset_instance["additional_expenses"] == 2 else 'High'
+            json_asset_instance["current_status"] = 'Active' if json_asset_instance["current_status"] == 1 else 'Inactive' if json_asset_instance["current_status"] == 2 else 'Disposed' if json_asset_instance["current_status"] == 3 else 'Unknown'
+            json_asset_instance["operating_zone"] = 'Corporate Intranet' if json_asset_instance["operating_zone"] == 1 else 'Business Partners/Clients' if json_asset_instance["operating_zone"] == 2 else 'Employee Private networks' if json_asset_instance["operating_zone"] == 3 else 'Public space'
+            json_asset_instance["security_levels"] = 'No specific requirements or security protection necessary' if json_asset_instance["security_levels"] == 1 else 'Protection against casual or coincidental violation' if json_asset_instance["security_levels"] == 2 else 'Protection against intentional violation using simple means with low resources, generic skills and low motivation' if json_asset_instance["security_levels"] == 3 else 'Protection against intentional violation using sophisticated means with moderate resources, specific skills and moderate motivation' if json_asset_instance["security_levels"] == 4 else 'Protection against intentional violation using sophisticated means with extended resources, specific skills and high motivation'
 
         print(json_assets)
         json_assets = json.dumps(json_assets)
