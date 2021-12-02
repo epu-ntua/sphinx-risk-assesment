@@ -10,6 +10,13 @@ repo_asset_common_vulnerabilities_and_exposures_association_table = db.Table(
               db.ForeignKey('common_vulnerabilities_and_exposures.id'))
 )
 
+repo_threat_common_vulnerabilities_and_exposures_association_table = db.Table(
+    'repo_threat_common_vulnerabilities_and_exposures_association_table',
+    db.Model.metadata,
+    db.Column('repo_threat_id', db.Integer, db.ForeignKey('repo_threat.id')),
+    db.Column('common_vulnerabilities_and_exposures_id', db.Integer,
+              db.ForeignKey('common_vulnerabilities_and_exposures.id'))
+)
 
 class VulnerabilityReport(db.Model):
     __tablename__ = 'vulnerability_report'
@@ -56,6 +63,9 @@ class CommonVulnerabilitiesAndExposures(db.Model):
     userInteractionRequired = db.Column(db.Boolean)
     assets = db.relationship("RepoAsset",
                              secondary=repo_asset_common_vulnerabilities_and_exposures_association_table,
+                             back_populates="cves")
+    threats = db.relationship("RepoThreat",
+                             secondary=repo_threat_common_vulnerabilities_and_exposures_association_table,
                              back_populates="cves")
 
     # # Relationships
@@ -382,7 +392,9 @@ class RepoThreat(db.Model):
     prob = db.Column(db.Integer)
     user_prob = db.Column(db.Integer)
     risk_assessment = db.relationship("RepoRiskAssessment", back_populates="threat")
-
+    cves = db.relationship("CommonVulnerabilitiesAndExposures",
+                           secondary=repo_threat_common_vulnerabilities_and_exposures_association_table,
+                           back_populates="threats")
 
 class RepoResponse(db.Model):
     """ Responses are intrinsically tied to the threats and therefore are unique for each one"""
