@@ -62,6 +62,15 @@ def view_repo_assets():
                     else:
                         edit_static_ip = 0
 
+                if RepoService.query.filter(RepoService.assets.any(id=to_edit_asset.id)).count() > 0:
+                    value_weight = RepoService.query.filter(RepoService.assets.any(id=to_edit_asset.id)).count()
+                    value_calculations = value_weight * (int(new_edit_form.edit_loss_of_revenue.data) + int(new_edit_form.edit_additional_expenses.data) + \
+                                int(new_edit_form.edit_security_levels.data) + int(new_edit_form.edit_integrity.data) + \
+                                int(new_edit_form.edit_availability.data) + int(new_edit_form.edit_confidentiality.data))
+                    final_value = 1 if value_calculations <= 6 else 2 if value_calculations <= 8 else 3
+                else:
+                    final_value = None
+
                 # print(new_edit_form.edit_verified)
                 # print("----------here--------------")
                 to_edit_asset.name = new_edit_form.edit_name.data
@@ -74,7 +83,7 @@ def view_repo_assets():
                 to_edit_asset.has_static_ip = edit_static_ip
                 to_edit_asset.ip = new_edit_form.edit_ip.data
                 to_edit_asset.net_group_fk = edit_net_group_fk_id
-                to_edit_asset.value = new_edit_form.edit_value.data
+                to_edit_asset.value = final_value
                 to_edit_asset.loss_of_revenue = new_edit_form.edit_loss_of_revenue.data
                 to_edit_asset.additional_expenses = new_edit_form.edit_additional_expenses.data
                 to_edit_asset.security_levels = new_edit_form.edit_security_levels.data
@@ -224,6 +233,7 @@ def view_repo_assets():
             json_asset_instance["confidentiality"] = 'Low' if json_asset_instance["confidentiality"] == 1 else 'Medium' if json_asset_instance["confidentiality"] == 2 else 'High'
             json_asset_instance["loss_of_revenue"] = 'Low' if json_asset_instance["loss_of_revenue"] == 1 else 'Medium' if json_asset_instance["loss_of_revenue"] == 2 else 'High'
             json_asset_instance["additional_expenses"] = 'Low' if json_asset_instance["additional_expenses"] == 1 else 'Medium' if json_asset_instance["additional_expenses"] == 2 else 'High'
+            json_asset_instance["value"] = 'Low' if json_asset_instance["value"] == 1 else 'Medium' if json_asset_instance["value"] == 2 else 'High' if json_asset_instance["value"] == 3 else ''
             json_asset_instance["current_status"] = 'Active' if json_asset_instance["current_status"] == 1 else 'Inactive' if json_asset_instance["current_status"] == 2 else 'Disposed' if json_asset_instance["current_status"] == 3 else 'Unknown'
             json_asset_instance["operating_zone"] = 'Corporate Intranet' if json_asset_instance["operating_zone"] == 1 else 'Business Partners/Clients' if json_asset_instance["operating_zone"] == 2 else 'Employee Private networks' if json_asset_instance["operating_zone"] == 3 else 'Public space'
             json_asset_instance["security_levels"] = 'No specific requirements or security protection necessary' if json_asset_instance["security_levels"] == 1 else 'Protection against casual or coincidental violation' if json_asset_instance["security_levels"] == 2 else 'Protection against intentional violation using simple means with low resources, generic skills and low motivation' if json_asset_instance["security_levels"] == 3 else 'Protection against intentional violation using sophisticated means with moderate resources, specific skills and moderate motivation' if json_asset_instance["security_levels"] == 4 else 'Protection against intentional violation using sophisticated means with extended resources, specific skills and high motivation'

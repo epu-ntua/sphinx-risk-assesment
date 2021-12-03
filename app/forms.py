@@ -261,4 +261,4 @@ class FormEditRepoAsset(FlaskForm):
     edit_confidentiality = SelectField('Confidentiality', choices=edit_dropdown_dictionary, default='1', validators=[Optional()])
     edit_dropdown_current_status = [('1', 'Active'), ('2', 'Inactive'), ('3', 'Disposed'), ('4', 'Unknown')]
     edit_current_status = SelectField('Status', choices=edit_dropdown_current_status, default='1', validators=[Optional()])
-    edit_submit = SubmitField("Edit asset")
+    edit_submit = SubmitField("Save asset")
