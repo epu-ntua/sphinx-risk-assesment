@@ -14,14 +14,12 @@
             return '<i class="fa fa-spinner fa-spin fa-fw fa-2x"></i>'
         }
 
-        function operateFormatter(value, row, index) {
+        function operateFormatter(value, row, index)  {
+            var href_custom = "/repo/threat/" + row.id + "/cve/"
             return [
-                {#'<a class="edit" href="javascript:void(0)" title="Edit">',#}
-                {#'<i class="fa fa-edit"></i>',#}
-                {#'</a>  ',#}
-                '<button type="button" class="btn btn-primary fa fa-edit" data-toggle="modal" data-target="#editModal">\n' +
-                '<span class= "custom-font">Edit</span>' +
-                '</button>'
+                '<a href="' + href_custom + '"style="color: #ffffff" type="button" class="btn btn-primary fa fa-edit">\n' +
+                '<span class= "custom-font">Related CVEs</span>' +
+                '</a>'
             ].join('')
         }
 
@@ -85,7 +83,7 @@
         <tr>
             <th data-field="id" data-sortable="true">ID</th>
             <th data-field="name" data-sortable="true">Name</th>
-            <th data-field="CAPEC_id" data-sortable="true">CAPEC</th>
+            <th data-field="operate" data-formatter="operateFormatter">Linked CVEs</th>
             {#            <th data-field="likelihood" data-sortable="true">Likelihood</th>#}
             {#            <th data-field="impact" data-sortable="true">Impact</th>#}
 

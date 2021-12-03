@@ -47,6 +47,9 @@ def query_generic_repo_objective():
     return RepoObjective.query
 
 
+def query_generic_cve():
+    return CommonVulnerabilitiesAndExposures.query
+
 class FormAddRepoActor(FlaskForm):
     id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
     name = StringField('Name', validators=[DataRequired()])
@@ -191,6 +194,12 @@ class FormAddRepoUtilityObjective(FlaskForm):
     submit_utility_objective = SubmitField("Add Objective to Utility")
 
 
+class FormAddCVEtoAsset(FlaskForm):
+    id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
+    cve = QuerySelectField(query_factory=query_generic_cve, allow_blank=False, get_label='CVEId')
+    submit = SubmitField("Connect CVE to threat")
+
+
 class FormAddRepoAsset(FlaskForm):
     id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
     name = StringField('Name', validators=[InputRequired()])
@@ -262,3 +271,4 @@ class FormEditRepoAsset(FlaskForm):
     edit_dropdown_current_status = [('1', 'Active'), ('2', 'Inactive'), ('3', 'Disposed'), ('4', 'Unknown')]
     edit_current_status = SelectField('Status', choices=edit_dropdown_current_status, default='1', validators=[Optional()])
     edit_submit = SubmitField("Save asset")
+

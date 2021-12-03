@@ -99,7 +99,7 @@ wrapper {
 }
 
 .rangeslider__fill {
-    background-color: #f01f14;
+    background-color: #00a79d !important;
     border-radius: 0;
 }
 

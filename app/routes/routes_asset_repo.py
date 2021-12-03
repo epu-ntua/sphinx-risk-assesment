@@ -751,10 +751,10 @@ def view_repo_vulnerability_info(vulnerability_id):
         # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
 
         json_vulnerabilities = convert_database_items_to_json_table(repo_services)
-        json_vulnerabilities = json.dumps(json_vulnerabilities)
+        json_vulnerabilities = json.dumps(json_vulnerabilities, default=str)
 
         this_vulnerability = convert_database_items_to_json_table(this_vulnerability)
-        this_vulnerability = json.dumps(this_vulnerability)
+        this_vulnerability = json.dumps(this_vulnerability, default=str)
         print("ACTORS ARE --------")
         print(json_vulnerabilities)
         json_vulnerabilities = [{
@@ -908,6 +908,83 @@ def view_repo_threat_info(threat_id):
                                new_materialisation_form=new_materialisation_form,
                                new_consequence_form=new_consequence_form,
                                repo_responses=repo_responses, new_response_form=new_response_form)
+
+
+@app.route('/repo/threat/<threat_id>/cve/', methods=['GET', 'POST'])
+def view_repo_threat_cve(threat_id):
+    if request.method == 'POST':
+        # new_materialisation_consequence_form = FormAddRepoMaterialisationConsequence()
+
+        new_cve_relationship_form = FormAddCVEtoAsset()
+
+
+
+        if new_cve_relationship_form.validate_on_submit():
+            try:
+                this_threat = RepoThreat.query.filter_by(id=threat_id).first()
+            except SQLAlchemyError:
+                return Response("SQLAlchemyError", 500)
+
+            this_threat.cves.append(new_cve_relationship_form.cve.data)
+
+            db.session.commit()
+        else:
+            print("Form CVE add relationship error :", new_cve_relationship_form.errors)
+
+        return redirect("/repo/threat/" + threat_id + "/cve/")
+    else:
+        try:
+            repo_threat = RepoThreat.query.filter_by(id=threat_id).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        try:
+            repo_cves = CommonVulnerabilitiesAndExposures.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        try:
+            repo_cves_related = CommonVulnerabilitiesAndExposures.query.filter(CommonVulnerabilitiesAndExposures.threats.any(RepoThreat.id == threat_id)).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+
+        # try:
+        #     repo_materialisations = RepoMaterialisation.query.filter_by(threat_id=threat_id).all()
+        # except SQLAlchemyError:
+        #     return Response("SQLAlchemyError", 500)
+        #
+        # try:
+        #     repo_consequences = RepoConsequence.query.filter_by(threat_id=threat_id).all()
+        # except SQLAlchemyError:
+        #     return Response("SQLAlchemyError", 500)
+        #
+        # try:
+        #     repo_responses = RepoResponse.query.filter_by(threat_id=threat_id).all()
+        # except SQLAlchemyError:
+        #     return Response("SQLAlchemyError", 500)
+
+        repo_threat = convert_database_items_to_json_table(repo_threat)
+        repo_threat_dict = repo_threat
+        repo_threat = json.dumps(repo_threat)
+
+        json_cves = convert_database_items_to_json_table(repo_cves)
+        json_cves = json.dumps(json_cves)
+
+        json_cves_related = convert_database_items_to_json_table(repo_cves_related)
+        json_cves_related = json.dumps(json_cves_related)
+
+
+        # new_materialisation_consequence_form = FormAddRepoMaterialisationConsequence()
+
+        new_cve_relationship_form = FormAddCVEtoAsset()
+
+        # print("Mats here is: ", repo_materialisations)
+        return render_template("templates_asset_repo/view_repo_threat_cve.html", repo_threat=repo_threat,
+                               repo_threat_dict=repo_threat_dict,
+                               json_cves=json_cves, json_cves_related =json_cves_related,
+                               new_cve_relationship_form=new_cve_relationship_form)
+
 
 
 @app.route('/repo/threat/<threat_id>/info/consequence/<consequence_id>/info/', methods=['GET', 'POST'])
