@@ -10,6 +10,13 @@
     <script>
         var $table = $('#table')
 
+        $(document).ready(function(){
+          $("#Add").click(function(){
+            $("#frm").toggle();
+          });
+          $("#frm").toggle();
+        });
+
         function loadingTemplate() {
             return '<i class="fa fa-spinner fa-spin fa-fw fa-2x"></i>'
         }
@@ -79,17 +86,17 @@
             $("#editForm").find("#edit_ip").val(row.ip)
             $("#editForm").find("#edit_net_group_fk").val(row.net_group_fk)
             $("#editForm").find("#edit_value").val(row.value)
-            $("#editForm").find("#edit_loss_of_revenue").val(row.loss_of_revenue)
-            $("#editForm").find("#edit_additional_expenses").val(row.additional_expenses)
-            $("#editForm").find("#edit_security_levels").val(row.security_levels)
+            $("#editForm").find("#edit_loss_of_revenue").val(row.loss_of_revenue_id)
+            $("#editForm").find("#edit_additional_expenses").val(row.additional_expenses_id)
+            $("#editForm").find("#edit_security_levels").val(row.security_levels_id)
             $("#editForm").find("#edit_customer_service").val(row.customer_service)
-            $("#editForm").find("#edit_operating_zone").val(row.operating_zone)
-            $("#editForm").find("#edit_last_touch_date").val(row.last_touch_date)
+            $("#editForm").find("#edit_operating_zone").val(row.operating_zone_id)
+            $("#editForm").find("#edit_last_touch_date").val(row.last_touch_date_id)
             $("#editForm").find("#edit_type_fk").val(row.type_fk)
-            $("#editForm").find("#edit_integrity").val(row.integrity.)
-            $("#editForm").find("#edit_availability").val(row.availability)
-            $("#editForm").find("#edit_confidentiality").val(row.confidentiality)
-            $("#editForm").find("#edit_current_status").val(row.current_status)
+            $("#editForm").find("#edit_integrity").val(row.integrity_id)
+            $("#editForm").find("#edit_availability").val(row.availability_id)
+            $("#editForm").find("#edit_confidentiality").val(row.confidentiality_id)
+            $("#editForm").find("#edit_current_status").val(row.current_status_id)
             $("#editForm").find("#edit_type").val(row.type)
             $("#editForm").find("#edit_subtype").val(row.subtype)
         }
@@ -143,7 +150,6 @@
                     }
                 }
             }
-
         }
 
         /*
@@ -241,7 +247,7 @@
             <th data-field="id" data-sortable="true">ID</th>
             <th data-field="name" data-sortable="true">Name</th>
             <th data-field="description" data-sortable="true">Description</th>
-            <th data-field="owner" data-sortable="true">Owner</th>
+            <th data-field="owner" data-sortable="true">Asset Owner</th>
             <th data-field="location" data-sortable="true">Location</th>
             <th data-field="verified" data-sortable="true">Verified</th>
             <th data-field="verified_by" data-sortable="true">Verified by</th>
@@ -266,18 +272,19 @@
         </thead>
     </table>
     <hr/>
-    <h2>Add New Asset</h2>
-    <form action="/repo/assets/" method="post" novalidate>
-        {#        {{ wtf.form_field(new_asset_form.name) }}#}
-        {#        {{ wtf.form_field(new_asset_form.description) }}#}
-        {#        {{ wtf.form_field(new_asset_form.owner) }}#}
-        {#        {{ wtf.form_field(new_asset_form.verified_by[0]) }}#}
+    <button id="Add" class="btn btn-secondary" type="button" name="Add_new" aria-label="Add new Asset">Add New Asset</button>
+    <div id="frm">
+        <form action="/repo/assets/" method="post" novalidate>
+            {#        {{ wtf.form_field(new_asset_form.name) }}#}
+            {#        {{ wtf.form_field(new_asset_form.description) }}#}
+            {#        {{ wtf.form_field(new_asset_form.owner) }}#}
+            {#        {{ wtf.form_field(new_asset_form.verified_by[0]) }}#}
 
-        {{ wtf.quick_form(new_asset_form) }}
-        {#        <p>{{ wtf.form_field(new_asset_form.submit()) }}</p>#}
-        </p>
-    </form>
-
+            {{ wtf.quick_form(new_asset_form) }}
+            {#        <p>{{ wtf.form_field(new_asset_form.submit()) }}</p>#}
+            </p>
+        </form>
+    </div>
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
          aria-hidden="true">
         <div class="modal-dialog" role="document">

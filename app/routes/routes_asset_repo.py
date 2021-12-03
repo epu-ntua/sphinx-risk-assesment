@@ -228,6 +228,14 @@ def view_repo_assets():
         for index,json_asset_instance in enumerate(json_assets):
             json_asset_instance["subtype"] = repo_assets[index].type.name
             json_asset_instance["type"] = repo_assets[index].type.variety.name
+            json_asset_instance["integrity_id"] = json_asset_instance["integrity"]
+            json_asset_instance["availability_id"] = json_asset_instance["availability"]
+            json_asset_instance["confidentiality_id"] = json_asset_instance["confidentiality"]
+            json_asset_instance["loss_of_revenue_id"] = json_asset_instance["loss_of_revenue"]
+            json_asset_instance["additional_expenses_id"] = json_asset_instance["additional_expenses"]
+            json_asset_instance["current_status_id"] = json_asset_instance["current_status"]
+            json_asset_instance["operating_zone_id"] = json_asset_instance["operating_zone"]
+            json_asset_instance["security_levels_id"] = json_asset_instance["security_levels"]
             json_asset_instance["integrity"] = 'Low' if json_asset_instance["integrity"] == 1 else 'Medium' if json_asset_instance["integrity"] == 2 else 'High'
             json_asset_instance["availability"] = 'Low' if json_asset_instance["availability"] == 1 else 'Medium' if json_asset_instance["availability"] == 2 else 'High'
             json_asset_instance["confidentiality"] = 'Low' if json_asset_instance["confidentiality"] == 1 else 'Medium' if json_asset_instance["confidentiality"] == 2 else 'High'
@@ -1187,6 +1195,13 @@ def view_repo_asset_services_relation(asset_id):
                     print("RELATION ADD", service.name)
                     # Otherwise add it
                     repo_asset.services.append(service)
+
+        # Update Asset value
+        if RepoService.query.filter(RepoService.assets.any(id=int(asset_id))).count() > 0:
+            value_weight = RepoService.query.filter(RepoService.assets.any(id=int(asset_id))).count()
+            value_calculations = value_weight * (int(repo_asset.loss_of_revenue) + int(repo_asset.additional_expenses) + int(repo_asset.security_levels) + int(repo_asset.integrity) + int(repo_asset.availability) + int(repo_asset.confidentiality))
+            final_value = 1 if value_calculations <= 6 else 2 if value_calculations <= 8 else 3
+            repo_asset.value = final_value
 
         db.session.commit()
         # for service in services:
