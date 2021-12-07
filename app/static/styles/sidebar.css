@@ -159,3 +159,31 @@ wrapper {
     -webkit-transform: translate(-50%, -45%);
     -ms-transform: translate(-50%, -45%);
 }
+
+.tab-button{
+    width: 100%;
+    background-color: #00a79d;
+    font-size: 150%;
+    color: white;
+    border: 3px solid #00a79d;
+    /*border-right: 50px;*/
+    /*border-left: 15px;*/
+    /*padding-right: 15px;*/
+    /*padding-left: 15px;*/
+}
+
+.tab-button:hover{
+    width: 100%;
+    background-color: #5b80b2;
+    font-size: 150%;
+    color: white;
+    border-color: #00a79d;
+    cursor: pointer;
+}
+
+.param_estimation_tab{
+    border: 3px solid #00a79d;
+    padding: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+}

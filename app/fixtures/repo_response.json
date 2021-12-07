@@ -8,5 +8,55 @@
         "id": "2",
         "name": "Act",
         "threat_id": "1"
+    },
+    {
+        "id": "3",
+        "name": "Do Nothing",
+        "threat_id": "2"
+    },
+    {
+        "id": "4",
+        "name": "Act",
+        "threat_id": "2"
+    },
+    {
+        "id": "5",
+        "name": "Do Nothing",
+        "threat_id": "3"
+    },
+    {
+        "id": "6",
+        "name": "Act",
+        "threat_id": "3"
+    },
+    {
+        "id": "7",
+        "name": "Do Nothing",
+        "threat_id": "4"
+    },
+    {
+        "id": "8",
+        "name": "Act",
+        "threat_id": "4"
+    },
+    {
+        "id": "9",
+        "name": "Do Nothing",
+        "threat_id": "5"
+    },
+    {
+        "id": "10",
+        "name": "Act",
+        "threat_id": "5"
+    },
+    {
+        "id": "11",
+        "name": "Do Nothing",
+        "threat_id": "6"
+    },
+    {
+        "id": "12",
+        "name": "Act",
+        "threat_id": "6"
     }
 ]

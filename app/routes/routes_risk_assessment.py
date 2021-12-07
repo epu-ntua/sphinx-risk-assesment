@@ -397,6 +397,9 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
                     repo_asset_id=asset_id,
                     repo_threat_id=threat_id).first())
                 print("threat_id =" + str(type(threat_id)) + "asset_id= " + str(type(asset_id)))
+                print("----------==============----------")
+                print(repo_threat_materialisations)
+                print(repo_threat_responses)
                 for materialisation in repo_threat_materialisations:
                     temp_array_threat_materialisation_calculation = []
                     for response in repo_threat_responses:
@@ -555,29 +558,40 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
         # for toprint in array_threat_consequence_calculation:
         #     print("Consequences are: ", toprint)
         try:
+            # repo_vulnerabilities = VulnerabilityReportVulnerabilitiesLink.query.filter_by(asset_id=asset_id).all()
+            # NNEEEED TO CHECK THIS
+            repo_vulnerabilities = db.session.query(VulnerabilityReportVulnerabilitiesLink).join(CommonVulnerabilitiesAndExposures, VulnerabilityReportVulnerabilitiesLink.cve).join(RepoThreat, CommonVulnerabilitiesAndExposures.threats).filter(VulnerabilityReportVulnerabilitiesLink.asset_id == asset_id, RepoThreat.id == threat_id).all()
+            # repo_vulnerabilities = VulnerabilityReportVulnerabilitiesLink.join(VulnerabilityReportVulnerabilitiesLink.cve).query.filter().all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        try:
             repo_controls = RepoControl.query.join(VulnerabilityReportVulnerabilitiesLink).filter(
                 VulnerabilityReportVulnerabilitiesLink.asset_id == asset_id).all()
         except SQLAlchemyError:
             return Response("SQLAlchemyError", 500)
 
-        try:
-            repo_vulnerabilities = VulnerabilityReportVulnerabilitiesLink.query.filter_by(asset_id=asset_id).all()
-        except SQLAlchemyError:
-            return Response("SQLAlchemyError", 500)
-            # print("------------------------------")
-            # print(repo_actors, flush=True)
+
+        print("------------------------------======================================================")
+
             #
             # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
 
         json_controls = convert_database_items_to_json_table(repo_controls)
-        json_vulnerabilities = convert_database_items_to_json_table(repo_vulnerabilities)
 
+
+        json_vulnerabilities = convert_database_items_to_json_table(repo_vulnerabilities)
+        for it,instance in enumerate(json_vulnerabilities):
+            instance["cve_actual_id"] = repo_vulnerabilities[it].cve.CVEId
+            print(instance, flush=True)
+            print("---")
         json_controls = json.dumps(json_controls, default=str)
         json_vulnerabilities = json.dumps(json_vulnerabilities, default=str)
 
         print("Threat id is" + str(threat_id))
         print(json_controls)
         print(json_vulnerabilities)
+        print(array_threat_materialisation_calculation)
         return render_template("templates_risk_assessment/repo_risk_configuration_threat_asset.html",
                                threat_id=threat_id, asset_id=asset_id, json_controls=json_controls,
                                json_vulnerabilities=json_vulnerabilities,

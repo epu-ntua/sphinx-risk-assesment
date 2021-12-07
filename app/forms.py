@@ -71,7 +71,7 @@ class FormAddRepoService(FlaskForm):
 class FormAddRepoControl(FlaskForm):
     id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
     name = StringField('Name', validators=[DataRequired()])
-    vulnerability = QuerySelectField(query_factory=query_generic_repo_vulnerability, allow_blank=True, get_label='comments')
+    vulnerability = QuerySelectField(query_factory=query_generic_repo_vulnerability, allow_blank=True, get_label='cve_id')
     description = StringField('Description')
     submit = SubmitField("Add new control")
 
