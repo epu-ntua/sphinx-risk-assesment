@@ -200,6 +200,12 @@ wrapper {
     font-size: large;
 }
 
+.orange-span{
+    color: #FFB780;
+    font-weight: bold;
+    font-size: large;
+}
+
 .rangeslider-row{
     border-bottom: 3px solid grey;
     border-top: 1px solid rgba(255, 255, 255, .1);

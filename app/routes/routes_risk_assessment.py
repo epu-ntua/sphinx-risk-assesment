@@ -664,8 +664,10 @@ def repo_risk_configuration_impacts_risk(threat_id=1, asset_id=-1, impact_id=-1)
                 consequences_state=json.dumps(related_consequence_state)
             )
             if does_exist.count() > 0:
+                print("Value exists =-=-=-=-=-=-=-=-=-=-=-=-=-=")
                 to_score_entry = does_exist.first()
             else:
+                print("Value new =-=-=-=-=-=-=-=-=-=-=-=-=-=")
                 to_score_entry = RepoAssetThreatConsequenceServiceImpactRelationship(repo_asset_id=asset_id,
                                                                                      repo_threat_id=threat_id,
                                                                                      repo_impact_id=impact_id,
@@ -676,12 +678,15 @@ def repo_risk_configuration_impacts_risk(threat_id=1, asset_id=-1, impact_id=-1)
                                                                                      )
                 db.session.add(to_score_entry)
                 db.session.flush()
-
+            print(to_score_entry)
             if deconstructedId[0] == "low":
+                print("Value low is: ----------" , request.form[user_input], "-------------")
                 to_score_entry.low_prob = request.form[user_input]
             elif deconstructedId[0] == "medium":
+                print("Value med is: ----------" , request.form[user_input], "-------------")
                 to_score_entry.med_prob = request.form[user_input]
             else:
+                print("Value high is: ----------" , request.form[user_input], "-------------")
                 to_score_entry.high_prob = request.form[user_input]
 
         print("WILL SAVE NOW")
@@ -804,9 +809,11 @@ def repo_risk_configuration_impacts_risk(threat_id=1, asset_id=-1, impact_id=-1)
                 to_send.append(33)
             # to_score_entry = does_exist.first()
         else:
+            print("---Doesnt Exist ----")
             custom_it = 0
             does_exist = does_exist.all()
             for to_send in array_impact_calculation:
+                print(does_exist[custom_it])
                 to_send.append(does_exist[custom_it].low_prob)
                 to_send.append(does_exist[custom_it].med_prob)
                 to_send.append(does_exist[custom_it].high_prob)
