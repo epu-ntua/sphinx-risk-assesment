@@ -8,7 +8,7 @@
 {#{% endblock %}#}
 {% block script %}
     <script>
-     var valueBubble = '<output class="rangeslider__value-bubble" />';
+        var valueBubble = '<output class="rangeslider__value-bubble" />';
 
         var unit = $('input[type="range"]').attr('unit');
 
@@ -38,24 +38,26 @@
 
         function nextInDOM(_selector, _subject) {
             var next = getNext(_subject);
-            while(next.length != 0) {
+            while (next.length != 0) {
                 var found = searchFor(_selector, next);
-                if(found != null) return found;
+                if (found != null) return found;
                 next = getNext(next);
             }
             return null;
         }
+
         function getNext(_subject) {
-            if(_subject.next().length > 0) return _subject.next();
+            if (_subject.next().length > 0) return _subject.next();
             return getNext(_subject.parent());
         }
+
         function searchFor(_selector, _subject) {
-            if(_subject.is(_selector)) return _subject;
+            if (_subject.is(_selector)) return _subject;
             else {
                 var found = null;
-                _subject.children().each(function() {
+                _subject.children().each(function () {
                     found = searchFor(_selector, $(this));
-                    if(found != null) return false;
+                    if (found != null) return false;
                 });
                 return found;
             }
@@ -75,23 +77,23 @@
             {#$table.bootstrapTable({data: data});#}
             {#$table2.bootstrapTable({data: data2});#}
 
-            let idTest = "cons|1|1|True"
+            {#let idTest = "cons|1|1|True"#}
             {#let toChange = nextInDOM('.rangeslider__value-bubble', $('#' + $.escapeSelector(idTest)))#}
-            let PreviousToChange = $('#' + $.escapeSelector(idTest))
-            PreviousToChange.html("HERE")
-            let toChange = PreviousToChange.next().find('.rangeslider__value-bubble')
-            toChange.html(toChange.html() + "<span>+ 20" )
+            {#let PreviousToChange = $('#' + $.escapeSelector(idTest))#}
+            {#PreviousToChange.html("HERE")#}
+            {#let toChange = PreviousToChange.next().find('.rangeslider__value-bubble')#}
+            {#toChange.html(toChange.html() + "<span>+ 20")#}
 
         })
 
-     function open_close_tab(){
-            if ( $('#param_estimation_tab').is(":visible")){
+        function open_close_tab() {
+            if ($('#param_estimation_tab').is(":visible")) {
                 $('#param_estimation_tab').hide()
-            }else{
+            } else {
                 $('#param_estimation_tab').show()
             }
 
-     }
+        }
     </script>
 {% endblock %}
 
@@ -176,7 +178,7 @@
             </div>
             {% if asset_id != -1 %}
                 <hr/>
-                <button class="tab-button" onclick="open_close_tab()"> Parameter Estimation Tab </button>
+                <button class="tab-button" onclick="open_close_tab()"> Parameter Estimation Tab</button>
                 <div id="param_estimation_tab" class="row dashboard-row param_estimation_tab">
                     <div class="col-6">
                         <h5>Vulnerabilities</h5>
@@ -188,7 +190,7 @@
                             <thead>
                             <tr>
                                 <th data-field="id" data-sortable="true">Vulnerability</th>
-{#                                <th data-field="cve_id" data-sortable="true">CVE</th>#}
+                                {#                                <th data-field="cve_id" data-sortable="true">CVE</th>#}
                                 <th data-field="cve_actual_id" data-sortable="true">CVE</th>
                                 <th data-field="VReport_CVSS_score" data-sortable="true">CVSS</th>
                                 <th data-field="VReport_CVSS_score" data-sortable="true">CVSS</th>
@@ -216,9 +218,9 @@
                     </div>
                     <hr/>
                 </div>
-{#                <div id="param_estimation_tab" class="row dashboard-row">#}
-{#                <h5>Automated Parameter Estimation</h5>#}
-{#                </div>#}
+                {#                <div id="param_estimation_tab" class="row dashboard-row">#}
+                {#                <h5>Automated Parameter Estimation</h5>#}
+                {#                </div>#}
                 <div id="param_estimation_tab" class="row dashboard-row param_estimation_tab">
                     <div class="col-6">
                         <h5>Automated Calculated Effect on Materialisation Calculation</h5>
@@ -226,7 +228,7 @@
                         <br/>
                     </div>
                     <div class="col-6">
-                       <h5>Automated Calculated Effect on Consequence Calculation</h5>
+                        <h5>Automated Calculated Effect on Consequence Calculation</h5>
                         <span> Total Effect Of Controls: </span>
                         <br/>
                     </div>
@@ -235,64 +237,209 @@
                 <form action="/repo/risk/configuration/threat/{{ threat_id }}/asset/{{ asset_id }}/" method="post">
                     <div class="row dashboard-row">
                         <div class="col-6">
-                            <h4>Threat Materialisation Calculation </h4>
-                            {% for materialisation_calculation_wrapper in array_threat_materialisation_calculation %}
-                                <h6>Materialisation
-                                    | {{ materialisation_calculation_wrapper[0].materialisation.name }}</h6>
-                                {% for materialisation_calculation in materialisation_calculation_wrapper %}
-                                    <div class="row dashboard-row">
-                                        <div class="col-2 custom-select-column">
-                                            Response: {{ materialisation_calculation.response.name }}
-                                            Threat Occurs: {{ materialisation_calculation.threat_occurrence }}
-                                        </div>
-                                        <div class="col-10">
-                                            <div class="row dashboard-row">
+                            <h3>Threat Materialisation Calculation </h3>
+                            <div class="row">
+                                <div class="col-12">
+                                    {% for materialisation_calculation_wrapper in array_threat_materialisation_calculation %}
+                                        <h4 class="group-row-header">Materialisation
+                                            | {{ materialisation_calculation_wrapper[0].materialisation.name }}</h4>
+                                        {% for materialisation_calculation in materialisation_calculation_wrapper %}
+                                            <div class="row entry-row">
+                                                <div class="col-12">
+                                                    <div class="row dashboard-row parameter-row">
+                                                        <div class="col-2 parameter-row-header">
+                                                            Response:
+                                                        </div>
+                                                        <div class="col-10">
+                                                            {% if materialisation_calculation.response.name == "Act" %}
+                                                                <span class="green-span"> {{ materialisation_calculation.response.name }}</span>
+                                                            {% else %}
+                                                                <span class="red-span"> {{ materialisation_calculation.response.name }}</span>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row dashboard-row parameter-row">
+                                                        <div class="col-2 parameter-row-header">
+                                                            Threat Occurs:
+                                                        </div>
+                                                        <div class="col-10">
+                                                            {#                                        {{ materialisation_calculation.threat_occurrence }}#}
+                                                            {% if materialisation_calculation.threat_occurrence == True %}
+                                                                <span class="green-span">{{ materialisation_calculation.threat_occurrence }}</span>
+                                                            {% else %}
+                                                                <span class="red-span">{{ materialisation_calculation.threat_occurrence }}</span>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                    {#                                    </div>#}
+                                                    <div class="row dashboard-row rangeslider-row">
+                                                        {#                                        <div class="col-2 custom-select-column">#}
+                                                        {##}
+                                                        {#                                        </div>#}
+                                                        <div class="col-12">
+                                                            <div class="row dashboard-row">
 
-                                                <div class="col-10">
-                                                    <div class="row dashboard-row">
-                                            </div>
-                                                    <input type="range" class="form-control-range"
-                                                           name="mat|{{ materialisation_calculation.materialisation.id }}|{{ materialisation_calculation.response.id }}|{{ materialisation_calculation.threat_occurrence }}"
-                                                           id="mat|{{ materialisation_calculation.materialisation.id }}|{{ materialisation_calculation.response.id }}|{{ materialisation_calculation.threat_occurrence }}"
-                                                           step="1"
-                                                           min="0"
-                                                           max="100" value="{{ materialisation_calculation.prob }}" ,
-                                                           name="objective_state_alert_3">
+                                                                <div class="col-10">
+                                                                    <div class="row dashboard-row">
+                                                                        <div class="col-2">
+                                                                            Very Low
+                                                                        </div>
+                                                                        <div class="col-2">
+                                                                            Low
+                                                                        </div>
+                                                                        <div class="col-3">
+                                                                            Medium
+                                                                        </div>
+                                                                        <div class="col-3">
+                                                                            High
+                                                                        </div>
+                                                                        <div class="col-2">
+                                                                            Critical
+                                                                        </div>
+                                                                    </div>
+                                                                    <input type="range" class="form-control-range"
+                                                                           name="mat|{{ materialisation_calculation.materialisation.id }}|{{ materialisation_calculation.response.id }}|{{ materialisation_calculation.threat_occurrence }}"
+                                                                           id="mat|{{ materialisation_calculation.materialisation.id }}|{{ materialisation_calculation.response.id }}|{{ materialisation_calculation.threat_occurrence }}"
+                                                                           step="1"
+                                                                           min="0"
+                                                                           max="100"
+                                                                           value="{{ materialisation_calculation.prob }}"
+                                                                           ,
+                                                                           name="objective_state_alert_3">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            {% endfor %}
+                                        {% endfor %}
+                                    {% endfor %}
+                                </div>
+                            </div>
                         </div>
                         <div class="col-6">
-                            <h4>Threat Consequence Calculation</h4>
-                            {% for consequence_calculation_wrapper in array_threat_consequence_calculation %}
-                                <h6>Consequence | {{ consequence_calculation_wrapper[0].consequence.name }}</h6>
-                                {% for consequence_calculation in consequence_calculation_wrapper %}
-                                    <div class="row dashboard-row">
-                                        <div class="col-2 custom-select-column">
-                                            Response: {{ consequence_calculation.response.name }}
-                                            Threat Occurs: {{ consequence_calculation.threat_occurrence }}
-                                        </div>
-                                        <div class="col-10">
-                                            <div class="row dashboard-row">
-                                            </div>
-                                            <div class="row dashboard-row">
-                                                <div class="col-10">
-                                                    <input type="range" class="form-control-range"
-                                                           name="cons|{{ consequence_calculation.consequence.id }}|{{ consequence_calculation.response.id }}|{{ consequence_calculation.threat_occurrence }}"
-                                                           id="cons|{{ consequence_calculation.consequence.id }}|{{ consequence_calculation.response.id }}|{{ consequence_calculation.threat_occurrence }}"
-                                                           step="1"
-                                                           min="0"
-                                                           max="100" value="{{ consequence_calculation.prob }}" ,
-                                                           name="objective_state_alert_3" >
+                            <h3>Threat Consequence Calculation</h3>
+                            <div class="row">
+                                <div class="col-12">
+                                    {% for consequence_calculation_wrapper in array_threat_consequence_calculation %}
+                                        <h4 class="group-row-header">Consequence | {{ consequence_calculation_wrapper[0].consequence.name }}</h4>
+                                        {% for consequence_calculation in consequence_calculation_wrapper %}
+                                            <div class="row entry-row">
+                                                <div class="col-12">
+                                                    <div class="row dashboard-row parameter-row">
+                                                        <div class="col-2 parameter-row-header">
+                                                            Response:
+                                                        </div>
+                                                        <div class="col-10">
+                                                            {% if consequence_calculation.response.name == "Act" %}
+                                                                <span class="green-span"> {{ consequence_calculation.response.name }}</span>
+                                                            {% else %}
+                                                                <span class="red-span"> {{ consequence_calculation.response.name }}</span>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row dashboard-row parameter-row">
+                                                        <div class="col-2 parameter-row-header">
+                                                            Threat Occurs:
+                                                        </div>
+                                                        <div class="col-10">
+                                                            {#                                        {{ materialisation_calculation.threat_occurrence }}#}
+                                                            {% if consequence_calculation.threat_occurrence == True %}
+                                                                <span class="green-span">{{ consequence_calculation.threat_occurrence }}</span>
+                                                            {% else %}
+                                                                <span class="red-span">{{ consequence_calculation.threat_occurrence }}</span>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                    {#                                    </div>#}
+                                                    <div class="row dashboard-row rangeslider-row">
+                                                        {#                                        <div class="col-2 custom-select-column">#}
+                                                        {##}
+                                                        {#                                        </div>#}
+                                                        <div class="col-12">
+                                                            <div class="row dashboard-row">
+
+                                                                <div class="col-10">
+                                                                    <div class="row dashboard-row">
+                                                                        <div class="col-2">
+                                                                            Very Low
+                                                                        </div>
+                                                                        <div class="col-2">
+                                                                            Low
+                                                                        </div>
+                                                                        <div class="col-3">
+                                                                            Medium
+                                                                        </div>
+                                                                        <div class="col-3">
+                                                                            High
+                                                                        </div>
+                                                                        <div class="col-2">
+                                                                            Critical
+                                                                        </div>
+                                                                    </div>
+                                                                    <input type="range" class="form-control-range"
+                                                                       name="cons|{{ consequence_calculation.consequence.id }}|{{ consequence_calculation.response.id }}|{{ consequence_calculation.threat_occurrence }}"
+                                                                       id="cons|{{ consequence_calculation.consequence.id }}|{{ consequence_calculation.response.id }}|{{ consequence_calculation.threat_occurrence }}"
+                                                                       step="1"
+                                                                       min="0"
+                                                                       max="100" value="{{ consequence_calculation.prob }}"
+                                                                       ,
+                                                                       name="objective_state_alert_3">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            {% endfor %}
+
+
+
+
+
+
+
+
+{#                                            <div class="row dashboard-row">#}
+{#                                                <div class="col-2 custom-select-column">#}
+{#                                                    Response: {{ consequence_calculation.response.name }}#}
+{#                                                    Threat Occurs: {{ consequence_calculation.response.name }}#}
+{#                                                </div>#}
+{#                                                <div class="col-10">#}
+{#                                                    <div class="row dashboard-row">#}
+{#                                                        <div class="col-2">#}
+{#                                                            Very Low#}
+{#                                                        </div>#}
+{#                                                        <div class="col-2">#}
+{#                                                            Low#}
+{#                                                        </div>#}
+{#                                                        <div class="col-2">#}
+{#                                                            Medium#}
+{#                                                        </div>#}
+{#                                                        <div class="col-2 ">#}
+{#                                                            High#}
+{#                                                        </div>#}
+{#                                                        <div class="col-2">#}
+{#                                                            Critical#}
+{#                                                        </div>#}
+{#                                                    </div>#}
+{#                                                    <div class="row dashboard-row">#}
+{#                                                        <div class="col-10">#}
+{#                                                            <input type="range" class="form-control-range"#}
+{#                                                                   name="cons|{{ consequence_calculation.consequence.id }}|{{ consequence_calculation.response.id }}|{{ consequence_calculation.threat_occurrence }}"#}
+{#                                                                   id="cons|{{ consequence_calculation.consequence.id }}|{{ consequence_calculation.response.id }}|{{ consequence_calculation.threat_occurrence }}"#}
+{#                                                                   step="1"#}
+{#                                                                   min="0"#}
+{#                                                                   max="100" value="{{ consequence_calculation.prob }}"#}
+{#                                                                   ,#}
+{#                                                                   name="objective_state_alert_3">#}
+{#                                                        </div>#}
+{#                                                    </div>#}
+{#                                                </div>#}
+{#                                            </div>#}
+                                        {% endfor %}
+                                    {% endfor %}
+                                </div>
+                            </div>
                         </div>
                     </div>
 
