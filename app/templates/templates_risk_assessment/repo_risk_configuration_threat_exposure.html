@@ -137,68 +137,40 @@
                     {#            <div class="row flex-grow custom-select-column-header">#}
                     {#            <h3> Likelihood &lt Medium 50% &gt </h3>#}
                     <h4> Threat Agent Factory </h4>
-
-                    <h3> <label for="formControlRange">Skill Level</label> </h3>
-                     <div class="row dashboard-row">
-                        <div class="col-2">
-                            Very Low
-                        </div>
-                        <div class="col-2">
-                            Low
-                        </div>
-                        <div class="col-3">
-                            Medium
-                        </div>
-                        <div class="col-3">
-                            High
-                        </div>
-                        <div class="col-2">
-                            Critical
-                        </div>
+                    <label for="formControlRange">Skill Level</label>
+                    <div class="d-flex justify-content-between" style= "font-size:12px; word-wrap: break-word">
+                        <label style="max-width: 15%">Not Applicable</label>
+                        <label style="max-width: 15%">Security penetration skills</label>
+                        <label style="max-width: 15%">Network and programming skills</label>
+                        <label style="max-width: 15%">Advanced computer user</label>
+                        <label style="max-width: 15%">Advanced technical skills</label>
+                        <label style="max-width: 15%">No technical skills</label>
                     </div>
                     <input type="range" class="form-control-range" id="formControlRange" min="0" max="100" step="1"
                            name="risk_skill" value="{{ risk_skill_level }}">
                     <br/>
                     <br/>
-                    <h3>  <label for="formControlRange">Motive</label> </h3>
-                    <div class="row dashboard-row">
-                        <div class="col-2">
-                            Very Low
-                        </div>
-                        <div class="col-2">
-                            Low
-                        </div>
-                        <div class="col-3">
-                            Medium
-                        </div>
-                        <div class="col-3">
-                            High
-                        </div>
-                        <div class="col-2">
-                            Critical
-                        </div>
+                    <label for="formControlRange">Motive</label>
+                    <div class="d-flex justify-content-between" style= "font-size:12px; word-wrap: break-word">
+                        <label style="max-width: 20%">Not Applicable</label>
+                        <label style="max-width: 20%">Low or no reward</label>
+                        <label style="max-width: 20%">Possible reward</label>
+                        <label style="max-width: 20%">High reward</label>
+                        <label style="max-width: 20%">High-value reward</label>
                     </div>
                     <input type="range" class="form-control-range" id="formControlRange" min="0" max="100" step="1"
                            name="risk_motive" value="{{ risk_motive }}">
                     <br/>
                     <br/>
-                    <h3>  <label for="formControlRange">Source</label> </h3>
-                    <div class="row dashboard-row">
-                        <div class="col-2">
-                            Very Low
-                        </div>
-                        <div class="col-2">
-                            Low
-                        </div>
-                        <div class="col-3">
-                            Medium
-                        </div>
-                        <div class="col-3">
-                            High
-                        </div>
-                        <div class="col-2">
-                            Critical
-                        </div>
+                    <br/>
+                    <label for="formControlRange">Source (group)</label>
+                    <div class="d-flex justify-content-between" style= "font-size:12px; word-wrap: break-word">
+                        <label style="max-width: 16%">Not Applicable</label>
+                        <label style="max-width: 16%">System Administrators</label>
+                        <label style="max-width: 16%">Intranet users</label>
+                        <label style="max-width: 16%">Third parties</label>
+                        <label style="max-width: 16%">Authorised users</label>
+                        <label>Anonymous Internet users</label>
                     </div>
                     <input type="range" class="form-control-range" id="formControlRange" min="0" max="100" step="1"
                            name="risk_source" value="{{ risk_source }}">
@@ -211,46 +183,29 @@
                     <br/>
                     <br/>
                     <br/>
+                    <br/>
+                    <br/>
 
-                    <h3> <label for="formControlRange">Actor</label> </h3>
-                    <div class="row dashboard-row">
-                        <div class="col-2">
-                            Very Low
-                        </div>
-                        <div class="col-2">
-                            Low
-                        </div>
-                        <div class="col-3">
-                            Medium
-                        </div>
-                        <div class="col-3">
-                            High
-                        </div>
-                        <div class="col-2">
-                            Critical
-                        </div>
+                    <label for="formControlRange">Actor</label>
+                    <div class="d-flex justify-content-between" style= "font-size:12px; word-wrap: break-word">
+                        <label style="max-width: 20%">Not Applicable</label>
+                        <label style="max-width: 20%">Insider threats</label>
+                        <label style="max-width: 20%">Hacktivists, cyber-terrorists, thrill-seekers</label>
+                        <label style="max-width: 20%">Cybercriminals </label>
+                        <label style="max-width: 20%">Nation-states</label>
                     </div>
                     <input type="range" class="form-control-range" id="formControlRange" min="0" max="100" step="1"
                            name="risk_actor" value="{{ risk_actor }}">
                     <br/>
                     <br/>
-                    <h3>  <label for="formControlRange">Opportunity</label> </h3>
-                    <div class="row dashboard-row">
-                        <div class="col-2">
-                            Very Low
-                        </div>
-                        <div class="col-2">
-                            Low
-                        </div>
-                        <div class="col-3">
-                            Medium
-                        </div>
-                        <div class="col-3">
-                            High
-                        </div>
-                        <div class="col-2">
-                            Critical
-                        </div>
+                    <br/>
+                    <label for="formControlRange">Opportunity</label>
+                    <div class="d-flex justify-content-between" style= "font-size:12px; word-wrap: break-word">
+                        <label style="max-width: 20%">Full access</label>
+                        <label style="max-width: 20%">Special access</label>
+                        <label style="max-width: 20%">Some access</label>
+                        <label style="max-width: 20%">Common access</label>
+                        <label style="max-width: 20%">No access</label>
                     </div>
                     <input type="range" class="form-control-range" id="formControlRange" min="0" max="100" step="1"
                            name="risk_opportunity" value="{{ risk_opportunity }}">
