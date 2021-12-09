@@ -65,26 +65,26 @@
             </h3>
             <br/>
 
-            {#            <div class="row dashboard-row">#}
-            {#                <div class="col-2">#}
-            {#                    |None#}
-            {#                </div>#}
-            {#                <div class="col-2">#}
-            {#                    |Very Low#}
-            {#                </div>#}
-            {#                <div class="col-2">#}
-            {#                    |Low#}
-            {#                </div>#}
-            {#                <div class="col-2 ">#}
-            {#                    |Medium#}
-            {#                </div>#}
-            {#                <div class="col-2">#}
-            {#                    |High#}
-            {#                </div>#}
-            {#                <div class="col-2">#}
-            {#                    |Critical#}
-            {#                </div>#}
-            {#            </div>#}
+{#                        <div class="row dashboard-row">#}
+{#                            <div class="col-2">#}
+{#                                |None#}
+{#                            </div>#}
+{#                            <div class="col-2">#}
+{#                                |Very Low#}
+{#                            </div>#}
+{#                            <div class="col-2">#}
+{#                                |Low#}
+{#                            </div>#}
+{#                            <div class="col-2 ">#}
+{#                                |Medium#}
+{#                            </div>#}
+{#                            <div class="col-2">#}
+{#                                |High#}
+{#                            </div>#}
+{#                            <div class="col-2">#}
+{#                                |Critical#}
+{#                            </div>#}
+{#                        </div>#}
             {#            <input type="range" class="form-control-range" id="objective_state_alert_3" step="1"#}
             {#                   min="0"#}
             {#                   max="5" value="0" , name="objective_state_alert_3">#}
@@ -137,17 +137,69 @@
                     {#            <div class="row flex-grow custom-select-column-header">#}
                     {#            <h3> Likelihood &lt Medium 50% &gt </h3>#}
                     <h4> Threat Agent Factory </h4>
-                    <label for="formControlRange">Skill Level</label>
+
+                    <h3> <label for="formControlRange">Skill Level</label> </h3>
+                     <div class="row dashboard-row">
+                        <div class="col-2">
+                            Very Low
+                        </div>
+                        <div class="col-2">
+                            Low
+                        </div>
+                        <div class="col-3">
+                            Medium
+                        </div>
+                        <div class="col-3">
+                            High
+                        </div>
+                        <div class="col-2">
+                            Critical
+                        </div>
+                    </div>
                     <input type="range" class="form-control-range" id="formControlRange" min="0" max="100" step="1"
                            name="risk_skill" value="{{ risk_skill_level }}">
                     <br/>
                     <br/>
-                    <label for="formControlRange">Motive</label>
+                    <h3>  <label for="formControlRange">Motive</label> </h3>
+                    <div class="row dashboard-row">
+                        <div class="col-2">
+                            Very Low
+                        </div>
+                        <div class="col-2">
+                            Low
+                        </div>
+                        <div class="col-3">
+                            Medium
+                        </div>
+                        <div class="col-3">
+                            High
+                        </div>
+                        <div class="col-2">
+                            Critical
+                        </div>
+                    </div>
                     <input type="range" class="form-control-range" id="formControlRange" min="0" max="100" step="1"
                            name="risk_motive" value="{{ risk_motive }}">
                     <br/>
                     <br/>
-                    <label for="formControlRange">Source</label>
+                    <h3>  <label for="formControlRange">Source</label> </h3>
+                    <div class="row dashboard-row">
+                        <div class="col-2">
+                            Very Low
+                        </div>
+                        <div class="col-2">
+                            Low
+                        </div>
+                        <div class="col-3">
+                            Medium
+                        </div>
+                        <div class="col-3">
+                            High
+                        </div>
+                        <div class="col-2">
+                            Critical
+                        </div>
+                    </div>
                     <input type="range" class="form-control-range" id="formControlRange" min="0" max="100" step="1"
                            name="risk_source" value="{{ risk_source }}">
                     {#            </div>#}
@@ -160,12 +212,46 @@
                     <br/>
                     <br/>
 
-                    <label for="formControlRange">Actor</label>
+                    <h3> <label for="formControlRange">Actor</label> </h3>
+                    <div class="row dashboard-row">
+                        <div class="col-2">
+                            Very Low
+                        </div>
+                        <div class="col-2">
+                            Low
+                        </div>
+                        <div class="col-3">
+                            Medium
+                        </div>
+                        <div class="col-3">
+                            High
+                        </div>
+                        <div class="col-2">
+                            Critical
+                        </div>
+                    </div>
                     <input type="range" class="form-control-range" id="formControlRange" min="0" max="100" step="1"
                            name="risk_actor" value="{{ risk_actor }}">
                     <br/>
                     <br/>
-                    <label for="formControlRange">Opportunity</label>
+                    <h3>  <label for="formControlRange">Opportunity</label> </h3>
+                    <div class="row dashboard-row">
+                        <div class="col-2">
+                            Very Low
+                        </div>
+                        <div class="col-2">
+                            Low
+                        </div>
+                        <div class="col-3">
+                            Medium
+                        </div>
+                        <div class="col-3">
+                            High
+                        </div>
+                        <div class="col-2">
+                            Critical
+                        </div>
+                    </div>
                     <input type="range" class="form-control-range" id="formControlRange" min="0" max="100" step="1"
                            name="risk_opportunity" value="{{ risk_opportunity }}">
                     {#            <label for="formControlRange">Awareness</label>#}

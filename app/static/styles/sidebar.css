@@ -187,3 +187,41 @@ wrapper {
     margin-left: 0px;
     margin-right: 0px;
 }
+
+.green-span{
+    color: #3A7734;
+    font-weight: bold;
+    font-size: large;
+}
+
+.red-span{
+    color: #9C1A1C;
+    font-weight: bold;
+    font-size: large;
+}
+
+.rangeslider-row{
+    border-bottom: 3px solid grey;
+    border-top: 1px solid rgba(255, 255, 255, .1);
+    padding-bottom: 0px !important;
+}
+
+.entry-row{
+    /*margin-bottom: 15px;*/
+    /*margin-top: 5px;*/
+    border: 1px solid grey;
+
+}
+
+.parameter-row{
+    border-top: 1px solid rgba(255, 255, 255, .1);
+    padding-bottom: 0px !important;
+}
+
+.parameter-row-header{
+    border-right: 1px solid rgba(255, 255, 255, .1);
+}
+
+.group-row-header{
+    margin-top: 10px;
+}

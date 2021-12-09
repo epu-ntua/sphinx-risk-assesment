@@ -531,7 +531,7 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
 
                         for item in existing_user_input_consequence:
                             if item["repo_response_id"] == response["id"] and item["repo_consequence_id"] == \
-                                    consequence["id"] and item["threat_occurrence"] is True:
+                                    consequence["id"] and item["threat_occurrence"] is False:
                                 prob_item = item
 
                         if prob_item:
