@@ -13,6 +13,10 @@ def calculate_exposure(skill, motive, source, actor, opportunity):
     return exposure
 
 
+# def security_event_risk_assessment(threat_id, asset_id):
+
+
+
 def start_risk_assessment(threat_id, asset_id):
     diag = gum.InfluenceDiagram()
     try:

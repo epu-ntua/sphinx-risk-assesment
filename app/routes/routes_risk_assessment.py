@@ -1366,6 +1366,67 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
 
             db.session.add(first_risk_assessment_result)
             db.session.commit()
+        else:
+            this_risk_assessment = this_risk_assessment.first()
+            risk_assessment_result = start_risk_assessment(threat_id, asset_id)
+            print(risk_assessment_result)
+            print(type(risk_assessment_result))
+
+            exposure_inference = ""
+            materialisations_inference = ""
+            consequences_inference = ""
+            services_inference = ""
+            impacts_inference = ""
+            objectives_inference = ""
+
+            for key, value in risk_assessment_result.items():
+                print("KEY IS")
+                print(key)
+                temp_key = "".join(i for i in key if not i.isdigit())
+                temp_digit = "".join(i for i in key if i.isdigit())
+
+                if temp_key == "te":
+                    exposure_inference = exposure_inference + str(temp_digit) + "|" + str(
+                        value.values[0]) + "|" + str(
+                        value.values[1]) + "|"
+                elif temp_key == "mat":
+                    materialisations_inference = materialisations_inference + str(temp_digit) + "|" + str(
+                        value.values[0]) + "|" + str(
+                        value.values[1]) + "|"
+                elif temp_key == "con":
+                    consequences_inference = consequences_inference + str(temp_digit) + "|" + str(
+                        value.values[0]) + "|" + str(
+                        value.values[1]) + "|"
+                elif temp_key == "serv":
+                    services_inference = services_inference + str(temp_digit) + "|" + str(
+                        value.values[0]) + "|" + str(
+                        value.values[1]) + "|"
+                elif temp_key == "imp":
+                    impacts_inference = impacts_inference + str(temp_digit) + "|" + str(value.values[0]) + "|" + str(
+                        value.values[1]) + "|" + str(value.values[2]) + "|"
+                elif temp_key == "obj":
+                    objectives_inference = objectives_inference + str(temp_digit) + "|" + str(
+                        value.values[0]) + "|" + str(
+                        value.values[1]) + "|" + str(value.values[2]) + "|"
+                # elif temp_key == "util":
+                #     materialisations_set_values = str(temp_digit)+ "|" + str(value.values(0)) + "|"
+                else:
+                    print("Ignore")
+
+            first_risk_assessment_result = RepoRiskAssessmentReports(
+                risk_assessment_id=this_risk_assessment.id,
+                type="baseline_report",
+                exposure_inference=exposure_inference,
+                # responses_set_values = responses_set_values,
+                materialisations_inference=materialisations_inference,
+                consequences_inference=consequences_inference,
+                services_inference=services_inference,
+                impacts_inference=impacts_inference,
+                objectives_inference=objectives_inference,
+            )
+
+            db.session.add(first_risk_assessment_result)
+            db.session.commit()
 
         flash('Assed "{}" Added Succesfully to risk assessment'.format(asset_id))
         return redirect("/repo/risk/assessment/" + threat_id + "/asset/" + asset_id + "/")
