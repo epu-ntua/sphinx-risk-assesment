@@ -64,7 +64,7 @@
                     console.log("low")
                     otherSlider1Id = "med" + idDetails
                     otherSlider2Id = "high" + idDetails
-                } else if (idLevel == "medium") {
+                } else if (idLevel == "med") {
                     console.log("med")
                     otherSlider1Id = "low" + idDetails
                     otherSlider2Id = "high" + idDetails
@@ -242,71 +242,132 @@
                     <div class="col-12">
                         <h4>Objective Options Calculation </h4>
                         {% for objective_calculation_wrapper in array_objective_calculation %}
-                            <div class="row dashboard-row">
-                                <div class="col-2 custom-select-column">
-                                    {% for temp_header in objective_calculation_wrapper[:-3] %}
-                                        Impact: {{ temp_header.impact.name }} | State:
-                                        {{ temp_header.state }}
-                                        <br/>
-                                    {% endfor %}
+{#                            <div class="row dashboard-row">#}
+                                <div class="row entry-row">
+                                    <div class="col-12">
+                                        {% for temp_header in objective_calculation_wrapper[:-3] %}
+                                            <div class="row dashboard-row parameter-row">
+                                                <div class="col-4 parameter-row-header">
+                                                    Impact: {{ temp_header.impact.name }}
+                                                </div>
+                                                <div class="col-8">
+                                                    {% if temp_header.state == "high" %}
+                                                        <span class="green-span"> {{temp_header.state }}</span>
+                                                    {% elif temp_header.state == "med"%}
+                                                        <span class="orange-span"> {{temp_header.state }}</span>
+                                                    {% else %}
+                                                        <span class="red-span"> {{temp_header.state }}</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                        {#                                    </div>#}
+                                        <div class="row dashboard-row rangeslider-row">
+                                            {#                                        <div class="col-2 custom-select-column">#}
+                                            {##}
+                                            {#                                        </div>#}
+                                            <div class="col-4">
+                                                <div class="row dashboard-row">
+                                                    <h5>Low Impact</h5>
+                                                </div>
+                                                <div class="row dashboard-row">
+    {#                                                <div class="col-2">#}
+    {#                                                    0%#}
+    {#                                                </div>#}
+    {#                                                <div class="col-2">#}
+    {#                                                    25%#}
+    {#                                                </div>#}
+    {#                                                <div class="col-2">#}
+    {#                                                    50%#}
+    {#                                                </div>#}
+    {#                                                <div class="col-2 ">#}
+    {#                                                    75%#}
+    {#                                                </div>#}
+    {#                                                <div class="col-2">#}
+    {#                                                    100%#}
+    {#                                                </div>#}
+                                                </div>
+                                                <div class="row dashboard-row">
+                                                    <div class="col-12">
+    {#                                                    <output>0</output>#}
+                                                         <input type="range" class="form-control-range"
+                                                           name="low{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"
+                                                           id="low{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"
+                                                           step="1"
+                                                           min="0"
+                                                           max="100"
+                                                           value="{{ objective_calculation_wrapper[-3] }}"
+                                                           oldValue = "{{ objective_calculation_wrapper[-3] }}"
+                                                           shouldChange = "true"
+                                                           >
 
-                                </div>
-                                <div class="col-3">
-                                    <div class="row dashboard-row">
-                                        <h5>Low</h5>
-                                    </div>
-                                    <div class="row dashboard-row">
-                                    </div>
-                                    <div class="row dashboard-row">
-                                        <div class="col-10">
-                                            <input type="range" class="form-control-range"
-                                                   name="low{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"
-                                                   id="low{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"
-                                                   step="1"
-                                                   min="0"
-                                                   max="100"
-                                                   value="{{ objective_calculation_wrapper[-3] }}"
-                                                   oldValue = "{{ objective_calculation_wrapper[-3] }}"
-                                                   shouldChange = "true"
-                                                   >
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-3">
-                                    <div class="row dashboard-row">
-                                        <h5>Medium</h5>
-                                    </div>
-                                    <div class="row dashboard-row">
-
-                                    </div>
-                                    <div class="row dashboard-row">
-                                        <div class="col-10">
-
-                                            <input type="range" class="form-control-range"
-                                                   name="med{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"
-                                                   id="med{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"
-                                                   step="1"
-                                                   min="0"
-                                                   max="100"
-                                                   value="{{ objective_calculation_wrapper[-2] }}"
-                                                   oldValue = "{{ objective_calculation_wrapper[-2] }}"
-                                                   shouldChange = "true"
-                                                   ,
-                                                   name="objective_state_alert_3"
-                                                   >
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-3">
-                                    <div class="row dashboard-row">
-                                        <h5>High</h5>
-                                    </div>
-                                    <div class="row dashboard-row">
-
-                                    </div>
-                                    <div class="row dashboard-row">
-                                        <div class="col-10">
-                                            <input type="range" class="form-control-range"
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="row dashboard-row">
+                                                    <h5>Medium Impact</h5>
+                                                </div>
+                                                <div class="row dashboard-row">
+    {#                                                <div class="col-2">#}
+    {#                                                    0%#}
+    {#                                                </div>#}
+    {#                                                <div class="col-2">#}
+    {#                                                    25%#}
+    {#                                                </div>#}
+    {#                                                <div class="col-2">#}
+    {#                                                    50%#}
+    {#                                                </div>#}
+    {#                                                <div class="col-2 ">#}
+    {#                                                    75%#}
+    {#                                                </div>#}
+    {#                                                <div class="col-2">#}
+    {#                                                    100%#}
+    {#                                                </div>#}
+                                                </div>
+                                                <div class="row dashboard-row">
+                                                    <div class="col-12">
+    {#                                                    <output>0</output>#}
+                                                        <input type="range" class="form-control-range"
+                                                           name="med{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"
+                                                           id="med{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"
+                                                           step="1"
+                                                           min="0"
+                                                           max="100"
+                                                           value="{{ objective_calculation_wrapper[-2] }}"
+                                                           oldValue = "{{ objective_calculation_wrapper[-2] }}"
+                                                           shouldChange = "true"
+                                                           ,
+{#                                                           name="objective_state_alert_3"#}
+                                                           >
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                            <div class="row dashboard-row">
+                                                <h5>High Impact</h5>
+                                            </div>
+                                            <div class="row dashboard-row">
+{#                                                <div class="col-2">#}
+{#                                                    0%#}
+{#                                                </div>#}
+{#                                                <div class="col-2">#}
+{#                                                    25%#}
+{#                                                </div>#}
+{#                                                <div class="col-2">#}
+{#                                                    50%#}
+{#                                                </div>#}
+{#                                                <div class="col-2 ">#}
+{#                                                    75%#}
+{#                                                </div>#}
+{#                                                <div class="col-2">#}
+{#                                                    100%#}
+{#                                                </div>#}
+                                            </div>
+                                            <div class="row dashboard-row">
+                                                <div class="col-12">
+{#                                                    <output>0</output>#}
+                                                    <input type="range" class="form-control-range"
                                                    name="high{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"
                                                    id="high{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"
                                                    step="1"
@@ -316,15 +377,114 @@
                                                    oldValue = "{{ objective_calculation_wrapper[-1] }}"
                                                    shouldChange = "true"
                                                    ,
-                                                   name="objective_state_alert_3"
+{#                                                   name="objective_state_alert_3"#}
                                                    >
+{#                                                           oninput="this.previousElementSibling.value = this.value">#}
+                                                </div>
+                                            </div>
+                                        </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+
+
+
+
+
+
+
+
+
+
+
+{#                                <div class="col-2 custom-select-column">#}
+{#                                    {% for temp_header in objective_calculation_wrapper[:-3] %}#}
+{#                                        Impact: {{ temp_header.impact.name }} | State:#}
+{#                                        {{ temp_header.state }}#}
+{#                                        <br/>#}
+{#                                    {% endfor %}#}
+{##}
+{#                                </div>#}
+{#                                <div class="col-3">#}
+{#                                    <div class="row dashboard-row">#}
+{#                                        <h5>Low</h5>#}
+{#                                    </div>#}
+{#                                    <div class="row dashboard-row">#}
+{#                                    </div>#}
+{#                                    <div class="row dashboard-row">#}
+{#                                        <div class="col-10">#}
+{#                                            <input type="range" class="form-control-range"#}
+{#                                                   name="low{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"#}
+{#                                                   id="low{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"#}
+{#                                                   step="1"#}
+{#                                                   min="0"#}
+{#                                                   max="100"#}
+{#                                                   value="{{ objective_calculation_wrapper[-3] }}"#}
+{#                                                   oldValue = "{{ objective_calculation_wrapper[-3] }}"#}
+{#                                                   shouldChange = "true"#}
+{#                                                   >#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                                <div class="col-3">#}
+{#                                    <div class="row dashboard-row">#}
+{#                                        <h5>Medium</h5>#}
+{#                                    </div>#}
+{#                                    <div class="row dashboard-row">#}
+{##}
+{#                                    </div>#}
+{#                                    <div class="row dashboard-row">#}
+{#                                        <div class="col-10">#}
+{##}
+{#                                            <input type="range" class="form-control-range"#}
+{#                                                   name="med{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"#}
+{#                                                   id="med{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"#}
+{#                                                   step="1"#}
+{#                                                   min="0"#}
+{#                                                   max="100"#}
+{#                                                   value="{{ objective_calculation_wrapper[-2] }}"#}
+{#                                                   oldValue = "{{ objective_calculation_wrapper[-2] }}"#}
+{#                                                   shouldChange = "true"#}
+{#                                                   ,#}
+{#                                                   name="objective_state_alert_3"#}
+{#                                                   >#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                                <div class="col-3">#}
+{#                                    <div class="row dashboard-row">#}
+{#                                        <h5>High</h5>#}
+{#                                    </div>#}
+{#                                    <div class="row dashboard-row">#}
+{##}
+{#                                    </div>#}
+{#                                    <div class="row dashboard-row">#}
+{#                                        <div class="col-10">#}
+{#                                            <input type="range" class="form-control-range"#}
+{#                                                   name="high{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"#}
+{#                                                   id="high{% for temp_header in objective_calculation_wrapper[:-3] %}|{{ temp_header.impact.id }}|{{ temp_header.state }}{% endfor %}"#}
+{#                                                   step="1"#}
+{#                                                   min="0"#}
+{#                                                   max="100"#}
+{#                                                   value="{{ objective_calculation_wrapper[-1] }}"#}
+{#                                                   oldValue = "{{ objective_calculation_wrapper[-1] }}"#}
+{#                                                   shouldChange = "true"#}
+{#                                                   ,#}
+{#                                                   name="objective_state_alert_3"#}
+{#                                                   >#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                </div>#}
+
+
+
+
+
+
                         {% endfor %}
+                     </div>
                     </div>
-                </div>
+{#                </div>#}
 
 
                 <div class="row dashboard-row">
