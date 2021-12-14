@@ -476,6 +476,7 @@ repo_utility_repo_objective_association_table = db.Table('repo_utility_repo_obje
 class RepoAsset(db.Model):
     __tablename__ = 'repo_asset'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    common_id = db.Column(db.String)
     name = db.Column(db.String)
     description = db.Column(db.String)
     owner = db.Column(db.Integer, db.ForeignKey('repo_actor.id'))

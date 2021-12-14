@@ -13,7 +13,8 @@ from app.utils.utils_3rd_party_data_handling import v_report
 
 
 @app.route('/repo/assets/', methods=['GET', 'POST'])
-def view_repo_assets():
+@app.route('/repo/assets/<asset_id>/', methods=['GET', 'POST'])
+def view_repo_assets(asset_id=-1):
     if request.method == 'POST':
         new_asset_form = FormAddRepoAsset()
         new_edit_form = FormEditRepoAsset()
@@ -216,10 +217,16 @@ def view_repo_assets():
 
         return redirect("/repo/assets/")
     else:
-        try:
-            repo_assets = RepoAsset.query.all()
-        except SQLAlchemyError:
-            return Response("SQLAlchemyError", 500)
+        if str(asset_id) == "-1":
+            try:
+                repo_assets = RepoAsset.query.all()
+            except SQLAlchemyError:
+                return Response("SQLAlchemyError", 500)
+        else:
+            try:
+                repo_assets = RepoAsset.query.filter_by(id=int(asset_id)).all()
+            except SQLAlchemyError:
+                return Response("SQLAlchemyError", 500)
 
 
         json_assets = convert_database_items_to_json_table(repo_assets)
@@ -253,7 +260,7 @@ def view_repo_assets():
         edit_asset_form = FormEditRepoAsset()
         print("REPO ASSETS", json_assets)
         return render_template("templates_asset_repo/view_repo_assets.html", repo_assets=json_assets,
-                               new_asset_form=new_asset_form, edit_asset_form=edit_asset_form)
+                               new_asset_form=new_asset_form, edit_asset_form=edit_asset_form, asset_id=asset_id)
 
 
 @app.route('/repo/impacts/', methods=['GET', 'POST', 'PUT'])

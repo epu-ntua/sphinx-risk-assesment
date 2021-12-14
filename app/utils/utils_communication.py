@@ -8,6 +8,68 @@ import stix2
 import stix2validator
 import app.utils.stix2_custom as stix2_custom
 from app.producer import SendKafkaReport
+from app.globals import GLOBAL_IP
+
+
+def send_alert_new_asset(asset_obj):
+    now = datetime.now()
+
+    try:
+        asset_vulnerabilities_count = VulnerabilityReportVulnerabilitiesLink.query.filter(VulnerabilityReportVulnerabilitiesLink.asset.any(id =asset_obj.id)).count()
+    except SQLAlchemyError:
+        return Response("SQLAlchemyError", 500)
+
+    alert_to_send = {
+        "alert_type": "new_asset_detected",
+        "date_time": now.strftime("%m/%d/%Y, %H:%M:%S"),
+        "asset" : {
+            "asset_ip" :  asset_obj.ip if asset_obj.ip else "",
+            "asset_common_id": asset_obj.common_id if asset_obj.common_id else "",
+            "asset_vulnerabilities" : asset_vulnerabilities_count,
+        },
+        "asset_url": GLOBAL_IP + "/repo/assets/" + asset_obj.id + "/"
+    }
+
+    print(alert_to_send)
+
+
+def send_alert_old_asset(asset_obj):
+    now = datetime.now()
+
+    try:
+        asset_vulnerabilities_count = VulnerabilityReportVulnerabilitiesLink.query.filter(VulnerabilityReportVulnerabilitiesLink.asset.any(id =asset_obj.id)).count()
+    except SQLAlchemyError:
+        return Response("SQLAlchemyError", 500)
+
+    alert_to_send = {
+        "alert_type": "old_asset_detected",
+        "date_time": now.strftime("%m/%d/%Y, %H:%M:%S"),
+        "asset" : {
+            "asset_ip" :  asset_obj.ip if asset_obj.ip else "",
+            "asset_common_id": asset_obj.common_id if asset_obj.common_id else "",
+            "asset_vulnerabilities" : asset_vulnerabilities_count,
+            "last_touched": asset_obj.last_touch_date if asset_obj.last_touch_date else ""
+        },
+        "asset_url": GLOBAL_IP + "/repo/assets/" + asset_obj.id + "/"
+    }
+
+    print(alert_to_send)
+
+def send_alert_info_update_needed(asset_obj, threat_obj):
+    now = datetime.now()
+
+    alert_to_send = {
+        "alert_type": "new_asset_detected",
+        "date_time": now.strftime("%m/%d/%Y, %H:%M:%S"),
+        "asset" : {
+            "asset_ip" :  asset_obj.ip if asset_obj.ip else "",
+            "asset_common_id": asset_obj.common_id if asset_obj.common_id else "",
+        },
+        "threat" : threat_obj.name,
+        "pages_update_url": GLOBAL_IP + "/repo//" #NNNEEED TO DECIDE HOW TO PASS SPECIFIC PAGES
+    }
+
+    print(alert_to_send)
 
 
 def send_risk_report(report_id, asset_id, threat_id):

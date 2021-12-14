@@ -64,6 +64,18 @@
             ].join('')
         }
 
+         function operateFormatter3(value, row, index) {
+            var href_custom = "/repo/assets/" + row.id + "/"
+            return [
+                {#'<a class="edit" href="javascript:void(0)" title="Edit">',#}
+                {#'<i class="fa fa-edit"></i>',#}
+                {#'</a>  ',#}
+                '<a href="' + href_custom + '" style="" type="button" class="btn btn-primary">\n' +
+                '<span class= "custom-font">'+row.id +' </span>' +
+                '</a>'
+            ].join('')
+        }
+
         function populateEditFields(row) {
             console.log(row)
             $("#editForm").find("#edit_id").val(row.id)
@@ -215,7 +227,13 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Repo Asset</h1>
+    <h1>
+        {% if asset_id != -1 %}
+        <a href="/repo/assets/" class="btn btn-primary">
+            < Show all assets
+        </a> |
+        {% endif %}
+        Repo Asset</h1>
     <hr/>
     <div id="toolbar">
         <button id="remove" class="btn btn-danger" disabled>
@@ -244,7 +262,8 @@
             <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents"></th>
             <th data-field="operate" data-formatter="operateFormatter1" ></th>
             <th data-field="operate" data-formatter="operateFormatter2" ></th>
-            <th data-field="id" data-sortable="true">ID</th>
+            <th data-field="operate" data-formatter="operateFormatter3" >ID</th>
+{#            <th data-field="id" data-sortable="true">ID</th>#}
             <th data-field="name" data-sortable="true">Name</th>
             <th data-field="description" data-sortable="true">Description</th>
             <th data-field="owner" data-sortable="true">Asset Owner</th>
