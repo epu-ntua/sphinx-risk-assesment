@@ -13,6 +13,9 @@ from app.utils.utils_database import convert_database_items_to_json_table
 from app.utils.utils_risk_assessment import start_risk_assessment, risk_assessment_manual
 import pandas as pd
 
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
+
 
 @app.route('/repo/dashboard/asset/', methods=['GET', 'POST'])
 def repo_dashboard_asset():
@@ -637,7 +640,7 @@ def repo_dashboard_vulnerability():
             return Response("SQLAlchemyError", 500)
 
         try:
-            repo_asset = RepoAsset.query.all()
+            repo_assets = RepoAsset.query.all()
         except SQLAlchemyError:
             return Response("SQLAlchemyError", 500)
 
@@ -655,6 +658,9 @@ def repo_dashboard_vulnerability():
         for asset_type_object in repo_assets_type:
             dict_assets_type[asset_type_object.name] = 0
 
+        vulnerability_months_list_values = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        already_used_asset_vulnerabilities = []
+
         for vulnerability_object in repo_vulnerabilities:
             # Count asset types
             print(vulnerability_object.asset)
@@ -667,26 +673,56 @@ def repo_dashboard_vulnerability():
                 else:
                     dict_vulnerabilities_occurrence[vulnerability_object.cve.CVEId] = 1
 
+            # Gather data for timeline vulnerarbilities
+            time_since_insertion = datetime.now() - vulnerability_object.date
+            print("Timedelta is: ", time_since_insertion.resolution.days)
+            if time_since_insertion.resolution.days < 365:
+                used_asset_log = {"asset": vulnerability_object.asset_id, "vulnerability": vulnerability_object.cve_id}
+                if used_asset_log in already_used_asset_vulnerabilities:
+                    continue
+                else:
+                    already_used_asset_vulnerabilities.append(used_asset_log)
+                    vulnerability_months_list_values[vulnerability_object.date.month - 1] += 1
+
+
+
+        # for vulnerability_object in repo_vulnerabilities:
+
+
+        # Get List of month starting from this month
+        now = datetime.now()
+        vulnerability_months_list = [(now + relativedelta(months=i)).strftime('%b') for i in range(12)]
+
+        print(vulnerability_months_list)
+
         asset_types_list = list(dict_assets_type.keys())
         asset_types_vulnerability_occurrence = list(dict_assets_type.values())
+        # Remove entries with no value
+        custom_it = 0
+        while custom_it < len(asset_types_list):
+            if asset_types_vulnerability_occurrence[custom_it] == 0:
+                asset_types_list.pop(custom_it)
+                asset_types_vulnerability_occurrence.pop(custom_it)
+            else:
+                custom_it += 1
+
+
         vulnerability_cve_id_list = list(dict_vulnerabilities_occurrence.keys())
         vulnerability_cve_id_occurrence = list(dict_vulnerabilities_occurrence.values())
-        repo_vulnerabilities = [
-            {
-                "id": "1",
-                "name": "1",
-                "location": "1",
-                "Verified": "1",
-                "mac_address": "1",
-                "ip": "1",
-                "last_touch_date": "1",
-            }
-        ]
+        # Get only the first 10 of the list for this visualisation
+        vulnerability_cve_id_list = vulnerability_cve_id_list[:10]
+        vulnerability_cve_id_occurrence = vulnerability_cve_id_occurrence[:10]
+
+        repo_assets = convert_database_items_to_json_table(repo_assets)
+        repo_assets = json.dumps(repo_assets)
         print("--------- Vuln Dashboard Data is -----------")
         print(asset_types_list)
         print(asset_types_vulnerability_occurrence)
+        print(repo_assets)
         return render_template('templates_dashboard/repo_vulnerability_dashboard.html',
-                               repo_vulnerabilities=repo_vulnerabilities,
+                               repo_assets=repo_assets,
                                asset_types_vulnerability_occurrence=asset_types_vulnerability_occurrence,
+                               vulnerability_months_list =vulnerability_months_list,
+                               vulnerability_months_list_values = vulnerability_months_list_values,
                                asset_types_list=asset_types_list, vulnerability_cve_id_list=vulnerability_cve_id_list,
                                vulnerability_cve_id_occurrence=vulnerability_cve_id_occurrence)
