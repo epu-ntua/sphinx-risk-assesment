@@ -11,65 +11,168 @@ from app.producer import SendKafkaReport
 from app.globals import GLOBAL_IP
 
 
+
+import mlflow
+import os
+import click
+from mlflow.tracking import MlflowClient
+
+from dotenv import load_dotenv
+load_dotenv()
+
+
+def print_run_info(runs):
+    for r in runs:
+        print("run_id: {}".format(r.info.run_id))
+        # print("lifecycle_stage: {}".format(r.info.lifecycle_stage))
+        # print("metrics: {}".format(r.data.metrics))
+
+        # Exclude mlflow system tags
+        # tags = {k: v for k, v in r.data.tags.items() if not k.startswith("mlflow.")}
+        # print("tags: {}".format(tags))
+
+# @click.command()
+# @click.option("--experiments", "-e",
+#               type=str,
+#               multiple=True,
+#               help="The experiment name for which you need to download the example file. (Repeat prefix for multiple arguments)"
+#               )
+# @click.option("--root-dir", "-d",
+#               type=str,
+#               multiple=False,
+#               default='.',
+#               help="The local (root) directory to use for downloading the files"
+#               )
+def get_ml_flow_info(experiments, root_dir):
+    # Search all runs under experiment id and order them by
+    # descending value of the metric 'm'
+    # root_dir = "./download_examples"
+    if not os.path.exists(root_dir):
+        os.mkdir(root_dir)
+
+    # This may need change, when run in kubernetes
+    client = MlflowClient(tracking_uri='http://localhost:5000')
+    for name in experiments:
+        e = client.get_experiment_by_name(name)
+        print(e.experiment_id, e.name)
+        # define / create local directory to store example
+        local_dir = os.path.join(root_dir, e.name)
+        if not os.path.exists(local_dir):
+            os.mkdir(local_dir)
+        runs = client.search_runs(e.experiment_id)
+        print_run_info(runs)
+        print("--")
+        # download last run artifacts
+        local_path = client.download_artifacts(runs[0].info.run_id, "model/input_example.json", local_dir)
+        print("Artifacts downloaded in: {}".format(local_dir))
+        print("Artifacts: {}".format(local_dir))
+
+
 def send_alert_new_asset(asset_obj):
     now = datetime.now()
 
+    print("1")
     try:
-        asset_vulnerabilities_count = VulnerabilityReportVulnerabilitiesLink.query.filter(VulnerabilityReportVulnerabilitiesLink.asset.any(id =asset_obj.id)).count()
+        asset_vulnerabilities_count = VulnerabilityReportVulnerabilitiesLink.query.join(RepoAsset).filter(
+            RepoAsset.id == asset_obj.id).count()
     except SQLAlchemyError:
         return Response("SQLAlchemyError", 500)
-
+    print("2")
     alert_to_send = {
         "alert_type": "new_asset_detected",
         "date_time": now.strftime("%m/%d/%Y, %H:%M:%S"),
-        "asset" : {
-            "asset_ip" :  asset_obj.ip if asset_obj.ip else "",
+        "asset": {
+            "asset_ip": asset_obj.ip if asset_obj.ip else "",
             "asset_common_id": asset_obj.common_id if asset_obj.common_id else "",
-            "asset_vulnerabilities" : asset_vulnerabilities_count,
+            "asset_vulnerabilities": str(asset_vulnerabilities_count),
         },
-        "asset_url": GLOBAL_IP + "/repo/assets/" + asset_obj.id + "/"
+        "asset_url": GLOBAL_IP + "repo/assets/" + str(asset_obj.id) + "/"
     }
 
-    print(alert_to_send)
+    print("Alerts is --------", alert_to_send, flush=True)
+    return alert_to_send
 
 
 def send_alert_old_asset(asset_obj):
     now = datetime.now()
 
     try:
-        asset_vulnerabilities_count = VulnerabilityReportVulnerabilitiesLink.query.filter(VulnerabilityReportVulnerabilitiesLink.asset.any(id =asset_obj.id)).count()
+        asset_vulnerabilities_count = VulnerabilityReportVulnerabilitiesLink.query.join(RepoAsset).filter(
+            RepoAsset.id == asset_obj.id).count()
     except SQLAlchemyError:
         return Response("SQLAlchemyError", 500)
 
     alert_to_send = {
         "alert_type": "old_asset_detected",
         "date_time": now.strftime("%m/%d/%Y, %H:%M:%S"),
-        "asset" : {
-            "asset_ip" :  asset_obj.ip if asset_obj.ip else "",
+        "asset": {
+            "asset_ip": asset_obj.ip if asset_obj.ip else "",
             "asset_common_id": asset_obj.common_id if asset_obj.common_id else "",
-            "asset_vulnerabilities" : asset_vulnerabilities_count,
+            "asset_vulnerabilities": str(asset_vulnerabilities_count),
             "last_touched": asset_obj.last_touch_date if asset_obj.last_touch_date else ""
         },
-        "asset_url": GLOBAL_IP + "/repo/assets/" + asset_obj.id + "/"
+        "asset_url": GLOBAL_IP + "repo/assets/" + str(asset_obj.id) + "/"
     }
 
-    print(alert_to_send)
+    print("Alerts is --------", alert_to_send, flush=True)
+    return alert_to_send
 
-def send_alert_info_update_needed(asset_obj, threat_obj):
+
+def send_alert_info_update_needed(asset_obj=None, threat_obj=None, threat_exposure_info=-1,
+                                  threat_materialisation_info=-1, threat_impact_info=-1, objective_info=-1,
+                                  utility_info=-1):
     now = datetime.now()
+
+    pages_to_send = []
+    # Add exposure info in alert
+    if threat_exposure_info != -1:
+        pages_to_send.append(
+            GLOBAL_IP + "repo/risk/configuration/threat/exposure/" + str(threat_obj.id) + "/asset/" + str(asset_obj.id) + "/")
+
+    # Add mat and cons info in alert
+    if threat_materialisation_info != -1:
+        pages_to_send.append(
+            GLOBAL_IP + "repo/risk/configuration/threat/" + str(threat_obj.id) + "/asset/" + str(asset_obj.id) + "/")
+
+    # Add impact info in alert
+    if threat_impact_info != -1:
+        pages_to_send.append(
+            GLOBAL_IP + "repo/risk/configuration/impact/1/threat" + str(threat_obj.id) + "/asset/" + str(asset_obj.id) + "/")
+        pages_to_send.append(
+            GLOBAL_IP + "repo/risk/configuration/impact/2/threat" + str(threat_obj.id) + "/asset/" + str(asset_obj.id) + "/")
+        pages_to_send.append(
+            GLOBAL_IP + "repo/risk/configuration/impact/3/threat" + str(threat_obj.id) + "/asset/" + str(asset_obj.id) + "/")
+        pages_to_send.append(
+            GLOBAL_IP + "repo/risk/configuration/impact/4/threat" + str(threat_obj.id) + "/asset/" + str(asset_obj.id) + "/")
+        pages_to_send.append(
+            GLOBAL_IP + "repo/risk/configuration/impact/5/threat" + str(threat_obj.id) + "/asset/" + str(asset_obj.id) + "/")
+
+    # Add Objective info in alert
+    if objective_info != -1:
+        pages_to_send.append(GLOBAL_IP + "repo/risk/configuration/objective/1/")
+        pages_to_send.append(GLOBAL_IP + "repo/risk/configuration/objective/2/")
+        pages_to_send.append(GLOBAL_IP + "repo/risk/configuration/objective/3/")
+        pages_to_send.append(GLOBAL_IP + "repo/risk/configuration/objective/4/")
+        pages_to_send.append(GLOBAL_IP + "repo/risk/configuration/objective/5/")
+
+    # Add Utility info in alert
+    if utility_info != -1:
+        pages_to_send.append(GLOBAL_IP + "/repo/risk/configuration/utility/1/")
+        pages_to_send.append(GLOBAL_IP + "/repo/risk/configuration/utility/2/")
 
     alert_to_send = {
         "alert_type": "new_asset_detected",
         "date_time": now.strftime("%m/%d/%Y, %H:%M:%S"),
-        "asset" : {
-            "asset_ip" :  asset_obj.ip if asset_obj.ip else "",
+        "asset": {
+            "asset_ip": asset_obj.ip if asset_obj.ip else "",
             "asset_common_id": asset_obj.common_id if asset_obj.common_id else "",
         },
-        "threat" : threat_obj.name,
-        "pages_update_url": GLOBAL_IP + "/repo//" #NNNEEED TO DECIDE HOW TO PASS SPECIFIC PAGES
+        "threat": threat_obj.name,
+        "pages_update_url": pages_to_send
     }
 
-    print(alert_to_send)
+    print("Alerts is --------", alert_to_send, flush=True)
+    return alert_to_send
 
 
 def send_risk_report(report_id, asset_id, threat_id):
@@ -205,7 +308,7 @@ def send_risk_report(report_id, asset_id, threat_id):
     print(json.dumps(report_to_send))
     report_to_send = json.dumps(report_to_send)
     # print(report_to_send)
-    #SendKafkaReport(report_to_send, "rcra-report-topic")
+    # SendKafkaReport(report_to_send, "rcra-report-topic")
 
 
 def sendDSSScore():
