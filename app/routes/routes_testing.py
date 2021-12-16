@@ -55,7 +55,14 @@ def mlflow_info():
     current_dict = os.getcwd()
     dict_to_save = os.path.join(current_dict, "mlflow_info")
     print("PATH IS --------------", dict_to_save, flush=True)
-    get_ml_flow_info(experiments, current_dict)
+    get_ml_flow_info(experiments, dict_to_save)
+    return Response(status=200)
+
+@app.route('/mlflow/data/test/')
+def mlflow_data_test():
+    response = get_mlflow_experiment()
+
+    print("Response is --------------", response, flush=True)
     return Response(status=200)
 
 

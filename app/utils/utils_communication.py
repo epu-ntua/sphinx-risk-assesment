@@ -1,3 +1,4 @@
+import requests
 from flask import Response
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -16,10 +17,28 @@ import mlflow
 import os
 import click
 from mlflow.tracking import MlflowClient
-
+from flask import request
 from dotenv import load_dotenv
 load_dotenv()
 
+
+def get_mlflow_experiment(ip="5010", experiment="asset.variety.Server"):
+    url = "http://mlflow_code:"+ip+"/invocations"
+    current_dict = os.getcwd()
+    dict_to_load = os.path.join(current_dict, "mlflow_info", experiment, "model", "input_example.json")
+    print("--------SENDING---------")
+    print(url)
+    print(dict_to_load)
+    f = open(dict_to_load)
+    payload = json.dumps(json.load(f))
+    headers = {
+        'Content-Type': 'application/json'
+    }
+    print("--------SENDING---------")
+    print(url)
+    print(payload)
+    response = requests.request("POST", url, headers=headers, data=payload)
+    return response
 
 def print_run_info(runs):
     for r in runs:
@@ -51,7 +70,7 @@ def get_ml_flow_info(experiments, root_dir):
         os.mkdir(root_dir)
 
     # This may need change, when run in kubernetes
-    client = MlflowClient(tracking_uri='http://localhost:5000')
+    client = MlflowClient(tracking_uri='http://mlflow_server:5000')
     for name in experiments:
         e = client.get_experiment_by_name(name)
         print(e.experiment_id, e.name)
