@@ -1,3 +1,5 @@
+import os
+
 from flask import render_template, request, redirect, jsonify, Response, flash
 from multiprocessing import Process
 from app.producer import *
@@ -7,6 +9,61 @@ from app.forms import *
 from app import app
 from app.utils.utils_communication import *
 from app.utils.utils_risk_assessment import *
+
+
+
+@app.route('/alerts/new_asset/')
+def alerts_new_asset():
+    print("--HERe")
+    try:
+        repo_asset_first = RepoAsset.query.first()
+    except SQLAlchemyError:
+        return Response("SQLAlchemyError", 500)
+    result = send_alert_new_asset(repo_asset_first)
+    print("--HERe 2", result)
+
+    return Response(status=200)
+
+@app.route('/alerts/old_asset/')
+def alerts_old_asset():
+    try:
+        repo_asset_first = RepoAsset.query.first()
+    except SQLAlchemyError:
+        return Response("SQLAlchemyError", 500)
+    send_alert_old_asset(repo_asset_first)
+    return Response(status=200)
+
+@app.route('/alerts/info_update/')
+def alerts_info_update():
+    try:
+        repo_asset_first = RepoAsset.query.first()
+    except SQLAlchemyError:
+        return Response("SQLAlchemyError", 500)
+
+    try:
+        repo_threat_first = RepoThreat.query.first()
+    except SQLAlchemyError:
+        return Response("SQLAlchemyError", 500)
+
+    send_alert_info_update_needed(repo_asset_first, repo_threat_first, threat_exposure_info=1,
+                                  threat_materialisation_info=1)
+    return Response(status=200)
+
+@app.route('/mlflow/info/')
+def mlflow_info():
+    experiments = ["asset.variety.Server", "asset.variety.User Dev"]
+    current_dict = os.getcwd()
+    dict_to_save = os.path.join(current_dict, "mlflow_info")
+    print("PATH IS --------------", dict_to_save, flush=True)
+    get_ml_flow_info(experiments, dict_to_save)
+    return Response(status=200)
+
+@app.route('/mlflow/data/test/')
+def mlflow_data_test():
+    response = get_mlflow_experiment()
+
+    print("Response is --------------", response, flush=True)
+    return Response(status=200)
 
 
 @app.route('/write_topic')

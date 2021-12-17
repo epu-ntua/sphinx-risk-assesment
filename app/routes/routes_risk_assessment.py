@@ -1550,6 +1550,10 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
             for related_asset_each in related_assets:
                 if this_asset[0] == related_asset_each:
                     asset_is_related = 1
+
+        print("---ASET VALUEs--")
+        print(related_assets)
+        print(asset_is_related)
         # array_objective_calculation = [[{}], [{}]                                       ]
         # for
 

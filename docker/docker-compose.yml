@@ -55,6 +55,11 @@ services:
     ports:
       - 5002:5002
       - 3005:3005
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow_server:5000
+      MLFLOW_S3_ENDPOINT_URL: http://minio:9000
+      AWS_ACCESS_KEY_ID: 'minio-id'
+      AWS_SECRET_ACCESS_KEY: 'minio-key'
     command: bash -c "chmod +x ./docker/launch.sh && ./docker/launch.sh"
 #    command: bash -c " flask run --host=0.0.0.0 --no-reload"
     networks:
@@ -62,20 +67,18 @@ services:
       - frontend
 
   minio:
-    image: minio/minio:latest
+    image: minio/minio:RELEASE.2020-12-18T03-27-42Z
     container_name: myminio
     volumes:
-      - artifact-store:/mlflow-bucket
+      - artifact-store:/mlflow_bucket
     ports:
       - "9000:9000"
     environment:
-      MINIO_ROOT_USER: minio-id
-      MINIO_ROOT_PASSWORD: minio-key
-      AWS_ACCESS_KEY_ID: 'minio-id'
-      AWS_SECRET_ACCESS_KEY: 'minio-key'
+      MINIO_ACCESS_KEY: minio-id
+      MINIO_SECRET_KEY: minio-key
     networks:
       - backend
-    command: server mlflow-bucket
+    command: server mlflow_bucket
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
       interval: 10s
@@ -84,14 +87,14 @@ services:
       retries: 3
 
   create_bucket:
-    image: minio/mc:latest
+    image: minio/mc:RELEASE.2019-07-17T22-13-42Z
     depends_on:
       - minio
     networks:
       - backend
     environment:
-      MINIO_ROOT_USER: minio-id
-      MINIO_ROOT_PASSWORD: minio-key
+      MINIO_ACCESS_KEY: minio-id
+      MINIO_SECRET_KEY: minio-key
       PORT: 9000
     entrypoint: >
       /bin/sh -c "
@@ -147,12 +150,12 @@ services:
       - backend
     command: bash -c
       "mlflow server --backend-store-uri postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@pgdb:5432/${POSTGRES_DATABASE} --host 0.0.0.0 --default-artifact-root s3://mlflow-bucket/"
-    healthcheck:
-      test: [ "CMD", "curl", "--fail", "http://localhost:5000" ]
-      interval: 10s
-      timeout: 10s
-      start_period: 3s
-      retries: 3
+#    healthcheck:
+#      test: [ "CMD", "curl", "--fail", "http://localhost:5000" ]
+#      interval: 10s
+#      timeout: 10s
+#      start_period: 3s
+#      retries: 3
 
   mlflow_code:
     restart: always
@@ -178,6 +181,7 @@ services:
       - 5030:5030
       - 5031:5031
       - 5032:5032
+      - 5100:5100
     environment:
       MLFLOW_TRACKING_URI: http://mlflow_server:5000
       MLFLOW_S3_ENDPOINT_URL: http://minio:9000
@@ -189,6 +193,8 @@ services:
       - pgdb
       - mlflow_server
     working_dir: '/code/'
+    # volumes:
+    #     - ./:/code/ # remoooooooooooooooooooove
     networks:
       - backend
       - frontend
