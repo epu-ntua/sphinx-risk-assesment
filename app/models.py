@@ -487,19 +487,19 @@ class RepoAsset(db.Model):
     ip = db.Column(db.String)
     net_group_fk = db.Column(db.Integer, db.ForeignKey('repo_net_group.id'))
     value = db.Column(db.Integer)
-    loss_of_revenue = db.Column(db.Integer)     # this is related to Cost(revenue)
-    additional_expenses = db.Column(db.Integer)     # this is related to Repair time
-    security_levels = db.Column(db.Integer)
-    customer_service = db.Column(db.Integer)        # this is yet to be related
-    operating_zone = db.Column(db.Integer)      # this is yet to be related. It might help in cons2
+    loss_of_revenue = db.Column(db.Integer, default=1)     # this is related to Cost(revenue)
+    additional_expenses = db.Column(db.Integer, default=1)     # this is related to Repair time
+    security_levels = db.Column(db.Integer, default=1)
+    customer_service = db.Column(db.Integer, default=1)        # this is yet to be related
+    operating_zone = db.Column(db.Integer, default=1)      # this is yet to be related. It might help in cons2
     last_touch_date = db.Column(db.DateTime)
     type_fk = db.Column(db.Integer, db.ForeignKey('repo_assets_type.id'), default=1)
     # TODO Maybe remove the default, and ensure that type is always applied instead another way
     type = db.relationship("RepoAssetsType", back_populates="assets")
-    integrity = db.Column(db.Integer)
-    availability = db.Column(db.Integer)
-    confidentiality = db.Column(db.Integer)
-    current_status = db.Column(db.Integer)      # this is active, Inactive, Unknown, etc.
+    integrity = db.Column(db.Integer, default=1)
+    availability = db.Column(db.Integer, default=1)
+    confidentiality = db.Column(db.Integer, default=1)
+    current_status = db.Column(db.Integer, default=1)      # this is active, Inactive, Unknown, etc.
     services = db.relationship("RepoService", secondary=repo_asset_repo_service_association_table,
                                back_populates="assets")
     cves = db.relationship("CommonVulnerabilitiesAndExposures",
