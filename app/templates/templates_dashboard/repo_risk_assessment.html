@@ -266,7 +266,9 @@
                         <div class="col-2">
                             {% if check_threat_exposure_exists == 1 and check_threat_materialisation_exists == 1
                                     and check_asset_impact_exists == 1 and check_objectives_impact_exists == 1 and
-                                    check_utility_conf_exists == 1 and check_asset_service_exists == 1 %}
+                                    check_utility_conf_exists == 1   %}
+{#                                    and check_asset_service_exists == 1   %}#}
+
                                 {% if asset_is_related == 0 %}
                                     <button type="submit" class="btn btn-primary" style="margin-right: 3px; ">
                                         Add asset to automated risk assessment process

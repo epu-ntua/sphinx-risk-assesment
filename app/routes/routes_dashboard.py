@@ -378,7 +378,8 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, report_id=-1):
             these_objectives = convert_database_items_to_json_table(these_objectives)
             these_utils = convert_database_items_to_json_table(these_utils)
             this_risk_assessment = convert_database_items_to_json_table(this_risk_assessment)
-
+            # print("-------------------- RETRIEVED RISK ASSESSMENT IS -------------------------")
+            # print(this_risk_assessment)
             # print("---DASHBOARD DATA IS---")
             # print(this_risk_assessment)
             # print(this_exposure)

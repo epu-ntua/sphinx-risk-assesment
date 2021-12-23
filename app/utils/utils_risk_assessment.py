@@ -8,6 +8,12 @@ from copy import deepcopy
 
 # Function to calculate the risk exposure with range 0.0 -1.0, needs updating currently
 def calculate_exposure(skill, motive, source, actor, opportunity):
+    print("---------Exposure Values---------")
+    print(skill)
+    print(motive)
+    print(source)
+    print(actor)
+    print(opportunity)
     exposure = (skill + motive + source + actor + opportunity) / 5
     exposure = exposure / 100
     return exposure
@@ -67,9 +73,10 @@ def start_risk_assessment(threat_id, asset_id):
     except SQLAlchemyError:
         return "SQLAlchemyError"
 
+    # Node creation services
     for service in these_services:
         nodeId = "serv" + str(service.id)
-        diag.addDecisionNode(gum.LabelizedVariable(nodeId, service.name, 2))
+        diag.add(gum.LabelizedVariable(nodeId, service.name, 2))
 
     # Node creation impacts
     try:
@@ -142,6 +149,12 @@ def start_risk_assessment(threat_id, asset_id):
         except SQLAlchemyError:
             return "SQLAlchemyError"
 
+        # for service in these_services:
+        #     nodeServId = "serv" + str(service.id)
+        #     diag.addArc(nodeConsId, nodeServId)
+
+            # ie.addEvidence(nodeServId, 0)
+
         for impact in these_related_impacts:
             nodeImpactId = "imp" + str(impact.id)
             diag.addArc(nodeConsId, nodeImpactId)
@@ -173,14 +186,16 @@ def start_risk_assessment(threat_id, asset_id):
     # Node Value Filling
     # Exposure Node Values
     try:
-        this_exposure = RepoAssetRepoThreatRelationship.query.filter_by(repo_threat_id=threat_id).first()
+        this_exposure = RepoAssetRepoThreatRelationship.query.filter_by(repo_threat_id=threat_id, repo_asset_id=asset_id).first()
     except SQLAlchemyError:
         return "SQLAlchemyError"
 
     exposure = calculate_exposure(this_exposure.risk_skill_level, this_exposure.risk_motive, this_exposure.risk_source,
                                   this_exposure.risk_actor, this_exposure.risk_opportunity)
 
+    print("-------------------------------------- EXPOSURE IS ----------------------------------------------", exposure)
     diag.cpt("te1").fillWith([1 - exposure, exposure])
+    # diag.cpt("te1").fillWith([1, 0])
 
     # Materialisation Node Values
     for materialisation in these_materialisations:
@@ -251,6 +266,11 @@ def start_risk_assessment(threat_id, asset_id):
                                                                                                   1 - (
                                                                                                           node_value.prob / 100)]
         # print(these_cosnequence_values)
+
+    # Service node values
+    for service in these_services:
+        nodeServId = "serv" + str(service.id)
+        diag.cpt(nodeServId).fillWith([0.6, 0.4])
 
     # Impact Node Values
     for impact in these_impacts:
@@ -368,6 +388,11 @@ def start_risk_assessment(threat_id, asset_id):
             # print(utility_objective_value.utility_value)
             diag.utility(nodeUtilId)[utility_node_id] = utility_node_value
 
+    # #Add decision ndoe values
+    # for service in these_services:
+    #     nodeServId = "serv" + str(service.id)
+    #     diag.cpt()
+
     # Print Diagram
     diag.saveBIFXML(os.path.join("out", "GiraDynamic.bifxml"))
 
@@ -377,19 +402,26 @@ def start_risk_assessment(threat_id, asset_id):
 
     no_forgetting_array.append("re")
 
-    for service in these_services:
-        nodeServId = "serv" + str(service.id)
-        no_forgetting_array.append(nodeServId)
+    # for service in these_services:
+    #     nodeServId = "serv" + str(service.id)
+    #     ie.addEvidence(nodeServId, 0)
+    #     no_forgetting_array.append(nodeServId)
 
     # for response in these_responses:
 
-    ie.addNoForgettingAssumption(no_forgetting_array)
+    # ie.addNoForgettingAssumption(no_forgetting_array)
 
     # print("Is this solvable =" + str(ie.isSolvable()))
     # ie.addEvidence('te1', 1)
     # ie.addEvidence('re', 0)
 
     ie.makeInference()
+    print("---optimal decision---")
+    print(ie.optimalDecision("re"))
+    # print(ie.optimalDecision(nodeServId))
+    print("--- maximum utility---")
+
+    print(ie.MEU())
 
     # print("-------- INFERENCE RESULTS ----------")
     # print(ie.posterior('obj1'))
@@ -616,7 +648,7 @@ def risk_assessment_manual(threat_id, asset_id, exposures_set, materialisations_
     # Node Value Filling
     # Exposure Node Values
     try:
-        this_exposure = RepoAssetRepoThreatRelationship.query.filter_by(repo_threat_id=threat_id).first()
+        this_exposure = RepoAssetRepoThreatRelationship.query.filter_by(repo_threat_id=threat_id, repo_asset_id=asset_id).first()
     except SQLAlchemyError:
         return "SQLAlchemyError"
 
@@ -832,7 +864,7 @@ def risk_assessment_manual(threat_id, asset_id, exposures_set, materialisations_
     # ie.addEvidence('te1', 1)
     # ie.addEvidence('re', 0)
 
-    ie.makeInference()
+    # ie.makeInference()
 
     # --------- Set Manual Values ---------
     for exposure_set in exposures_set:
@@ -941,6 +973,7 @@ def risk_assessment_manual(threat_id, asset_id, exposures_set, materialisations_
     #
 
     # return ie.posterior('obj1').topandas()
+    ie.makeInference()
 
     results = {}
     # Threat Exposure Posterior
