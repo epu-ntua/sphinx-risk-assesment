@@ -1324,3 +1324,137 @@ def view_repo_controls():
         new_control_form = FormAddRepoControl()
         return render_template("templates_asset_repo/view_repo_controls.html", repo_controls=json_controls,
                                new_control_form=new_control_form)
+
+
+@app.route('/repo/security_posture/', methods=['GET', 'POST'])
+def view_repo_organisation_security_posture():
+    if request.method == 'POST':
+        new_security_posture_form = FormEditRepoOrganisationSecurityPosture()
+        if new_security_posture_form.id.data:
+            try:
+                to_edit_security_posture = RepoOrganisationSecurityPosture.query.filter_by(id=new_security_posture_form.id.data).first()
+            except SQLAlchemyError:
+                return Response("SQLAlchemyError when editing records", 500)
+            if new_security_posture_form.validate_on_submit():
+                to_edit_security_posture.q1_completedSRA = new_security_posture_form.q1_completedSRA.data
+                to_edit_security_posture.q2_include_IS_SRA = new_security_posture_form.q2_include_IS_SRA.data
+                to_edit_security_posture.q3_compliance = new_security_posture_form.q3_compliance.data
+                to_edit_security_posture.q4_respond = new_security_posture_form.q4_respond.data
+                to_edit_security_posture.q5_respond_personnel = new_security_posture_form.q5_respond_personnel.data
+                to_edit_security_posture.q6_communicate_responses = new_security_posture_form.q6_communicate_responses.data
+                to_edit_security_posture.q7_documented_policies = new_security_posture_form.q7_documented_policies.data
+                to_edit_security_posture.q8_reflect_business_practices = new_security_posture_form.q8_reflect_business_practices.data
+                to_edit_security_posture.q9_documentation_availability = new_security_posture_form.q9_documentation_availability.data
+                to_edit_security_posture.q10_responsible = new_security_posture_form.q10_responsible.data
+                to_edit_security_posture.q11_defined_access = new_security_posture_form.q11_defined_access.data
+                to_edit_security_posture.q12_member_screening = new_security_posture_form.q12_member_screening.data
+                to_edit_security_posture.q13_security_training = new_security_posture_form.q13_security_training.data
+                to_edit_security_posture.q14_monitoring_login = new_security_posture_form.q14_monitoring_login.data
+                to_edit_security_posture.q15_protection_malicious = new_security_posture_form.q15_protection_malicious.data
+                to_edit_security_posture.q16_password_security = new_security_posture_form.q16_password_security.data
+                to_edit_security_posture.q17_awareness_training = new_security_posture_form.q17_awareness_training.data
+                to_edit_security_posture.q18_sanction_policy = new_security_posture_form.q18_sanction_policy.data
+                to_edit_security_posture.q19_personnel_access = new_security_posture_form.q19_personnel_access.data
+                to_edit_security_posture.q20_access_to_PHI = new_security_posture_form.q20_access_to_PHI.data
+                to_edit_security_posture.q21_kind_of_access = new_security_posture_form.q21_kind_of_access.data
+                to_edit_security_posture.q22_use_of_encryption = new_security_posture_form.q22_use_of_encryption.data
+                to_edit_security_posture.q23_periodic_review_of_IS = new_security_posture_form.q23_periodic_review_of_IS.data
+                to_edit_security_posture.q24_monitor_system_activity = new_security_posture_form.q24_monitor_system_activity.data
+                to_edit_security_posture.q25_logoff_policy = new_security_posture_form.q25_logoff_policy.data
+                to_edit_security_posture.q26_user_authentication_policy = new_security_posture_form.q26_user_authentication_policy.data
+                to_edit_security_posture.q27_unauthorised_modification = new_security_posture_form.q27_unauthorised_modification.data
+                to_edit_security_posture.q28_unauthorised_modification_transmitted = new_security_posture_form.q28_unauthorised_modification_transmitted.data
+                to_edit_security_posture.q29_manage_facility_access = new_security_posture_form.q29_manage_facility_access.data
+                to_edit_security_posture.q30_manage_device_access = new_security_posture_form.q30_manage_device_access.data
+                to_edit_security_posture.q31_device_inventory = new_security_posture_form.q31_device_inventory.data
+                to_edit_security_posture.q32_validate_facility_access = new_security_posture_form.q32_validate_facility_access.data
+                to_edit_security_posture.q33_activity_on_IS_with_PHI = new_security_posture_form.q33_activity_on_IS_with_PHI.data
+                to_edit_security_posture.q34_backup_PHI = new_security_posture_form.q34_backup_PHI.data
+                to_edit_security_posture.q35_sanitise_disposed_devices = new_security_posture_form.q35_sanitise_disposed_devices.data
+                to_edit_security_posture.q36_connected_devices = new_security_posture_form.q36_connected_devices.data
+                to_edit_security_posture.q37_necessary_access_rules = new_security_posture_form.q37_necessary_access_rules.data
+                to_edit_security_posture.q38_monitor_3rd_access = new_security_posture_form.q38_monitor_3rd_access.data
+                to_edit_security_posture.q39_sanitise_new_devices = new_security_posture_form.q39_sanitise_new_devices.data
+                to_edit_security_posture.q40_BAA = new_security_posture_form.q40_BAA.data
+                to_edit_security_posture.q41_monitor_BA = new_security_posture_form.q41_monitor_BA.data
+                to_edit_security_posture.q42_contingency_plan = new_security_posture_form.q42_contingency_plan.data
+                to_edit_security_posture.q43_determine_critical_IS = new_security_posture_form.q43_determine_critical_IS.data
+                to_edit_security_posture.q44_pdr_security_incidents = new_security_posture_form.q44_pdr_security_incidents.data
+                to_edit_security_posture.q45_incident_response_plan = new_security_posture_form.q45_incident_response_plan.data
+                to_edit_security_posture.q46_incident_response_team = new_security_posture_form.q46_incident_response_team.data
+                to_edit_security_posture.q47_necessary_IS = new_security_posture_form.q47_necessary_IS.data
+                to_edit_security_posture.q48_access_when_emergency = new_security_posture_form.q48_access_when_emergency.data
+                to_edit_security_posture.q49_backup_plan = new_security_posture_form.q49_backup_plan.data
+                to_edit_security_posture.q50_disaster_recovery_plan = new_security_posture_form.q50_disaster_recovery_plan.data
+
+
+                db.session.commit()
+                return redirect("/repo/security_posture/")
+            else:
+                return Response("SQLAlchemyError", 500)
+        else:
+            return Response("Not found", 500)
+    else:
+        if db.session.query(RepoOrganisationSecurityPosture.id).first():
+            repo_organisation_security_posture = RepoOrganisationSecurityPosture.query.first()
+        else:
+            repo_organisation_security_posture = RepoOrganisationSecurityPosture()
+            db.session.add(repo_organisation_security_posture)
+            db.session.commit()
+        new_security_posture_form = FormEditRepoOrganisationSecurityPosture()
+        new_security_posture_form.id.data = repo_organisation_security_posture.id
+        new_security_posture_form.q1_completedSRA.data = str(repo_organisation_security_posture.q1_completedSRA)
+        new_security_posture_form.q2_include_IS_SRA.data = str(repo_organisation_security_posture.q2_include_IS_SRA)
+        new_security_posture_form.q3_compliance.data = str(repo_organisation_security_posture.q3_compliance)
+        new_security_posture_form.q4_respond.data = str(repo_organisation_security_posture.q4_respond)
+        new_security_posture_form.q5_respond_personnel.data = str(repo_organisation_security_posture.q5_respond_personnel)
+
+        new_security_posture_form.q6_communicate_responses.data =str(repo_organisation_security_posture.q6_communicate_responses)
+        new_security_posture_form.q7_documented_policies.data =str(repo_organisation_security_posture.q7_documented_policies)
+        new_security_posture_form.q8_reflect_business_practices.data =str(repo_organisation_security_posture.q8_reflect_business_practices)
+        new_security_posture_form.q9_documentation_availability.data =str(repo_organisation_security_posture.q9_documentation_availability)
+        new_security_posture_form.q10_responsible.data =str(repo_organisation_security_posture.q10_responsible)
+        new_security_posture_form.q11_defined_access.data =str(repo_organisation_security_posture.q11_defined_access)
+        new_security_posture_form.q12_member_screening.data =str(repo_organisation_security_posture.q12_member_screening)
+        new_security_posture_form.q13_security_training.data =str(repo_organisation_security_posture.q13_security_training)
+        new_security_posture_form.q14_monitoring_login.data =str(repo_organisation_security_posture.q14_monitoring_login)
+        new_security_posture_form.q15_protection_malicious.data =str(repo_organisation_security_posture.q15_protection_malicious)
+        new_security_posture_form.q16_password_security.data =str(repo_organisation_security_posture.q16_password_security)
+        new_security_posture_form.q17_awareness_training.data =str(repo_organisation_security_posture.q17_awareness_training)
+        new_security_posture_form.q18_sanction_policy.data =str(repo_organisation_security_posture.q18_sanction_policy)
+        new_security_posture_form.q19_personnel_access.data =str(repo_organisation_security_posture.q19_personnel_access)
+        new_security_posture_form.q20_access_to_PHI.data =str(repo_organisation_security_posture.q20_access_to_PHI)
+        new_security_posture_form.q21_kind_of_access.data =str(repo_organisation_security_posture.q21_kind_of_access)
+        new_security_posture_form.q22_use_of_encryption.data =str(repo_organisation_security_posture.q22_use_of_encryption)
+        new_security_posture_form.q23_periodic_review_of_IS.data =str(repo_organisation_security_posture.q23_periodic_review_of_IS)
+        new_security_posture_form.q24_monitor_system_activity.data =str(repo_organisation_security_posture.q24_monitor_system_activity)
+        new_security_posture_form.q25_logoff_policy.data =str(repo_organisation_security_posture.q25_logoff_policy)
+        new_security_posture_form.q26_user_authentication_policy.data =str(repo_organisation_security_posture.q26_user_authentication_policy)
+        new_security_posture_form.q27_unauthorised_modification.data =str(repo_organisation_security_posture.q27_unauthorised_modification)
+        new_security_posture_form.q28_unauthorised_modification_transmitted.data =str(repo_organisation_security_posture.q28_unauthorised_modification_transmitted)
+        new_security_posture_form.q29_manage_facility_access.data =str(repo_organisation_security_posture.q29_manage_facility_access)
+        new_security_posture_form.q30_manage_device_access.data =str(repo_organisation_security_posture.q30_manage_device_access)
+        new_security_posture_form.q31_device_inventory.data =str(repo_organisation_security_posture.q31_device_inventory)
+        new_security_posture_form.q32_validate_facility_access.data =str(repo_organisation_security_posture.q32_validate_facility_access)
+        new_security_posture_form.q33_activity_on_IS_with_PHI.data =str(repo_organisation_security_posture.q33_activity_on_IS_with_PHI)
+        new_security_posture_form.q34_backup_PHI.data =str(repo_organisation_security_posture.q34_backup_PHI)
+        new_security_posture_form.q35_sanitise_disposed_devices.data =str(repo_organisation_security_posture.q35_sanitise_disposed_devices)
+        new_security_posture_form.q36_connected_devices.data =str(repo_organisation_security_posture.q36_connected_devices)
+        new_security_posture_form.q37_necessary_access_rules.data =str(repo_organisation_security_posture.q37_necessary_access_rules)
+        new_security_posture_form.q38_monitor_3rd_access.data =str(repo_organisation_security_posture.q38_monitor_3rd_access)
+        new_security_posture_form.q39_sanitise_new_devices.data =str(repo_organisation_security_posture.q39_sanitise_new_devices)
+        new_security_posture_form.q40_BAA.data =str(repo_organisation_security_posture.q40_BAA)
+        new_security_posture_form.q41_monitor_BA.data =str(repo_organisation_security_posture.q41_monitor_BA)
+        new_security_posture_form.q42_contingency_plan.data =str(repo_organisation_security_posture.q42_contingency_plan)
+        new_security_posture_form.q43_determine_critical_IS.data =str(repo_organisation_security_posture.q43_determine_critical_IS)
+        new_security_posture_form.q44_pdr_security_incidents.data =str(repo_organisation_security_posture.q44_pdr_security_incidents)
+        new_security_posture_form.q45_incident_response_plan.data =str(repo_organisation_security_posture.q45_incident_response_plan)
+        new_security_posture_form.q46_incident_response_team.data =str(repo_organisation_security_posture.q46_incident_response_team)
+        new_security_posture_form.q47_necessary_IS.data =str(repo_organisation_security_posture.q47_necessary_IS)
+        new_security_posture_form.q48_access_when_emergency.data =str(repo_organisation_security_posture.q48_access_when_emergency)
+        new_security_posture_form.q49_backup_plan.data =str(repo_organisation_security_posture.q49_backup_plan)
+        new_security_posture_form.q50_disaster_recovery_plan.data =str(repo_organisation_security_posture.q50_disaster_recovery_plan)
+        return render_template("templates_asset_repo/view_repo_organisation_security_posture.html",
+                               new_security_posture_form=new_security_posture_form)
+
+

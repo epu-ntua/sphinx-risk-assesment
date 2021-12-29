@@ -1,0 +1,126 @@
+{% extends "templates_supporting/sidebar_asset_management.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{#{% block header %}#}
+{#<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/repo.css') }}">#}
+{#{% endblock %}#}
+{#{% block head %}#}
+{##}
+{#{% endblock %}#}
+{% block script %}
+    <script>
+
+    </script>
+{% endblock %}
+
+{% block content %}
+    <h1>Security Posture</h1>
+    <hr/>
+    <div class="modal-body">
+        <form id="editForm" action="/repo/security_posture/" method="post" class="form form-horizontal" role="form" novalidate>
+            {{ new_security_posture_form.hidden_tag() }}
+            <h4 class="text-danger">{{ new_security_posture_form.q1_completedSRA.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q1_completedSRA) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q2_include_IS_SRA.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q2_include_IS_SRA) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q3_compliance.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q3_compliance) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q4_respond.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q4_respond) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q5_respond_personnel.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q5_respond_personnel) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q6_communicate_responses.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q6_communicate_responses) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q7_documented_policies.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q7_documented_policies) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q8_reflect_business_practices.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q8_reflect_business_practices) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q9_documentation_availability.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q9_documentation_availability) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q10_responsible.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q10_responsible) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q11_defined_access.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q11_defined_access) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q12_member_screening.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q12_member_screening) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q13_security_training.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q13_security_training) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q14_monitoring_login.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q14_monitoring_login) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q15_protection_malicious.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q15_protection_malicious) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q16_password_security.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q16_password_security) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q17_awareness_training.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q17_awareness_training) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q18_sanction_policy.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q18_sanction_policy) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q19_personnel_access.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q19_personnel_access) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q20_access_to_PHI.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q20_access_to_PHI) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q21_kind_of_access.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q21_kind_of_access) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q22_use_of_encryption.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q22_use_of_encryption) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q23_periodic_review_of_IS.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q23_periodic_review_of_IS) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q24_monitor_system_activity.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q24_monitor_system_activity) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q25_logoff_policy.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q25_logoff_policy) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q26_user_authentication_policy.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q26_user_authentication_policy) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q27_unauthorised_modification.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q27_unauthorised_modification) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q28_unauthorised_modification_transmitted.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q28_unauthorised_modification_transmitted) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q29_manage_facility_access.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q29_manage_facility_access) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q30_manage_device_access.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q30_manage_device_access) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q31_device_inventory.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q31_device_inventory) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q32_validate_facility_access.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q32_validate_facility_access) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q33_activity_on_IS_with_PHI.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q33_activity_on_IS_with_PHI) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q34_backup_PHI.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q34_backup_PHI) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q35_sanitise_disposed_devices.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q35_sanitise_disposed_devices) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q36_connected_devices.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q36_connected_devices) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q37_necessary_access_rules.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q37_necessary_access_rules) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q38_monitor_3rd_access.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q38_monitor_3rd_access) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q39_sanitise_new_devices.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q39_sanitise_new_devices) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q40_BAA.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q40_BAA) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q41_monitor_BA.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q41_monitor_BA) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q42_contingency_plan.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q42_contingency_plan) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q43_determine_critical_IS.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q43_determine_critical_IS) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q44_pdr_security_incidents.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q44_pdr_security_incidents) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q45_incident_response_plan.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q45_incident_response_plan) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q46_incident_response_team.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q46_incident_response_team) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q47_necessary_IS.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q47_necessary_IS) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q48_access_when_emergency.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q48_access_when_emergency) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q49_backup_plan.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q49_backup_plan) }}
+            <h4 class="text-danger">{{ new_security_posture_form.q50_disaster_recovery_plan.label }}</h4>
+            {{ wtf.form_field(new_security_posture_form.q50_disaster_recovery_plan) }}
+            <h4 class="text-danger" style="font-weight:Bold"></h4>
+            {{ wtf.form_field(new_security_posture_form.submit)}}
+        </form>
+    </div>
+
+{% endblock %}
