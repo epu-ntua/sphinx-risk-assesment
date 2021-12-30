@@ -78,9 +78,15 @@ def get_ml_flow_info(experiment, root_dir):
         os.mkdir(root_dir)
 
     # This may need change, when run in kubernetes
+
     client = MlflowClient(tracking_uri='http://mlflow_server:5000')
+
+
     # for name in experiments:
-    e = client.get_experiment_by_name(experiment)
+    try:
+        e = client.get_experiment_by_name(experiment)
+    except mlflow.exceptions.MlflowException:
+        return False
     print(e.experiment_id, e.name)
     # define / create local directory to store example
     local_dir = os.path.join(root_dir, e.name)
@@ -93,6 +99,7 @@ def get_ml_flow_info(experiment, root_dir):
     local_path = client.download_artifacts(runs[0].info.run_id, "model/input_example.json", local_dir)
     print("Artifacts downloaded in: {}".format(local_dir))
     print("Artifacts: {}".format(local_dir))
+    return True
 
 
 def send_alert_new_asset(asset_obj):
