@@ -9,7 +9,7 @@ from app.forms import *
 from app import app
 from app.utils.utils_communication import *
 from app.utils.utils_risk_assessment import *
-
+from app.utils.utils_risk_profiles import get_RiskML_value
 
 
 @app.route('/alerts/new_asset/')
@@ -52,6 +52,7 @@ def alerts_info_update():
 @app.route('/mlflow/info/')
 def mlflow_info():
     experiments = ["asset.variety.Server", "asset.variety.User Dev"]
+    experiments = "asset.variety.Server"
     current_dict = os.getcwd()
     dict_to_save = os.path.join(current_dict, "mlflow_info")
     print("PATH IS --------------", dict_to_save, flush=True)
@@ -63,6 +64,14 @@ def mlflow_data_test():
     response = get_mlflow_experiment()
 
     print("Response is --------------", response, flush=True)
+    return Response(status=200)
+
+@app.route('/mlflow/data/clean/test/')
+def mlflow_data_clean_test():
+    get_RiskML_value(["action.malware.variety.Exploit misconfig", "action.malware.variety.Exploit vuln"], "-", "action", "5010", "asset.variety.Server")
+    # response = get_mlflow_experiment()
+
+    print("Response is --------------", flush=True)
     return Response(status=200)
 
 

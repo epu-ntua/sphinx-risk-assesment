@@ -313,11 +313,11 @@ def start_risk_assessment(threat_id, asset_id):
 
                 impact_node_id[nodeServId] = state_to_add
 
-            impact_node_value.append(asset_threat_impact_value.low_prob)
+            impact_node_value.append(asset_threat_impact_value.low_prob / 100)
             # objective_node_value.append(1 - concatted_entry_key.low_prob)
-            impact_node_value.append(asset_threat_impact_value.med_prob)
+            impact_node_value.append(asset_threat_impact_value.med_prob / 100)
             # objective_node_value.append(1 - concatted_entry_key.med_prob)
-            impact_node_value.append(asset_threat_impact_value.high_prob)
+            impact_node_value.append(asset_threat_impact_value.high_prob / 100)
             # objective_node_value.append(1 - concatted_entry_key.high_prob)
 
             # print("-------- TO FIX ERROR --------")
@@ -348,11 +348,11 @@ def start_risk_assessment(threat_id, asset_id):
                 nodeImpactId = "imp" + str(json_dict['imp_id'])
                 objective_node_id[nodeImpactId] = json_dict['state']
 
-            objective_node_value.append(objective_impact_value.low_prob)
+            objective_node_value.append(objective_impact_value.low_prob / 100)
             # objective_node_value.append(1 - concatted_entry_key.low_prob)
-            objective_node_value.append(objective_impact_value.med_prob)
+            objective_node_value.append(objective_impact_value.med_prob / 100)
             # objective_node_value.append(1 - concatted_entry_key.med_prob)
-            objective_node_value.append(objective_impact_value.high_prob)
+            objective_node_value.append(objective_impact_value.high_prob / 100)
             # objective_node_value.append(1 - concatted_entry_key.high_prob)
 
             # print("-------- TO LEARN ERROR --------")
@@ -395,8 +395,19 @@ def start_risk_assessment(threat_id, asset_id):
 
     # Print Diagram
     diag.saveBIFXML(os.path.join("out", "GiraDynamic.bifxml"))
+    # diag.saveBIF(os.path.join("out", "GiraDynamic.bif"))
+
+    print("------- Topological Order -------")
+    print(diag.topologicalOrder())
+
 
     ie = gum.ShaferShenoyLIMIDInference(diag)
+
+    print("------- Is Solvable -------")
+    print(ie.isSolvable())
+    print("------- Is Something -------")
+    # diag.cpt("re").fillWith([0.6, 0.4])
+    # print()
 
     no_forgetting_array = []
 
@@ -413,7 +424,7 @@ def start_risk_assessment(threat_id, asset_id):
 
     # print("Is this solvable =" + str(ie.isSolvable()))
     # ie.addEvidence('te1', 1)
-    # ie.addEvidence('re', 0)
+    ie.addEvidence('re', 1)
 
     ie.makeInference()
     print("---optimal decision---")
@@ -468,8 +479,8 @@ def start_risk_assessment(threat_id, asset_id):
     # Util Posterior
     for utility in these_utils:
         nodeUtilId = "util" + str(utility.id)
-        to_result_util = ie.posterior(nodeObjId).topandas()
-        results[nodeObjId] = to_result_util
+        to_result_util = ie.posterior(nodeUtilId).topandas()
+        results[nodeUtilId] = to_result_util
 
     return results
     # Print Graph

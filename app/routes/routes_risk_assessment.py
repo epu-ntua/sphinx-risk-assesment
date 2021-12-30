@@ -213,8 +213,8 @@ def repo_risk_configuration_threat_exposure(threat_id=1, asset_id=-1):
 def repo_risk_configuration_threat_asset(threat_id, asset_id):
     if request.method == 'POST':
         # new_service_form = FormAddRepoService
-        print("Requests are: ")
-        print(request.form)
+        # print("Requests are: ")
+        # print(request.form)
         # The name in the input forms has the following template
         # "mat|<materialisation_id>|<response_id>|<threat_occurrence>" for materialisations
         # "cons|<consequence_id>|<response_id>|<threat_occurrence>" for consequences
@@ -224,8 +224,8 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
                                                               repo_threat_id=threat_id).count() is not 0:
             for user_input in request.form:
                 deconstructedId = user_input.split("|")
-                print("deconstructedId Mat")
-                print(deconstructedId)
+                # print("deconstructedId Mat")
+                # print(deconstructedId)
                 if deconstructedId[0] == "mat":
                     if deconstructedId[3] == "True":
                         to_add_threat_occurence_bool = True
@@ -258,8 +258,8 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
                     db.session.commit()
 
                 elif deconstructedId[0] == "cons":
-                    print("deconstructedId Cons")
-                    print(deconstructedId)
+                    # print("deconstructedId Cons")
+                    # print(deconstructedId)
                     if deconstructedId[3] == "True":
                         to_add_threat_occurence_bool = True
                     elif deconstructedId[3] == "False":
@@ -298,8 +298,8 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
         else:
             for user_input in request.form:
                 deconstructedId = user_input.split("|")
-                print("deconstructedId Mat")
-                print(deconstructedId)
+                # print("deconstructedId Mat")
+                # print(deconstructedId)
                 if deconstructedId[0] == "mat":
                     if deconstructedId[3] == "True":
                         to_add_threat_occurence_bool = True
@@ -318,8 +318,8 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
 
                     db.session.add(to_add_mat_node)
                 elif deconstructedId[0] == "cons":
-                    print("deconstructedId Cons")
-                    print(deconstructedId)
+                    # print("deconstructedId Cons")
+                    # print(deconstructedId)
                     if deconstructedId[3] == "True":
                         to_add_threat_occurence_bool = True
                     elif deconstructedId[3] == "False":
@@ -616,8 +616,8 @@ def repo_risk_configuration_impacts_risk(threat_id=1, asset_id=-1, impact_id=-1)
 
         for user_input in request.form:
             deconstructedId = user_input.split("|")
-            print("deconstructedId Mat")
-            print(deconstructedId)
+            # print("deconstructedId Mat")
+            # print(deconstructedId)
 
             # Entries for low,medium and high states are in the same table entry
             # but arent sent by the frontend as one entry but as three in succession
@@ -836,8 +836,8 @@ def repo_risk_configuration_objective_risk(objective_id=1):
         # new_service_form = FormAddRepoService()
         for user_input in request.form:
             deconstructedId = user_input.split("|")
-            print("deconstructedId Mat")
-            print(deconstructedId)
+            # print("deconstructedId Mat")
+            # print(deconstructedId)
 
             # Entries for low,medium and high states are in the same table entry
             # but arent sent by the frontend as one entry but as three in succession
@@ -1174,11 +1174,11 @@ def repo_risk_configuration_utility_risk(utility_id=1):
             db.session.commit()
         else:
             for user_input in request.form:
-                print(user_input)
+                # print(user_input)
                 deconstructedId = user_input.split("|")
                 deconstructedId.pop(0)
-                print("deconstructedId Mat")
-                print(deconstructedId)
+                # print("deconstructedId Mat")
+                # print(deconstructedId)
                 # print(request.form[user_input])
                 to_add_relationship = RepoUtilityObjectiveRelationship(repo_utility_id=utility_id,
                                                                        utility_value=request.form[user_input])
@@ -1308,8 +1308,8 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
 
             # Save the firs produced report
             risk_assessment_result = start_risk_assessment(threat_id, asset_id)
-            print(risk_assessment_result)
-            print(type(risk_assessment_result))
+            # print(risk_assessment_result)
+            # print(type(risk_assessment_result))
 
             exposure_inference = ""
             materialisations_inference = ""
@@ -1319,8 +1319,8 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
             objectives_inference = ""
 
             for key, value in risk_assessment_result.items():
-                print("KEY IS")
-                print(key)
+                # print("KEY IS")
+                # print(key)
                 temp_key = "".join(i for i in key if not i.isdigit())
                 temp_digit = "".join(i for i in key if i.isdigit())
 
@@ -1369,8 +1369,8 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
         else:
             this_risk_assessment = this_risk_assessment.first()
             risk_assessment_result = start_risk_assessment(threat_id, asset_id)
-            print(risk_assessment_result)
-            print(type(risk_assessment_result))
+            # print(risk_assessment_result)
+            # print(type(risk_assessment_result))
 
             exposure_inference = ""
             materialisations_inference = ""
@@ -1379,9 +1379,11 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
             impacts_inference = ""
             objectives_inference = ""
 
+            print("-------------- All ITEMS ARE ------------------")
+            print(risk_assessment_result.items())
             for key, value in risk_assessment_result.items():
-                print("KEY IS")
-                print(key)
+                # print("KEY IS")
+                # print(key)
                 temp_key = "".join(i for i in key if not i.isdigit())
                 temp_digit = "".join(i for i in key if i.isdigit())
 
@@ -1411,7 +1413,7 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
                 # elif temp_key == "util":
                 #     materialisations_set_values = str(temp_digit)+ "|" + str(value.values(0)) + "|"
                 else:
-                    print("Ignore")
+                    print("Ignore", temp_key)
 
             first_risk_assessment_result = RepoRiskAssessmentReports(
                 risk_assessment_id=this_risk_assessment.id,
@@ -1452,7 +1454,7 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
             return Response("SQLAlchemyError", 500)
 
         related_assets = []
-        print(all_assets)
+        # print(all_assets)
         for related_assessment in related_assessments:
             related_assets.append(related_assessment.asset)
             # print(related_assessment.asset)
@@ -1551,9 +1553,9 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
                 if this_asset[0] == related_asset_each:
                     asset_is_related = 1
 
-        print("---ASET VALUEs--")
-        print(related_assets)
-        print(asset_is_related)
+        # print("---ASET VALUEs--")
+        # print(related_assets)
+        # print(asset_is_related)
         # array_objective_calculation = [[{}], [{}]                                       ]
         # for
 

@@ -1,80 +1,58 @@
 from app.models import *
+# from app.utils import  *
 from sqlalchemy import exists
 import json
-
+import os
 
 # region Threat Estimation calls  @@@@@@@@@@@@@
 # 1 RiskML, 2 Reputation, 3 DB, 4 DSS forecasting
 # region 1 RiskML
-def get_RiskML_value(asset_type, threat, estimation_type):
+from app.utils.utils_communication import get_ml_flow_info
+
+
+def get_RiskML_value(asset_type, threat, estimation_type, port, experiment):
     # action = {Hacking, Social, Malware, Physical, Error}
     # action.variety = {M.Ransomware, H.DoS, H.SQL, H Brute force, H.Use of backdoor or C2}
     # asset.variety = {Server, User Device, Person, Media}
     # asset.asset.variety = {S.Database, S.Web.application, U.Desctop or laptop}
     # attribute = {Confidenciality,availability,integrity}
+    print("To start", flush=True)
+    # Get root directory to save json input in correct path
+    current_dict = os.getcwd()
+    root_dir = os.path.join(current_dict, "mlflow_info")
+
+    # Get from server current json input still containing junk data
+    # get_ml_flow_info(experiment, root_dir)
+
+    # URL to get actual values for this experiment (selected experiment depends on port)
+    url = "http://mlflow_code:" + port + "/invocations"
+    print( current_dict, "mlflow_info", experiment, "model", "input_example.json", flush = True)
+    dict_to_load_path = os.path.join(current_dict, "mlflow_info", experiment, "model", "input_example.json")
+    # Remove junk info from input json
+    file_json = open(dict_to_load_path)
+    json_to_send = json.load(file_json)
+
+    print(json_to_send, flush=True)
+    to_clean_data = json_to_send["data"][0]
+    print(to_clean_data, flush=True)
+    for it,entry in enumerate(to_clean_data):
+        if entry == True:
+            to_clean_data[it] = False
+
+    print(json_to_send, flush=True)
+
+
     if (estimation_type == 'action'):
-        for item in asset_type:
-            paramlist = ["asset.variety.Embedded", "asset.variety.Kiosk/Term", "asset.variety.Media",
-                         "asset.variety.Network", "asset.variety.Person", "asset.variety.Server",
-                         "asset.variety.User Dev", "asset.assets.variety.E - Other",
-                         "asset.assets.variety.E - Telematics", "asset.assets.variety.E - Telemetry",
-                         "asset.assets.variety.M - Disk drive", "asset.assets.variety.M - Disk media",
-                         "asset.assets.variety.M - Documents", "asset.assets.variety.M - Fax",
-                         "asset.assets.variety.M - Flash drive", "asset.assets.variety.M - Other",
-                         "asset.assets.variety.M - Payment card", "asset.assets.variety.M - Smart card",
-                         "asset.assets.variety.M - Tapes", "asset.assets.variety.N - Access reader",
-                         "asset.assets.variety.N - Broadband", "asset.assets.variety.N - Camera",
-                         "asset.assets.variety.N - Firewall", "asset.assets.variety.N - HSM",
-                         "asset.assets.variety.N - IDS", "asset.assets.variety.N - LAN", "asset.assets.variety.N - NAS",
-                         "asset.assets.variety.N - Other", "asset.assets.variety.N - PBX",
-                         "asset.assets.variety.N - PLC", "asset.assets.variety.N - Private WAN",
-                         "asset.assets.variety.N - Public WAN", "asset.assets.variety.N - RTU",
-                         "asset.assets.variety.N - Router or switch", "asset.assets.variety.N - SAN",
-                         "asset.assets.variety.N - Telephone", "asset.assets.variety.N - VoIP adapter",
-                         "asset.assets.variety.N - WLAN", "asset.assets.variety.Other",
-                         "asset.assets.variety.P - Auditor", "asset.assets.variety.P - Call center",
-                         "asset.assets.variety.P - Cashier", "asset.assets.variety.P - Customer",
-                         "asset.assets.variety.P - Developer", "asset.assets.variety.P - End-user",
-                         "asset.assets.variety.P - End-user or employee", "asset.assets.variety.P - Executive",
-                         "asset.assets.variety.P - Finance", "asset.assets.variety.P - Former employee",
-                         "asset.assets.variety.P - Guard", "asset.assets.variety.P - Helpdesk",
-                         "asset.assets.variety.P - Human resources", "asset.assets.variety.P - Maintenance",
-                         "asset.assets.variety.P - Manager", "asset.assets.variety.P - Other",
-                         "asset.assets.variety.P - Other employee", "asset.assets.variety.P - Partner",
-                         "asset.assets.variety.P - System admin", "asset.assets.variety.S - Authentication",
-                         "asset.assets.variety.S - Backup", "asset.assets.variety.S - Code repository",
-                         "asset.assets.variety.S - Configuration or patch management", "asset.assets.variety.S - DCS",
-                         "asset.assets.variety.S - DHCP", "asset.assets.variety.S - DNS",
-                         "asset.assets.variety.S - Database", "asset.assets.variety.S - Directory",
-                         "asset.assets.variety.S - File", "asset.assets.variety.S - ICS",
-                         "asset.assets.variety.S - Log", "asset.assets.variety.S - Mail",
-                         "asset.assets.variety.S - Mainframe", "asset.assets.variety.S - Other",
-                         "asset.assets.variety.S - POS controller", "asset.assets.variety.S - Payment switch",
-                         "asset.assets.variety.S - Print", "asset.assets.variety.S - Proxy",
-                         "asset.assets.variety.S - Remote access", "asset.assets.variety.S - VM host",
-                         "asset.assets.variety.S - Web application", "asset.assets.variety.T - ATM",
-                         "asset.assets.variety.T - Gas terminal", "asset.assets.variety.T - Kiosk",
-                         "asset.assets.variety.T - Other", "asset.assets.variety.T - PED pad",
-                         "asset.assets.variety.U - Auth token", "asset.assets.variety.U - Desktop",
-                         "asset.assets.variety.U - Desktop or laptop", "asset.assets.variety.U - Laptop",
-                         "asset.assets.variety.U - Media", "asset.assets.variety.U - Mobile phone",
-                         "asset.assets.variety.U - Other", "asset.assets.variety.U - POS terminal",
-                         "asset.assets.variety.U - Peripheral", "asset.assets.variety.U - Tablet",
-                         "asset.assets.variety.U - Telephone", "asset.assets.variety.U - VoIP phone",
-                         "victim.orgsize.Large", "victim.industry.name"]
-            valuelist = [False, False, False, False, False, False, False, False, False, False, False, False, False,
-                         False, False, False, False, False, False, False, False, False, False, False, False, False,
-                         False, False, False, False, False, False, False, False, False, False, False, False, False,
-                         False, False, False, False, False, False, False, False, False, False, False, False, False,
-                         False, False, False, False, False, False, False, False, False, False, False, False, False,
-                         False, False, False, False, False, False, False, False, False, False, False, False, False,
-                         False, False, False, False, False, False, False, False, False, False, False, False, False,
-                         False, False, False, False, False, False, False, "Healthcare"]
-            findindex = paramlist.index(item)
+        for asset_name in asset_type:
+            paramlist = json_to_send["columns"]
+            valuelist = json_to_send["data"][0]
+            findindex = paramlist.index(asset_name)
             valuelist[findindex] = True
-            str = {"columns": paramlist, "data": [valuelist]}
-            print(json.dumps(str))
-            return json.dumps(str)
+            print(json_to_send, flush=True)
+
+            # str = {"columns": paramlist, "data": [valuelist]}
+            # print(json.dumps(str))
+            # return json.dumps(str)
     elif (estimation_type == 'action.x.variety'):
         paramlist = ["asset.variety.Embedded", "asset.variety.Kiosk/Term", "asset.variety.Media",
                      "asset.variety.Network", "asset.variety.Person", "asset.variety.Server", "asset.variety.User Dev",
@@ -428,7 +406,13 @@ def get_RiskML_value(asset_type, threat, estimation_type):
     else:
         return -1
 
-
+    # TODO remove return when wanting to call the
+    return
+    headers = {
+        'Content-Type': 'application/json'
+    }
+    payload = json.dumps()
+    response = requests.request("POST", url, headers=headers, data=payload)
 # endregion 1 RiskML
 # region 2 Reputation
 #     TODO: "provide API to get the estimation"

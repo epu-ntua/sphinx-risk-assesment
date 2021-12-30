@@ -22,14 +22,22 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def get_mlflow_experiment(ip="5010", experiment="asset.variety.Server"):
-    url = "http://mlflow_code:"+ip+"/invocations"
+def get_mlflow_experiment(port="5010", experiment="asset.variety.Server"):
+    url = "http://mlflow_code:"+port+"/invocations"
     current_dict = os.getcwd()
     dict_to_load = os.path.join(current_dict, "mlflow_info", experiment, "model", "input_example.json")
+    # Remove junk info from input json
+
+
     print("--------SENDING---------")
     print(url)
     print(dict_to_load)
     f = open(dict_to_load)
+    # to_clean_data = dict_to_load["data"][0]
+    # for entry in to_clean_data:
+    #     if entry == 'true':
+    #         entry = 'false'
+
     payload = json.dumps(json.load(f))
     headers = {
         'Content-Type': 'application/json'
@@ -62,7 +70,7 @@ def print_run_info(runs):
 #               default='.',
 #               help="The local (root) directory to use for downloading the files"
 #               )
-def get_ml_flow_info(experiments, root_dir):
+def get_ml_flow_info(experiment, root_dir):
     # Search all runs under experiment id and order them by
     # descending value of the metric 'm'
     # root_dir = "./download_examples"
@@ -71,20 +79,20 @@ def get_ml_flow_info(experiments, root_dir):
 
     # This may need change, when run in kubernetes
     client = MlflowClient(tracking_uri='http://mlflow_server:5000')
-    for name in experiments:
-        e = client.get_experiment_by_name(name)
-        print(e.experiment_id, e.name)
-        # define / create local directory to store example
-        local_dir = os.path.join(root_dir, e.name)
-        if not os.path.exists(local_dir):
-            os.mkdir(local_dir)
-        runs = client.search_runs(e.experiment_id)
-        print_run_info(runs)
-        print("--")
-        # download last run artifacts
-        local_path = client.download_artifacts(runs[0].info.run_id, "model/input_example.json", local_dir)
-        print("Artifacts downloaded in: {}".format(local_dir))
-        print("Artifacts: {}".format(local_dir))
+    # for name in experiments:
+    e = client.get_experiment_by_name(experiment)
+    print(e.experiment_id, e.name)
+    # define / create local directory to store example
+    local_dir = os.path.join(root_dir, e.name)
+    if not os.path.exists(local_dir):
+        os.mkdir(local_dir)
+    runs = client.search_runs(e.experiment_id)
+    print_run_info(runs)
+    print("--")
+    # download last run artifacts
+    local_path = client.download_artifacts(runs[0].info.run_id, "model/input_example.json", local_dir)
+    print("Artifacts downloaded in: {}".format(local_dir))
+    print("Artifacts: {}".format(local_dir))
 
 
 def send_alert_new_asset(asset_obj):
