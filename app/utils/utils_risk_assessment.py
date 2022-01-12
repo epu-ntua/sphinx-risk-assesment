@@ -124,7 +124,7 @@ def start_risk_assessment_pycid(threat_id, asset_id):
     for materialisation in these_materialisations:
         nodeId = "re"
         nodeMatId = "mat" + str(materialisation.id)
-        all_nodes.append((exposureNodeId, nodeMatId))
+        all_nodes.append((nodeId, nodeMatId))
 
         # diag.addArc(nodeId, nodeMatId)
 
@@ -239,6 +239,8 @@ def start_risk_assessment_pycid(threat_id, asset_id):
                                                                                               repo_materialisation_id=materialisation.id).all()
         except SQLAlchemyError:
             return "SQLAlchemyError"
+
+        mat_nodes_values = {}
         for node_value in these_materialisation_values:
             if node_value.threat_occurrence is True:
                 occurance_bool_num = 1
@@ -249,158 +251,202 @@ def start_risk_assessment_pycid(threat_id, asset_id):
                 if these_responses[it].id == node_value.repo_response_id:
                     response_bool_num = it
 
-            # if node_value.repo_response_id % 2 == 0:
-            #     response_bool_num = 1
-            # else:
-            #     response_bool_num = 0
-            # TODO CONVERT THIS INPUT TO A DICT A GET VALUE FROM IT THAT WAY
+            # Create dict key with the name of the node and current state as key in this format
+            # all_keys + all_values
 
-            attributes_to_add = (exposureNodeId, nodeReId )
-            # cid.model[nodeMatId] = lambda  *attributes_to_add : (pycid.bernoulli(node_value.prob / 100) if exposureNodeId )
-
-            # exposureNodeId = "A"
-            # nodeReId = "B"
-            # attributes_to_add = (exposureNodeId, nodeReId)
-            # custom_dict = {"0": 0.3, "1": 0.5}
-            # # attributes_to_add = { "c":exposureNodeId, "d":nodeReId }
-            # cbn.model['C'] = lambda *arg, **kwargs: (custom_dict[str(kwargs[exposureNodeId])])
-            #
-            # diag.cpt(nodeMatId)[{exposureNodeId: occurance_bool_num, nodeReId: response_bool_num}] = [
-            #     node_value.prob / 100,
-            #     1 - (node_value.prob / 100)]
-            ###########################################################################################################
+            mat_nodes_values[exposureNodeId+nodeReId+str(occurance_bool_num)+str(response_bool_num)] = node_value.prob / 100
+            print("MatnodesValues are: ")
+            print(mat_nodes_values)
+            print(''.join(mat_nodes_values.keys()) )
+            # print(''.join(mat_nodes_values.keys() + ''.join(mat_nodes_values.values())) )
+            # cid.model[nodeMatId] = lambda *arg, **kwargs: print(kwargs)
+            mat_nodes_current_it = ""
+            # cid.model[nodeMatId] = lambda *arg, **kwargs: print(''.join(kwargs.keys() ))
+            # cid.model[nodeMatId] = lambda *arg, **kwargs: print(''.join(kwargs.keys() ))
+        # cid.model[nodeMatId] = lambda *arg, **kwargs: (print(mat_nodes_values[''.join(kwargs.keys()) + ''.join(str(x) for x in kwargs.values())]))
+        cid.model[nodeMatId] = lambda *arg, **kwargs: (pycid.bernoulli(mat_nodes_values[''.join(kwargs.keys()) + ''.join(str(x) for x in kwargs.values())]))
         # print(these_materialisation_values)
+
+    # Consequence Node Values
+    for consequence in these_consequences:
+        # print("----- Matinfo ------")
+        # print(nodeImpactId)
+        # print(nodeObjectiveId)
+        nodeConsId = "con" + str(consequence.id)
+        nodeReId = "re"
+        try:
+            these_cosnequence_values = RepoRiskThreatAssetConsequence.query.filter_by(repo_asset_id=asset_id,
+                                                                                      repo_threat_id=threat_id,
+                                                                                      repo_consequence_id=consequence.id).all()
+        except SQLAlchemyError:
+            return "SQLAlchemyError"
+
+        cons_nodes_values = {}
+        for node_value in these_cosnequence_values:
+            if node_value.threat_occurrence is True:
+                occurance_bool_num = 1
+            else:
+                occurance_bool_num = 0
+
+            # response shouldnt work like that this needs a bit of a rework
+            if node_value.repo_response_id % 2 == 0:
+                response_bool_num = 1
+            else:
+                response_bool_num = 0
+
+            for it in range(0, len(these_responses), 1):
+                if these_responses[it].id == node_value.repo_response_id:
+                    response_bool_num = it
+
+            nodeMatId = "mat" + str(node_value.repo_consequence.materialisation_id)
+            # Adding both values in dict name
+            cons_nodes_values[nodeMatId + nodeReId + str(response_bool_num) + str(occurance_bool_num)] = node_value.prob/100
+            cons_nodes_values[nodeReId + nodeMatId + str(occurance_bool_num) + str(response_bool_num)] = node_value.prob/100
+            # print(cons_nodes_values)
+
+        # cid.model[nodeConsId] = lambda *arg, **kwargs: (
+        #     pycid.bernoulli(cons_nodes_values[''.join(kwargs.keys()) + ''.join(str(x) for x in kwargs.values())]))
+
+        print("CONS_NODES_VALUES")
+        print(cons_nodes_values)
+        cid.model[nodeConsId] = lambda *arg, **kwargs: {0:cons_nodes_values[''.join(kwargs.keys()) + ''.join(str(x) for x in kwargs.values())],
+                                                        1:1-cons_nodes_values[''.join(kwargs.keys()) + ''.join(str(x) for x in kwargs.values())]
+
+                                                        }
+
+
+            # pycid.bernoulli(cons_nodes_values[''.join(kwargs.keys()) + ''.join(str(x) for x in kwargs.values())]))
+            # diag.cpt(nodeConsId)[{nodeMatId: occurance_bool_num, nodeReId: response_bool_num}] = [node_value.prob / 100,
+            #                                                                                       1 - (
+            #                                                                                               node_value.prob / 100)]
+        # print(these_cosnequence_values)
+
+    # Service node values
+    for service in these_services:
+        nodeServId = "serv" + str(service.id)
+        cid.model[nodeServId] = {0: 0.6, 1: 0.4}
+        # diag.cpt(nodeServId).fillWith([0.6, 0.4])
+
+    # Impact Node Values
+    for impact in these_impacts:
+        asset_threat_impact_values = RepoAssetThreatConsequenceServiceImpactRelationship.query.filter_by(
+            repo_asset_id=asset_id,
+            repo_threat_id=threat_id,
+            repo_impact_id=impact.id
+            # repo_objective_id=objective.id,
+        )
+
+        imp_nodes_values = {}
+        for asset_threat_impact_value in asset_threat_impact_values:
+            nodeImpactId = "imp" + str(impact.id)
+
+            impact_node_value = []
+
+            impact_node_id = {}
+            impact_node_id_reverse = {}
+            #
+            # print("JSON LOADS IS")
+            # print(json.loads(asset_threat_impact_value.consequences_state))
+            # print(json.loads(asset_threat_impact_value.services_state))
+            # Convert state of objective to correct one for the
+            consequence_state = json.loads(asset_threat_impact_value.consequences_state)
+            service_state = json.loads(asset_threat_impact_value.services_state)
+            for json_dict in service_state:
+                nodeServId = "serv" + str(json_dict['serv_id'])
+                if json_dict['state'] == 'False':
+                    state_to_add = 0
+                elif json_dict['state'] == 'True':
+                    state_to_add = 1
+
+                impact_node_id[nodeServId] = state_to_add
+
+            for json_dict in consequence_state:
+                # print("JSON_DICT")
+                # print(json_dict)
+                nodeConsId = "con" + str(json_dict['cons_id'])
+                if json_dict['state'] == 'False':
+                    state_to_add = 0
+                elif json_dict['state'] == 'True':
+                    state_to_add = 1
+
+                impact_node_id[nodeConsId] = state_to_add
+                impact_node_id_reverse[nodeConsId] = state_to_add
+
+            for json_dict in service_state:
+                nodeServId = "serv" + str(json_dict['serv_id'])
+                if json_dict['state'] == 'False':
+                    state_to_add = 0
+                elif json_dict['state'] == 'True':
+                    state_to_add = 1
+
+                impact_node_id_reverse[nodeServId] = state_to_add
+
+            impact_node_value.append(asset_threat_impact_value.low_prob / 100)
+            # objective_node_value.append(1 - concatted_entry_key.low_prob)
+            impact_node_value.append(asset_threat_impact_value.med_prob / 100)
+            # objective_node_value.append(1 - concatted_entry_key.med_prob)
+            impact_node_value.append(asset_threat_impact_value.high_prob / 100)
+            # objective_node_value.append(1 - concatted_entry_key.high_prob)
+
+            # print("-------- TO FIX ERROR --------")
+            # print(impact_node_id)
+            # print(impact_node_value)
+            # print(nodeImpactId)
+            # diag.cpt("imp1")[{'con3': 1, 'serv2': 0}] = [50,50,50]
+            # diag.cpt(nodeImpactId)[impact_node_id] = [50,50]
+            # print("IMP NODE ID")
+            # print(impact_node_id)
+            # print("IMP NODE VALUE")
+            # print(impact_node_value)
+            imp_nodes_values[''.join(impact_node_id.keys()) + ''.join(str(x) for x in impact_node_id.values())] = impact_node_value
+            imp_nodes_values[''.join(impact_node_id_reverse.keys()) + ''.join(str(x) for x in impact_node_id_reverse.values())] = impact_node_value
+            # cid.model[nodeImpactId] =  lambda *arg, **kwargs: print(kwargs)
+        # print(imp_nodes_values)
+
+        print("IMP_NODES_VALUES")
+        print(imp_nodes_values)
+        cid.model[nodeImpactId] = lambda *arg, **kwargs: { 0:imp_nodes_values[''.join(kwargs.keys()) + ''.join(str(x) for x in kwargs.values())][0] , 1:imp_nodes_values[''.join(kwargs.keys()) + ''.join(str(x) for x in kwargs.values())][1] , 2:imp_nodes_values[''.join(kwargs.keys()) + ''.join(str(x) for x in kwargs.values())][2] }
+   #          # diag.cpt(nodeImpactId)[impact_node_id] = impact_node_value
     #
-    # # Consequence Node Values
-    # for consequence in these_consequences:
-    #     # print("----- Matinfo ------")
-    #     # print(nodeImpactId)
-    #     # print(nodeObjectiveId)
-    #     nodeConsId = "con" + str(consequence.id)
-    #     nodeReId = "re"
-    #     try:
-    #         these_cosnequence_values = RepoRiskThreatAssetConsequence.query.filter_by(repo_asset_id=asset_id,
-    #                                                                                   repo_threat_id=threat_id,
-    #                                                                                   repo_consequence_id=consequence.id).all()
-    #     except SQLAlchemyError:
-    #         return "SQLAlchemyError"
-    #
-    #     for node_value in these_cosnequence_values:
-    #         if node_value.threat_occurrence is True:
-    #             occurance_bool_num = 1
-    #         else:
-    #             occurance_bool_num = 0
-    #
-    #         # response shouldnt work like that this needs a bit of a rework
-    #         if node_value.repo_response_id % 2 == 0:
-    #             response_bool_num = 1
-    #         else:
-    #             response_bool_num = 0
-    #
-    #         for it in range(0, len(these_responses), 1):
-    #             if these_responses[it].id == node_value.repo_response_id:
-    #                 response_bool_num = it
-    #
-    #         nodeMatId = "mat" + str(node_value.repo_consequence.materialisation_id)
-    #         diag.cpt(nodeConsId)[{nodeMatId: occurance_bool_num, nodeReId: response_bool_num}] = [node_value.prob / 100,
-    #                                                                                               1 - (
-    #                                                                                                       node_value.prob / 100)]
-    #     # print(these_cosnequence_values)
-    #
-    # # Service node values
-    # for service in these_services:
-    #     nodeServId = "serv" + str(service.id)
-    #     diag.cpt(nodeServId).fillWith([0.6, 0.4])
-    #
-    # # Impact Node Values
-    # for impact in these_impacts:
-    #     asset_threat_impact_values = RepoAssetThreatConsequenceServiceImpactRelationship.query.filter_by(
-    #         repo_asset_id=asset_id,
-    #         repo_threat_id=threat_id,
-    #         repo_impact_id=impact.id
-    #         # repo_objective_id=objective.id,
-    #     )
-    #     for asset_threat_impact_value in asset_threat_impact_values:
-    #         nodeImpactId = "imp" + str(impact.id)
-    #
-    #         impact_node_value = []
-    #
-    #         impact_node_id = {}
-    #         #
-    #         # print("JSON LOADS IS")
-    #         # print(json.loads(asset_threat_impact_value.consequences_state))
-    #         # print(json.loads(asset_threat_impact_value.services_state))
-    #         # Convert state of objective to correct one for the
-    #         consequence_state = json.loads(asset_threat_impact_value.consequences_state)
-    #         service_state = json.loads(asset_threat_impact_value.services_state)
-    #         for json_dict in consequence_state:
-    #             # print("JSON_DICT")
-    #             # print(json_dict)
-    #             nodeConsId = "con" + str(json_dict['cons_id'])
-    #             if json_dict['state'] == 'False':
-    #                 state_to_add = 0
-    #             elif json_dict['state'] == 'True':
-    #                 state_to_add = 1
-    #
-    #             impact_node_id[nodeConsId] = state_to_add
-    #
-    #         for json_dict in service_state:
-    #             nodeServId = "serv" + str(json_dict['serv_id'])
-    #             if json_dict['state'] == 'False':
-    #                 state_to_add = 0
-    #             elif json_dict['state'] == 'True':
-    #                 state_to_add = 1
-    #
-    #             impact_node_id[nodeServId] = state_to_add
-    #
-    #         impact_node_value.append(asset_threat_impact_value.low_prob / 100)
-    #         # objective_node_value.append(1 - concatted_entry_key.low_prob)
-    #         impact_node_value.append(asset_threat_impact_value.med_prob / 100)
-    #         # objective_node_value.append(1 - concatted_entry_key.med_prob)
-    #         impact_node_value.append(asset_threat_impact_value.high_prob / 100)
-    #         # objective_node_value.append(1 - concatted_entry_key.high_prob)
-    #
-    #         # print("-------- TO FIX ERROR --------")
-    #         # print(impact_node_id)
-    #         # print(impact_node_value)
-    #         # print(nodeImpactId)
-    #         # diag.cpt("imp1")[{'con3': 1, 'serv2': 0}] = [50,50,50]
-    #         # diag.cpt(nodeImpactId)[impact_node_id] = [50,50]
-    #         diag.cpt(nodeImpactId)[impact_node_id] = impact_node_value
-    #
-    # # Objective  Node Values
-    # objective_it = 0
-    # for objective in these_objectives:
-    #     objective_impact_values = RepoObjectiveImpactRelationship.query.filter_by(
-    #         repo_objective_id=objective.id,
-    #     )
-    #     for objective_impact_value in objective_impact_values:
-    #         nodeObjectiveId = "obj" + str(objective.id)
-    #
-    #         objective_node_value = []
-    #         objective_node_id = {}
-    #
-    #         # print("JSON LOADS IS")
-    #         # print(json.loads(objective_impact_value.impacts_state))
-    #         # Convert state of objective to correct one for the
-    #         objective_state = json.loads(objective_impact_value.impacts_state)
-    #         for json_dict in objective_state:
-    #             nodeImpactId = "imp" + str(json_dict['imp_id'])
-    #             objective_node_id[nodeImpactId] = json_dict['state']
-    #
-    #         objective_node_value.append(objective_impact_value.low_prob / 100)
-    #         # objective_node_value.append(1 - concatted_entry_key.low_prob)
-    #         objective_node_value.append(objective_impact_value.med_prob / 100)
-    #         # objective_node_value.append(1 - concatted_entry_key.med_prob)
-    #         objective_node_value.append(objective_impact_value.high_prob / 100)
-    #         # objective_node_value.append(1 - concatted_entry_key.high_prob)
-    #
-    #         # print("-------- TO LEARN ERROR --------")
-    #         # print(objective_node_id)
-    #         # print(objective_node_value)
-    #
-    #         diag.cpt(nodeObjectiveId)[objective_node_id] = objective_node_value
-    #
+    # Objective  Node Values
+    objective_it = 0
+    for objective in these_objectives:
+        objective_impact_values = RepoObjectiveImpactRelationship.query.filter_by(
+            repo_objective_id=objective.id,
+        )
+
+        obj_nodes_values = {}
+        for objective_impact_value in objective_impact_values:
+            nodeObjectiveId = "obj" + str(objective.id)
+
+            objective_node_value = []
+            objective_node_id = {}
+
+            # print("JSON LOADS IS")
+            # print(json.loads(objective_impact_value.impacts_state))
+            # Convert state of objective to correct one for the
+            objective_state = json.loads(objective_impact_value.impacts_state)
+            for json_dict in objective_state:
+                nodeImpactId = "imp" + str(json_dict['imp_id'])
+                objective_node_id[nodeImpactId] = json_dict['state']
+
+            objective_node_value.append(objective_impact_value.low_prob / 100)
+            # objective_node_value.append(1 - concatted_entry_key.low_prob)
+            objective_node_value.append(objective_impact_value.med_prob / 100)
+            # objective_node_value.append(1 - concatted_entry_key.med_prob)
+            objective_node_value.append(objective_impact_value.high_prob / 100)
+            # objective_node_value.append(1 - concatted_entry_key.high_prob)
+
+            # print("-------- TO LEARN ERROR --------")
+            # print(objective_node_id)
+            # print(objective_node_value)
+            obj_nodes_values[''.join(objective_node_id.keys()) + ''.join(str(x) for x in objective_node_id.values())] = objective_node_value
+
+            # diag.cpt(nodeObjectiveId)[objective_node_id] = objective_node_value
+        print("IMP_NODES_VALUES")
+        print(obj_nodes_values)
+        cid.model[nodeObjectiveId] = lambda *arg, **kwargs: {0:obj_nodes_values[''.join(kwargs.keys()) + ''.join(str(x) for x in kwargs.values())][0] , 1:obj_nodes_values[''.join(kwargs.keys()) + ''.join(str(x) for x in kwargs.values())][1] , 2:obj_nodes_values[''.join(kwargs.keys()) + ''.join(str(x) for x in kwargs.values())][2] }
+
     # # Utility Node Values
     # for utility in these_utils:
     #     nodeUtilId = "util" + str(utility.id)
@@ -441,7 +487,8 @@ def start_risk_assessment_pycid(threat_id, asset_id):
     # print(diag.topologicalOrder())
     cid.draw()
     print(cid.draw())
-
+    # cons_nodes_values = {}
+    cid.solve()
 
     # ie = gum.ShaferShenoyLIMIDInference(diag)
     #
