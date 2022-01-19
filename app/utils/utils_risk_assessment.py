@@ -309,9 +309,8 @@ def start_risk_assessment_pycid(threat_id, asset_id):
 
         print("CONS_NODES_VALUES")
         print(cons_nodes_values)
-        cid.model[nodeConsId] = lambda *arg, **kwargs: {0:cons_nodes_values[''.join(kwargs.keys()) + ''.join(str(x) for x in kwargs.values())],
+        cid.model[nodeConsId] = lambda zero=0, one=0, *arg, **kwargs: {0:cons_nodes_values[''.join(kwargs.keys()) + ''.join(str(x) for x in kwargs.values())],
                                                         1:1-cons_nodes_values[''.join(kwargs.keys()) + ''.join(str(x) for x in kwargs.values())]
-
                                                         }
 
 
@@ -445,8 +444,16 @@ def start_risk_assessment_pycid(threat_id, asset_id):
             # diag.cpt(nodeObjectiveId)[objective_node_id] = objective_node_value
         print("IMP_NODES_VALUES")
         print(obj_nodes_values)
-        cid.model[nodeObjectiveId] = lambda *arg, **kwargs: {0:obj_nodes_values[''.join(kwargs.keys()) + ''.join(str(x) for x in kwargs.values())][0] , 1:obj_nodes_values[''.join(kwargs.keys()) + ''.join(str(x) for x in kwargs.values())][1] , 2:obj_nodes_values[''.join(kwargs.keys()) + ''.join(str(x) for x in kwargs.values())][2] }
+        def test(*arg, **kwargs):
+            print("------- KWARGS ARE ----------")
+            print(kwargs)
+            to_return = {0: obj_nodes_values[''.join(kwargs.keys()) + ''.join(str(x) for x in kwargs.values())][0],
+             1: obj_nodes_values[''.join(kwargs.keys()) + ''.join(str(x) for x in kwargs.values())][1],
+             2: obj_nodes_values[''.join(kwargs.keys()) + ''.join(str(x) for x in kwargs.values())][2]}
 
+            return to_return
+        # cid.model[nodeObjectiveId] = lambda *arg, **kwargs: {0:obj_nodes_values[''.join(kwargs.keys()) + ''.join(str(x) for x in kwargs.values())][0] , 1:obj_nodes_values[''.join(kwargs.keys()) + ''.join(str(x) for x in kwargs.values())][1] , 2:obj_nodes_values[''.join(kwargs.keys()) + ''.join(str(x) for x in kwargs.values())][2] }
+        cid.model[nodeObjectiveId] = test()
     # # Utility Node Values
     # for utility in these_utils:
     #     nodeUtilId = "util" + str(utility.id)

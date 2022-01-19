@@ -1369,10 +1369,10 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
             db.session.commit()
         else:
             this_risk_assessment = this_risk_assessment.first()
-            start_risk_assessment_pycid(threat_id, asset_id)
-
+            # start_risk_assessment_pycid(threat_id, asset_id)
+            risk_assessment_result = start_risk_assessment(threat_id, asset_id)
             flash('New Function run ok'.format(asset_id))
-            return redirect("/repo/risk/assessment/" + threat_id + "/asset/" + asset_id + "/")
+            # return redirect("/repo/risk/assessment/" + threat_id + "/asset/" + asset_id + "/")
             # print(risk_assessment_result)
             # print(type(risk_assessment_result))
 

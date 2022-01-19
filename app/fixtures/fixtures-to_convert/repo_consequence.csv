@@ -21,3 +21,30 @@ id,name,threat_id,materialisation_id
 20,Unauthorised disclosure of data,6,6
 21,Unauthorised modifications of data,6,6
 22,Under maintenance,6,6
+23,Unauthorised access/control,2,2
+24,Unauthorised modifications of data,7,7
+25,Disruption of operations,8,8
+26,Unauthorised access/control,8,8
+27,Unauthorised disclosure of data,8,8
+28,Unauthorised modifications of data,8,8
+29,Infrastructure malfunction/damage,8,8
+30,Under maintenance,8,8
+31,Unauthorised disclosure of data,9,9
+32,Unauthorised modifications of data,9,9
+33,Under maintenance,7,7
+34,Under maintenance,8,8
+35,Under maintenance,9,9
+36,Under maintenance,10,10
+37,Under maintenance,11,11
+38,Unauthorised access/control,10,10
+39,Disruption of operations,10,10
+40,Unauthorised access/control,10,10
+41,Unauthorised disclosure of data,10,10
+42,Unauthorised modifications of data,10,10
+43,Infrastructure malfunction/damage,10,10
+44,Unauthorised access/control,11,11
+45,Disruption of operations,11,11
+46,Unauthorised access/control,11,11
+47,Unauthorised disclosure of data,11,11
+48,Unauthorised modifications of data,11,11
+49,Infrastructure malfunction/damage,11,11
