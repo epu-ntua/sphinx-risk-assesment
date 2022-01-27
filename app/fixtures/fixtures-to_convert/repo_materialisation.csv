@@ -5,3 +5,8 @@ id,name,threat_id
 4,SQL Injection is executed successfully,4
 5,Port Scanning is executed successfully,5
 6,MiTM is executed successfully,6
+7,Data integrity violated,7
+8,Unauthorised remote access acquired,8
+9,Unauthorised device connected,9
+10,Abnormal netowrk activity materialised,10
+11,Suspicious human action/behaviour materialised,11

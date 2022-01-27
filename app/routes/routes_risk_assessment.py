@@ -10,7 +10,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from copy import deepcopy
 from deepdiff import DeepDiff
 
-from app.utils.utils_risk_assessment import start_risk_assessment
+from app.utils.utils_risk_assessment import start_risk_assessment, start_risk_assessment_pycid
 
 
 @app.route('/repo/risk/configuration/threat/exposure/<threat_id>/', methods=['GET', 'POST'])
@@ -1308,6 +1308,7 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
 
             # Save the firs produced report
             risk_assessment_result = start_risk_assessment(threat_id, asset_id)
+
             # print(risk_assessment_result)
             # print(type(risk_assessment_result))
 
@@ -1368,7 +1369,10 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
             db.session.commit()
         else:
             this_risk_assessment = this_risk_assessment.first()
+            # start_risk_assessment_pycid(threat_id, asset_id)
             risk_assessment_result = start_risk_assessment(threat_id, asset_id)
+            flash('New Function run ok'.format(asset_id))
+            # return redirect("/repo/risk/assessment/" + threat_id + "/asset/" + asset_id + "/")
             # print(risk_assessment_result)
             # print(type(risk_assessment_result))
 

@@ -5,3 +5,8 @@ id,name,CAPEC_id,prob,user_prob
 4,SQL Injection,,,
 5,Port Scanning,,,
 6,MiTM,,,
+7,Data Integrity Violation,,,
+8,Unauthorised Remote Access,,,
+9,Unauthorised Device Connection,,,
+10,Abnormal Network Activity,,,
+11,Suspicious Human Action/Behaviour,,,
