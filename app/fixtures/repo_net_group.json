@@ -14,5 +14,9 @@
     {
         "id": "4",
         "name": "VLAN255 (Management): 10.10.255"
+    },
+    {
+        "id": "5",
+        "name": "VLAN192 (CLIENTS): 192.168.10"
     }
 ]
