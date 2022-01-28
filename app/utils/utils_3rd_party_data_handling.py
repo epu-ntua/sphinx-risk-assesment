@@ -281,99 +281,6 @@ def v_report_json(report_name, report_details):
                 continue
         return 1
 
-def getAssetsfromDTM(report_details):
-    """ report_details should be a json object"""
-    # obj = json.loads(report_details)
-    if report_details["ip"] is not None:
-        reprow_dtm_asset_id = obj["ip"]
-        if db.session.query(RepoAsset.id).filter_by(ip = reprow_dtm_asset_id).first() is not None:
-            my_db_asset = db.session.query(RepoAsset).filter_by(ip=reprow_dtm_asset_id).first()
-        else:
-            my_db_asset = RepoAsset(ip=reprow_dtm_asset_id)
-        my_db_asset.mac_address = obj["physicalAddress"] if obj["physicalAddress"] is not None else ""
-        my_db_asset.last_touch_date = obj["lastTouch"] if obj["lastTouch"] is not None else ""
-        db.session.add(my_db_asset)
-        try:
-            db.session.commit()
-            # flash('Asset "{}" Added Succesfully'.format(my_db_asset.ip))
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            return -1
-    return 1
-
-def certification_report_json(report_details):
-    """ report_details should be a json object"""
-    # obj = json.loads(report_details)
-    if report_details["id"] is not None:
-        reprow_reportId = report_details["id"]
-        if db.session.query(exists().where(VulnerabilityReport.reportId == reprow_reportId)).scalar():
-            my_json_report = db.session.query(VulnerabilityReport).filter_by(reportId=reprow_reportId).one()
-        else:
-            my_json_report = VulnerabilityReport(reportId=reprow_reportId)
-        my_json_report.scan_start_time = report_details["start"] if report_details["start"] is not None else ""
-        my_json_report.scan_end_time = report_details["end"] if report_details["end"] is not None else ""
-        my_json_report.source_component = 2
-        my_json_report.source_attackType = report_details["attackType"] if report_details["attackType"] is not None else ""
-        my_json_report.source_eventsCount = report_details["eventsCount"] if report_details["eventsCount"] is not None else ""
-        my_json_report.source_riskScore = report_details["riskScore"] if report_details["riskScore"] is not None else ""
-        my_json_report.source_severity = report_details["severity"] if report_details["severity"] is not None else ""
-        db.session.add(my_json_report)
-        try:
-            db.session.commit()
-            # flash('Vulnerability from ACS Report "{}" Added Succesfully'.format(my_json_report.reportId))
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            return -1
-
-        my_asset_IP = None
-        my_asset_Name = None
-        for item in report_details['data']:
-            # Get asset IP
-            if item['agent.ip'] is not None:
-                # We do not know if this report includes only one agent
-                my_asset_IP = item['agent.ip']
-                my_asset_Name = item['agent.name']
-                if db.session.query(RepoAsset.id).filter_by(ip=my_asset_IP).first() is None:
-                    my_repo_asset = RepoAsset(ip=my_asset_IP)
-                    my_repo_asset.name = my_asset_Name if my_asset_Name is not None else ""
-                    db.session.add(my_repo_asset)
-                    try:
-                        db.session.commit()
-                        # flash('Asset "{}" Added Succesfully'.format(my_repo_asset.ip))
-                        # TODO: Send alert for the new Asset to the EndUser
-                    except SQLAlchemyError as e:
-                        db.session.rollback()
-                else:
-                    my_repo_asset = db.session.query(RepoAsset).filter_by(ip=my_asset_IP).first()
-
-                # Get CVE from the result nodes of the report
-                reprow_cve = item['rule.description']
-                reprow_cveId = reprow_cve.split(' ')[0]
-                if db.session.query(CommonVulnerabilitiesAndExposures.id).filter_by(CVEId=reprow_cveId).first() is None:
-                    my_cve = CommonVulnerabilitiesAndExposures(CVEId=reprow_cveId)
-                    db.session.add(my_cve)
-                else:
-                    my_cve = db.session.query(CommonVulnerabilitiesAndExposures).filter_by(CVEId=reprow_cveId).first()
-
-                if VulnerabilityReport.query.join(VulnerabilityReportVulnerabilitiesLink).join(CommonVulnerabilitiesAndExposures).filter((VulnerabilityReportVulnerabilitiesLink.vreport_id == my_json_report.id) & (VulnerabilityReportVulnerabilitiesLink.cve_id == my_cve.id)).first() is None:
-                    my_link = VulnerabilityReportVulnerabilitiesLink(vreport_id=my_json_report.id, cve_id=my_cve.id)
-                    db.session.add(my_link)
-                else:
-                    my_link = VulnerabilityReport.query.join(VulnerabilityReportVulnerabilitiesLink).join(CommonVulnerabilitiesAndExposures).filter((VulnerabilityReportVulnerabilitiesLink.vreport_id == my_json_report.id) & (VulnerabilityReportVulnerabilitiesLink.cve_id == my_cve.id)).first()
-                my_link.asset_id = my_repo_asset.id
-                my_link.VReport_assetIp = item['agent.ip'] if item['agent.ip'] is not None else ""
-                my_link.VReport_CVSS_score = '{0:.2f}'.format(float(item['cvss3'])) if item['cvss3'] is not None else ""
-                my_link.comments = item['rule.description'] if item['rule.description'] is not None else ""
-                try:
-                    db.session.commit()
-                except SQLAlchemyError as e:
-                    db.session.rollback()
-                    continue
-            else:
-                continue
-        return 1
-
-
 # region Call NVD API to update CVE scores and get CWEs
 # region Call NVD API to update CVE scores
 def update_cve_scores(cveId):
@@ -489,6 +396,111 @@ def get_cwe_codes_from_API_report(APIreport):
 # endregion CWE
 # endregion CVE & CWE
 # endregion VAaaS report
+
+# region Insert information from Certification Report
+def certification_report_json(report_details):
+    """ report_details should be a json object"""
+    # obj = json.loads(report_details)
+    if report_details["id"] is not None:
+        reprow_reportId = report_details["id"]
+        if db.session.query(exists().where(VulnerabilityReport.reportId == reprow_reportId)).scalar():
+            my_json_report = db.session.query(VulnerabilityReport).filter_by(reportId=reprow_reportId).one()
+        else:
+            my_json_report = VulnerabilityReport(reportId=reprow_reportId)
+        my_json_report.scan_start_time = report_details["start"] if report_details["start"] is not None else ""
+        my_json_report.scan_end_time = report_details["end"] if report_details["end"] is not None else ""
+        my_json_report.source_component = 2
+        my_json_report.source_attackType = report_details["attackType"] if report_details["attackType"] is not None else ""
+        my_json_report.source_eventsCount = report_details["eventsCount"] if report_details["eventsCount"] is not None else ""
+        my_json_report.source_riskScore = report_details["riskScore"] if report_details["riskScore"] is not None else ""
+        my_json_report.source_severity = report_details["severity"] if report_details["severity"] is not None else ""
+        db.session.add(my_json_report)
+        try:
+            db.session.commit()
+            # flash('Vulnerability from ACS Report "{}" Added Succesfully'.format(my_json_report.reportId))
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return -1
+
+        my_asset_IP = None
+        my_asset_Name = None
+        for item in report_details['data']:
+            # Get asset IP
+            if item['agent.ip'] is not None:
+                # We do not know if this report includes only one agent
+                my_asset_IP = item['agent.ip']
+                my_asset_Name = item['agent.name']
+                if db.session.query(RepoAsset.id).filter_by(ip=my_asset_IP).first() is None:
+                    my_repo_asset = RepoAsset(ip=my_asset_IP)
+                    my_repo_asset.name = my_asset_Name if my_asset_Name is not None else ""
+                    db.session.add(my_repo_asset)
+                    try:
+                        db.session.commit()
+                        # flash('Asset "{}" Added Succesfully'.format(my_repo_asset.ip))
+                        # TODO: Send alert for the new Asset to the EndUser
+                    except SQLAlchemyError as e:
+                        db.session.rollback()
+                else:
+                    my_repo_asset = db.session.query(RepoAsset).filter_by(ip=my_asset_IP).first()
+
+                # Get CVE from the result nodes of the report
+                reprow_cve = item['rule.description']
+                reprow_cveId = reprow_cve.split(' ')[0]
+                if db.session.query(CommonVulnerabilitiesAndExposures.id).filter_by(CVEId=reprow_cveId).first() is None:
+                    my_cve = CommonVulnerabilitiesAndExposures(CVEId=reprow_cveId)
+                    db.session.add(my_cve)
+                else:
+                    my_cve = db.session.query(CommonVulnerabilitiesAndExposures).filter_by(CVEId=reprow_cveId).first()
+
+                if VulnerabilityReport.query.join(VulnerabilityReportVulnerabilitiesLink).join(CommonVulnerabilitiesAndExposures).filter((VulnerabilityReportVulnerabilitiesLink.vreport_id == my_json_report.id) & (VulnerabilityReportVulnerabilitiesLink.cve_id == my_cve.id)).first() is None:
+                    my_link = VulnerabilityReportVulnerabilitiesLink(vreport_id=my_json_report.id, cve_id=my_cve.id)
+                    db.session.add(my_link)
+                else:
+                    my_link = VulnerabilityReport.query.join(VulnerabilityReportVulnerabilitiesLink).join(CommonVulnerabilitiesAndExposures).filter((VulnerabilityReportVulnerabilitiesLink.vreport_id == my_json_report.id) & (VulnerabilityReportVulnerabilitiesLink.cve_id == my_cve.id)).first()
+                my_link.asset_id = my_repo_asset.id
+                my_link.VReport_assetIp = item['agent.ip'] if item['agent.ip'] is not None else ""
+                my_link.VReport_CVSS_score = '{0:.2f}'.format(float(item['cvss3'])) if item['cvss3'] is not None else ""
+                my_link.comments = item['rule.description'] if item['rule.description'] is not None else ""
+
+                # Connect the result nodes of the report with the relevant Threat
+                reprow_threat = report_details['attackType']
+                if db.session.query(RepoThreat.id).filter_by(name=reprow_threat).first() is not None:
+                    my_threat = db.session.query(RepoThreat).filter_by(name=reprow_threat).first()
+                    if db.session.query(repo_threat_common_vulnerabilities_and_exposures_association_table).filter_by(repo_threat_id=my_threat.id, common_vulnerabilities_and_exposures_id=my_cve.id).first() is None:
+                        my_threat.cves.append(my_cve)
+
+                try:
+                    db.session.commit()
+                except SQLAlchemyError as e:
+                    db.session.rollback()
+                    continue
+            else:
+                continue
+        return 1
+# endregion Insert information from Certification Report
+
+# region Insert Asset information from DTM
+def getAssetsfromDTM(report_details):
+    """ report_details should be a json object"""
+    # obj = json.loads(report_details)
+    if report_details["ip"] is not None:
+        reprow_dtm_asset_id = report_details["ip"]
+        if db.session.query(RepoAsset.id).filter_by(ip = reprow_dtm_asset_id).first() is not None:
+            my_db_asset = db.session.query(RepoAsset).filter_by(ip=reprow_dtm_asset_id).first()
+        else:
+            my_db_asset = RepoAsset(ip=reprow_dtm_asset_id)
+        my_db_asset.mac_address = report_details["physicalAddress"] if report_details["physicalAddress"] is not None else ""
+        my_db_asset.last_touch_date = report_details["lastTouch"] if report_details["lastTouch"] is not None else ""
+        db.session.add(my_db_asset)
+        try:
+            db.session.commit()
+            # flash('Asset "{}" Added Succesfully'.format(my_db_asset.ip))
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return -1
+    return 1
+
+# endregion Insert Asset information from DTM
 
 # region get_assets
 # temporarily from VaasReport table
