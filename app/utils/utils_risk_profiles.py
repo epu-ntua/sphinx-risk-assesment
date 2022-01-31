@@ -446,7 +446,6 @@ def get_RiskML_value(asset_type, action_type, estimation_type, port):
 def get_Threat_Estimation_BBTR():
     return -1
 
-
 # endregion 2 Reputation
 # region 3 DB
 def get_ThreatFactorsvaluesfromDB(assetID, threatID):
@@ -466,7 +465,6 @@ def get_ThreatFactorsvaluesfromDB(assetID, threatID):
     else:
         return -1
 
-
 # endregion 3 DB
 
 # region 4 DSS forecasting
@@ -476,56 +474,99 @@ def get_ThreatFactorsvaluesfromDB(assetID, threatID):
 #     TODO: "call functions"
 
 def get_Threat_exposure_value(assetID, threatID):
+    """ return threat exposure estimation"""
     i = 0
-    # TODO: The SIEM_threat_ID must be converted into RCRA_threat_ID
-    # This call needs RCRA_Threat_ID
     value_DB = get_ThreatFactorsvaluesfromDB(assetID, threatID)
     if not value_DB == -1:
         i += 1
     else:
         value_DB = 0
-    # This call needs SIEM_Threat_ID
+    # TODO: How do we get this information?
     value_BBTR = get_Threat_Estimation_BBTR()
     if not value_BBTR == -1:
         i += 1
     else:
         value_BBTR = 0
 
-    # This call needs RCRA_Threat_ID
-    if (threatID == 1):
-        # Malware
-        ports = [5020]
-        url = "http://127.0.0.1:5020/invocations"
-    elif (threatID == 2):
-        # Malware - Ransomware
-        ports = [5020.5022]
-        url = "http://127.0.0.1:5020/invocations"
-        url = "http://127.0.0.1:5022/invocations"
-    elif (threatID == 3):
-        # hacking - DoS
-        ports = [5021.5023]
-        url = "http://127.0.0.1:5021/invocations"
-        url = "http://127.0.0.1:5023/invocations"
-    elif (threatID == 4):
-        # hacking - SQLi
-        ports = [5021.5024]
-        url = "http://127.0.0.1:5021/invocations"
-        url = "http://127.0.0.1:5024/invocations"
-    elif (threatID == 5):
-        # hacking - MitM
-        ports = [5021.5024]
-        url = "http://127.0.0.1:5021/invocations"
-        url = "http://127.0.0.1:5024/invocations"
+    # This call needs RCRA_Threat_ID, Asset_type
+    if RepoAssetsType.query.join(RepoAsset).filter(RepoAsset.id == assetID).first() is None:
+        asset_type_row = RepoAssetsType.query.join(RepoAsset).filter(RepoAsset.id == 1).first()
+        asset_type = "asset.assets.variety." + asset_type_row.name
+    else:
+        asset_type=""
 
-    value_ML = get_RiskML_value(["asset.assets.variety.M - Disk drive"], [""],
-                                ["action.hacking", "action.hacking.variety.DOS"], [], )
-    if not value_ML == -1:
+    if threatID == 1:
+        # Malware   ports = [5020]  url = "http://127.0.0.1:5020/invocations
+        result = get_RiskML_value([asset_type], [], "action.Malware", "5020")
+        if 0 <= result <= 1:
+            value_ml = result
+        else:
+            value_ml = -1
+    elif threatID == 2:
+        # Malware - Ransomware  ports = [5020.5022]
+        result = get_RiskML_value([asset_type], [], "action.Malware", "5020")
+        result_child = get_RiskML_value([asset_type], [], "action.malware.variety.Ransomware", "5022")
+        if 0 <= result * result_child <= 1:
+            value_ml = result * result_child
+        else:
+            value_ml = -1
+    elif threatID == 3:
+        # hacking - DoS ports = [5021.5023]
+        result = get_RiskML_value([asset_type], [], "action.Hacking", "5021")
+        result_child = get_RiskML_value([asset_type], [], "action.hacking.variety.DoS", "5023")
+        if 0 <= result * result_child <= 1:
+            value_ml = result * result_child
+        else:
+            value_ml = -1
+    elif threatID == 4:
+        # hacking - SQLi    ports = [5021.5024]
+        result = get_RiskML_value([asset_type], [], "action.Hacking", "5021")
+        result_child = get_RiskML_value([asset_type], [], "action.hacking.variety.SQLi", "5024")
+        if 0 <= result * result_child <= 1:
+            value_ml = result * result_child
+        else:
+            value_ml = -1
+    elif threatID == 5:
+        # hacking - Port Scanning
+        value_ml = -1
+    elif threatID == 6:
+        # hacking - MiTM
+        value_ml = -1
+    elif threatID == 7:
+        # hacking - Data Integrity Violation
+        value_ml = -1
+    elif threatID == 8:
+        # hacking - Unauthorised Remote Access
+        result = get_RiskML_value([asset_type], [], "action.Hacking", "5021")
+        result_child = get_RiskML_value([asset_type], [], "action.hacking.variety.Use of backdoor or C2", "5026")
+        if 0 <= result * result_child <= 1:
+            value_ml = result * result_child
+        else:
+            value_ml = -1
+    elif threatID == 9:
+        # hacking - Unauthorised Device Connection
+        value_ml =  -1
+    elif threatID == 10:
+        # hacking - Abnormal Network Activity
+        result = get_RiskML_value([asset_type], [], "action.Hacking", "5021")
+        result_child = get_RiskML_value([asset_type], [], "action.hacking.variety.Use of backdoor or C2", "5026")
+        if 0 <= result * result_child <= 1:
+            value_ml = result * result_child
+        else:
+            value_ml = -1
+    elif threatID == 11:
+        # hacking - Suspicious Human Action/Behaviour
+        value_ml = -1
+
+
+
+    if not value_ml == -1:
         i += 1
     else:
-        value_ML = 0
+        value_ml = 0
 
     if i>0:
-        return (value_DB + value_BBTR + value_ML) / i
+        return (value_DB + value_BBTR + value_ml) / i
     else:
         return -1
 
@@ -536,6 +577,10 @@ def get_Threat_exposure_value(assetID, threatID):
 
 # region Test area
 
+
+asset_type_row = RepoAssetsType.query.join(RepoAsset).filter(RepoAsset.id == 1).first()
+asset_type = "asset.assets.variety."+asset_type_row.name
+print (asset_type)
 #x = get_ThreatFactorsvaluesfromDB(1, 1)
 # x = get_RiskML_value(["asset.variety.Server"],"Malware",'action')
 #print(x)
