@@ -710,6 +710,7 @@ def view_repo_vulnerabilities():
             json_vulnerability["cve_id"] = repo_vulnerabilities[it].cve.CVEId
             json_vulnerability["VReport_id"] = repo_vulnerabilities[it].vreport.reportId
             json_vulnerability["VReport_source_component"] = repo_vulnerabilities[it].vreport.source_component
+            json_vulnerability["VReport_source_component"] = 'VAaaS' if json_vulnerability["VReport_source_component"] == 1 else 'Certification'
 
         json_vulnerabilities = json.dumps(json_vulnerabilities, default=str)
         # print("ACTORS ARE --------")
@@ -1280,6 +1281,7 @@ def view_repo_controls():
                 # print(new_actor_form.name.data, flush=True)
                 to_add_control = RepoControl(name=new_control_form.name.data,
                                              description=new_control_form.description.data,
+                                             effectiveness=new_control_form.effectiveness.data,
                                              vulnerability_id=new_control_form.vulnerability.data.id)
                 db.session.add(to_add_control)
                 db.session.commit()
@@ -1313,9 +1315,9 @@ def view_repo_controls():
         json_controls = convert_database_items_to_json_table(repo_controls)
         print("Controls ARE --------")
         for it, control in enumerate(json_controls):
-            control["vulnerability"] = repo_controls[it].vulnerabilities.comments
+            control["vulnerability"] = repo_controls[it].vulnerabilities.cve.CVEId
             control["vulnerability_id"] = {"id": control["vulnerability_id"],
-                                           "name": repo_controls[it].vulnerabilities.comments}
+                                           "name": repo_controls[it].vulnerabilities.cve.CVEId}
             # print(type(control))
             print(control)
 

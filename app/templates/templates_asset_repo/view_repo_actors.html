@@ -10,6 +10,13 @@
     <script>
         var $table = $('#table')
 
+        $(document).ready(function(){
+          $("#Add").click(function(){
+            $("#frm").toggle();
+          });
+          $("#frm").toggle();
+        });
+
         function loadingTemplate() {
             return '<i class="fa fa-spinner fa-spin fa-fw fa-2x"></i>'
         }
@@ -72,21 +79,22 @@
     >
         <thead>
         <tr>
-            <th data-field="id" data-sortable="true">ID</th>
+<!--            <th data-field="id" data-sortable="true">ID</th>-->
             <th data-field="name" data-sortable="true">Name</th>
-            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents">Item Price</th>
+            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents">Action</th>
         </tr>
         </thead>
     </table>
 
     <hr/>
-    <h2>Add New User</h2>
-    <form action="/repo/actors/" method="post" novalidate>
-        {{ wtf.quick_form(new_actor_form) }}
-{#        <p>{{ wtf.form_field(new_actor_form.submit()) }}</p>#}
-        </p>
-    </form>
-
+    <button id="Add" class="btn btn-secondary" type="button" name="Add_new" aria-label="Add new Asset">Add New User</button>
+    <div id="frm">
+        <form action="/repo/actors/" method="post" novalidate>
+            {{ wtf.quick_form(new_actor_form) }}
+    {#        <p>{{ wtf.form_field(new_actor_form.submit()) }}</p>#}
+            </p>
+        </form>
+    </div>
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
          aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -100,7 +108,6 @@
                 <div class="modal-body">
                     <form id="editForm" action="/repo/actors/" method="post" class="form form-horizontal" method="post" role="form" novalidate>
                         {{ new_actor_form.hidden_tag() }}
-
                         {{ wtf.form_field(new_actor_form.name) }}
                         {{ wtf.form_field(new_actor_form.submit)}}
                     </form>

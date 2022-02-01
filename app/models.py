@@ -118,6 +118,7 @@ class RepoControl(db.Model):
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     name = db.Column(db.String())
     description = db.Column(db.String())
+    effectiveness = db.Column(db.Integer)
     vulnerability_id = db.Column(db.Integer, db.ForeignKey('vulnerability_report_vulnerabilities_link.id'))
     vulnerabilities = db.relationship("VulnerabilityReportVulnerabilitiesLink", back_populates="controls")
 

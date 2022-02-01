@@ -32,7 +32,7 @@ def query_generic_repo_type():
 
 
 def query_generic_repo_vulnerability():
-    return VulnerabilityReportVulnerabilitiesLink.query
+    return CommonVulnerabilitiesAndExposures.query
 
 
 def query_generic_repo_materialisation():
@@ -51,18 +51,18 @@ def query_generic_cve():
     return CommonVulnerabilitiesAndExposures.query
 
 def query_generic_organisation_security_posture_questions():
-    return RepoOrganisationSecurityPostureQuestions.query
+    return RepoOrganisationSecurityPosture.query
 
 class FormAddRepoActor(FlaskForm):
     id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
     name = StringField('Name', validators=[DataRequired()])
-    submit = SubmitField("Add new actor")
+    submit = SubmitField("Add User")
 
 
 class FormAddRepoNetGroup(FlaskForm):
     id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
     name = StringField('Name', validators=[DataRequired()])
-    submit = SubmitField("Add new net group")
+    submit = SubmitField("Add network group")
 
 
 class FormAddRepoService(FlaskForm):
@@ -74,8 +74,9 @@ class FormAddRepoService(FlaskForm):
 class FormAddRepoControl(FlaskForm):
     id = IntegerField('Id', widget=HiddenInput(), validators=[Optional()])
     name = StringField('Name', validators=[DataRequired()])
-    vulnerability = QuerySelectField(query_factory=query_generic_repo_vulnerability, allow_blank=True, get_label='cve_id')
+    vulnerability = QuerySelectField(query_factory=query_generic_repo_vulnerability, allow_blank=True, get_label='CVEId')
     description = StringField('Description')
+    effectiveness = IntegerField("Control effectiveness", validators=[Optional()])
     submit = SubmitField("Add new control")
 
 
