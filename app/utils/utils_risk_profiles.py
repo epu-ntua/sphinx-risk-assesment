@@ -578,9 +578,6 @@ def get_Threat_exposure_value(assetID, threatID):
 # region Test area
 
 
-asset_type_row = RepoAssetsType.query.join(RepoAsset).filter(RepoAsset.id == 1).first()
-asset_type = "asset.assets.variety."+asset_type_row.name
-print (asset_type)
 #x = get_ThreatFactorsvaluesfromDB(1, 1)
 # x = get_RiskML_value(["asset.variety.Server"],"Malware",'action')
 #print(x)
