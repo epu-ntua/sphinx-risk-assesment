@@ -10,6 +10,13 @@
     <script>
         var $table = $('#table')
 
+        $(document).ready(function(){
+          $("#Add").click(function(){
+            $("#frm").toggle();
+          });
+          $("#frm").toggle();
+        });
+
         function loadingTemplate() {
             return '<i class="fa fa-spinner fa-spin fa-fw fa-2x"></i>'
         }
@@ -48,7 +55,7 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Net Groups </h1>
+    <h1>Network Groups </h1>
     <hr/>
     <div id="toolbar">
         <button id="remove" class="btn btn-danger" disabled>
@@ -73,20 +80,21 @@
     >
         <thead>
         <tr>
-            <th data-field="id" data-sortable="true">ID</th>
+<!--            <th data-field="id" data-sortable="true">ID</th>-->
             <th data-field="name" data-sortable="true">Name</th>
-            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents">Item Price</th>
+            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents">Action</th>
         </tr>
         </thead>
     </table>
     <hr/>
-    <h2>Add New Net Group</h2>
-    <form action="/repo/net_groups/" method="post" novalidate>
-     {{ wtf.quick_form(new_net_group_form) }}
-{#        <p>{{ wtf.form_field(new_actor_form.submit()) }}</p>#}
-    </p>
-    </form>
-
+    <button id="Add" class="btn btn-secondary" type="button" name="Add_new" aria-label="Add new Asset">Add New Group</button>
+    <div id="frm">
+        <form action="/repo/net_groups/" method="post" novalidate>
+         {{ wtf.quick_form(new_net_group_form) }}
+    {#        <p>{{ wtf.form_field(new_actor_form.submit()) }}</p>#}
+        </p>
+        </form>
+    </div>
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
          aria-hidden="true">
         <div class="modal-dialog" role="document">
