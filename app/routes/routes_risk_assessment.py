@@ -5,6 +5,7 @@ from app.globals import *
 from app.utils import *
 from app.forms import *
 from app import app
+from app.utils.utils_communication import send_risk_report
 from app.utils.utils_database import *
 from sqlalchemy.exc import SQLAlchemyError
 from copy import deepcopy
@@ -1367,6 +1368,7 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
 
             db.session.add(first_risk_assessment_result)
             db.session.commit()
+            send_risk_report(first_risk_assessment_result.id, asset_id, threat_id)
         else:
             this_risk_assessment = this_risk_assessment.first()
             # start_risk_assessment_pycid(threat_id, asset_id)
@@ -1382,6 +1384,7 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
             services_inference = ""
             impacts_inference = ""
             objectives_inference = ""
+            utility_inference = ""
 
             print("-------------- All ITEMS ARE ------------------")
             print(risk_assessment_result.items())
@@ -1414,16 +1417,23 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
                     objectives_inference = objectives_inference + str(temp_digit) + "|" + str(
                         value.values[0]) + "|" + str(
                         value.values[1]) + "|" + str(value.values[2]) + "|"
-                # elif temp_key == "util":
+                elif temp_key == "util":
+                    print("[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]")
+                    print(value)
+                    print("}}}}}}}}}}}}}}}}}}}{{{{{{{{{{{{{{{{{{{")
+                    utility_inference = utility_inference + str(temp_digit) + "|" + str(
+                        value.values[0]) + "|" + str(
+                        value.values[1]) + "|" + str(value.values[2]) + "|"
                 #     materialisations_set_values = str(temp_digit)+ "|" + str(value.values(0)) + "|"
                 else:
                     print("Ignore", temp_key)
-
+            # TODO CHANGE UTILITY INFERENCE TO CORRECT FIELD
+            print(utility_inference)
             first_risk_assessment_result = RepoRiskAssessmentReports(
                 risk_assessment_id=this_risk_assessment.id,
                 type="baseline_report",
                 exposure_inference=exposure_inference,
-                # responses_set_values = responses_set_values,
+                responses_inference = utility_inference,  # TODO HERE CHANGE
                 materialisations_inference=materialisations_inference,
                 consequences_inference=consequences_inference,
                 services_inference=services_inference,
@@ -1433,7 +1443,7 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
 
             db.session.add(first_risk_assessment_result)
             db.session.commit()
-
+            send_risk_report(first_risk_assessment_result.id, asset_id, threat_id)
         flash('Assed "{}" Added Succesfully to risk assessment'.format(asset_id))
         return redirect("/repo/risk/assessment/" + threat_id + "/asset/" + asset_id + "/")
     else:

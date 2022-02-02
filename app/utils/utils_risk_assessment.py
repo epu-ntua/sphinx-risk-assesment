@@ -770,7 +770,7 @@ def start_risk_assessment(threat_id, asset_id):
                                   this_exposure.risk_actor, this_exposure.risk_opportunity)
 
     print("-------------------------------------- EXPOSURE IS ----------------------------------------------", exposure)
-    diag.cpt("te1").fillWith([1 - exposure, exposure])
+    diag.cpt(exposureNodeId).fillWith([1 - exposure, exposure])
     # diag.cpt("te1").fillWith([1, 0])
 
     # Materialisation Node Values
@@ -856,53 +856,62 @@ def start_risk_assessment(threat_id, asset_id):
             repo_impact_id=impact.id
             # repo_objective_id=objective.id,
         )
-        for asset_threat_impact_value in asset_threat_impact_values:
+
+        print("--------------COUNT IS---------------")
+        print(asset_threat_impact_values.count())
+        if asset_threat_impact_values.count() > 0:
+            for asset_threat_impact_value in asset_threat_impact_values:
+                nodeImpactId = "imp" + str(impact.id)
+
+                impact_node_value = []
+
+                impact_node_id = {}
+                #
+                # print("JSON LOADS IS")
+                # print(json.loads(asset_threat_impact_value.consequences_state))
+                # print(json.loads(asset_threat_impact_value.services_state))
+                # Convert state of objective to correct one for the
+                consequence_state = json.loads(asset_threat_impact_value.consequences_state)
+                service_state = json.loads(asset_threat_impact_value.services_state)
+                for json_dict in consequence_state:
+                    # print("JSON_DICT")
+                    # print(json_dict)
+                    nodeConsId = "con" + str(json_dict['cons_id'])
+                    if json_dict['state'] == 'False':
+                        state_to_add = 0
+                    elif json_dict['state'] == 'True':
+                        state_to_add = 1
+
+                    impact_node_id[nodeConsId] = state_to_add
+
+                for json_dict in service_state:
+                    nodeServId = "serv" + str(json_dict['serv_id'])
+                    if json_dict['state'] == 'False':
+                        state_to_add = 0
+                    elif json_dict['state'] == 'True':
+                        state_to_add = 1
+
+                    impact_node_id[nodeServId] = state_to_add
+
+                impact_node_value.append(asset_threat_impact_value.low_prob / 100)
+                # objective_node_value.append(1 - concatted_entry_key.low_prob)
+                impact_node_value.append(asset_threat_impact_value.med_prob / 100)
+                # objective_node_value.append(1 - concatted_entry_key.med_prob)
+                impact_node_value.append(asset_threat_impact_value.high_prob / 100)
+                # objective_node_value.append(1 - concatted_entry_key.high_prob)
+
+                # print("-------- TO FIX ERROR --------")
+                # print(impact_node_id)
+                # print(impact_node_value)
+                # print(nodeImpactId)
+                # diag.cpt("imp1")[{'con3': 1, 'serv2': 0}] = [50,50,50]
+                # diag.cpt(nodeImpactId)[impact_node_id] = [50,50]
+                diag.cpt(nodeImpactId)[impact_node_id] = impact_node_value
+        else:
             nodeImpactId = "imp" + str(impact.id)
-
-            impact_node_value = []
-
-            impact_node_id = {}
-            #
-            # print("JSON LOADS IS")
-            # print(json.loads(asset_threat_impact_value.consequences_state))
-            # print(json.loads(asset_threat_impact_value.services_state))
-            # Convert state of objective to correct one for the
-            consequence_state = json.loads(asset_threat_impact_value.consequences_state)
-            service_state = json.loads(asset_threat_impact_value.services_state)
-            for json_dict in consequence_state:
-                # print("JSON_DICT")
-                # print(json_dict)
-                nodeConsId = "con" + str(json_dict['cons_id'])
-                if json_dict['state'] == 'False':
-                    state_to_add = 0
-                elif json_dict['state'] == 'True':
-                    state_to_add = 1
-
-                impact_node_id[nodeConsId] = state_to_add
-
-            for json_dict in service_state:
-                nodeServId = "serv" + str(json_dict['serv_id'])
-                if json_dict['state'] == 'False':
-                    state_to_add = 0
-                elif json_dict['state'] == 'True':
-                    state_to_add = 1
-
-                impact_node_id[nodeServId] = state_to_add
-
-            impact_node_value.append(asset_threat_impact_value.low_prob / 100)
-            # objective_node_value.append(1 - concatted_entry_key.low_prob)
-            impact_node_value.append(asset_threat_impact_value.med_prob / 100)
-            # objective_node_value.append(1 - concatted_entry_key.med_prob)
-            impact_node_value.append(asset_threat_impact_value.high_prob / 100)
-            # objective_node_value.append(1 - concatted_entry_key.high_prob)
-
-            # print("-------- TO FIX ERROR --------")
-            # print(impact_node_id)
-            # print(impact_node_value)
-            # print(nodeImpactId)
-            # diag.cpt("imp1")[{'con3': 1, 'serv2': 0}] = [50,50,50]
-            # diag.cpt(nodeImpactId)[impact_node_id] = [50,50]
-            diag.cpt(nodeImpactId)[impact_node_id] = impact_node_value
+            print(nodeImpactId)
+            diag.saveBIFXML(os.path.join("out", "GiraDynamicTEST.bifxml"))
+            diag.cpt(nodeImpactId).fillWith([1, 0, 0])
 
     # Objective  Node Values
     objective_it = 0
@@ -953,6 +962,8 @@ def start_risk_assessment(threat_id, asset_id):
 
             for utility_objective_state in utility_objective_states:
                 nodeObjectiveId = "obj" + str(utility_objective_state.repo_objective_id)
+                # print("<><><><><><><><><><><><><><><>><")
+                # print(nodeObjectiveId)
                 utility_node_id[nodeObjectiveId] = str(utility_objective_state.repo_objective_state - 1)
 
             utility_node_value.append(utility_objective_value.utility_value)
@@ -1001,6 +1012,24 @@ def start_risk_assessment(threat_id, asset_id):
     # print("Is this solvable =" + str(ie.isSolvable()))
     # ie.addEvidence('te1', 1)
     ie.addEvidence('re', 1)
+
+    # TODO Disable everything here after finishing the testing and create a new function for the actual alert
+    # ------------- Testing AREA -------------
+    # ie.addEvidence('mat1', [0, 1])
+
+    # ie.addEvidence('con24', [0, 1])
+    # ie.addEvidence('con2', [1, 0])
+    # ie.addEvidence('con3', [0, 1])
+
+    # ie.addEvidence('con5', [0, 1])
+    # ie.addEvidence('obj5', [1, 0 ,0])
+    # ie.addEvidence('obj2', [1, 0 ,0])
+
+    # ie.addEvidence('mat7', [0, 1])
+    # ie.addEvidence('con24', [0, 1])
+    # ie.addEvidence('con33', [1, 0])
+
+    # --------------------------
 
     ie.makeInference()
     print("---optimal decision---")
@@ -1056,8 +1085,11 @@ def start_risk_assessment(threat_id, asset_id):
     for utility in these_utils:
         nodeUtilId = "util" + str(utility.id)
         to_result_util = ie.posterior(nodeUtilId).topandas()
+        print("--------- UTILITY " + nodeUtilId + "----------")
+        print(ie.posterior(nodeUtilId))
         results[nodeUtilId] = to_result_util
 
+    print(ie.posteriorUtility("util2"))
     return results
     # Print Graph
     # with open(os.path.join("out", "GiraDynamic.bifxml"), "r") as out:
