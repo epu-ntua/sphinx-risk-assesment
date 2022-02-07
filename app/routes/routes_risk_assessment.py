@@ -28,7 +28,7 @@ def repo_risk_configuration_threat_exposure(threat_id=1, asset_id=-1):
         # # Check if there are already data for this threat-asset pair
         existing_exposure_item = RepoAssetRepoThreatRelationship.query.filter_by(repo_asset_id=asset_id,
                                                                                  repo_threat_id=threat_id)
-        if existing_exposure_item.count() is not 0:
+        if existing_exposure_item.count() != 0:
             to_edit_exposure_node = existing_exposure_item.first()
             to_edit_exposure_node.risk_skill_level = request.form["risk_skill"]
             to_edit_exposure_node.risk_actor = request.form["risk_actor"]
@@ -105,7 +105,7 @@ def repo_risk_configuration_threat_exposure(threat_id=1, asset_id=-1):
                 repo_asset_id=asset_id,
                 repo_threat_id=threat_id)
 
-            if existing_exposure_item.count() is 0:
+            if existing_exposure_item.count() == 0:
                 print("NO PREVIOUS INPUT------------------------")
                 print(RepoRiskThreatAssetMaterialisation.query.filter_by(
                     repo_asset_id=asset_id,
@@ -222,7 +222,7 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
 
         # Check if there are already data for this threat-asset pair
         if RepoRiskThreatAssetMaterialisation.query.filter_by(repo_asset_id=asset_id,
-                                                              repo_threat_id=threat_id).count() is not 0:
+                                                              repo_threat_id=threat_id).count() != 0:
             for user_input in request.form:
                 deconstructedId = user_input.split("|")
                 # print("deconstructedId Mat")
@@ -392,7 +392,7 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
             # Check if there are already data for this threat-asset pair
             if RepoRiskThreatAssetMaterialisation.query.filter_by(
                     repo_asset_id=asset_id,
-                    repo_threat_id=threat_id).count() is 0:
+                    repo_threat_id=threat_id).count() == 0:
                 print("NO PREVIOUS INPUT------------------------")
                 print(RepoRiskThreatAssetMaterialisation.query.filter_by(
                     repo_asset_id=asset_id,
