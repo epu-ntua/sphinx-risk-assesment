@@ -47,7 +47,7 @@ def view_repo_assets(asset_id=-1):
                     edit_verified_by_id = new_edit_form.edit_verified_by.data.id
 
                 if new_edit_form.edit_net_group_fk.data:
-                    edit_net_group_fk_id = new_edit_form.edit_net_group_fk.id
+                    edit_net_group_fk_id = new_edit_form.edit_net_group_fk.data.id
 
                 if new_edit_form.edit_verified:
                     # print("I Go HERE ", new_edit_form.edit_verified.data)
@@ -124,7 +124,7 @@ def view_repo_assets(asset_id=-1):
                     edit_verified_by_id = new_asset_form.verified_by.data.id
 
                 if new_asset_form.net_group_fk.data:
-                    edit_net_group_fk_id = new_asset_form.net_group_fk.id
+                    edit_net_group_fk_id = new_asset_form.net_group_fk.data.id
 
                 # print(new_actor_form.name.data, flush=True)
                 to_add_asset = RepoAsset(name=new_asset_form.name.data,
