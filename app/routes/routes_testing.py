@@ -68,6 +68,7 @@ def mlflow_data_test():
 
 @app.route('/mlflow/data/clean/test/')
 def mlflow_data_clean_test():
+    result = get_RiskML_value([], [], "action.Hacking", "5021")
     result = get_RiskML_value(["action.malware.variety.Exploit misconfig", "action.malware.variety.Exploit vuln"], [], "asset.variety.Server", "5010")
     result = get_RiskML_value(["action.malware.variety.Exploit misconfig", "action.malware.variety.Exploit vuln"], [],
                               "action.Malware", "5020")

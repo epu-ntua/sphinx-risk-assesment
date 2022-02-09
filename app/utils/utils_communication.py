@@ -21,7 +21,7 @@ from flask import request
 from dotenv import load_dotenv
 load_dotenv()
 
-
+from ast import literal_eval
 def get_mlflow_experiment(port="5010", experiment="asset.variety.Server"):
     url = "http://mlflow_code:"+port+"/invocations"
     current_dict = os.getcwd()
@@ -149,6 +149,7 @@ def send_alert_old_asset(asset_obj):
     }
 
     print("Alerts is --------", alert_to_send, flush=True)
+    # SendKafkaReport(alert_to_send, "rcra-alerts")
     return alert_to_send
 
 
@@ -234,22 +235,37 @@ def send_risk_report(report_id, asset_id, threat_id):
     report_to_send = {}
     report_to_send["report_info"] = {
         "date_time": this_risk_assessment_report.date_time,
-        "type": this_risk_assessment_report.type}
+        "type": "baseline"
+        # "type": "manual"
+        # "type": "incident"
+    }
 
     report_to_send["assset"] = {
         "id": this_asset.id,
         "name": this_asset.name,
-        "asset_reputation": 0,  # placeholder
+        # "asset_reputation": 0,  # placeholder
         "ip": this_asset.ip,
         "mac": this_asset.mac_address,
         "last_touched": this_asset.last_touch_date,
+        "vulnerabilities" : [
+            {
+                "cve_id": "CVE-2020-0645",
+                "controls": []
+            },
+            {
+                "cve_id": "CVE-2020-0774",
+                "controls": [ {"description":"Updated software",
+                               "effectiveness" : "high"
+                               }]
+            }
+        ],
+
         # "type": this_asset.type, #aSSETS DONT HAVE TYPE SHOULD BE ADDED
         # "related_services": SHould this be added?
     }
 
     report_to_send["threat"] = {
         "name": this_threat.name,
-        "probability": this_threat.prob,
         "capec_info": {
             "capec_id": "",
             "name": "",
@@ -266,7 +282,9 @@ def send_risk_report(report_id, asset_id, threat_id):
         }
     }
 
+    exposure_inference_values = this_risk_assessment_report.exposure_inference.split("|")
     objectives_inference_values = this_risk_assessment_report.objectives_inference.split("|")
+    utility_inference_values = this_risk_assessment_report.responses_inference.split("|") # TODO Change to correct field after the model is fixed itself
     static_info_to_add = {}
     # Load static info to the report
     # exposure_set = []
@@ -284,6 +302,15 @@ def send_risk_report(report_id, asset_id, threat_id):
 
         static_info_to_add["exposure"] = exposure_to_add
 
+    static_info_to_add = {
+        "service_insurance_check" : "1",
+        # "threat_occurance": "1",
+        # "materialisation": "1",
+        # "Unauthorised modifications of data": "1",
+        # "Under maintenance": "0",
+        # "Safety": "0",
+        # "Integrity": "0"
+    }
     if this_risk_assessment_report.materialisations_set:
         materialisation_to_add = {}
         materialisations_set = this_risk_assessment_report.materialisations_set.split("|")
@@ -299,6 +326,9 @@ def send_risk_report(report_id, asset_id, threat_id):
     # Need to add the other static info
     report_to_send["risk"] = {
         "static_info": static_info_to_add,
+        "exposure_threat": {
+            "occurrence": str(exposure_inference_values[1])
+        },
         "objectives": {
             "confidentiality": {
                 "low": str(objectives_inference_values[1]),
@@ -327,22 +357,218 @@ def send_risk_report(report_id, asset_id, threat_id):
             },
             "utilities": {
                 "CIA": {
+                    "most_probable_scenarios" : [
+                        {
+                            "confidentiality" : "medium",
+                            "integrity" : "medium",
+                            "availability" : "low",
+                            "probability" : "0.2891"
 
+                        },
+                        {
+                            "confidentiality": "high",
+                            "integrity": "high",
+                            "availability": "medium",
+                            "probability": "0.2654"
+
+                        },
+                        {
+                            "confidentiality": "medium",
+                            "integrity": "medium",
+                            "availability": "medium",
+                            "probability": "0.1266"
+
+                        },
+                    ],
+                    "optimal_scenario":{
+                        "confidentiality": "low",
+                        "integrity": "low",
+                        "availability": "low",
+                        "probability": "0.0225"
+                    }
                 },
-                "Evaluation": {
+                "Evaluation":{
+                    "most_probable_scenarios" : [
+                        {
+                            "monetary" : "low",
+                            "safety" : "low",
+                            "probability" : "0.6275"
+                        },
+                        {
+                            "monetary" : "medium",
+                            "safety" : "medium",
+                            "probability": "0.1573"
 
-                }
+                        },
+                        {
+                            "monetary" : "low",
+                            "safety" : "medium",
+                            "probability": "0.0853"
+                        },
+                    ],
+                    "optimal_scenario":{
+                        "monetary" : "low",
+                            "safety" : "low",
+                            "probability" : "0.6275"
+                    }
+                },
             },
-            "alerts": {}
+            "alerts": {
+                "objectives": {
+                    "confidentiality": {
+                        "level" : "high",
+                        "threshold" : "0.4"
+                    }
+                }
+            }
         }
     }
 
     print("----- THE REPORT IS -----")
     print(report_to_send)
     print(json.dumps(report_to_send))
+    with open('example_output.json', 'w', encoding='utf-8') as f:
+        json.dump(report_to_send, f, ensure_ascii=False, indent=4)
     report_to_send = json.dumps(report_to_send)
+
     # print(report_to_send)
     # SendKafkaReport(report_to_send, "rcra-report-topic")
+
+
+# def send_risk_report(report_id, asset_id, threat_id):
+#     try:
+#         this_asset = RepoAsset.query.filter_by(id=asset_id).first()
+#     except SQLAlchemyError:
+#         return Response("SQLAlchemyError", 500)
+#
+#     try:
+#         this_risk_assessment_report = RepoRiskAssessmentReports.query.filter_by(id=report_id).first()
+#     except SQLAlchemyError:
+#         return "SQLAlchemyError"
+#
+#     try:
+#         this_threat = RepoThreat.query.filter_by(id=threat_id).first()
+#     except SQLAlchemyError:
+#         return Response("SQLAlchemyError", 500)
+#
+#     try:
+#         this_threat_asset_exposure = RepoAssetRepoThreatRelationship.query.filter_by(repo_asset_id=asset_id,
+#                                                                                      repo_threat_id=threat_id).first()
+#     except SQLAlchemyError:
+#         return Response("SQLAlchemyError", 500)
+#
+#     report_to_send = {}
+#     report_to_send["report_info"] = {
+#         "date_time": this_risk_assessment_report.date_time,
+#         "type": this_risk_assessment_report.type}
+#
+#     report_to_send["assset"] = {
+#         "id": this_asset.id,
+#         "name": this_asset.name,
+#         "asset_reputation": 0,  # placeholder
+#         "ip": this_asset.ip,
+#         "mac": this_asset.mac_address,
+#         "last_touched": this_asset.last_touch_date,
+#         # "type": this_asset.type, #aSSETS DONT HAVE TYPE SHOULD BE ADDED
+#         # "related_services": SHould this be added?
+#     }
+#
+#     report_to_send["threat"] = {
+#         "name": this_threat.name,
+#         "probability": this_threat.prob,
+#         "capec_info": {
+#             "capec_id": "",
+#             "name": "",
+#             "abstraction": "",
+#             "likelihood": "",
+#             "typical_severity": ""
+#         },
+#         "threat_asset_info": {
+#             "skill_level": this_threat_asset_exposure.risk_skill_level,
+#             "motive": this_threat_asset_exposure.risk_motive,
+#             "source": this_threat_asset_exposure.risk_source,
+#             "actor": this_threat_asset_exposure.risk_actor,
+#             "opportunity": this_threat_asset_exposure.risk_opportunity,
+#         }
+#     }
+#
+#     objectives_inference_values = this_risk_assessment_report.objectives_inference.split("|")
+#     utlity_inference_values = this_risk_assessment_report.responses_inference.split("|") # TODO Change to correct field after the model is fixed itself
+#     static_info_to_add = {}
+#     # Load static info to the report
+#     # exposure_set = []
+#     # materialisations_set = []
+#     # responses_set = []
+#     # consequences_set = []
+#     # services_set = []
+#     # impacts_set = []
+#     # objectives_set = []
+#     if this_risk_assessment_report.exposure_set:
+#         exposure_to_add = {}
+#         exposure_set = this_risk_assessment_report.exposure_set.split("|")
+#         for it in range(0, len(exposure_set) - 1, 2):
+#             exposure_to_add[this_threat.name] = exposure_set[it + 1]
+#
+#         static_info_to_add["exposure"] = exposure_to_add
+#
+#     if this_risk_assessment_report.materialisations_set:
+#         materialisation_to_add = {}
+#         materialisations_set = this_risk_assessment_report.materialisations_set.split("|")
+#         for it in range(0, len(materialisations_set) - 1, 2):
+#             try:
+#                 this_materialisation = RepoMaterialisation.query.filter_by(id=materialisations_set[it]).first()
+#             except SQLAlchemyError:
+#                 return Response("SQLAlchemyError", 500)
+#
+#             materialisation_to_add[this_materialisation.name] = materialisations_set[it + 1]
+#         static_info_to_add["materialisations"] = materialisation_to_add
+#
+#     # Need to add the other static info
+#     report_to_send["risk"] = {
+#         "static_info": static_info_to_add,
+#         "objectives": {
+#             "confidentiality": {
+#                 "low": str(objectives_inference_values[1]),
+#                 "medium": str(objectives_inference_values[2]),
+#                 "high": str(objectives_inference_values[3])
+#             },
+#             "integrity": {
+#                 "low": str(objectives_inference_values[5]),
+#                 "medium": str(objectives_inference_values[6]),
+#                 "high": str(objectives_inference_values[7])
+#             },
+#             "availability": {
+#                 "low": str(objectives_inference_values[9]),
+#                 "medium": str(objectives_inference_values[10]),
+#                 "high": str(objectives_inference_values[11])
+#             },
+#             "monetary": {
+#                 "low": str(objectives_inference_values[13]),
+#                 "medium": str(objectives_inference_values[14]),
+#                 "high": str(objectives_inference_values[15])
+#             },
+#             "safety": {
+#                 "low": str(objectives_inference_values[17]),
+#                 "medium": str(objectives_inference_values[18]),
+#                 "high": str(objectives_inference_values[19])
+#             },
+#             "utilities": {
+#                 "CIA": str( utlity_inference_values[2]),
+#                 "Evaluation": str(utlity_inference_values[5])
+#             },
+#             "alerts": {}
+#         }
+#     }
+#
+#     print("----- THE REPORT IS -----")
+#     print(report_to_send)
+#     print(json.dumps(report_to_send))
+#     with open('example_output.json', 'w', encoding='utf-8') as f:
+#         json.dump(report_to_send, f, ensure_ascii=False, indent=4)
+#     report_to_send = json.dumps(report_to_send)
+#
+#     # print(report_to_send)
+#     # SendKafkaReport(report_to_send, "rcra-report-topic")
 
 
 def sendDSSScore():

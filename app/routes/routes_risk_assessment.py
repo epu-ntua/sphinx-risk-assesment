@@ -5,12 +5,13 @@ from app.globals import *
 from app.utils import *
 from app.forms import *
 from app import app
+from app.utils.utils_communication import send_risk_report
 from app.utils.utils_database import *
 from sqlalchemy.exc import SQLAlchemyError
 from copy import deepcopy
 from deepdiff import DeepDiff
 
-from app.utils.utils_risk_assessment import start_risk_assessment, start_risk_assessment_pycid
+from app.utils.utils_risk_assessment import start_risk_assessment, start_risk_assessment_alert
 
 
 @app.route('/repo/risk/configuration/threat/exposure/<threat_id>/', methods=['GET', 'POST'])
@@ -27,7 +28,7 @@ def repo_risk_configuration_threat_exposure(threat_id=1, asset_id=-1):
         # # Check if there are already data for this threat-asset pair
         existing_exposure_item = RepoAssetRepoThreatRelationship.query.filter_by(repo_asset_id=asset_id,
                                                                                  repo_threat_id=threat_id)
-        if existing_exposure_item.count() is not 0:
+        if existing_exposure_item.count() != 0:
             to_edit_exposure_node = existing_exposure_item.first()
             to_edit_exposure_node.risk_skill_level = request.form["risk_skill"]
             to_edit_exposure_node.risk_actor = request.form["risk_actor"]
@@ -104,7 +105,7 @@ def repo_risk_configuration_threat_exposure(threat_id=1, asset_id=-1):
                 repo_asset_id=asset_id,
                 repo_threat_id=threat_id)
 
-            if existing_exposure_item.count() is 0:
+            if existing_exposure_item.count() == 0:
                 print("NO PREVIOUS INPUT------------------------")
                 print(RepoRiskThreatAssetMaterialisation.query.filter_by(
                     repo_asset_id=asset_id,
@@ -221,7 +222,7 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
 
         # Check if there are already data for this threat-asset pair
         if RepoRiskThreatAssetMaterialisation.query.filter_by(repo_asset_id=asset_id,
-                                                              repo_threat_id=threat_id).count() is not 0:
+                                                              repo_threat_id=threat_id).count() != 0:
             for user_input in request.form:
                 deconstructedId = user_input.split("|")
                 # print("deconstructedId Mat")
@@ -391,7 +392,7 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
             # Check if there are already data for this threat-asset pair
             if RepoRiskThreatAssetMaterialisation.query.filter_by(
                     repo_asset_id=asset_id,
-                    repo_threat_id=threat_id).count() is 0:
+                    repo_threat_id=threat_id).count() == 0:
                 print("NO PREVIOUS INPUT------------------------")
                 print(RepoRiskThreatAssetMaterialisation.query.filter_by(
                     repo_asset_id=asset_id,
@@ -1308,6 +1309,7 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
 
             # Save the firs produced report
             risk_assessment_result = start_risk_assessment(threat_id, asset_id)
+            # risk_assessment_result = start_risk_assessment_alert(threat_id, asset_id)
 
             # print(risk_assessment_result)
             # print(type(risk_assessment_result))
@@ -1367,10 +1369,11 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
 
             db.session.add(first_risk_assessment_result)
             db.session.commit()
+            send_risk_report(first_risk_assessment_result.id, asset_id, threat_id)
         else:
             this_risk_assessment = this_risk_assessment.first()
-            # start_risk_assessment_pycid(threat_id, asset_id)
             risk_assessment_result = start_risk_assessment(threat_id, asset_id)
+            # risk_assessment_result = start_risk_assessment_alert(threat_id, asset_id)
             flash('New Function run ok'.format(asset_id))
             # return redirect("/repo/risk/assessment/" + threat_id + "/asset/" + asset_id + "/")
             # print(risk_assessment_result)
@@ -1382,6 +1385,7 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
             services_inference = ""
             impacts_inference = ""
             objectives_inference = ""
+            utility_inference = ""
 
             print("-------------- All ITEMS ARE ------------------")
             print(risk_assessment_result.items())
@@ -1414,16 +1418,23 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
                     objectives_inference = objectives_inference + str(temp_digit) + "|" + str(
                         value.values[0]) + "|" + str(
                         value.values[1]) + "|" + str(value.values[2]) + "|"
-                # elif temp_key == "util":
+                elif temp_key == "util":
+                    print("[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]")
+                    print(value)
+                    print("}}}}}}}}}}}}}}}}}}}{{{{{{{{{{{{{{{{{{{")
+                    utility_inference = utility_inference + str(temp_digit) + "|" + str(
+                        value.values[0]) + "|" + str(
+                        value.values[1]) + "|" + str(value.values[2]) + "|"
                 #     materialisations_set_values = str(temp_digit)+ "|" + str(value.values(0)) + "|"
                 else:
                     print("Ignore", temp_key)
-
+            # TODO CHANGE UTILITY INFERENCE TO CORRECT FIELD
+            print(utility_inference)
             first_risk_assessment_result = RepoRiskAssessmentReports(
                 risk_assessment_id=this_risk_assessment.id,
                 type="baseline_report",
                 exposure_inference=exposure_inference,
-                # responses_set_values = responses_set_values,
+                responses_inference = utility_inference,  # TODO HERE CHANGE
                 materialisations_inference=materialisations_inference,
                 consequences_inference=consequences_inference,
                 services_inference=services_inference,
@@ -1433,7 +1444,7 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
 
             db.session.add(first_risk_assessment_result)
             db.session.commit()
-
+            send_risk_report(first_risk_assessment_result.id, asset_id, threat_id)
         flash('Assed "{}" Added Succesfully to risk assessment'.format(asset_id))
         return redirect("/repo/risk/assessment/" + threat_id + "/asset/" + asset_id + "/")
     else:
