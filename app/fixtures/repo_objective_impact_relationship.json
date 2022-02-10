@@ -1,0 +1,746 @@
+[
+    {
+        "id": "1",
+        "repo_objective_id": "1",
+        "high_prob": "75",
+        "med_prob": "12",
+        "low_prob": "13",
+        "impacts_state": "[{\"imp_id\": \"3\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "2",
+        "repo_objective_id": "1",
+        "high_prob": "16",
+        "med_prob": "68",
+        "low_prob": "16",
+        "impacts_state": "[{\"imp_id\": \"3\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "3",
+        "repo_objective_id": "1",
+        "high_prob": "18",
+        "med_prob": "19",
+        "low_prob": "63",
+        "impacts_state": "[{\"imp_id\": \"3\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "4",
+        "repo_objective_id": "2",
+        "high_prob": "52",
+        "med_prob": "43",
+        "low_prob": "5",
+        "impacts_state": "[{\"imp_id\": \"3\", \"state\": \"2\"}, {\"imp_id\": \"4\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "5",
+        "repo_objective_id": "2",
+        "high_prob": "16",
+        "med_prob": "63",
+        "low_prob": "21",
+        "impacts_state": "[{\"imp_id\": \"3\", \"state\": \"1\"}, {\"imp_id\": \"4\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "6",
+        "repo_objective_id": "2",
+        "high_prob": "0",
+        "med_prob": "7",
+        "low_prob": "93",
+        "impacts_state": "[{\"imp_id\": \"3\", \"state\": \"0\"}, {\"imp_id\": \"4\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "7",
+        "repo_objective_id": "2",
+        "high_prob": "94",
+        "med_prob": "3",
+        "low_prob": "3",
+        "impacts_state": "[{\"imp_id\": \"3\", \"state\": \"2\"}, {\"imp_id\": \"4\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "8",
+        "repo_objective_id": "2",
+        "high_prob": "70",
+        "med_prob": "30",
+        "low_prob": "0",
+        "impacts_state": "[{\"imp_id\": \"3\", \"state\": \"1\"}, {\"imp_id\": \"4\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "9",
+        "repo_objective_id": "2",
+        "high_prob": "79",
+        "med_prob": "21",
+        "low_prob": "0",
+        "impacts_state": "[{\"imp_id\": \"3\", \"state\": \"0\"}, {\"imp_id\": \"4\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "10",
+        "repo_objective_id": "2",
+        "high_prob": "82",
+        "med_prob": "18",
+        "low_prob": "0",
+        "impacts_state": "[{\"imp_id\": \"3\", \"state\": \"2\"}, {\"imp_id\": \"4\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "11",
+        "repo_objective_id": "2",
+        "high_prob": "7",
+        "med_prob": "78",
+        "low_prob": "15",
+        "impacts_state": "[{\"imp_id\": \"3\", \"state\": \"1\"}, {\"imp_id\": \"4\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "12",
+        "repo_objective_id": "2",
+        "high_prob": "4",
+        "med_prob": "57",
+        "low_prob": "39",
+        "impacts_state": "[{\"imp_id\": \"3\", \"state\": \"0\"}, {\"imp_id\": \"4\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "13",
+        "repo_objective_id": "3",
+        "high_prob": "33",
+        "med_prob": "33",
+        "low_prob": "34",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"2\"}, {\"imp_id\": \"3\", \"state\": \"0\"}, {\"imp_id\": \"5\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "14",
+        "repo_objective_id": "3",
+        "high_prob": "33",
+        "med_prob": "33",
+        "low_prob": "34",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"1\"}, {\"imp_id\": \"3\", \"state\": \"0\"}, {\"imp_id\": \"5\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "15",
+        "repo_objective_id": "3",
+        "high_prob": "6",
+        "med_prob": "7",
+        "low_prob": "87",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"0\"}, {\"imp_id\": \"3\", \"state\": \"0\"}, {\"imp_id\": \"5\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "16",
+        "repo_objective_id": "3",
+        "high_prob": "32",
+        "med_prob": "68",
+        "low_prob": "0",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"2\"}, {\"imp_id\": \"3\", \"state\": \"2\"}, {\"imp_id\": \"5\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "17",
+        "repo_objective_id": "3",
+        "high_prob": "18",
+        "med_prob": "82",
+        "low_prob": "0",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"1\"}, {\"imp_id\": \"3\", \"state\": \"2\"}, {\"imp_id\": \"5\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "18",
+        "repo_objective_id": "3",
+        "high_prob": "4",
+        "med_prob": "37",
+        "low_prob": "59",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"0\"}, {\"imp_id\": \"3\", \"state\": \"2\"}, {\"imp_id\": \"5\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "19",
+        "repo_objective_id": "3",
+        "high_prob": "14",
+        "med_prob": "75",
+        "low_prob": "11",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"2\"}, {\"imp_id\": \"3\", \"state\": \"1\"}, {\"imp_id\": \"5\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "20",
+        "repo_objective_id": "3",
+        "high_prob": "0",
+        "med_prob": "49",
+        "low_prob": "51",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"1\"}, {\"imp_id\": \"3\", \"state\": \"1\"}, {\"imp_id\": \"5\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "21",
+        "repo_objective_id": "3",
+        "high_prob": "3",
+        "med_prob": "14",
+        "low_prob": "83",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"0\"}, {\"imp_id\": \"3\", \"state\": \"1\"}, {\"imp_id\": \"5\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "22",
+        "repo_objective_id": "3",
+        "high_prob": "48",
+        "med_prob": "45",
+        "low_prob": "7",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"2\"}, {\"imp_id\": \"3\", \"state\": \"0\"}, {\"imp_id\": \"5\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "23",
+        "repo_objective_id": "3",
+        "high_prob": "17",
+        "med_prob": "76",
+        "low_prob": "7",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"1\"}, {\"imp_id\": \"3\", \"state\": \"0\"}, {\"imp_id\": \"5\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "24",
+        "repo_objective_id": "3",
+        "high_prob": "3",
+        "med_prob": "41",
+        "low_prob": "56",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"0\"}, {\"imp_id\": \"3\", \"state\": \"0\"}, {\"imp_id\": \"5\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "25",
+        "repo_objective_id": "3",
+        "high_prob": "99",
+        "med_prob": "1",
+        "low_prob": "0",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"2\"}, {\"imp_id\": \"3\", \"state\": \"2\"}, {\"imp_id\": \"5\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "26",
+        "repo_objective_id": "3",
+        "high_prob": "90",
+        "med_prob": "10",
+        "low_prob": "0",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"1\"}, {\"imp_id\": \"3\", \"state\": \"2\"}, {\"imp_id\": \"5\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "27",
+        "repo_objective_id": "3",
+        "high_prob": "81",
+        "med_prob": "19",
+        "low_prob": "0",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"0\"}, {\"imp_id\": \"3\", \"state\": \"2\"}, {\"imp_id\": \"5\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "28",
+        "repo_objective_id": "3",
+        "high_prob": "76",
+        "med_prob": "24",
+        "low_prob": "0",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"2\"}, {\"imp_id\": \"3\", \"state\": \"1\"}, {\"imp_id\": \"5\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "29",
+        "repo_objective_id": "3",
+        "high_prob": "15",
+        "med_prob": "80",
+        "low_prob": "5",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"1\"}, {\"imp_id\": \"3\", \"state\": \"1\"}, {\"imp_id\": \"5\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "30",
+        "repo_objective_id": "3",
+        "high_prob": "15",
+        "med_prob": "83",
+        "low_prob": "2",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"0\"}, {\"imp_id\": \"3\", \"state\": \"1\"}, {\"imp_id\": \"5\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "31",
+        "repo_objective_id": "3",
+        "high_prob": "9",
+        "med_prob": "62",
+        "low_prob": "29",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"2\"}, {\"imp_id\": \"3\", \"state\": \"0\"}, {\"imp_id\": \"5\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "32",
+        "repo_objective_id": "3",
+        "high_prob": "0",
+        "med_prob": "24",
+        "low_prob": "76",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"1\"}, {\"imp_id\": \"3\", \"state\": \"0\"}, {\"imp_id\": \"5\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "33",
+        "repo_objective_id": "3",
+        "high_prob": "0",
+        "med_prob": "39",
+        "low_prob": "61",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"0\"}, {\"imp_id\": \"3\", \"state\": \"0\"}, {\"imp_id\": \"5\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "34",
+        "repo_objective_id": "3",
+        "high_prob": "75",
+        "med_prob": "25",
+        "low_prob": "0",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"2\"}, {\"imp_id\": \"3\", \"state\": \"2\"}, {\"imp_id\": \"5\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "35",
+        "repo_objective_id": "3",
+        "high_prob": "19",
+        "med_prob": "71",
+        "low_prob": "10",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"1\"}, {\"imp_id\": \"3\", \"state\": \"2\"}, {\"imp_id\": \"5\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "36",
+        "repo_objective_id": "3",
+        "high_prob": "5",
+        "med_prob": "90",
+        "low_prob": "5",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"0\"}, {\"imp_id\": \"3\", \"state\": \"2\"}, {\"imp_id\": \"5\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "37",
+        "repo_objective_id": "3",
+        "high_prob": "48",
+        "med_prob": "46",
+        "low_prob": "6",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"2\"}, {\"imp_id\": \"3\", \"state\": \"1\"}, {\"imp_id\": \"5\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "38",
+        "repo_objective_id": "3",
+        "high_prob": "1",
+        "med_prob": "97",
+        "low_prob": "2",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"1\"}, {\"imp_id\": \"3\", \"state\": \"1\"}, {\"imp_id\": \"5\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "39",
+        "repo_objective_id": "3",
+        "high_prob": "30",
+        "med_prob": "0",
+        "low_prob": "70",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"0\"}, {\"imp_id\": \"3\", \"state\": \"1\"}, {\"imp_id\": \"5\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "40",
+        "repo_objective_id": "4",
+        "high_prob": "54",
+        "med_prob": "23",
+        "low_prob": "23",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"2\"}, {\"imp_id\": \"2\", \"state\": \"0\"}, {\"imp_id\": \"3\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "41",
+        "repo_objective_id": "4",
+        "high_prob": "0",
+        "med_prob": "24",
+        "low_prob": "76",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"1\"}, {\"imp_id\": \"2\", \"state\": \"0\"}, {\"imp_id\": \"3\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "42",
+        "repo_objective_id": "4",
+        "high_prob": "0",
+        "med_prob": "3",
+        "low_prob": "97",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"0\"}, {\"imp_id\": \"2\", \"state\": \"0\"}, {\"imp_id\": \"3\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "43",
+        "repo_objective_id": "4",
+        "high_prob": "7",
+        "med_prob": "93",
+        "low_prob": "0",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"2\"}, {\"imp_id\": \"2\", \"state\": \"2\"}, {\"imp_id\": \"3\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "44",
+        "repo_objective_id": "4",
+        "high_prob": "16",
+        "med_prob": "84",
+        "low_prob": "0",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"1\"}, {\"imp_id\": \"2\", \"state\": \"2\"}, {\"imp_id\": \"3\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "45",
+        "repo_objective_id": "4",
+        "high_prob": "11",
+        "med_prob": "52",
+        "low_prob": "37",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"0\"}, {\"imp_id\": \"2\", \"state\": \"2\"}, {\"imp_id\": \"3\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "46",
+        "repo_objective_id": "4",
+        "high_prob": "2",
+        "med_prob": "95",
+        "low_prob": "3",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"2\"}, {\"imp_id\": \"2\", \"state\": \"1\"}, {\"imp_id\": \"3\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "47",
+        "repo_objective_id": "4",
+        "high_prob": "0",
+        "med_prob": "34",
+        "low_prob": "66",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"1\"}, {\"imp_id\": \"2\", \"state\": \"1\"}, {\"imp_id\": \"3\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "48",
+        "repo_objective_id": "4",
+        "high_prob": "0",
+        "med_prob": "36",
+        "low_prob": "64",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"0\"}, {\"imp_id\": \"2\", \"state\": \"1\"}, {\"imp_id\": \"3\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "49",
+        "repo_objective_id": "4",
+        "high_prob": "66",
+        "med_prob": "34",
+        "low_prob": "0",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"2\"}, {\"imp_id\": \"2\", \"state\": \"0\"}, {\"imp_id\": \"3\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "50",
+        "repo_objective_id": "4",
+        "high_prob": "5",
+        "med_prob": "89",
+        "low_prob": "6",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"1\"}, {\"imp_id\": \"2\", \"state\": \"0\"}, {\"imp_id\": \"3\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "51",
+        "repo_objective_id": "4",
+        "high_prob": "15",
+        "med_prob": "21",
+        "low_prob": "64",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"0\"}, {\"imp_id\": \"2\", \"state\": \"0\"}, {\"imp_id\": \"3\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "52",
+        "repo_objective_id": "4",
+        "high_prob": "97",
+        "med_prob": "3",
+        "low_prob": "0",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"2\"}, {\"imp_id\": \"2\", \"state\": \"2\"}, {\"imp_id\": \"3\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "53",
+        "repo_objective_id": "4",
+        "high_prob": "86",
+        "med_prob": "14",
+        "low_prob": "0",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"1\"}, {\"imp_id\": \"2\", \"state\": \"2\"}, {\"imp_id\": \"3\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "54",
+        "repo_objective_id": "4",
+        "high_prob": "57",
+        "med_prob": "10",
+        "low_prob": "33",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"0\"}, {\"imp_id\": \"2\", \"state\": \"2\"}, {\"imp_id\": \"3\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "55",
+        "repo_objective_id": "4",
+        "high_prob": "68",
+        "med_prob": "23",
+        "low_prob": "9",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"2\"}, {\"imp_id\": \"2\", \"state\": \"1\"}, {\"imp_id\": \"3\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "56",
+        "repo_objective_id": "4",
+        "high_prob": "47",
+        "med_prob": "44",
+        "low_prob": "9",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"1\"}, {\"imp_id\": \"2\", \"state\": \"1\"}, {\"imp_id\": \"3\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "57",
+        "repo_objective_id": "4",
+        "high_prob": "23",
+        "med_prob": "77",
+        "low_prob": "0",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"0\"}, {\"imp_id\": \"2\", \"state\": \"1\"}, {\"imp_id\": \"3\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "58",
+        "repo_objective_id": "4",
+        "high_prob": "18",
+        "med_prob": "73",
+        "low_prob": "9",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"2\"}, {\"imp_id\": \"2\", \"state\": \"0\"}, {\"imp_id\": \"3\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "59",
+        "repo_objective_id": "4",
+        "high_prob": "16",
+        "med_prob": "68",
+        "low_prob": "16",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"1\"}, {\"imp_id\": \"2\", \"state\": \"0\"}, {\"imp_id\": \"3\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "60",
+        "repo_objective_id": "4",
+        "high_prob": "2",
+        "med_prob": "17",
+        "low_prob": "81",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"0\"}, {\"imp_id\": \"2\", \"state\": \"0\"}, {\"imp_id\": \"3\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "61",
+        "repo_objective_id": "4",
+        "high_prob": "47",
+        "med_prob": "47",
+        "low_prob": "6",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"2\"}, {\"imp_id\": \"2\", \"state\": \"2\"}, {\"imp_id\": \"3\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "62",
+        "repo_objective_id": "4",
+        "high_prob": "16",
+        "med_prob": "68",
+        "low_prob": "16",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"1\"}, {\"imp_id\": \"2\", \"state\": \"2\"}, {\"imp_id\": \"3\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "63",
+        "repo_objective_id": "4",
+        "high_prob": "9",
+        "med_prob": "82",
+        "low_prob": "9",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"0\"}, {\"imp_id\": \"2\", \"state\": \"2\"}, {\"imp_id\": \"3\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "64",
+        "repo_objective_id": "4",
+        "high_prob": "18",
+        "med_prob": "63",
+        "low_prob": "19",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"2\"}, {\"imp_id\": \"2\", \"state\": \"1\"}, {\"imp_id\": \"3\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "65",
+        "repo_objective_id": "4",
+        "high_prob": "25",
+        "med_prob": "58",
+        "low_prob": "17",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"1\"}, {\"imp_id\": \"2\", \"state\": \"1\"}, {\"imp_id\": \"3\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "66",
+        "repo_objective_id": "4",
+        "high_prob": "5",
+        "med_prob": "35",
+        "low_prob": "60",
+        "impacts_state": "[{\"imp_id\": \"1\", \"state\": \"0\"}, {\"imp_id\": \"2\", \"state\": \"1\"}, {\"imp_id\": \"3\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "67",
+        "repo_objective_id": "5",
+        "high_prob": "14",
+        "med_prob": "26",
+        "low_prob": "60",
+        "impacts_state": "[{\"imp_id\": \"4\", \"state\": \"2\"}, {\"imp_id\": \"5\", \"state\": \"0\"}, {\"imp_id\": \"6\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "68",
+        "repo_objective_id": "5",
+        "high_prob": "1",
+        "med_prob": "69",
+        "low_prob": "30",
+        "impacts_state": "[{\"imp_id\": \"4\", \"state\": \"1\"}, {\"imp_id\": \"5\", \"state\": \"0\"}, {\"imp_id\": \"6\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "69",
+        "repo_objective_id": "5",
+        "high_prob": "0",
+        "med_prob": "4",
+        "low_prob": "96",
+        "impacts_state": "[{\"imp_id\": \"4\", \"state\": \"0\"}, {\"imp_id\": \"5\", \"state\": \"0\"}, {\"imp_id\": \"6\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "70",
+        "repo_objective_id": "5",
+        "high_prob": "52",
+        "med_prob": "45",
+        "low_prob": "3",
+        "impacts_state": "[{\"imp_id\": \"4\", \"state\": \"2\"}, {\"imp_id\": \"5\", \"state\": \"2\"}, {\"imp_id\": \"6\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "71",
+        "repo_objective_id": "5",
+        "high_prob": "7",
+        "med_prob": "85",
+        "low_prob": "8",
+        "impacts_state": "[{\"imp_id\": \"4\", \"state\": \"1\"}, {\"imp_id\": \"5\", \"state\": \"2\"}, {\"imp_id\": \"6\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "72",
+        "repo_objective_id": "5",
+        "high_prob": "10",
+        "med_prob": "43",
+        "low_prob": "47",
+        "impacts_state": "[{\"imp_id\": \"4\", \"state\": \"0\"}, {\"imp_id\": \"5\", \"state\": \"2\"}, {\"imp_id\": \"6\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "73",
+        "repo_objective_id": "5",
+        "high_prob": "5",
+        "med_prob": "90",
+        "low_prob": "5",
+        "impacts_state": "[{\"imp_id\": \"4\", \"state\": \"2\"}, {\"imp_id\": \"5\", \"state\": \"1\"}, {\"imp_id\": \"6\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "74",
+        "repo_objective_id": "5",
+        "high_prob": "9",
+        "med_prob": "58",
+        "low_prob": "33",
+        "impacts_state": "[{\"imp_id\": \"4\", \"state\": \"1\"}, {\"imp_id\": \"5\", \"state\": \"1\"}, {\"imp_id\": \"6\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "75",
+        "repo_objective_id": "5",
+        "high_prob": "2",
+        "med_prob": "11",
+        "low_prob": "87",
+        "impacts_state": "[{\"imp_id\": \"4\", \"state\": \"0\"}, {\"imp_id\": \"5\", \"state\": \"1\"}, {\"imp_id\": \"6\", \"state\": \"0\"}]"
+    },
+    {
+        "id": "76",
+        "repo_objective_id": "5",
+        "high_prob": "76",
+        "med_prob": "24",
+        "low_prob": "0",
+        "impacts_state": "[{\"imp_id\": \"4\", \"state\": \"2\"}, {\"imp_id\": \"5\", \"state\": \"0\"}, {\"imp_id\": \"6\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "77",
+        "repo_objective_id": "5",
+        "high_prob": "2",
+        "med_prob": "98",
+        "low_prob": "0",
+        "impacts_state": "[{\"imp_id\": \"4\", \"state\": \"1\"}, {\"imp_id\": \"5\", \"state\": \"0\"}, {\"imp_id\": \"6\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "78",
+        "repo_objective_id": "5",
+        "high_prob": "0",
+        "med_prob": "11",
+        "low_prob": "89",
+        "impacts_state": "[{\"imp_id\": \"4\", \"state\": \"0\"}, {\"imp_id\": \"5\", \"state\": \"0\"}, {\"imp_id\": \"6\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "79",
+        "repo_objective_id": "5",
+        "high_prob": "99",
+        "med_prob": "1",
+        "low_prob": "0",
+        "impacts_state": "[{\"imp_id\": \"4\", \"state\": \"2\"}, {\"imp_id\": \"5\", \"state\": \"2\"}, {\"imp_id\": \"6\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "80",
+        "repo_objective_id": "5",
+        "high_prob": "92",
+        "med_prob": "7",
+        "low_prob": "1",
+        "impacts_state": "[{\"imp_id\": \"4\", \"state\": \"1\"}, {\"imp_id\": \"5\", \"state\": \"2\"}, {\"imp_id\": \"6\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "81",
+        "repo_objective_id": "5",
+        "high_prob": "93",
+        "med_prob": "2",
+        "low_prob": "5",
+        "impacts_state": "[{\"imp_id\": \"4\", \"state\": \"0\"}, {\"imp_id\": \"5\", \"state\": \"2\"}, {\"imp_id\": \"6\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "82",
+        "repo_objective_id": "5",
+        "high_prob": "69",
+        "med_prob": "31",
+        "low_prob": "0",
+        "impacts_state": "[{\"imp_id\": \"4\", \"state\": \"2\"}, {\"imp_id\": \"5\", \"state\": \"1\"}, {\"imp_id\": \"6\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "83",
+        "repo_objective_id": "5",
+        "high_prob": "15",
+        "med_prob": "73",
+        "low_prob": "12",
+        "impacts_state": "[{\"imp_id\": \"4\", \"state\": \"1\"}, {\"imp_id\": \"5\", \"state\": \"1\"}, {\"imp_id\": \"6\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "84",
+        "repo_objective_id": "5",
+        "high_prob": "4",
+        "med_prob": "92",
+        "low_prob": "4",
+        "impacts_state": "[{\"imp_id\": \"4\", \"state\": \"0\"}, {\"imp_id\": \"5\", \"state\": \"1\"}, {\"imp_id\": \"6\", \"state\": \"2\"}]"
+    },
+    {
+        "id": "85",
+        "repo_objective_id": "5",
+        "high_prob": "2",
+        "med_prob": "96",
+        "low_prob": "2",
+        "impacts_state": "[{\"imp_id\": \"4\", \"state\": \"2\"}, {\"imp_id\": \"5\", \"state\": \"0\"}, {\"imp_id\": \"6\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "86",
+        "repo_objective_id": "5",
+        "high_prob": "11",
+        "med_prob": "41",
+        "low_prob": "48",
+        "impacts_state": "[{\"imp_id\": \"4\", \"state\": \"1\"}, {\"imp_id\": \"5\", \"state\": \"0\"}, {\"imp_id\": \"6\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "87",
+        "repo_objective_id": "5",
+        "high_prob": "2",
+        "med_prob": "45",
+        "low_prob": "53",
+        "impacts_state": "[{\"imp_id\": \"4\", \"state\": \"0\"}, {\"imp_id\": \"5\", \"state\": \"0\"}, {\"imp_id\": \"6\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "88",
+        "repo_objective_id": "5",
+        "high_prob": "72",
+        "med_prob": "28",
+        "low_prob": "0",
+        "impacts_state": "[{\"imp_id\": \"4\", \"state\": \"2\"}, {\"imp_id\": \"5\", \"state\": \"2\"}, {\"imp_id\": \"6\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "89",
+        "repo_objective_id": "5",
+        "high_prob": "4",
+        "med_prob": "91",
+        "low_prob": "5",
+        "impacts_state": "[{\"imp_id\": \"4\", \"state\": \"1\"}, {\"imp_id\": \"5\", \"state\": \"2\"}, {\"imp_id\": \"6\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "90",
+        "repo_objective_id": "5",
+        "high_prob": "2",
+        "med_prob": "96",
+        "low_prob": "2",
+        "impacts_state": "[{\"imp_id\": \"4\", \"state\": \"0\"}, {\"imp_id\": \"5\", \"state\": \"2\"}, {\"imp_id\": \"6\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "91",
+        "repo_objective_id": "5",
+        "high_prob": "15",
+        "med_prob": "70",
+        "low_prob": "15",
+        "impacts_state": "[{\"imp_id\": \"4\", \"state\": \"2\"}, {\"imp_id\": \"5\", \"state\": \"1\"}, {\"imp_id\": \"6\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "92",
+        "repo_objective_id": "5",
+        "high_prob": "3",
+        "med_prob": "95",
+        "low_prob": "2",
+        "impacts_state": "[{\"imp_id\": \"4\", \"state\": \"1\"}, {\"imp_id\": \"5\", \"state\": \"1\"}, {\"imp_id\": \"6\", \"state\": \"1\"}]"
+    },
+    {
+        "id": "93",
+        "repo_objective_id": "5",
+        "high_prob": "0",
+        "med_prob": "51",
+        "low_prob": "49",
+        "impacts_state": "[{\"imp_id\": \"4\", \"state\": \"0\"}, {\"imp_id\": \"5\", \"state\": \"1\"}, {\"imp_id\": \"6\", \"state\": \"1\"}]"
+    }
+]

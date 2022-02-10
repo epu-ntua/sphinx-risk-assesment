@@ -836,9 +836,9 @@ def get_capec_recommendations(selected_cve_id):
 #     print(y)
 
 # TEST 1
-rep = json.loads('{"attackType":"Data Integrity Violation", "agent.ip":"10.10.48.2"}')
-xx = siem_alerts(rep)
-print(xx)
+# rep = json.loads('{"attackType":"Data Integrity Violation", "agent.ip":"10.10.48.2"}')
+# xx = siem_alerts(rep)
+# print(xx)
 
 # TEST 2
 # xx = get_asset_reputation(1)

@@ -38,13 +38,11 @@ id,name,threat_id,materialisation_id
 37,Under maintenance,11,11
 38,Unauthorised access/control,10,10
 39,Disruption of operations,10,10
-40,Unauthorised access/control,10,10
 41,Unauthorised disclosure of data,10,10
 42,Unauthorised modifications of data,10,10
 43,Infrastructure malfunction/damage,10,10
 44,Unauthorised access/control,11,11
 45,Disruption of operations,11,11
-46,Unauthorised access/control,11,11
 47,Unauthorised disclosure of data,11,11
 48,Unauthorised modifications of data,11,11
 49,Infrastructure malfunction/damage,11,11
