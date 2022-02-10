@@ -293,6 +293,18 @@ def get_kafka_data_print_test(kafka_topic):
                 result_json = json.load(result)
                 certification_report_json(result_json)
                 print("-------------------------------------------------------------------------", flush=True)
+            elif msg.topic == "siem-alerts":
+                print("--------------Kafka Received: siem-alerts -------------------------")
+                result = msg.value
+                result_json = json.load(result)
+                print(result_json)
+                print("-------------------------------------------------------------------------", flush=True)
+            elif msg.topic == "siem - input - events":
+                print("--------------Kafka Received: siem - input - events -------------------------")
+                result = msg.value
+                result_json = json.load(result)
+                print(result_json)
+                print("-------------------------------------------------------------------------", flush=True)
             else:
                 print("--------------Kafka Received: other topic -------------------------")
                 #print(dat)

@@ -4,7 +4,7 @@ from flask import flash
 from sqlalchemy.exc import SQLAlchemyError
 from app.models import *
 # from app.csv_to_json_converter_util import *
-from sqlalchemy import exists
+from sqlalchemy import exists, func
 from datetime import datetime
 import openpyxl
 import json
@@ -502,6 +502,251 @@ def getAssetsfromDTM(report_details):
 
 # endregion Insert Asset information from DTM
 
+# region Handle SIEM alerts
+def siem_alerts(report_details):
+    if report_details["attackType"] is not None:
+        # if report_details["threat"] is not None: Retrieve Threat id based on threat_name
+        alert_threat = report_details['attackType']
+        if db.session.query(RepoThreat.id).filter_by(name=alert_threat).first() is not None:
+            my_threat = db.session.query(RepoThreat).filter_by(name=alert_threat).first()
+            alert_asset_ip = report_details['agent.ip']
+            if db.session.query(RepoAsset.ip).filter_by(ip=alert_asset_ip).first() is not None:
+                my_asset = db.session.query(RepoAsset).filter_by(ip=alert_asset_ip).first()
+                # TODO: Initiate Risk Assessment for this asset with mat1 and the rest nodes = 100% [we will define these for each threat- in RA call]
+                other_net_assets = get_all_assets_of_network_group(my_asset)
+                if other_net_assets:
+                    print("Assets on this Networks")
+                    for each_asset in other_net_assets:
+                        if not each_asset.verified:
+                            print("I'm not verified")
+                        # TODO: Initiate Risk Assessment for this asset with mat1 and the rest nodes = 100% [we will define these for each threat- in RA call]
+                        #      if we have enough data, otherwise WHAT???
+                        else:
+                            asset_reputation_value = get_asset_reputation(each_asset.common_id)
+                            print(asset_reputation_value)
+                            asset_vulnerability_value = get_asset_vulnerabilities_status(each_asset.id, my_threat.id)
+                            print(asset_vulnerability_value)
+                            if each_asset.type_fk == my_asset.type_fk:
+                                print("Asset of the same type on the same network: {0}, type: {1}".format(each_asset.name, each_asset.type_fk))
+                                if (asset_vulnerability_value[0] >= 7.5) or ((asset_vulnerability_value[0] + asset_vulnerability_value[1])/2 >= 7.5):
+                                    print("Over 7.5 : {0}".format(asset_vulnerability_value[0]))
+                                    # TODO: Initiate Risk Assessment for these assets with mat1 = 100%
+                                elif 5 <= asset_vulnerability_value[0] < 7.5:
+                                    print("5 to 7.5 the average: {0}".format(asset_vulnerability_value[0]))
+                                    # TODO: Initiate Risk Assessment for these assets with mat1 = mat1 * (1+ asset_vulnerability_value[0]/10)
+                                    #   obviously it should be <=100%
+                                else:
+                                    if asset_reputation_value < 100 and each_asset.value == 3:
+                                        print("Reputation <100 and Asset value =3: {0} - {1}".format(asset_reputation_value, each_asset.value))
+                                        # TODO: Initiate Risk Assessment for these assets with exposure = 100%
+                                    elif asset_reputation_value < 100 and each_asset.value == 2:
+                                        print("Reputation <100 and Asset value =2: {0} - {1}".format(asset_reputation_value, each_asset.value))
+                                        # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,2]  obviously <=100%
+                                    else:
+                                        print("Other: {0} - {1}".format(asset_reputation_value, each_asset.value))
+                                        # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,1]  obviously <=100%
+                            else:
+                                print("Asset of different type on the same network: {0}, type: {1}".format(each_asset.name, each_asset.type_fk))
+                                if (asset_vulnerability_value[0] >= 7.5) or ((asset_vulnerability_value[0] + asset_vulnerability_value[1])/2 >= 7.5):
+                                    print("Other type of Asset - Over 7.5 : {0}".format(asset_vulnerability_value[0]))
+                                    # TODO: Initiate Risk Assessment for these assets with mat1 = mat1 * (1+ asset_vulnerability_value[0]/10)
+                                    #   obviously it should be <=100%
+                                else:
+                                    if asset_reputation_value < 100 and each_asset.value == 3:
+                                        print("Reputation <100 and Asset value =3: {0} - {1}".format(
+                                            asset_reputation_value, each_asset.value))
+                                        # TODO: Initiate Risk Assessment for these assets with exposure = 100%
+                                    elif asset_reputation_value < 100 and each_asset.value == 2:
+                                        print("Reputation <100 and Asset value =2: {0} - {1}".format(
+                                            asset_reputation_value, each_asset.value))
+                                        # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,2]  obviously <=100%
+                                    else:
+                                        print("Other: {0} - {1}".format(asset_reputation_value, each_asset.value))
+                                        # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,1]  obviously <=100%
+                else:
+                    print("Assets on other Networks")
+                    assets_not_on_net = get_assets_not_on_netgroup_with_threat_vuln(my_asset, my_threat.id)
+                    for each_asset in assets_not_on_net:
+                        if not each_asset.verified:
+                            print("I'm not verified")
+                            # TODO: Initiate Risk Assessment for this asset with mat1 and the rest nodes = 100% [we will define these for each threat- in RA call]
+                            #      if we have enough data, otherwise WHAT???
+                        else:
+                            asset_reputation_value = get_asset_reputation(each_asset.common_id)
+                            print(asset_reputation_value)
+                            asset_vulnerability_value = get_asset_vulnerabilities_status(each_asset.id, my_threat.id)
+                            print(asset_vulnerability_value)
+                            print("Asset on different network: {0}, type: {1}".format(each_asset.name, each_asset.type_fk))
+                            if (asset_vulnerability_value[0] >= 5) or ((asset_vulnerability_value[0] + asset_vulnerability_value[1])/2 >= 7.5):
+                                print("Over 5 and average 7.5 : {0}".format(asset_vulnerability_value[0]))
+                                # TODO: Initiate Risk Assessment for these assets with mat1 = mat1 * (1+ asset_vulnerability_value[0]/10)
+                                #   obviously it should be <=100%
+                            else:
+                                if asset_reputation_value < 100 and each_asset.value == 3:
+                                    print("Reputation <100 and Asset value =3: {0} - {1}".format(asset_reputation_value, each_asset.value))
+                                    # TODO: Initiate Risk Assessment for these assets with exposure = 100%
+                                elif asset_reputation_value < 100 and each_asset.value == 2:
+                                    print("Reputation <100 and Asset value =2: {0} - {1}".format(asset_reputation_value, each_asset.value))
+                                    # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,2]  obviously <=100%
+                                else:
+                                    print("Other: {0} - {1}".format(asset_reputation_value, each_asset.value))
+                                    # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,1]  obviously <=100%
+            else:
+                print("No such asset")
+                assets_not_on_net = get_assets_not_on_netgroup_with_threat_vuln('', my_threat.id)
+                for each_asset in assets_not_on_net:
+                    if not each_asset.verified:
+                        print("I'm not verified")
+                        # TODO: Initiate Risk Assessment for this asset with mat1 and the rest nodes = 100% [we will define these for each threat- in RA call]
+                        #      if we have enough data, otherwise WHAT???
+                    else:
+                        asset_reputation_value = get_asset_reputation(each_asset.common_id)
+                        print(asset_reputation_value)
+                        asset_vulnerability_value = get_asset_vulnerabilities_status(each_asset.id, my_threat.id)
+                        print(asset_vulnerability_value)
+                        print("Asset on different network: {0}, type: {1}".format(each_asset.name, each_asset.type_fk))
+                        if (asset_vulnerability_value[0] >= 5) or (
+                                (asset_vulnerability_value[0] + asset_vulnerability_value[1]) / 2 >= 7.5):
+                            print("Over 5 and average 7.5 : {0}".format(asset_vulnerability_value[0]))
+                            # TODO: Initiate Risk Assessment for these assets with mat1 = mat1 * (1+ asset_vulnerability_value[0]/10)
+                            #   obviously it should be <=100%
+                        else:
+                            if asset_reputation_value < 100 and each_asset.value == 3:
+                                print("Reputation <100 and Asset value =3: {0} - {1}".format(asset_reputation_value,
+                                                                                             each_asset.value))
+                                # TODO: Initiate Risk Assessment for these assets with exposure = 100%
+                            elif asset_reputation_value < 100 and each_asset.value == 2:
+                                print("Reputation <100 and Asset value =2: {0} - {1}".format(asset_reputation_value,
+                                                                                             each_asset.value))
+                                # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,2]  obviously <=100%
+                            else:
+                                print("Other: {0} - {1}".format(asset_reputation_value, each_asset.value))
+                                # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,1]  obviously <=100%
+        else:   # If we can not identify the threat then do nothing
+            return -1
+
+
+def get_all_assets_of_network_group(base_asset):
+    if base_asset.net_group_fk is not None:
+        if (db.session.query(RepoAsset).filter(RepoAsset.id != base_asset.id,
+                                                                       RepoAsset.net_group_fk == base_asset.net_group_fk)) is not None:
+            other_assets = db.session.query(RepoAsset).filter(RepoAsset.id != base_asset.id,
+                                                              RepoAsset.net_group_fk == base_asset.net_group_fk).all()
+            return other_assets
+        else:
+            return []
+    else:
+        return []
+
+
+def get_assets_not_on_netgroup_with_threat_vuln(base_asset, threat_id):
+    if threat_id is None:
+        return []
+    # print("Get list of relevant vulnerabilities to this threat----------")
+    if db.session.query(repo_threat_common_vulnerabilities_and_exposures_association_table).filter_by(
+            repo_threat_id=threat_id).first() is not None:
+        vuln_threat_assoc = db.session.query(
+            repo_threat_common_vulnerabilities_and_exposures_association_table).filter_by(
+            repo_threat_id=threat_id).all()
+        vuln_threat = []
+        for item in vuln_threat_assoc:
+            vuln_threat.append(item[1])
+    else:
+        vuln_threat = []
+
+    # print("Get list of relevant assets based on the above vulnerabilities ----------")
+    if db.session.query(VulnerabilityReportVulnerabilitiesLink).join(CommonVulnerabilitiesAndExposures).filter(CommonVulnerabilitiesAndExposures.id.in_(vuln_threat)).first() is not None:
+        vulnerabilities_threat_all = db.session.query(VulnerabilityReportVulnerabilitiesLink).join(CommonVulnerabilitiesAndExposures).filter(CommonVulnerabilitiesAndExposures.id.in_(vuln_threat)).all()
+        other_assets = []
+        for item in vulnerabilities_threat_all:
+            other_assets.append(item.asset_id)
+    else:
+        other_assets = []
+
+    # print("Get list of relevant assets based on the above vulnerabilities ----------")
+    if (db.session.query(RepoAsset).filter(RepoAsset.id.in_(other_assets),
+                                               RepoAsset.net_group_fk != base_asset.net_group_fk)) is not None:
+        other_assets_assoc = db.session.query(RepoAsset).filter(RepoAsset.id.in_(other_assets), RepoAsset.net_group_fk != base_asset.net_group_fk).all()
+        output_assets = []
+        for item in other_assets_assoc:
+            output_assets.append(item.asset_id)
+        # print(other_assets)
+    else:
+        output_assets = []
+
+    return output_assets
+
+
+def get_asset_reputation(asset_common_id):
+    if asset_common_id is None:
+        return -1
+    if db.session.query(RepoAssetReputation.reputation).filter_by(global_asset_id=asset_common_id).first() is not None:
+        reputation_value = db.session.query(RepoAssetReputation).filter_by(global_asset_id=asset_common_id).order_by(RepoAssetReputation.id.desc()).first()
+        # We take the last entry for this asset
+        return reputation_value.reputation if reputation_value.reputation is not None else -1
+    else:
+        return -1
+
+def get_asset_vulnerabilities_status(asset_id, threat_id):
+    if asset_id is None:
+        return []
+    reports = []
+    # print("Get most recent reports---------------")
+    if db.session.query(VulnerabilityReport.id).join(VulnerabilityReportVulnerabilitiesLink).filter(VulnerabilityReport.source_component == 1).filter(VulnerabilityReportVulnerabilitiesLink.asset_id == asset_id).order_by(VulnerabilityReport.id.desc()).first() is not None:
+        vaaas_report = db.session.query(VulnerabilityReport).join(VulnerabilityReportVulnerabilitiesLink).filter(VulnerabilityReport.source_component == 1).filter(VulnerabilityReportVulnerabilitiesLink.asset_id == asset_id).order_by(VulnerabilityReport.id.desc()).first()
+        reports.append(vaaas_report.id)
+
+    if db.session.query(VulnerabilityReport.id).join(VulnerabilityReportVulnerabilitiesLink).filter(VulnerabilityReport.source_component == 2).filter(VulnerabilityReportVulnerabilitiesLink.asset_id == asset_id).order_by(VulnerabilityReport.id.desc()).first() is not None:
+        acs_report = db.session.query(VulnerabilityReport).join(VulnerabilityReportVulnerabilitiesLink).filter(VulnerabilityReport.source_component == 2).filter(VulnerabilityReportVulnerabilitiesLink.asset_id == asset_id).order_by(VulnerabilityReport.id.desc()).first()
+        reports.append(acs_report.id)
+    # for item in reports:
+    #     print(item)
+    # print("-----")
+    # print("Get list of relevant vulnerabilities----------")
+    if db.session.query(repo_threat_common_vulnerabilities_and_exposures_association_table).filter_by(repo_threat_id=threat_id).first() is not None:
+        vuln_threat_assoc = db.session.query(repo_threat_common_vulnerabilities_and_exposures_association_table).filter_by(repo_threat_id=threat_id).all()
+        vuln_threat=[]
+        for item in vuln_threat_assoc:
+            vuln_threat.append(item[1])
+        # print(vuln_threat)
+    else:
+        vuln_threat = []
+    vulnerabilities_threat_all = db.session.query(VulnerabilityReportVulnerabilitiesLink).join(CommonVulnerabilitiesAndExposures).filter(VulnerabilityReportVulnerabilitiesLink.vreport_id.in_(reports)).filter(CommonVulnerabilitiesAndExposures.id.in_(vuln_threat)).all()
+    # print(" Threat is associated with these vuln:------------")
+    relevant_vuln_score = 0
+    for item in vulnerabilities_threat_all:
+        if db.session.query(RepoControl.id).filter_by(vulnerability_id=item.id).first() is not None:
+            max_control_effectiveness = db.session.query(func.max(RepoControl.effectiveness)).filter_by(vulnerability_id=item.id).scalar()
+        else:
+            max_control_effectiveness = 0
+        vuln_score = float(item.VReport_CVSS_score)*(1 - max_control_effectiveness/100) if float(item.VReport_CVSS_score)*(1 - max_control_effectiveness/100) is not None else 0
+        relevant_vuln_score = max(relevant_vuln_score, vuln_score)
+        # print(item.id, item.comments)
+        # print(vuln_score)
+    # print("Max Relevant Vulnerability score: {0}".format(relevant_vuln_score))
+    # print("------------")
+    vulnerabilities_rest_all = db.session.query(VulnerabilityReportVulnerabilitiesLink).join(CommonVulnerabilitiesAndExposures).filter(VulnerabilityReportVulnerabilitiesLink.vreport_id.in_(reports)).filter(CommonVulnerabilitiesAndExposures.id.notin_(vuln_threat)).all()
+    # print("Threat is Not associated with these vuln:------------")
+    rest_vuln_score = 0
+    for item in vulnerabilities_rest_all:
+        if db.session.query(RepoControl.id).filter_by(vulnerability_id=item.id).first() is not None:
+            max_control_effectiveness = db.session.query(func.max(RepoControl.effectiveness)).filter_by(vulnerability_id=item.id).scalar()
+        else:
+            max_control_effectiveness = 0
+        vuln_score = float(item.VReport_CVSS_score) * (1 - max_control_effectiveness / 100) if float(
+            item.VReport_CVSS_score) * (1 - max_control_effectiveness / 100) is not None else 0
+        rest_vuln_score = max(rest_vuln_score, vuln_score)
+        # print(item.id, item.comments)
+        # print(vuln_score)
+    # print("Max Rest Vulnerability score: {0}".format(rest_vuln_score))
+
+    return [relevant_vuln_score, rest_vuln_score]
+
+    #publish to kafka everything
+
+# endregion Handle SIEM alerts
+
+# region OLD functions
 # region get_assets
 # temporarily from VaasReport table
 def get_assets():
@@ -575,7 +820,7 @@ def get_capec_recommendations(selected_cve_id):
 
 
 # endregion
-
+# endregion OLD functions
 
 # region test Area
 # path_to_VAaaS_report = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)), 'Json_texts', 'report_example_stix.json')
@@ -590,6 +835,18 @@ def get_capec_recommendations(selected_cve_id):
 #     y = certification_report_json(obj)
 #     print(y)
 
+# TEST 1
+rep = json.loads('{"attackType":"Data Integrity Violation", "agent.ip":"10.10.48.2"}')
+xx = siem_alerts(rep)
+print(xx)
+
+# TEST 2
+# xx = get_asset_reputation(1)
+# print(xx)
+
+# TEST 3
+# xx = get_asset_vulnerabilities_status(3, 7)
+# print(xx)
 
 # endregion test Area
 
