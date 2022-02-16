@@ -8,7 +8,7 @@
     },
     {
         "id": "2",
-        "name": "Hijacking/Ransomware",
+        "name": "Hijacking",
         "CAPEC_id": "",
         "prob": "",
         "user_prob": ""
@@ -64,14 +64,28 @@
     },
     {
         "id": "10",
-        "name": "Abnormal Network Activity",
+        "name": "Suspicious/Abnormal Network Activity",
         "CAPEC_id": "",
         "prob": "",
         "user_prob": ""
     },
     {
         "id": "11",
-        "name": "Suspicious Human Action/Behaviour",
+        "name": "Suspicious Human Action",
+        "CAPEC_id": "",
+        "prob": "",
+        "user_prob": ""
+    },
+    {
+        "id": "12",
+        "name": "Worm",
+        "CAPEC_id": "",
+        "prob": "",
+        "user_prob": ""
+    },
+    {
+        "id": "13",
+        "name": "Bruteforce Attack",
         "CAPEC_id": "",
         "prob": "",
         "user_prob": ""
