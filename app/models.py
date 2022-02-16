@@ -382,6 +382,8 @@ class RepoRiskAssessmentReports(db.Model):
     services_inference = db.Column(db.String)
     impacts_inference = db.Column(db.String)
     objectives_inference = db.Column(db.String)
+    utilities_inference = db.Column(db.String)
+    alerts_triggered = db.Column(db.String)
 
 
 class RepoThreat(db.Model):
@@ -596,9 +598,11 @@ class RepoObjectivesOptions(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, nullable=False)
     objective_fk = db.Column(db.Integer, db.ForeignKey('repo_objective.id'), nullable=False)
+    objective_level = db.Column(db.Integer, nullable=True)
     alert_level = db.Column(db.Integer, nullable=True,
                             default=0)  # 0-No Alert #1-Oddness3> #2-RareThanRare #3-Rare #4-Possible #5-Certain
     prob_likelihood = db.Column(db.Integer, nullable=True)
+
 
 
 class RepoUtility(db.Model):

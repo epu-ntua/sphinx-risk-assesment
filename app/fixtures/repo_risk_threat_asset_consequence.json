@@ -1,0 +1,258 @@
+[
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "1",
+        "repo_response_id": "1",
+        "repo_consequence_id": "1",
+        "threat_occurrence": "1",
+        "prob": "82"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "1",
+        "repo_response_id": "1",
+        "repo_consequence_id": "1",
+        "threat_occurrence": "0",
+        "prob": "17"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "1",
+        "repo_response_id": "2",
+        "repo_consequence_id": "1",
+        "threat_occurrence": "1",
+        "prob": "84"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "1",
+        "repo_response_id": "2",
+        "repo_consequence_id": "1",
+        "threat_occurrence": "0",
+        "prob": "30"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "1",
+        "repo_response_id": "1",
+        "repo_consequence_id": "2",
+        "threat_occurrence": "1",
+        "prob": "84"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "1",
+        "repo_response_id": "1",
+        "repo_consequence_id": "2",
+        "threat_occurrence": "0",
+        "prob": "30"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "1",
+        "repo_response_id": "2",
+        "repo_consequence_id": "2",
+        "threat_occurrence": "1",
+        "prob": "88"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "1",
+        "repo_response_id": "2",
+        "repo_consequence_id": "2",
+        "threat_occurrence": "0",
+        "prob": "32"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "1",
+        "repo_response_id": "1",
+        "repo_consequence_id": "3",
+        "threat_occurrence": "1",
+        "prob": "73"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "1",
+        "repo_response_id": "1",
+        "repo_consequence_id": "3",
+        "threat_occurrence": "0",
+        "prob": "37"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "1",
+        "repo_response_id": "2",
+        "repo_consequence_id": "3",
+        "threat_occurrence": "1",
+        "prob": "91"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "1",
+        "repo_response_id": "2",
+        "repo_consequence_id": "3",
+        "threat_occurrence": "0",
+        "prob": "31"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "1",
+        "repo_response_id": "1",
+        "repo_consequence_id": "4",
+        "threat_occurrence": "1",
+        "prob": "84"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "1",
+        "repo_response_id": "1",
+        "repo_consequence_id": "4",
+        "threat_occurrence": "0",
+        "prob": "24"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "1",
+        "repo_response_id": "2",
+        "repo_consequence_id": "4",
+        "threat_occurrence": "1",
+        "prob": "89"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "1",
+        "repo_response_id": "2",
+        "repo_consequence_id": "4",
+        "threat_occurrence": "0",
+        "prob": "27"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "1",
+        "repo_response_id": "1",
+        "repo_consequence_id": "5",
+        "threat_occurrence": "1",
+        "prob": "80"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "1",
+        "repo_response_id": "1",
+        "repo_consequence_id": "5",
+        "threat_occurrence": "0",
+        "prob": "23"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "1",
+        "repo_response_id": "2",
+        "repo_consequence_id": "5",
+        "threat_occurrence": "1",
+        "prob": "81"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "1",
+        "repo_response_id": "2",
+        "repo_consequence_id": "5",
+        "threat_occurrence": "0",
+        "prob": "25"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "1",
+        "repo_response_id": "1",
+        "repo_consequence_id": "6",
+        "threat_occurrence": "1",
+        "prob": "91"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "1",
+        "repo_response_id": "1",
+        "repo_consequence_id": "6",
+        "threat_occurrence": "0",
+        "prob": "28"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "1",
+        "repo_response_id": "2",
+        "repo_consequence_id": "6",
+        "threat_occurrence": "1",
+        "prob": "78"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "1",
+        "repo_response_id": "2",
+        "repo_consequence_id": "6",
+        "threat_occurrence": "0",
+        "prob": "19"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "7",
+        "repo_response_id": "13",
+        "repo_consequence_id": "24",
+        "threat_occurrence": "1",
+        "prob": "94"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "7",
+        "repo_response_id": "13",
+        "repo_consequence_id": "24",
+        "threat_occurrence": "0",
+        "prob": "24"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "7",
+        "repo_response_id": "14",
+        "repo_consequence_id": "24",
+        "threat_occurrence": "1",
+        "prob": "79"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "7",
+        "repo_response_id": "14",
+        "repo_consequence_id": "24",
+        "threat_occurrence": "0",
+        "prob": "24"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "7",
+        "repo_response_id": "13",
+        "repo_consequence_id": "33",
+        "threat_occurrence": "1",
+        "prob": "84"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "7",
+        "repo_response_id": "13",
+        "repo_consequence_id": "33",
+        "threat_occurrence": "0",
+        "prob": "27"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "7",
+        "repo_response_id": "14",
+        "repo_consequence_id": "33",
+        "threat_occurrence": "1",
+        "prob": "74"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "7",
+        "repo_response_id": "14",
+        "repo_consequence_id": "33",
+        "threat_occurrence": "0",
+        "prob": "14"
+    }
+]

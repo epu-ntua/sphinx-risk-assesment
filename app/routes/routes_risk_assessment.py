@@ -1301,6 +1301,11 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
         except SQLAlchemyError:
             return Response("SQLAlchemyError", 500)
 
+        try:
+            these_alerts = RepoObjectivesOptions.query.all()
+        except SQLAlchemyError:
+            return  Response('SQLAlchemyError', 500)
+
         if this_risk_assessment.count() == 0:
             # Save the new Valid Risk Assessment
             this_risk_assessment = RepoRiskAssessment(repo_threat_id=threat_id, repo_asset_id=asset_id)
@@ -1350,6 +1355,25 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
                     objectives_inference = objectives_inference + str(temp_digit) + "|" + str(
                         value.values[0]) + "|" + str(
                         value.values[1]) + "|" + str(value.values[2]) + "|"
+
+                # Check Objectives for alerts
+                objectives_to_check = objectives_inference.split("|")
+                for alert in these_alerts:
+                    # If value is 0 then there is no alert to check
+                    if alert.alert_level != 0:
+                        if alert.objective_fk == 1:
+                            pass
+                        elif  alert.objective_fk == 2:
+                            pass
+                        elif alert.objective_fk == 3:
+                            pass
+                        elif alert.objective_fk == 4:
+                            pass
+                        elif alert.objective_fk == 5:
+                            pass
+                        else:
+                            pass
+
                 # elif temp_key == "util":
                 #     materialisations_set_values = str(temp_digit)+ "|" + str(value.values(0)) + "|"
                 else:
