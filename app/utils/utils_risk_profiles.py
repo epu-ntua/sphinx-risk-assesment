@@ -441,12 +441,36 @@ def get_RiskML_value(asset_type, action_type, estimation_type, port):
     print("Response is:", response_converted[0])
     return response_converted[0]
 # endregion 1 RiskML
-# region 2 Reputation
+# region 2 TIAR Threat metrics
 #     TODO: "provide API to get the estimation"
-def get_Threat_Estimation_BBTR():
-    return -1
+def get_Threat_metrics_BBTR(assetID, threatID):
+    if db.session.query(RepoThreat.name).filter(RepoThreat.id == threatID).first() is not None:
+        threat_row = db.session.query(RepoThreat).filter(RepoThreat.id == threatID).one()
+        threat_description = threat_row.name
+    else:
+        return -1
 
-# endregion 2 Reputation
+    if RepoAssetsType.query.join(RepoAsset).filter(RepoAsset.id == assetID).first() is not None:
+        asset_type_row = RepoAssetsType.query.join(RepoAsset).filter(RepoAsset.id == assetID).one()
+        asset_type = asset_type_row.name
+    else:
+        asset_type = ""
+
+    if db.session.query(RepoThreatMetricsReputation.id).filter(threat_description=threat_description,
+                                                               asset_type=asset_type).first() is not None:
+        db_threat_metrics_record = db.session.query(RepoThreatMetricsReputation).filter_by(
+            threat_description=threat_description,
+            asset_type=asset_type).one()
+        return db_threat_metrics_record.threat_type_in_this_asset_type_hospital
+    else:
+        if db.session.query(RepoThreatMetricsReputation.id).filter(threat_description=threat_description).first() is not None:
+            db_threat_metrics_record = db.session.query(RepoThreatMetricsReputation).filter_by(
+                threat_description=threat_description).order_by(RepoThreatMetricsReputation.threat_timestamp.desc()).first()
+            return db_threat_metrics_record.threat_description_global
+        else:
+            return -1
+
+# endregion 2 TIAR Threat metrics
 # region 3 DB
 def get_ThreatFactorsvaluesfromDB(assetID, threatID):
     if db.session.query(exists().where((RepoAssetRepoThreatRelationship.repo_asset_id == assetID) and (
@@ -482,15 +506,15 @@ def get_Threat_exposure_value(assetID, threatID):
     else:
         value_DB = 0
     # TODO: How do we get this information?
-    value_BBTR = get_Threat_Estimation_BBTR()
+    value_BBTR = get_Threat_metrics_BBTR()
     if not value_BBTR == -1:
         i += 1
     else:
         value_BBTR = 0
 
     # This call needs RCRA_Threat_ID, Asset_type
-    if RepoAssetsType.query.join(RepoAsset).filter(RepoAsset.id == assetID).first() is None:
-        asset_type_row = RepoAssetsType.query.join(RepoAsset).filter(RepoAsset.id == 1).first()
+    if RepoAssetsType.query.join(RepoAsset).filter(RepoAsset.id == assetID).first() is not None:
+        asset_type_row = RepoAssetsType.query.join(RepoAsset).filter(RepoAsset.id == assetID).first()
         asset_type = "asset.assets.variety." + asset_type_row.name
     else:
         asset_type=""

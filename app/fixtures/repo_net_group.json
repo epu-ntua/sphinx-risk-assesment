@@ -18,5 +18,9 @@
     {
         "id": "5",
         "name": "VLAN192 (CLIENTS): 192.168.10"
+    },
+    {
+        "id": "6",
+        "name": "Test VAaaS: 10.0.255"
     }
 ]

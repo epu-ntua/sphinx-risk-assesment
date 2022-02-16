@@ -616,18 +616,18 @@ class RepoUtility(db.Model):
 class RepoAssetReputation(db.Model):
     __tablename__ = 'repo_asset_reputation'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    source_hospital_id = db.Column(db.Integer)
+    source_hospital_id = db.Column(db.String)
     # This asset id is not the same as the above one, but these should be merged in some way
-    global_asset_id = db.Column(db.Integer)
+    global_asset_id = db.Column(db.String)
+    asset_value = db.Column(db.Integer)
     global_asset_type = db.Column(db.String)
-    global_asset_ip = db.Column(db.String)
+    count = db.Column(db.Integer)
     first_update = db.Column(db.String)
     last_update = db.Column(db.String)
-    asset_value = db.Column(db.Integer)
-    count = db.Column(db.Integer)
     reputation = db.Column(db.Integer)
     reputation_speed = db.Column(db.Integer)
     weighted_importance = db.Column(db.Integer)
+    global_asset_ip = db.Column(db.String)
 
 
 class RepoOrganisationSecurityPosture(db.Model):
@@ -683,3 +683,15 @@ class RepoOrganisationSecurityPosture(db.Model):
     q48_access_when_emergency = db.Column(db.Integer)
     q49_backup_plan = db.Column(db.Integer)
     q50_disaster_recovery_plan = db.Column(db.Integer)
+
+class RepoThreatMetricsReputation(db.Model):
+    __tablename__ = 'repo_threat_metrics_reputation'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    threat_timestamp = db.Column(db.String)
+    threat_id = db.Column(db.String)
+    threat_description = db.Column(db.String)
+    asset_type = db.Column(db.String)
+    threat_type_in_this_asset_type_hospital = db.Column(db.Float)
+    threats_in_this_asset_type = db.Column(db.Float)
+    threat_description_global = db.Column(db.Float)
+
