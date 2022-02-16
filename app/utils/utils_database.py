@@ -171,55 +171,55 @@ def rcra_db_init():
     for asset in to_add_assets:
         to_add_asset = RepoAsset(**asset)
         db.session.add(to_add_asset)
-
-    # Adding cves
-    to_add_cves = import_fixture_from_file("common_vulnerabilities_and_exposures")
-    for cve in to_add_cves:
-        to_add_cve = CommonVulnerabilitiesAndExposures(**cve)
-        db.session.add(to_add_cve)
-
-    # Adding vulnerabilities reports
-    to_add_vulnerability_reports = import_fixture_from_file("vulnerability_report")
-    for vulnerability_report in to_add_vulnerability_reports:
-        to_add_vulnerability_report = VulnerabilityReport(**vulnerability_report)
-        db.session.add(to_add_vulnerability_report)
+    #
+    # # Adding cves
+    # to_add_cves = import_fixture_from_file("common_vulnerabilities_and_exposures")
+    # for cve in to_add_cves:
+    #     to_add_cve = CommonVulnerabilitiesAndExposures(**cve)
+    #     db.session.add(to_add_cve)
+    #
+    # # Adding vulnerabilities reports
+    # to_add_vulnerability_reports = import_fixture_from_file("vulnerability_report")
+    # for vulnerability_report in to_add_vulnerability_reports:
+    #     to_add_vulnerability_report = VulnerabilityReport(**vulnerability_report)
+    #     db.session.add(to_add_vulnerability_report)
 
     # Adding vulnerability reports link
-    to_add_vulnerability_reports_links = import_fixture_from_file("vulnerability_report_vulnerabilities_link")
-    for vulnerability_reports_link in to_add_vulnerability_reports_links:
-        to_add_vulnerability_reports_link = VulnerabilityReportVulnerabilitiesLink(**vulnerability_reports_link)
-        db.session.add(to_add_vulnerability_reports_link)
+    # to_add_vulnerability_reports_links = import_fixture_from_file("vulnerability_report_vulnerabilities_link")
+    # for vulnerability_reports_link in to_add_vulnerability_reports_links:
+    #     to_add_vulnerability_reports_link = VulnerabilityReportVulnerabilitiesLink(**vulnerability_reports_link)
+    #     db.session.add(to_add_vulnerability_reports_link)
 
-
-    # RISK VALUES FOR FIRST ASSET
-    # Adding repo asset threat relationship (EXPOSURE)
-    to_add_asset_threat_relationship_exposures = import_fixture_from_file("repo_asset_repo_threat_relationship")
-    for assets_threat_relationship in to_add_asset_threat_relationship_exposures:
-        to_add_asset_threat_relationship_exposure = RepoAssetRepoThreatRelationship(**assets_threat_relationship)
-        db.session.add(to_add_asset_threat_relationship_exposure)
-
-    # Adding repo risk threat asset materialisation
-    to_add_asset_materialisations = import_fixture_from_file("repo_risk_threat_asset_materialisation")
-    for assets_materialisation in to_add_asset_materialisations:
-        to_add_asset_materialisation = RepoRiskThreatAssetMaterialisation(**assets_materialisation)
-        db.session.add(to_add_asset_materialisation)
-
-    # Adding repo risk threat asset consequence
-    to_add_asset_consequences = import_fixture_from_file("repo_risk_threat_asset_consequence")
-    for assets_consequence in to_add_asset_consequences:
-        to_add_asset_consequence = RepoRiskThreatAssetConsequence(**assets_consequence)
-        db.session.add(to_add_asset_consequence)
-
-    # Adding repo objective impact relationship
-    to_add_objective_impacts = import_fixture_from_file("repo_objective_impact_relationship")
-    for objective_impact in to_add_objective_impacts:
-        to_add_objective_impact = RepoObjectiveImpactRelationship(**objective_impact)
-        db.session.add(to_add_objective_impact)
-
-    # Adding repo asset threat consequence service impact relationship
-    to_add_asset_threat_consequence_service_impacts = import_fixture_from_file("repo_asset_threat_consequence_service_impact_relationship")
-    for asset_threat_consequence_service_impact in to_add_asset_threat_consequence_service_impacts:
-        to_add_asset_threat_consequence_service_impact = RepoAssetThreatConsequenceServiceImpactRelationship(**asset_threat_consequence_service_impact)
-        db.session.add(to_add_asset_threat_consequence_service_impact)
+    #
+    # # RISK VALUES FOR FIRST ASSET
+    # # Adding repo asset threat relationship (EXPOSURE)
+    # to_add_asset_threat_relationship_exposures = import_fixture_from_file("repo_asset_repo_threat_relationship")
+    # for assets_threat_relationship in to_add_asset_threat_relationship_exposures:
+    #     to_add_asset_threat_relationship_exposure = RepoAssetRepoThreatRelationship(**assets_threat_relationship)
+    #     db.session.add(to_add_asset_threat_relationship_exposure)
+    #
+    # # Adding repo risk threat asset materialisation
+    # to_add_asset_materialisations = import_fixture_from_file("repo_risk_threat_asset_materialisation")
+    # for assets_materialisation in to_add_asset_materialisations:
+    #     to_add_asset_materialisation = RepoRiskThreatAssetMaterialisation(**assets_materialisation)
+    #     db.session.add(to_add_asset_materialisation)
+    #
+    # # Adding repo risk threat asset consequence
+    # to_add_asset_consequences = import_fixture_from_file("repo_risk_threat_asset_consequence")
+    # for assets_consequence in to_add_asset_consequences:
+    #     to_add_asset_consequence = RepoRiskThreatAssetConsequence(**assets_consequence)
+    #     db.session.add(to_add_asset_consequence)
+    #
+    # # Adding repo objective impact relationship
+    # to_add_objective_impacts = import_fixture_from_file("repo_objective_impact_relationship")
+    # for objective_impact in to_add_objective_impacts:
+    #     to_add_objective_impact = RepoObjectiveImpactRelationship(**objective_impact)
+    #     db.session.add(to_add_objective_impact)
+    #
+    # # Adding repo asset threat consequence service impact relationship
+    # to_add_asset_threat_consequence_service_impacts = import_fixture_from_file("repo_asset_threat_consequence_service_impact_relationship")
+    # for asset_threat_consequence_service_impact in to_add_asset_threat_consequence_service_impacts:
+    #     to_add_asset_threat_consequence_service_impact = RepoAssetThreatConsequenceServiceImpactRelationship(**asset_threat_consequence_service_impact)
+    #     db.session.add(to_add_asset_threat_consequence_service_impact)
 
     db.session.commit()
