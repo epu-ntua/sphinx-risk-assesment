@@ -7,7 +7,7 @@ from kafka import KafkaProducer, KafkaConsumer
 from kafka.oauth import AbstractTokenProvider
 from kafka.errors import KafkaError
 
-from app import app
+# from app import app
 
 from datetime import datetime
 from time import sleep
@@ -18,7 +18,8 @@ import threading, time
 
 # check this too : https://pypi.org/project/javaproperties/
 # 8080
-from app.utils.utils_3rd_party_data_handling import v_report_json, certification_report_json, getAssetsfromDTM
+from app.utils.utils_3rd_party_data_handling import v_report_json, certification_report_json, getAssetsfromDTM, \
+    siem_alerts
 
 path_to_kafka_cert = os.path.join(os.path.abspath(os.getcwd()), 'app', 'auth_files', 'for_clients.crt')
 # path_to_kafka_cert = sys.path[0] + "\""
@@ -220,14 +221,19 @@ def get_kafka_data_print_test(kafka_topic):
                              )
     # 'python-topic' default kafka topic
     consumer.subscribe([
+        #WIP
+        "siem-certification-vulnerabilities"
+
+        #Test
         "rcra-report-topic",
         "rcra-report-topic-test",
+
+        #Unclear
         "dtm-alert",
         "vaaas-report",
         "vaaas-reports",
         "siem-alerts",
         "siem-input-events"
-        "siem-certification-vulnerabilities"
         "siem-acs-sca-detailed"
 
     ])
@@ -297,6 +303,7 @@ def get_kafka_data_print_test(kafka_topic):
                 print("--------------Kafka Received: siem-alerts -------------------------")
                 result = msg.value
                 result_json = json.load(result)
+                siem_alerts(result_json)
                 print(result_json)
                 print("-------------------------------------------------------------------------", flush=True)
             elif msg.topic == "siem - input - events":

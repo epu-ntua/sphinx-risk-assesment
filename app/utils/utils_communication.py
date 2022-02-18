@@ -23,6 +23,7 @@ load_dotenv()
 
 from ast import literal_eval
 def get_mlflow_experiment(port="5010", experiment="asset.variety.Server"):
+    # url = "http://127.0.0.1:"+port+"/invocations"
     url = "http://mlflow_code:"+port+"/invocations"
     current_dict = os.getcwd()
     dict_to_load = os.path.join(current_dict, "mlflow_info", experiment, "model", "input_example.json")
@@ -284,7 +285,8 @@ def send_risk_report(report_id, asset_id, threat_id):
 
     exposure_inference_values = this_risk_assessment_report.exposure_inference.split("|")
     objectives_inference_values = this_risk_assessment_report.objectives_inference.split("|")
-    utility_inference_values = this_risk_assessment_report.responses_inference.split("|") # TODO Change to correct field after the model is fixed itself
+    utility_inference_values = ""
+    # utility_inference_values = this_risk_assessment_report.responses_inference.split("|") # TODO Change to correct field after the model is fixed itself
     static_info_to_add = {}
     # Load static info to the report
     # exposure_set = []

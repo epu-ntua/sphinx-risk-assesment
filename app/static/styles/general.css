@@ -35,9 +35,9 @@ table{
     /*padding: 5px;*/
 }
 
-tr:nth-child(even){background-color: #f2f2f2 !important; color: black}
+/*tr:nth-child(even){background-color: #f2f2f2 !important; color: black}*/
 
-tr:hover {background-color: #232f6b !important; color: white}
+/*tr:hover {background-color: #232f6b !important; color: white}*/
 
 th {
   padding-top: 12px;

@@ -15,6 +15,11 @@ import stix2validator
 import app.utils.stix2_custom as stix2_custom
 
 # region Insert all CAPEC records from Excel
+from app.utils.utils_risk_assessment import start_risk_assessment_alert
+
+# def start_risk_assessment_alert ():
+#     pass
+
 def CAPEC_excel_insertData(capecexcelpath):
     theFile = openpyxl.load_workbook(capecexcelpath)
     currentSheet = theFile.active
@@ -512,6 +517,8 @@ def siem_alerts(report_details):
             alert_asset_ip = report_details['agent.ip']
             if db.session.query(RepoAsset.ip).filter_by(ip=alert_asset_ip).first() is not None:
                 my_asset = db.session.query(RepoAsset).filter_by(ip=alert_asset_ip).first()
+
+                start_risk_assessment_alert(my_threat.id, my_asset.id, materialisation_value=100,consequence_values=100)
                 # TODO: Initiate Risk Assessment for this asset with mat1 and the rest nodes = 100% [we will define these for each threat- in RA call]
                 other_net_assets = get_all_assets_of_network_group(my_asset)
                 if other_net_assets:
@@ -519,6 +526,7 @@ def siem_alerts(report_details):
                     for each_asset in other_net_assets:
                         if not each_asset.verified:
                             print("I'm not verified")
+                            start_risk_assessment_alert(my_threat.id, my_asset.id, materialisation_value=100,consequence_values=100)
                         # TODO: Initiate Risk Assessment for this asset with mat1 and the rest nodes = 100% [we will define these for each threat- in RA call]
                         #      if we have enough data, otherwise WHAT???
                         else:
@@ -530,37 +538,52 @@ def siem_alerts(report_details):
                                 print("Asset of the same type on the same network: {0}, type: {1}".format(each_asset.name, each_asset.type_fk))
                                 if (asset_vulnerability_value[0] >= 7.5) or ((asset_vulnerability_value[0] + asset_vulnerability_value[1])/2 >= 7.5):
                                     print("Over 7.5 : {0}".format(asset_vulnerability_value[0]))
+                                    start_risk_assessment_alert(my_threat.id, my_asset.id, materialisation_value=100)
                                     # TODO: Initiate Risk Assessment for these assets with mat1 = 100%
                                 elif 5 <= asset_vulnerability_value[0] < 7.5:
                                     print("5 to 7.5 the average: {0}".format(asset_vulnerability_value[0]))
+                                    start_risk_assessment_alert(my_threat.id, my_asset.id, materialisation_value_increase=10)
                                     # TODO: Initiate Risk Assessment for these assets with mat1 = mat1 * (1+ asset_vulnerability_value[0]/10)
                                     #   obviously it should be <=100%
                                 else:
-                                    if asset_reputation_value < 100 and each_asset.value == 3:
+                                    if asset_reputation_value < 100 and each_asset.value == 3 and asset_reputation_value != -1:
                                         print("Reputation <100 and Asset value =3: {0} - {1}".format(asset_reputation_value, each_asset.value))
+                                        start_risk_assessment_alert(my_threat.id, my_asset.id,
+                                                                    materialisation_value_increase=100)
                                         # TODO: Initiate Risk Assessment for these assets with exposure = 100%
-                                    elif asset_reputation_value < 100 and each_asset.value == 2:
+                                    elif asset_reputation_value < 100 and each_asset.value == 2 and asset_reputation_value != -1:
                                         print("Reputation <100 and Asset value =2: {0} - {1}".format(asset_reputation_value, each_asset.value))
+                                        start_risk_assessment_alert(my_threat.id, my_asset.id, exposure_value_increase=20)
                                         # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,2]  obviously <=100%
                                     else:
                                         print("Other: {0} - {1}".format(asset_reputation_value, each_asset.value))
+                                        start_risk_assessment_alert(my_threat.id, my_asset.id, exposure_value_increase=10)
                                         # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,1]  obviously <=100%
+
                             else:
                                 print("Asset of different type on the same network: {0}, type: {1}".format(each_asset.name, each_asset.type_fk))
                                 if (asset_vulnerability_value[0] >= 7.5) or ((asset_vulnerability_value[0] + asset_vulnerability_value[1])/2 >= 7.5):
                                     print("Other type of Asset - Over 7.5 : {0}".format(asset_vulnerability_value[0]))
+                                    start_risk_assessment_alert(my_threat.id, my_asset.id,
+                                                                materialisation_value_increase=10)
                                     # TODO: Initiate Risk Assessment for these assets with mat1 = mat1 * (1+ asset_vulnerability_value[0]/10)
                                     #   obviously it should be <=100%
                                 else:
-                                    if asset_reputation_value < 100 and each_asset.value == 3:
+                                    if asset_reputation_value < 100 and each_asset.value == 3 and asset_reputation_value != -1:
                                         print("Reputation <100 and Asset value =3: {0} - {1}".format(
                                             asset_reputation_value, each_asset.value))
+                                        start_risk_assessment_alert(my_threat.id, my_asset.id,
+                                                                    exposure_value=100)
                                         # TODO: Initiate Risk Assessment for these assets with exposure = 100%
-                                    elif asset_reputation_value < 100 and each_asset.value == 2:
+                                    elif asset_reputation_value < 100 and each_asset.value == 2 and asset_reputation_value != -1:
                                         print("Reputation <100 and Asset value =2: {0} - {1}".format(
                                             asset_reputation_value, each_asset.value))
+                                        start_risk_assessment_alert(my_threat.id, my_asset.id,
+                                                                    exposure_value_increase=20)
                                         # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,2]  obviously <=100%
                                     else:
+                                        start_risk_assessment_alert(my_threat.id, my_asset.id,
+                                                                    exposure_value_increase=10)
                                         print("Other: {0} - {1}".format(asset_reputation_value, each_asset.value))
                                         # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,1]  obviously <=100%
                 else:
@@ -569,6 +592,8 @@ def siem_alerts(report_details):
                     for each_asset in assets_not_on_net:
                         if not each_asset.verified:
                             print("I'm not verified")
+                            start_risk_assessment_alert(my_threat.id, my_asset.id, materialisation_value=100,
+                                                        consequence_values=100)
                             # TODO: Initiate Risk Assessment for this asset with mat1 and the rest nodes = 100% [we will define these for each threat- in RA call]
                             #      if we have enough data, otherwise WHAT???
                         else:
@@ -582,10 +607,10 @@ def siem_alerts(report_details):
                                 # TODO: Initiate Risk Assessment for these assets with mat1 = mat1 * (1+ asset_vulnerability_value[0]/10)
                                 #   obviously it should be <=100%
                             else:
-                                if asset_reputation_value < 100 and each_asset.value == 3:
+                                if asset_reputation_value < 100 and each_asset.value == 3 and asset_reputation_value != -1:
                                     print("Reputation <100 and Asset value =3: {0} - {1}".format(asset_reputation_value, each_asset.value))
                                     # TODO: Initiate Risk Assessment for these assets with exposure = 100%
-                                elif asset_reputation_value < 100 and each_asset.value == 2:
+                                elif asset_reputation_value < 100 and each_asset.value == 2 and asset_reputation_value != -1:
                                     print("Reputation <100 and Asset value =2: {0} - {1}".format(asset_reputation_value, each_asset.value))
                                     # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,2]  obviously <=100%
                                 else:
@@ -611,11 +636,11 @@ def siem_alerts(report_details):
                             # TODO: Initiate Risk Assessment for these assets with mat1 = mat1 * (1+ asset_vulnerability_value[0]/10)
                             #   obviously it should be <=100%
                         else:
-                            if asset_reputation_value < 100 and each_asset.value == 3:
+                            if asset_reputation_value < 100 and each_asset.value == 3 and asset_reputation_value != -1:
                                 print("Reputation <100 and Asset value =3: {0} - {1}".format(asset_reputation_value,
                                                                                              each_asset.value))
                                 # TODO: Initiate Risk Assessment for these assets with exposure = 100%
-                            elif asset_reputation_value < 100 and each_asset.value == 2:
+                            elif asset_reputation_value < 100 and each_asset.value == 2 and asset_reputation_value != -1:
                                 print("Reputation <100 and Asset value =2: {0} - {1}".format(asset_reputation_value,
                                                                                              each_asset.value))
                                 # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,2]  obviously <=100%

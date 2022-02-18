@@ -46,3 +46,9 @@ id,name,threat_id,materialisation_id
 47,Unauthorised disclosure of data,11,11
 48,Unauthorised modifications of data,11,11
 49,Infrastructure malfunction/damage,11,11
+50,Disruption of operations,12,12
+51,Unauthorised access/control,12,12
+52,Unauthorised disclosure of data,12,12
+53,Unauthorised modifications of data,12,12
+54,Infrastructure malfunction/damage,12,12
+55,Under maintenance,12,12

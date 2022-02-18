@@ -338,4 +338,12 @@ def rcra_db_init():
         to_add_utility_objective_relationship = RepoUtilityObjectiveRelationship(**utility_objective_relationship)
         db.session.add(to_add_utility_objective_relationship)
 
+    # Adding repo utility objectives relatinship values many to many
+    to_add_utility_objective_relationship_many_to_manys = import_fixture_from_file("repo_utility_objective_relationship_many_to_many")
+    for utility_objective_relationship_many_to_many in to_add_utility_objective_relationship_many_to_manys:
+        to_add_utility_objective_relationship_many_to_many = RepoUtilityObjectiveRelationshipManyToMany(**utility_objective_relationship_many_to_many)
+        db.session.add(to_add_utility_objective_relationship_many_to_many)
+
+
+
     db.session.commit()

@@ -10,3 +10,5 @@ id,name,threat_id
 9,Unauthorised device connected,9
 10,Abnormal netowrk activity materialised,10
 11,Suspicious human action/behaviour materialised,11
+12,Worm executed successfully,12
+13,Bruteforce Attack materialised,13

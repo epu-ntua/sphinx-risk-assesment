@@ -25,6 +25,7 @@ from app import producer
 # from app import utils
 from app.utils import stix2_custom, utils_communication, utils_database,\
     utils_risk_assessment, utils_3rd_party_data_handling
+
 db.create_all()
 db.session.commit()
 

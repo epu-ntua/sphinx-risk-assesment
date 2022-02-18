@@ -5,9 +5,11 @@ import pyAgrum as gum
 import pycid
 from sqlalchemy.exc import SQLAlchemyError
 from copy import deepcopy
-
+from app.utils.utils_risk_profiles import get_threat_exposure_value
 
 # Function to calculate the risk exposure with range 0.0 -1.0, needs updating currently
+# OBSOLETE WILL BE REMOVED AT NEXT UPDATE
+# Replaced by get_threat_exposure_value(asset_id, threat_id)
 def calculate_exposure(skill, motive, source, actor, opportunity):
     print("---------Exposure Values---------")
     print(skill)
@@ -21,7 +23,8 @@ def calculate_exposure(skill, motive, source, actor, opportunity):
 
 
 
-
+# def get_threat_exposure_value():
+#     pass
 
 
 def start_risk_assessment(threat_id, asset_id):
@@ -191,8 +194,9 @@ def start_risk_assessment(threat_id, asset_id):
     except SQLAlchemyError:
         return "SQLAlchemyError"
 
-    exposure = calculate_exposure(this_exposure.risk_skill_level, this_exposure.risk_motive, this_exposure.risk_source,
-                                  this_exposure.risk_actor, this_exposure.risk_opportunity)
+    exposure = get_threat_exposure_value(asset_id, threat_id)
+    # exposure = calculate_exposure(this_exposure.risk_skill_level, this_exposure.risk_motive, this_exposure.risk_source,
+    #                               this_exposure.risk_actor, this_exposure.risk_opportunity)
 
     print("-------------------------------------- EXPOSURE IS ----------------------------------------------", exposure)
     diag.cpt(exposureNodeId).fillWith([1 - exposure, exposure])
@@ -532,7 +536,9 @@ def start_risk_assessment(threat_id, asset_id):
     #
 
 
-def start_risk_assessment_alert(threat_id, asset_id):
+def start_risk_assessment_alert(threat_id, asset_id, exposure_value = None, materialisation_value=None, consequence_values=None, materialisation_value_increase=None, exposure_value_increase=None):
+    # Preset Values should have values from 1 - 100
+    # Value Increases are counted as percent from the previous value, for example materialisation_value_incrtease= 10 , means 10% increase from the materialisaiton value produced by the first run of risk inference
     diag = gum.InfluenceDiagram()
     try:
         this_risk_assessment = RepoRiskAssessment.query.filter_by(repo_threat_id=threat_id,
@@ -699,8 +705,9 @@ def start_risk_assessment_alert(threat_id, asset_id):
     except SQLAlchemyError:
         return "SQLAlchemyError"
 
-    exposure = calculate_exposure(this_exposure.risk_skill_level, this_exposure.risk_motive, this_exposure.risk_source,
-                                  this_exposure.risk_actor, this_exposure.risk_opportunity)
+    exposure = get_threat_exposure_value(asset_id, threat_id)
+    # exposure = calculate_exposure(this_exposure.risk_skill_level, this_exposure.risk_motive, this_exposure.risk_source,
+    #                               this_exposure.risk_actor, this_exposure.risk_opportunity)
 
     print("-------------------------------------- EXPOSURE IS ----------------------------------------------", exposure)
     diag.cpt(exposureNodeId).fillWith([1 - exposure, exposure])
@@ -935,67 +942,80 @@ def start_risk_assessment_alert(threat_id, asset_id):
 
     # ------------- Setting Evidence -------------
     # Exposure is left as is
-    # Materialisation is always positive when a threat occurs
-    for materialisation in these_materialisations:
-        nodeMatId = "mat" + str(materialisation.id)
-        ie.addEvidence(nodeMatId, [0, 1])
+    if exposure_value is not None:
+        exposureNodeId = "te" + str(this_threat.id)
+        ie.addEvidence(exposureNodeId, [exposure_value/100 - 1, exposure_value/100 ])
+
+    # Materialisation is getting values from materialisation values
+    if materialisation_value is not None:
+        for materialisation in these_materialisations:
+            nodeMatId = "mat" + str(materialisation.id)
+            ie.addEvidence(nodeMatId, [materialisation_value/100-1, materialisation_value/100])
 
     # Response is always negative when a threat occurs
     ie.addEvidence('re', [1, 0])
 
     # Consequences depend on type of threat
     # Find which threat we are handling now
-    if threat_id == "1":
-        ie.addEvidence( "con" + str(these_consequences[0].id), [0,1]) # Disrupt Operations
-        ie.addEvidence( "con" + str(these_consequences[1].id), [0,1]) # Unauthorised Control
-        ie.addEvidence( "con" + str(these_consequences[2].id), [0,1]) # Unauthorised disclosure of data
-        ie.addEvidence( "con" + str(these_consequences[3].id), [0,1]) # Unauthorised modification of data
-        ie.addEvidence( "con" + str(these_consequences[4].id), [0,1]) # Infrastructure malfunction
-    elif threat_id == "2":
-        ie.addEvidence("con" + str(these_consequences[0].id), [0,1])  # Disrupt Operations
-        ie.addEvidence("con" + str(these_consequences[1].id), [0,1])  # Unauthorised Control
-        ie.addEvidence("con" + str(these_consequences[2].id), [0,1])  # Unauthorised disclosure of data
-        ie.addEvidence("con" + str(these_consequences[3].id), [0,1])  # Unauthorised modification of data
-        ie.addEvidence("con" + str(these_consequences[4].id), [0,1])  # Infrastructure malfunction
-    elif threat_id == "3":
-        ie.addEvidence("con" + str(these_consequences[0].id), [0,1])  # Disrupt Operations
-        ie.addEvidence("con" + str(these_consequences[1].id), [0,1])  # Unauthorised modification of data
-    elif threat_id == "4":
-        ie.addEvidence("con" + str(these_consequences[0].id), [0,1])  # Disrupt Operations
-        ie.addEvidence("con" + str(these_consequences[1].id), [0,1])  # Unauthorised modification of data
-    elif threat_id == "5":
-        ie.addEvidence("con" + str(these_consequences[0].id), [0,1])  # Unauthorised disclosure of data
-    elif threat_id == "6":
-        ie.addEvidence("con" + str(these_consequences[0].id), [0,1])  # Unauthorised disclosure of data
-        ie.addEvidence("con" + str(these_consequences[1].id), [0,1])  # Unauthorised modification of data
-    elif threat_id == "7":
-        ie.addEvidence("con" + str(these_consequences[0].id), [0,1])  # Unauthorised modification of data
-    elif threat_id == "8":
-        ie.addEvidence("con" + str(these_consequences[0].id), [0,1])  # Disrupt Operations
-        ie.addEvidence("con" + str(these_consequences[1].id), [0,1])  # Unauthorised Control
-        ie.addEvidence("con" + str(these_consequences[2].id), [0,1])  # Unauthorised disclosure of data
-        ie.addEvidence("con" + str(these_consequences[3].id), [0,1])  # Unauthorised modification of data
-        ie.addEvidence("con" + str(these_consequences[4].id), [0,1])  # Infrastructure malfunction
-    elif threat_id == "9":
-        ie.addEvidence("con" + str(these_consequences[0].id), [0,1])  # Unauthorised disclosure of data
-        ie.addEvidence("con" + str(these_consequences[1].id), [0,1])  # Unauthorised modification of data
-    elif threat_id == "10":
-        # The order is different on purpose, this is how it is in the fixtures
-        ie.addEvidence("con" + str(these_consequences[1].id), [0,1])  # Unauthorised Control
-        ie.addEvidence("con" + str(these_consequences[2].id), [0,1])  # Disrupt Operations
-        ie.addEvidence("con" + str(these_consequences[3].id), [0,1])  # Unauthorised disclosure of data
-        ie.addEvidence("con" + str(these_consequences[4].id), [0,1])  # Unauthorised modification of data
-        ie.addEvidence("con" + str(these_consequences[5].id), [0,1])  # Infrastructure malfunction
-    elif threat_id == "11":
-        # The order is different on purpose, this is how it is in the fixtures
-        ie.addEvidence("con" + str(these_consequences[1].id), [0,1])  # Unauthorised Control
-        ie.addEvidence("con" + str(these_consequences[2].id), [0,1])  # Disrupt Operations
-        ie.addEvidence("con" + str(these_consequences[3].id), [0,1])  # Unauthorised disclosure of data
-        ie.addEvidence("con" + str(these_consequences[4].id), [0,1])  # Unauthorised modification of data
-        ie.addEvidence("con" + str(these_consequences[5].id), [0,1])  # Infrastructure malfunction
-    else:
-        print("-------SKIPPED------")
-        pass
+    if consequence_values is not None:
+        if threat_id == "1":
+            ie.addEvidence( "con" + str(these_consequences[0].id), [consequence_values/100 -1,consequence_values/100]) # Disrupt Operations
+            ie.addEvidence( "con" + str(these_consequences[1].id), [consequence_values/100 -1,consequence_values/100]) # Unauthorised Control
+            ie.addEvidence( "con" + str(these_consequences[2].id), [consequence_values/100 -1,consequence_values/100]) # Unauthorised disclosure of data
+            ie.addEvidence( "con" + str(these_consequences[3].id), [consequence_values/100 -1,consequence_values/100]) # Unauthorised modification of data
+            ie.addEvidence( "con" + str(these_consequences[4].id), [consequence_values/100 -1,consequence_values/100]) # Infrastructure malfunction
+        elif threat_id == "2":
+            ie.addEvidence("con" + str(these_consequences[0].id), [consequence_values/100 -1,consequence_values/100])  # Disrupt Operations
+            ie.addEvidence("con" + str(these_consequences[1].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised Control
+            ie.addEvidence("con" + str(these_consequences[2].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised disclosure of data
+            ie.addEvidence("con" + str(these_consequences[3].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised modification of data
+            ie.addEvidence("con" + str(these_consequences[4].id), [consequence_values/100 -1,consequence_values/100])  # Infrastructure malfunction
+        elif threat_id == "3":
+            ie.addEvidence("con" + str(these_consequences[0].id), [consequence_values/100 -1,consequence_values/100])  # Disrupt Operations
+            ie.addEvidence("con" + str(these_consequences[1].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised modification of data
+        elif threat_id == "4":
+            ie.addEvidence("con" + str(these_consequences[0].id), [consequence_values/100 -1,consequence_values/100])  # Disrupt Operations
+            ie.addEvidence("con" + str(these_consequences[1].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised modification of data
+        elif threat_id == "5":
+            ie.addEvidence("con" + str(these_consequences[0].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised disclosure of data
+        elif threat_id == "6":
+            ie.addEvidence("con" + str(these_consequences[0].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised disclosure of data
+            ie.addEvidence("con" + str(these_consequences[1].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised modification of data
+        elif threat_id == "7":
+            ie.addEvidence("con" + str(these_consequences[0].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised modification of data
+        elif threat_id == "8":
+            ie.addEvidence("con" + str(these_consequences[0].id), [consequence_values/100 -1,consequence_values/100])  # Disrupt Operations
+            ie.addEvidence("con" + str(these_consequences[1].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised Control
+            ie.addEvidence("con" + str(these_consequences[2].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised disclosure of data
+            ie.addEvidence("con" + str(these_consequences[3].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised modification of data
+            ie.addEvidence("con" + str(these_consequences[4].id), [consequence_values/100 -1,consequence_values/100])  # Infrastructure malfunction
+        elif threat_id == "9":
+            ie.addEvidence("con" + str(these_consequences[0].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised disclosure of data
+            ie.addEvidence("con" + str(these_consequences[1].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised modification of data
+        elif threat_id == "10":
+            # The order is different on purpose, this is how it is in the fixtures
+            ie.addEvidence("con" + str(these_consequences[1].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised Control
+            ie.addEvidence("con" + str(these_consequences[2].id), [consequence_values/100 -1,consequence_values/100])  # Disrupt Operations
+            ie.addEvidence("con" + str(these_consequences[3].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised disclosure of data
+            ie.addEvidence("con" + str(these_consequences[4].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised modification of data
+            ie.addEvidence("con" + str(these_consequences[5].id), [consequence_values/100 -1,consequence_values/100])  # Infrastructure malfunction
+        elif threat_id == "11":
+            # The order is different on purpose, this is how it is in the fixtures
+            ie.addEvidence("con" + str(these_consequences[1].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised Control
+            ie.addEvidence("con" + str(these_consequences[2].id), [consequence_values/100 -1,consequence_values/100])  # Disrupt Operations
+            ie.addEvidence("con" + str(these_consequences[3].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised disclosure of data
+            ie.addEvidence("con" + str(these_consequences[4].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised modification of data
+            ie.addEvidence("con" + str(these_consequences[5].id), [consequence_values/100 -1,consequence_values/100])  # Infrastructure malfunction
+        elif threat_id == "12":
+            # The order is different on purpose, this is how it is in the fixtures
+            ie.addEvidence("con" + str(these_consequences[1].id),[consequence_values / 100 - 1, consequence_values / 100])  # Unauthorised Control
+            ie.addEvidence("con" + str(these_consequences[2].id),[consequence_values / 100 - 1, consequence_values / 100])  # Disrupt Operations
+            ie.addEvidence("con" + str(these_consequences[3].id),[consequence_values / 100 - 1, consequence_values / 100])  # Unauthorised disclosure of data
+            ie.addEvidence("con" + str(these_consequences[4].id), [consequence_values / 100 - 1,consequence_values / 100])  # Unauthorised modification of data
+            ie.addEvidence("con" + str(these_consequences[5].id),[consequence_values / 100 - 1, consequence_values / 100])  # Infrastructure malfunction
+        else:
+            print("-------SKIPPED------")
+            pass
 
     # Impact and Obj nodes are left as is
 
@@ -1229,8 +1249,9 @@ def risk_assessment_manual(threat_id, asset_id, exposures_set, materialisations_
     except SQLAlchemyError:
         return "SQLAlchemyError"
 
-    exposure = calculate_exposure(this_exposure.risk_skill_level, this_exposure.risk_motive, this_exposure.risk_source,
-                                  this_exposure.risk_actor, this_exposure.risk_opportunity)
+    exposure = get_threat_exposure_value(asset_id, threat_id)
+    # exposure = calculate_exposure(this_exposure.risk_skill_level, this_exposure.risk_motive, this_exposure.risk_source,
+    #                               this_exposure.risk_actor, this_exposure.risk_opportunity)
 
     diag.cpt("te1").fillWith([1 - exposure, exposure])
 

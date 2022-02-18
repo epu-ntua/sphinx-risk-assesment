@@ -3,7 +3,7 @@ from multiprocessing import Process
 
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.producer import *
+from app.producer import get_kafka_data_print_test, SendKafkaReport
 from app.globals import *
 from app.utils import *
 from app.forms import *

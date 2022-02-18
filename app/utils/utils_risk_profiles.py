@@ -1,3 +1,6 @@
+import mlflow
+from mlflow.tracking import MlflowClient
+
 from app.models import *
 # from app.utils import  *
 from sqlalchemy import exists
@@ -8,8 +11,39 @@ import ast
 # region Threat Estimation calls  @@@@@@@@@@@@@
 # 1 RiskML, 2 Reputation, 3 DB, 4 DSS forecasting
 # region 1 RiskML
-from app.utils.utils_communication import get_ml_flow_info
+# from app.utils.utils_communication import get_ml_flow_info
 
+
+def get_ml_flow_info(experiment, root_dir):
+    # Search all runs under experiment id and order them by
+    # descending value of the metric 'm'
+    # root_dir = "./download_examples"
+    if not os.path.exists(root_dir):
+        os.mkdir(root_dir)
+
+    # This may need change, when run in kubernetes
+
+    client = MlflowClient(tracking_uri='http://mlflow_server:5000')
+
+
+    # for name in experiments:
+    try:
+        e = client.get_experiment_by_name(experiment)
+    except mlflow.exceptions.MlflowException:
+        return False
+    print(e.experiment_id, e.name)
+    # define / create local directory to store example
+    local_dir = os.path.join(root_dir, e.name)
+    if not os.path.exists(local_dir):
+        os.mkdir(local_dir)
+    runs = client.search_runs(e.experiment_id)
+    # print_run_info(runs)
+    print("--")
+    # download last run artifacts
+    local_path = client.download_artifacts(runs[0].info.run_id, "model/input_example.json", local_dir)
+    print("Artifacts downloaded in: {}".format(local_dir))
+    print("Artifacts: {}".format(local_dir))
+    return True
 
 def get_RiskML_value(asset_type, action_type, estimation_type, port):
     # action = {Hacking, Social, Malware, Physical, Error}
@@ -428,6 +462,7 @@ def get_RiskML_value(asset_type, action_type, estimation_type, port):
     # # TODO remove return when wanting to call the
     # return
     url = "http://mlflow_code:" + port + "/invocations"
+    # url = "http://127.0.0.1:" + port + "/invocations"
     headers = {
         'Content-Type': 'application/json'
     }
@@ -456,14 +491,14 @@ def get_Threat_metrics_BBTR(assetID, threatID):
     else:
         asset_type = ""
 
-    if db.session.query(RepoThreatMetricsReputation.id).filter(threat_description=threat_description,
+    if db.session.query(RepoThreatMetricsReputation.id).filter_by(threat_description=threat_description,
                                                                asset_type=asset_type).first() is not None:
         db_threat_metrics_record = db.session.query(RepoThreatMetricsReputation).filter_by(
             threat_description=threat_description,
             asset_type=asset_type).one()
         return db_threat_metrics_record.threat_type_in_this_asset_type_hospital
     else:
-        if db.session.query(RepoThreatMetricsReputation.id).filter(threat_description=threat_description).first() is not None:
+        if db.session.query(RepoThreatMetricsReputation.id).filter_by(threat_description=threat_description).first() is not None:
             db_threat_metrics_record = db.session.query(RepoThreatMetricsReputation).filter_by(
                 threat_description=threat_description).order_by(RepoThreatMetricsReputation.threat_timestamp.desc()).first()
             return db_threat_metrics_record.threat_description_global
@@ -497,7 +532,7 @@ def get_ThreatFactorsvaluesfromDB(assetID, threatID):
 # region return final estimation
 #     TODO: "call functions"
 
-def get_Threat_exposure_value(assetID, threatID):
+def get_threat_exposure_value(assetID, threatID):
     """ return threat exposure estimation"""
     i = 0
     value_DB = get_ThreatFactorsvaluesfromDB(assetID, threatID)
@@ -506,7 +541,7 @@ def get_Threat_exposure_value(assetID, threatID):
     else:
         value_DB = 0
     # TODO: How do we get this information?
-    value_BBTR = get_Threat_metrics_BBTR()
+    value_BBTR = get_Threat_metrics_BBTR(assetID, threatID)
     if not value_BBTR == -1:
         i += 1
     else:
@@ -519,6 +554,7 @@ def get_Threat_exposure_value(assetID, threatID):
     else:
         asset_type=""
 
+    value_ml = -1
     if threatID == 1:
         # Malware   ports = [5020]  url = "http://127.0.0.1:5020/invocations
         result = get_RiskML_value([asset_type], [], "action.Malware", "5020")
@@ -581,6 +617,22 @@ def get_Threat_exposure_value(assetID, threatID):
     elif threatID == 11:
         # hacking - Suspicious Human Action/Behaviour
         value_ml = -1
+    elif threatID == 12:
+        # Worm
+        result = get_RiskML_value([asset_type], [], "action.Malware", "5020")
+        if 0 <= result <= 1:
+            value_ml = result
+        else:
+            value_ml = -1
+    elif threatID == 13:
+        # Bruteforce
+        result = get_RiskML_value([asset_type], [], "action.Hacking", "5021")
+        result_child = get_RiskML_value([asset_type], [], "action.hacking.variety.Brute force", "5025")
+        if 0 <= result * result_child <= 1:
+            value_ml = result * result_child
+        else:
+            value_ml = -1
+
 
 
 

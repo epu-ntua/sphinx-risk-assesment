@@ -3,13 +3,15 @@
         "id": "1",
         "name": "(High) Many records leaked",
         "objective_fk": "1",
-        "alert_level": "0",
+        "objective_level": "3",
+        "alert_level": "4",
         "prob_likelihood": ""
     },
     {
         "id": "2",
         "name": "(Medium) Some records leaked",
         "objective_fk": "1",
+        "objective_level": "2",
         "alert_level": "0",
         "prob_likelihood": ""
     },
@@ -17,6 +19,7 @@
         "id": "3",
         "name": "(Low) No records leaked",
         "objective_fk": "1",
+        "objective_level": "1",
         "alert_level": "0",
         "prob_likelihood": ""
     },
@@ -24,20 +27,23 @@
         "id": "4",
         "name": "(High) Many records lost or altered",
         "objective_fk": "2",
-        "alert_level": "0",
+        "objective_level": "3",
+        "alert_level": "1",
         "prob_likelihood": ""
     },
     {
         "id": "5",
         "name": "(Medium) Some records lost or altered",
         "objective_fk": "2",
-        "alert_level": "0",
+        "objective_level": "2",
+        "alert_level": "3",
         "prob_likelihood": ""
     },
     {
         "id": "6",
         "name": "(Low) No records lost or altered",
         "objective_fk": "2",
+        "objective_level": "1",
         "alert_level": "0",
         "prob_likelihood": ""
     },
@@ -45,6 +51,7 @@
         "id": "7",
         "name": "(High) Significant disruption of services",
         "objective_fk": "3",
+        "objective_level": "3",
         "alert_level": "0",
         "prob_likelihood": ""
     },
@@ -52,6 +59,7 @@
         "id": "8",
         "name": "(Medium) Some disruption of services",
         "objective_fk": "3",
+        "objective_level": "2",
         "alert_level": "0",
         "prob_likelihood": ""
     },
@@ -59,6 +67,7 @@
         "id": "9",
         "name": "(Low) No disruption of services",
         "objective_fk": "3",
+        "objective_level": "1",
         "alert_level": "0",
         "prob_likelihood": ""
     },
@@ -66,6 +75,7 @@
         "id": "10",
         "name": "(High) Significant monetary loss",
         "objective_fk": "4",
+        "objective_level": "3",
         "alert_level": "0",
         "prob_likelihood": ""
     },
@@ -73,6 +83,7 @@
         "id": "11",
         "name": "(Medium) Some monetary loss",
         "objective_fk": "4",
+        "objective_level": "2",
         "alert_level": "0",
         "prob_likelihood": ""
     },
@@ -80,6 +91,7 @@
         "id": "12",
         "name": "(Low) No monetary loss",
         "objective_fk": "4",
+        "objective_level": "1",
         "alert_level": "0",
         "prob_likelihood": ""
     },
@@ -87,6 +99,7 @@
         "id": "13",
         "name": "(High) Fatalities are likley",
         "objective_fk": "5",
+        "objective_level": "3",
         "alert_level": "0",
         "prob_likelihood": ""
     },
@@ -94,6 +107,7 @@
         "id": "14",
         "name": "(Medium) Injuries are likely",
         "objective_fk": "5",
+        "objective_level": "2",
         "alert_level": "0",
         "prob_likelihood": ""
     },
@@ -101,6 +115,7 @@
         "id": "15",
         "name": "(Low) No injuries or fatalities likely",
         "objective_fk": "5",
+        "objective_level": "1",
         "alert_level": "0",
         "prob_likelihood": ""
     }
