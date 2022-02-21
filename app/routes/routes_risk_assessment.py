@@ -1,3 +1,5 @@
+import json
+
 from flask import render_template, request, redirect, jsonify, Response, flash
 from multiprocessing import Process
 from app.producer import *
@@ -12,7 +14,6 @@ from copy import deepcopy
 from deepdiff import DeepDiff
 
 from app.utils.utils_risk_assessment import start_risk_assessment, start_risk_assessment_alert
-
 
 
 @app.route('/repo/risk/configuration/threat/exposure/<threat_id>/', methods=['GET', 'POST'])
@@ -562,7 +563,10 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
         try:
             # repo_vulnerabilities = VulnerabilityReportVulnerabilitiesLink.query.filter_by(asset_id=asset_id).all()
             # NNEEEED TO CHECK THIS
-            repo_vulnerabilities = db.session.query(VulnerabilityReportVulnerabilitiesLink).join(CommonVulnerabilitiesAndExposures, VulnerabilityReportVulnerabilitiesLink.cve).join(RepoThreat, CommonVulnerabilitiesAndExposures.threats).filter(VulnerabilityReportVulnerabilitiesLink.asset_id == asset_id, RepoThreat.id == threat_id).all()
+            repo_vulnerabilities = db.session.query(VulnerabilityReportVulnerabilitiesLink).join(
+                CommonVulnerabilitiesAndExposures, VulnerabilityReportVulnerabilitiesLink.cve).join(RepoThreat,
+                                                                                                    CommonVulnerabilitiesAndExposures.threats).filter(
+                VulnerabilityReportVulnerabilitiesLink.asset_id == asset_id, RepoThreat.id == threat_id).all()
             # repo_vulnerabilities = VulnerabilityReportVulnerabilitiesLink.join(VulnerabilityReportVulnerabilitiesLink.cve).query.filter().all()
         except SQLAlchemyError:
             return Response("SQLAlchemyError", 500)
@@ -573,17 +577,15 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
         except SQLAlchemyError:
             return Response("SQLAlchemyError", 500)
 
-
         print("------------------------------======================================================")
 
-            #
-            # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
+        #
+        # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
 
         json_controls = convert_database_items_to_json_table(repo_controls)
 
-
         json_vulnerabilities = convert_database_items_to_json_table(repo_vulnerabilities)
-        for it,instance in enumerate(json_vulnerabilities):
+        for it, instance in enumerate(json_vulnerabilities):
             instance["cve_actual_id"] = repo_vulnerabilities[it].cve.CVEId
             print(instance, flush=True)
             print("---")
@@ -682,13 +684,13 @@ def repo_risk_configuration_impacts_risk(threat_id=1, asset_id=-1, impact_id=-1)
                 db.session.flush()
             print(to_score_entry)
             if deconstructedId[0] == "low":
-                print("Value low is: ----------" , request.form[user_input], "-------------")
+                print("Value low is: ----------", request.form[user_input], "-------------")
                 to_score_entry.low_prob = request.form[user_input]
             elif deconstructedId[0] == "medium":
-                print("Value med is: ----------" , request.form[user_input], "-------------")
+                print("Value med is: ----------", request.form[user_input], "-------------")
                 to_score_entry.med_prob = request.form[user_input]
             else:
-                print("Value high is: ----------" , request.form[user_input], "-------------")
+                print("Value high is: ----------", request.form[user_input], "-------------")
                 to_score_entry.high_prob = request.form[user_input]
 
         print("WILL SAVE NOW")
@@ -1305,7 +1307,7 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
         try:
             these_alerts = RepoObjectivesOptions.query.all()
         except SQLAlchemyError:
-            return  Response('SQLAlchemyError', 500)
+            return Response('SQLAlchemyError', 500)
 
         if this_risk_assessment.count() == 0:
             # Save the new Valid Risk Assessment
@@ -1326,6 +1328,8 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
             services_inference = ""
             impacts_inference = ""
             objectives_inference = ""
+            utility_inference = ""
+            alert_triggered = ""
 
             for key, value in risk_assessment_result.items():
                 # print("KEY IS")
@@ -1356,6 +1360,212 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
                     objectives_inference = objectives_inference + str(temp_digit) + "|" + str(
                         value.values[0]) + "|" + str(
                         value.values[1]) + "|" + str(value.values[2]) + "|"
+                elif temp_key == "util":
+                    print("[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]")
+                    print(value)
+                    print("}}}}}}}}}}}}}}}}}}}{{{{{{{{{{{{{{{{{{{")
+                    optimal_value = {}
+                    highest_values = []
+                    for index, row in value.iterrows():
+                        print(type(temp_digit))
+                        if temp_digit == "1":
+                            if index == ("0", "0"):
+                                # print(";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;")
+                                #  Optimal values is always the same 0, 0, 0,
+                                optimal_value = {"optimal_scenario": {
+                                    "confidentiality": "low",
+                                    "integrity": "low",
+                                    "availability": "low",
+                                    "probability": row[0]
+                                }}
+
+                                # Sort other values
+                                highest_values.append({
+                                    "confidentiality": "low",
+                                    "integrity": "low",
+                                    "availability": "low",
+                                    "probability": row[0]
+                                })
+                                highest_values.append({
+                                    "confidentiality": "low",
+                                    "integrity": "low",
+                                    "availability": "medium",
+                                    "probability": row[1]
+                                })
+                                highest_values.append({
+                                    "confidentiality": "low",
+                                    "integrity": "low",
+                                    "availability": "high",
+                                    "probability": row[2]
+                                })
+                                highest_values = sorted(highest_values, key=lambda k: k["probability"], reverse=True)
+                            else:
+                                # Check for each value if it is bigger than any saved value in that case save over the old one
+                                # This way we get the bigger
+                                # it is iterating over the rows values
+                                # it2 is iterating over the saved values
+                                for it in (0, 1, 2):
+                                    for it2 in (0, 1, 2):
+                                        if highest_values[it2]["probability"] < row[it]:
+                                            print("VALUES TO  UPADTRE ARE---------------------")
+                                            print(index)
+                                            print(type(row))
+                                            print(row)
+                                            print(row.index[0][1])
+                                            print(row.index[1][1])
+                                            print(row.index[2][1])
+
+                                            # Create new object to add to the list of highest values
+                                            to_add = {
+                                                "confidentiality": "",
+                                                "integrity": "",
+                                                "availability": "",
+                                                "probability": 0
+                                            }
+                                            if list(index)[0] == "0":
+                                                # highest_values[it2]["confidentiality"] = "low"
+                                                to_add["confidentiality"] = "low"
+                                            elif list(index)[0] == "1":
+                                                to_add["confidentiality"] = "medium"
+                                            elif list(index)[0] == "2":
+                                                to_add["confidentiality"] = "high"
+                                            else:
+                                                print("ERROR")
+
+                                            if list(index)[1] == "0":
+                                                to_add["integrity"] = "low"
+                                            elif list(index)[1] == "1":
+                                                to_add["integrity"] = "medium"
+                                            elif list(index)[1] == "2":
+                                                to_add["integrity"] = "high"
+                                            else:
+                                                print("ERROR")
+
+                                            if row.index[it][1] == "0":
+                                                to_add["availability"] = "low"
+                                            elif row.index[it][1] == "1":
+                                                to_add["availability"] = "medium"
+                                            elif row.index[it][1] == "2":
+                                                to_add["availability"] = "high"
+                                            else:
+                                                print("ERROR")
+
+                                            # highest_values[it2]["probability"] = row[it]
+                                            to_add["probability"] = row[it]
+
+                                            # Pop last value and move the values to keep them in ascending order
+                                            if it2 == 0:
+                                                highest_values[2] = highest_values[1]
+                                                highest_values[1] = highest_values[0]
+                                                highest_values[0] = to_add
+                                            elif it2 == 1:
+                                                highest_values[2] = highest_values[1]
+                                                highest_values[1] = to_add
+                                            elif it2 == 2:
+                                                highest_values[2] = to_add
+                                            else:
+                                                print("ERROR")
+
+                                            break
+
+                        elif temp_digit == "2":
+                            if index == ("0"):
+                                optimal_value = {"optimal_scenario": {
+                                    "monetary": "low",
+                                    "safety": "low",
+                                    "probability": row[0]
+                                }}
+
+                                highest_values.append({
+                                    "monetary": "low",
+                                    "safety": "low",
+                                    "probability": row[0]
+                                })
+
+                                highest_values.append({
+                                    "monetary": "low",
+                                    "safety": "medium",
+                                    "probability": row[1]
+                                })
+
+                                highest_values.append({
+                                    "monetary": "low",
+                                    "safety": "high",
+                                    "probability": row[2]
+                                })
+                                highest_values = sorted(highest_values, key=lambda k: k["probability"], reverse=True)
+                            else:
+                                # Check for each value if it is bigger than any saved value in that case save over the old one
+                                # This way we get the bigger
+                                # it is iterating over the rows values
+                                # it2 is iterating over the saved values
+                                for it in (0, 1, 2):
+                                    for it2 in (0, 1, 2):
+                                        if highest_values[it2]["probability"] < row[it]:
+                                            print("VALUES TO  UPADTRE ARE---------------------")
+                                            print(index)
+                                            print(type(row))
+                                            print(row)
+                                            print(row.index[0][1])
+                                            print(row.index[1][1])
+                                            print(row.index[2][1])
+
+                                            # Create new object to add to the list of highest values
+                                            to_add = {
+                                                "monetary": "",
+                                                "safety": "",
+                                                "probability": 0
+                                            }
+
+                                            if list(index)[0] == "0":
+                                                # highest_values[it2]["confidentiality"] = "low"
+                                                to_add["monetary"] = "low"
+                                            elif list(index)[0] == "1":
+                                                to_add["monetary"] = "medium"
+                                            elif list(index)[0] == "2":
+                                                to_add["monetary"] = "high"
+                                            else:
+                                                print("ERROR")
+
+                                            if row.index[it][1] == "0":
+                                                to_add["safety"] = "low"
+                                            elif row.index[it][1] == "1":
+                                                to_add["safety"] = "medium"
+                                            elif row.index[it][1] == "2":
+                                                to_add["safety"] = "high"
+                                            else:
+                                                print("ERROR")
+
+                                            # highest_values[it2]["probability"] = row[it]
+                                            to_add["probability"] = row[it]
+
+                                            # Pop last value and move the values to keep them in ascending order
+                                            if it2 == 0:
+                                                highest_values[2] = highest_values[1]
+                                                highest_values[1] = highest_values[0]
+                                                highest_values[0] = to_add
+                                            elif it2 == 1:
+                                                highest_values[2] = highest_values[1]
+                                                highest_values[1] = to_add
+                                            elif it2 == 2:
+                                                highest_values[2] = to_add
+                                            else:
+                                                print("ERROR")
+
+                                            break
+                        else:
+                            pass
+                        # print("ROW INDIVIDUALYL IS")
+                        # print(index)
+                        # print(row)
+                        # print(row[0])
+                        # print(row[1])
+                        # print(row[2])
+
+                    most_likely_values = {"most_probable_scenarios": highest_values}
+
+                    utility_inference = utility_inference + json.dumps(optimal_value) + "|" + json.dumps(
+                        most_likely_values) + "|"
 
                 # Check Objectives for alerts
                 objectives_to_check = objectives_inference.split("|")
@@ -1364,7 +1574,7 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
                     if alert.alert_level != 0:
                         if alert.objective_fk == 1:
                             pass
-                        elif  alert.objective_fk == 2:
+                        elif alert.objective_fk == 2:
                             pass
                         elif alert.objective_fk == 3:
                             pass
@@ -1380,6 +1590,56 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
                 else:
                     print("Ignore")
 
+            objectives_to_check = objectives_inference.split("|")
+            print("-------------ALL ALERTS CHECK -----------------------")
+            print(objectives_to_check)
+            for alert in these_alerts:
+                # If value is 0 then there is no alert to check
+                # alert.alert_level is wether there is an alert and the value of the alert that its triggered
+                if alert.alert_level != 0:
+                    # Accessing
+                    alert_it_to_check = 0
+                    objective_name = ""
+                    if alert.objective_fk == 1:
+                        alert_it_to_check = 0
+                        objective_name = "Confidentiality"
+                    elif alert.objective_fk == 2:
+                        alert_it_to_check = 4
+                        objective_name = "Integrity"
+                    elif alert.objective_fk == 3:
+                        alert_it_to_check = 8
+                        objective_name = "Availability"
+                    elif alert.objective_fk == 4:
+                        alert_it_to_check = 12
+                        objective_name = "Monetary"
+                    elif alert.objective_fk == 5:
+                        alert_it_to_check = 16
+                        objective_name = "Safety"
+
+                    value_to_check_against = 0
+                    if alert.alert_level == 1:
+                        value_to_check_against = 0.01
+                    elif alert.alert_level == 2:
+                        value_to_check_against = 0.1
+                    elif alert.alert_level == 3:
+                        value_to_check_against = 0.2
+                    elif alert.alert_level == 4:
+                        value_to_check_against = 0.4
+                    elif alert.alert_level == 5:
+                        value_to_check_against = 0.7
+
+                    if json.loads(
+                            objectives_to_check[alert_it_to_check + alert.objective_level]) > value_to_check_against:
+                        to_add_alert = {
+                            objective_name: {
+                                "level": alert.name,
+                                "threshold": value_to_check_against
+                            }
+                        }
+                        alert_triggered = alert_triggered + json.dumps(to_add_alert) + "|"
+                    else:
+                        pass
+
             first_risk_assessment_result = RepoRiskAssessmentReports(
                 risk_assessment_id=this_risk_assessment.id,
                 type="initial",
@@ -1390,6 +1650,8 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
                 services_inference=services_inference,
                 impacts_inference=impacts_inference,
                 objectives_inference=objectives_inference,
+                utilities_inference=utility_inference,
+                alerts_triggered = alert_triggered
             )
 
             db.session.add(first_risk_assessment_result)
@@ -1411,6 +1673,7 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
             impacts_inference = ""
             objectives_inference = ""
             utility_inference = ""
+            alert_triggered = ""
 
             print("-------------- All ITEMS ARE ------------------")
             print(risk_assessment_result.items())
@@ -1447,24 +1710,281 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
                     print("[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]")
                     print(value)
                     print("}}}}}}}}}}}}}}}}}}}{{{{{{{{{{{{{{{{{{{")
-                    utility_inference = utility_inference + str(temp_digit) + "|" + str(
-                        value.values[0]) + "|" + str(
-                        value.values[1]) + "|" + str(value.values[2]) + "|"
+                    optimal_value = {}
+                    highest_values = []
+                    for index, row in value.iterrows():
+                        print(type(temp_digit))
+                        if temp_digit == "1":
+                            if index == ("0","0"):
+                                # print(";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;")
+                                #  Optimal values is always the same 0, 0, 0,
+                                optimal_value = {"optimal_scenario": {
+                                    "confidentiality": "low",
+                                    "integrity": "low",
+                                    "availability": "low",
+                                    "probability": row[0]
+                                }}
+
+                                # Sort other values
+                                highest_values.append({
+                                    "confidentiality": "low",
+                                    "integrity": "low",
+                                    "availability": "low",
+                                    "probability": row[0]
+                                })
+                                highest_values.append({
+                                    "confidentiality": "low",
+                                    "integrity": "low",
+                                    "availability": "medium",
+                                    "probability": row[1]
+                                })
+                                highest_values.append({
+                                    "confidentiality": "low",
+                                    "integrity": "low",
+                                    "availability": "high",
+                                    "probability": row[2]
+                                })
+                                highest_values = sorted(highest_values, key=lambda k: k["probability"], reverse=True)
+                            else:
+                                # Check for each value if it is bigger than any saved value in that case save over the old one
+                                # This way we get the bigger
+                                # it is iterating over the rows values
+                                # it2 is iterating over the saved values
+                                for it in (0, 1, 2):
+                                    for it2 in (0, 1, 2):
+                                        if highest_values[it2]["probability"] < row[it]:
+                                            print("VALUES TO  UPADTRE ARE---------------------")
+                                            print(index)
+                                            print(type(row))
+                                            print(row)
+                                            print(row.index[0][1])
+                                            print(row.index[1][1])
+                                            print(row.index[2][1])
+
+                                            # Create new object to add to the list of highest values
+                                            to_add = {
+                                                "confidentiality": "",
+                                                "integrity": "",
+                                                "availability": "",
+                                                "probability": 0
+                                            }
+                                            if list(index)[0] == "0":
+                                                # highest_values[it2]["confidentiality"] = "low"
+                                                to_add["confidentiality"] = "low"
+                                            elif list(index)[0] == "1":
+                                                to_add["confidentiality"] = "medium"
+                                            elif list(index)[0] == "2":
+                                                to_add["confidentiality"] = "high"
+                                            else:
+                                                print("ERROR")
+
+                                            if list(index)[1] == "0":
+                                                to_add["integrity"] = "low"
+                                            elif list(index)[1] == "1":
+                                                to_add["integrity"] = "medium"
+                                            elif list(index)[1] == "2":
+                                                to_add["integrity"] = "high"
+                                            else:
+                                                print("ERROR")
+
+                                            if row.index[it][1] == "0":
+                                                to_add["availability"] = "low"
+                                            elif row.index[it][1] == "1":
+                                                to_add["availability"] = "medium"
+                                            elif row.index[it][1] == "2":
+                                                to_add["availability"] = "high"
+                                            else:
+                                                print("ERROR")
+
+                                            # highest_values[it2]["probability"] = row[it]
+                                            to_add["probability"] = row[it]
+
+                                            # Pop last value and move the values to keep them in ascending order
+                                            if it2 == 0:
+                                                highest_values[2] = highest_values[1]
+                                                highest_values[1] = highest_values[0]
+                                                highest_values[0] = to_add
+                                            elif it2 == 1:
+                                                highest_values[2] = highest_values[1]
+                                                highest_values[1] = to_add
+                                            elif it2 == 2:
+                                                highest_values[2] = to_add
+                                            else:
+                                                print("ERROR")
+
+
+                                            break
+
+                        elif temp_digit == "2":
+                            if index == ("0"):
+                                optimal_value = {"optimal_scenario": {
+                                    "monetary": "low",
+                                    "safety": "low",
+                                    "probability": row[0]
+                                }}
+
+                                highest_values.append({
+                                    "monetary": "low",
+                                    "safety": "low",
+                                    "probability": row[0]
+                                })
+
+
+                                highest_values.append({
+                                    "monetary": "low",
+                                    "safety": "medium",
+                                    "probability": row[1]
+                                })
+
+                                highest_values.append({
+                                    "monetary": "low",
+                                    "safety": "high",
+                                    "probability": row[2]
+                                })
+                                highest_values = sorted(highest_values, key=lambda k: k["probability"], reverse=True)
+                            else:
+                                # Check for each value if it is bigger than any saved value in that case save over the old one
+                                # This way we get the bigger
+                                # it is iterating over the rows values
+                                # it2 is iterating over the saved values
+                                for it in (0, 1, 2):
+                                    for it2 in (0, 1, 2):
+                                        if highest_values[it2]["probability"] < row[it]:
+                                            print("VALUES TO  UPADTRE ARE---------------------")
+                                            print(index)
+                                            print(type(row))
+                                            print(row)
+                                            print(row.index[0][1])
+                                            print(row.index[1][1])
+                                            print(row.index[2][1])
+
+                                            # Create new object to add to the list of highest values
+                                            to_add = {
+                                                "monetary": "",
+                                                "safety": "",
+                                                "probability": 0
+                                            }
+
+                                            if list(index)[0] == "0":
+                                                # highest_values[it2]["confidentiality"] = "low"
+                                                to_add["monetary"] = "low"
+                                            elif list(index)[0] == "1":
+                                                to_add["monetary"] = "medium"
+                                            elif list(index)[0] == "2":
+                                                to_add["monetary"] = "high"
+                                            else:
+                                                print("ERROR")
+
+                                            if row.index[it][1] == "0":
+                                                to_add["safety"] = "low"
+                                            elif row.index[it][1] == "1":
+                                                to_add["safety"] = "medium"
+                                            elif row.index[it][1] == "2":
+                                                to_add["safety"] = "high"
+                                            else:
+                                                print("ERROR")
+
+                                            # highest_values[it2]["probability"] = row[it]
+                                            to_add["probability"] = row[it]
+
+                                            # Pop last value and move the values to keep them in ascending order
+                                            if it2 == 0:
+                                                highest_values[2] = highest_values[1]
+                                                highest_values[1] = highest_values[0]
+                                                highest_values[0] = to_add
+                                            elif it2 == 1:
+                                                highest_values[2] = highest_values[1]
+                                                highest_values[1] = to_add
+                                            elif it2 == 2:
+                                                highest_values[2] = to_add
+                                            else:
+                                                print("ERROR")
+
+                                            break
+                        else:
+                            pass
+                        # print("ROW INDIVIDUALYL IS")
+                        # print(index)
+                        # print(row)
+                        # print(row[0])
+                        # print(row[1])
+                        # print(row[2])
+
+                    most_likely_values = {"most_probable_scenarios": highest_values}
+
+                    utility_inference = utility_inference + json.dumps(optimal_value) + "|" + json.dumps(most_likely_values) + "|"
                 #     materialisations_set_values = str(temp_digit)+ "|" + str(value.values(0)) + "|"
                 else:
                     print("Ignore", temp_key)
-            # TODO CHANGE UTILITY INFERENCE TO CORRECT FIELD
-            print(utility_inference)
+
+
+            # Check Objectives for alerts
+            objectives_to_check = objectives_inference.split("|")
+            print("-------------ALL ALERTS CHECK -----------------------")
+            print(objectives_to_check)
+            for alert in these_alerts:
+                # If value is 0 then there is no alert to check
+                # alert.alert_level is wether there is an alert and the value of the alert that its triggered
+                if alert.alert_level != 0:
+                    # Accessing
+                    alert_it_to_check = 0
+                    objective_name = ""
+                    if alert.objective_fk == 1:
+                        alert_it_to_check = 0
+                        objective_name = "Confidentiality"
+                    elif alert.objective_fk == 2:
+                        alert_it_to_check = 4
+                        objective_name = "Integrity"
+                    elif alert.objective_fk == 3:
+                        alert_it_to_check = 8
+                        objective_name = "Availability"
+                    elif alert.objective_fk == 4:
+                        alert_it_to_check = 12
+                        objective_name = "Monetary"
+                    elif alert.objective_fk == 5:
+                        alert_it_to_check = 16
+                        objective_name = "Safety"
+
+                    value_to_check_against =0
+                    if alert.alert_level == 1:
+                        value_to_check_against = 0.01
+                    elif alert.alert_level == 2:
+                        value_to_check_against = 0.1
+                    elif alert.alert_level == 3:
+                        value_to_check_against = 0.2
+                    elif alert.alert_level == 4:
+                        value_to_check_against = 0.4
+                    elif alert.alert_level == 5 :
+                        value_to_check_against = 0.7
+
+
+                    if json.loads(objectives_to_check[alert_it_to_check + alert.objective_level]) > value_to_check_against:
+                        to_add_alert = {
+                            objective_name : {
+                                "level" : alert.name,
+                                "threshold" : value_to_check_against
+                            }
+                        }
+                        alert_triggered = alert_triggered + json.dumps(to_add_alert) + "|"
+                    else:
+                        pass
+
+
+
+
+            # print(utility_inference)
             first_risk_assessment_result = RepoRiskAssessmentReports(
                 risk_assessment_id=this_risk_assessment.id,
-                type="baseline_report",
+                type="baseline",
                 exposure_inference=exposure_inference,
-                responses_inference = utility_inference,  # TODO HERE CHANGE
+                # responses_inference=utility_inference,  # TODO ADD Response inference
                 materialisations_inference=materialisations_inference,
                 consequences_inference=consequences_inference,
                 services_inference=services_inference,
                 impacts_inference=impacts_inference,
                 objectives_inference=objectives_inference,
+                utilities_inference=utility_inference,
+                alerts_triggered =alert_triggered
             )
 
             db.session.add(first_risk_assessment_result)
@@ -1557,7 +2077,8 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
                 check_objectives_impact_exists = 1
 
             try:
-                utility_conf = RepoUtilityObjectiveRelationship.query.group_by(RepoUtilityObjectiveRelationship.repo_utility_id)
+                utility_conf = RepoUtilityObjectiveRelationship.query.group_by(
+                    RepoUtilityObjectiveRelationship.repo_utility_id)
             except SQLAlchemyError:
                 return Response("SQLAlchemyError", 500)
 
@@ -1610,7 +2131,7 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
                                check_asset_impact_exists=check_asset_impact_exists,
                                check_objectives_impact_exists=check_objectives_impact_exists,
                                check_utility_conf_exists=check_utility_conf_exists,
-                               check_asset_service_exists = check_asset_service_exists,
+                               check_asset_service_exists=check_asset_service_exists,
                                asset_is_related=asset_is_related,
                                asset_threat_impact_count=asset_threat_impact_count,
                                objective_impact_count=objective_impact_count,

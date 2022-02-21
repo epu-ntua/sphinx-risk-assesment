@@ -524,9 +524,11 @@ def siem_alerts(report_details):
                 if other_net_assets:
                     print("Assets on this Networks")
                     for each_asset in other_net_assets:
+
+
                         if not each_asset.verified:
                             print("I'm not verified")
-                            start_risk_assessment_alert(my_threat.id, my_asset.id, materialisation_value=100,consequence_values=100)
+                            start_risk_assessment_alert(my_threat.id, each_asset.id, materialisation_value=100,consequence_values=100)
                         # TODO: Initiate Risk Assessment for this asset with mat1 and the rest nodes = 100% [we will define these for each threat- in RA call]
                         #      if we have enough data, otherwise WHAT???
                         else:
@@ -538,11 +540,11 @@ def siem_alerts(report_details):
                                 print("Asset of the same type on the same network: {0}, type: {1}".format(each_asset.name, each_asset.type_fk))
                                 if (asset_vulnerability_value[0] >= 7.5) or ((asset_vulnerability_value[0] + asset_vulnerability_value[1])/2 >= 7.5):
                                     print("Over 7.5 : {0}".format(asset_vulnerability_value[0]))
-                                    start_risk_assessment_alert(my_threat.id, my_asset.id, materialisation_value=100)
+                                    start_risk_assessment_alert(my_threat.id, each_asset.id, materialisation_value=100)
                                     # TODO: Initiate Risk Assessment for these assets with mat1 = 100%
                                 elif 5 <= asset_vulnerability_value[0] < 7.5:
                                     print("5 to 7.5 the average: {0}".format(asset_vulnerability_value[0]))
-                                    start_risk_assessment_alert(my_threat.id, my_asset.id, materialisation_value_increase=10)
+                                    start_risk_assessment_alert(my_threat.id, each_asset.id, materialisation_value_increase=10)
                                     # TODO: Initiate Risk Assessment for these assets with mat1 = mat1 * (1+ asset_vulnerability_value[0]/10)
                                     #   obviously it should be <=100%
                                 else:

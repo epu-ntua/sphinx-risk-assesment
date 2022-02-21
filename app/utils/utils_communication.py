@@ -236,10 +236,16 @@ def send_risk_report(report_id, asset_id, threat_id):
     report_to_send = {}
     report_to_send["report_info"] = {
         "date_time": this_risk_assessment_report.date_time,
-        "type": "baseline"
-        # "type": "manual"
-        # "type": "incident"
+        "type": this_risk_assessment_report.type
     }
+
+    try:
+        these_vulnerabilities = VulnerabilityReportVulnerabilitiesLink.query.filter_by(
+                        asset_id=asset_id).all()
+    except SQLAlchemyError:
+        return Response("SQLAlchemyError", 500)
+
+
 
     report_to_send["assset"] = {
         "id": this_asset.id,
@@ -248,22 +254,43 @@ def send_risk_report(report_id, asset_id, threat_id):
         "ip": this_asset.ip,
         "mac": this_asset.mac_address,
         "last_touched": this_asset.last_touch_date,
-        "vulnerabilities" : [
-            {
-                "cve_id": "CVE-2020-0645",
-                "controls": []
-            },
-            {
-                "cve_id": "CVE-2020-0774",
-                "controls": [ {"description":"Updated software",
-                               "effectiveness" : "high"
-                               }]
-            }
-        ],
+        # "vulnerabilities" : [
+        #     {
+        #         "cve_id": "CVE-2020-0645",
+        #         "controls": []
+        #     },
+        #     {
+        #         "cve_id": "CVE-2020-0774",
+        #         "controls": [ {"description":"Updated software",
+        #                        "effectiveness" : "high"
+        #                        }]
+        #     }
+        # ],
 
         # "type": this_asset.type, #aSSETS DONT HAVE TYPE SHOULD BE ADDED
         # "related_services": SHould this be added?
     }
+
+    vulnerabilities_to_add = []
+    for vulnerability in these_vulnerabilities:
+        temp_to_add = {"cve_id": vulnerability.cve.id, "controls": []}
+        try:
+            these_controls = RepoControl.query.filter_by( vulnerability_id=vulnerability.id).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        for control in these_controls:
+            temp_effectiveness = ""
+            if control.effectiveness:
+                temp_effectiveness = str(control.effectiveness)
+
+            temp_to_add["controls"].append({"description": control.name,
+                               "effectiveness": temp_effectiveness
+                               })
+
+        vulnerabilities_to_add.append(temp_to_add)
+
+    report_to_send["vulnerabilities"] = vulnerabilities_to_add
 
     report_to_send["threat"] = {
         "name": this_threat.name,
