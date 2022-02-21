@@ -936,16 +936,55 @@ def start_risk_assessment_alert(threat_id, asset_id, exposure_value = None, mate
     no_forgetting_array.append("re")
 
     # ------------- Setting Evidence -------------
+    # Setup value increase
+    # Run an initial inference to get the value that will be added after wards
+    if materialisation_value_increase is not None or exposure_value_increase is not None:
+        temp_ie = gum.ShaferShenoyLIMIDInference(diag)
+        temp_ie.makeInference()
+        if exposure_value_increase is not None:
+            temp_list = temp_ie.posterior("te" + str(this_threat.id)).tolist()
+            # print(temp_list)
+            exposure_value_to_increase = temp_list[1]*exposure_value_increase/100
+            exposure_new_evidence = temp_list[1] + exposure_value_to_increase
+            if exposure_new_evidence > 1:
+                exposure_new_evidence = 1
+
+            exposureNodeId = "te" + str(this_threat.id)
+            ie.addEvidence(exposureNodeId, [1-exposure_new_evidence, exposure_new_evidence])
+            # print("==========PREVIOUS EXP VALUE================")
+            # print(exposure_value_increase)
+
+        if materialisation_value_increase is not None:
+            temp_list = temp_ie.posterior(nodeMatId).tolist()
+            print(temp_list)
+            print(temp_ie.posterior(nodeMatId).topandas())
+            materialisation_value_to_increase = temp_list[1]*materialisation_value_increase/100
+            materialisation_new_evidence = temp_list[1] + materialisation_value_to_increase
+            if materialisation_new_evidence > 1:
+                materialisation_new_evidence = 1
+
+            for materialisation in these_materialisations:
+                nodeMatId = "mat" + str(materialisation.id)
+                # ie.addEvidence(nodeMatId, [1-0.3330799999999999, 0.3330799999999999])
+                ie.addEvidence(nodeMatId, [1-materialisation_new_evidence, materialisation_new_evidence])
+
+            print("==========PREVIOUS MAT VALUE================")
+            print(materialisation_value_to_increase)
+            print(materialisation_new_evidence)
+            print(1-materialisation_new_evidence)
+
+
+
     # Exposure is left as is
     if exposure_value is not None:
         exposureNodeId = "te" + str(this_threat.id)
-        ie.addEvidence(exposureNodeId, [exposure_value/100 - 1, exposure_value/100 ])
+        ie.addEvidence(exposureNodeId, [1 - exposure_value/100 , exposure_value/100 ])
 
     # Materialisation is getting values from materialisation values
     if materialisation_value is not None:
         for materialisation in these_materialisations:
             nodeMatId = "mat" + str(materialisation.id)
-            ie.addEvidence(nodeMatId, [materialisation_value/100-1, materialisation_value/100])
+            ie.addEvidence(nodeMatId, [1 - materialisation_value/100, materialisation_value/100])
 
     # Response is always negative when a threat occurs
     ie.addEvidence('re', [1, 0])
@@ -954,60 +993,60 @@ def start_risk_assessment_alert(threat_id, asset_id, exposure_value = None, mate
     # Find which threat we are handling now
     if consequence_values is not None:
         if threat_id == "1":
-            ie.addEvidence( "con" + str(these_consequences[0].id), [consequence_values/100 -1,consequence_values/100]) # Disrupt Operations
-            ie.addEvidence( "con" + str(these_consequences[1].id), [consequence_values/100 -1,consequence_values/100]) # Unauthorised Control
-            ie.addEvidence( "con" + str(these_consequences[2].id), [consequence_values/100 -1,consequence_values/100]) # Unauthorised disclosure of data
-            ie.addEvidence( "con" + str(these_consequences[3].id), [consequence_values/100 -1,consequence_values/100]) # Unauthorised modification of data
-            ie.addEvidence( "con" + str(these_consequences[4].id), [consequence_values/100 -1,consequence_values/100]) # Infrastructure malfunction
+            ie.addEvidence( "con" + str(these_consequences[0].id), [1 -consequence_values/100,consequence_values/100]) # Disrupt Operations
+            ie.addEvidence( "con" + str(these_consequences[1].id), [1 -consequence_values/100,consequence_values/100]) # Unauthorised Control
+            ie.addEvidence( "con" + str(these_consequences[2].id), [1 -consequence_values/100,consequence_values/100]) # Unauthorised disclosure of data
+            ie.addEvidence( "con" + str(these_consequences[3].id), [1 -consequence_values/100,consequence_values/100]) # Unauthorised modification of data
+            ie.addEvidence( "con" + str(these_consequences[4].id), [1 -consequence_values/100,consequence_values/100]) # Infrastructure malfunction
         elif threat_id == "2":
-            ie.addEvidence("con" + str(these_consequences[0].id), [consequence_values/100 -1,consequence_values/100])  # Disrupt Operations
-            ie.addEvidence("con" + str(these_consequences[1].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised Control
-            ie.addEvidence("con" + str(these_consequences[2].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised disclosure of data
-            ie.addEvidence("con" + str(these_consequences[3].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised modification of data
-            ie.addEvidence("con" + str(these_consequences[4].id), [consequence_values/100 -1,consequence_values/100])  # Infrastructure malfunction
+            ie.addEvidence("con" + str(these_consequences[0].id), [1 -consequence_values/100,consequence_values/100])  # Disrupt Operations
+            ie.addEvidence("con" + str(these_consequences[1].id), [1 -consequence_values/100,consequence_values/100])  # Unauthorised Control
+            ie.addEvidence("con" + str(these_consequences[2].id), [1 -consequence_values/100,consequence_values/100])  # Unauthorised disclosure of data
+            ie.addEvidence("con" + str(these_consequences[3].id), [1 -consequence_values/100,consequence_values/100])  # Unauthorised modification of data
+            ie.addEvidence("con" + str(these_consequences[4].id), [1 -consequence_values/100,consequence_values/100])  # Infrastructure malfunction
         elif threat_id == "3":
-            ie.addEvidence("con" + str(these_consequences[0].id), [consequence_values/100 -1,consequence_values/100])  # Disrupt Operations
-            ie.addEvidence("con" + str(these_consequences[1].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised modification of data
+            ie.addEvidence("con" + str(these_consequences[0].id), [1 -consequence_values/100,consequence_values/100])  # Disrupt Operations
+            ie.addEvidence("con" + str(these_consequences[1].id), [1 -consequence_values/100,consequence_values/100])  # Unauthorised modification of data
         elif threat_id == "4":
-            ie.addEvidence("con" + str(these_consequences[0].id), [consequence_values/100 -1,consequence_values/100])  # Disrupt Operations
-            ie.addEvidence("con" + str(these_consequences[1].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised modification of data
+            ie.addEvidence("con" + str(these_consequences[0].id), [1 -consequence_values/100,consequence_values/100])  # Disrupt Operations
+            ie.addEvidence("con" + str(these_consequences[1].id), [1 -consequence_values/100,consequence_values/100])  # Unauthorised modification of data
         elif threat_id == "5":
-            ie.addEvidence("con" + str(these_consequences[0].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised disclosure of data
+            ie.addEvidence("con" + str(these_consequences[0].id), [1 -consequence_values/100,consequence_values/100])  # Unauthorised disclosure of data
         elif threat_id == "6":
-            ie.addEvidence("con" + str(these_consequences[0].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised disclosure of data
-            ie.addEvidence("con" + str(these_consequences[1].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised modification of data
+            ie.addEvidence("con" + str(these_consequences[0].id), [1 -consequence_values/100,consequence_values/100])  # Unauthorised disclosure of data
+            ie.addEvidence("con" + str(these_consequences[1].id), [1 -consequence_values/100,consequence_values/100])  # Unauthorised modification of data
         elif threat_id == "7":
-            ie.addEvidence("con" + str(these_consequences[0].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised modification of data
+            ie.addEvidence("con" + str(these_consequences[0].id), [1 -consequence_values/100,consequence_values/100])  # Unauthorised modification of data
         elif threat_id == "8":
-            ie.addEvidence("con" + str(these_consequences[0].id), [consequence_values/100 -1,consequence_values/100])  # Disrupt Operations
-            ie.addEvidence("con" + str(these_consequences[1].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised Control
-            ie.addEvidence("con" + str(these_consequences[2].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised disclosure of data
-            ie.addEvidence("con" + str(these_consequences[3].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised modification of data
-            ie.addEvidence("con" + str(these_consequences[4].id), [consequence_values/100 -1,consequence_values/100])  # Infrastructure malfunction
+            ie.addEvidence("con" + str(these_consequences[0].id), [1 -consequence_values/100,consequence_values/100])  # Disrupt Operations
+            ie.addEvidence("con" + str(these_consequences[1].id), [1 -consequence_values/100,consequence_values/100])  # Unauthorised Control
+            ie.addEvidence("con" + str(these_consequences[2].id), [1 -consequence_values/100,consequence_values/100])  # Unauthorised disclosure of data
+            ie.addEvidence("con" + str(these_consequences[3].id), [1 -consequence_values/100,consequence_values/100])  # Unauthorised modification of data
+            ie.addEvidence("con" + str(these_consequences[4].id), [1 -consequence_values/100,consequence_values/100])  # Infrastructure malfunction
         elif threat_id == "9":
-            ie.addEvidence("con" + str(these_consequences[0].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised disclosure of data
-            ie.addEvidence("con" + str(these_consequences[1].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised modification of data
+            ie.addEvidence("con" + str(these_consequences[0].id), [1 -consequence_values/100,consequence_values/100])  # Unauthorised disclosure of data
+            ie.addEvidence("con" + str(these_consequences[1].id), [1 -consequence_values/100,consequence_values/100])  # Unauthorised modification of data
         elif threat_id == "10":
             # The order is different on purpose, this is how it is in the fixtures
-            ie.addEvidence("con" + str(these_consequences[1].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised Control
-            ie.addEvidence("con" + str(these_consequences[2].id), [consequence_values/100 -1,consequence_values/100])  # Disrupt Operations
-            ie.addEvidence("con" + str(these_consequences[3].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised disclosure of data
-            ie.addEvidence("con" + str(these_consequences[4].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised modification of data
-            ie.addEvidence("con" + str(these_consequences[5].id), [consequence_values/100 -1,consequence_values/100])  # Infrastructure malfunction
+            ie.addEvidence("con" + str(these_consequences[1].id), [1 -consequence_values/100,consequence_values/100])  # Unauthorised Control
+            ie.addEvidence("con" + str(these_consequences[2].id), [1 -consequence_values/100,consequence_values/100])  # Disrupt Operations
+            ie.addEvidence("con" + str(these_consequences[3].id), [1 -consequence_values/100,consequence_values/100])  # Unauthorised disclosure of data
+            ie.addEvidence("con" + str(these_consequences[4].id), [1 -consequence_values/100,consequence_values/100])  # Unauthorised modification of data
+            ie.addEvidence("con" + str(these_consequences[5].id), [1 -consequence_values/100,consequence_values/100])  # Infrastructure malfunction
         elif threat_id == "11":
             # The order is different on purpose, this is how it is in the fixtures
-            ie.addEvidence("con" + str(these_consequences[1].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised Control
-            ie.addEvidence("con" + str(these_consequences[2].id), [consequence_values/100 -1,consequence_values/100])  # Disrupt Operations
-            ie.addEvidence("con" + str(these_consequences[3].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised disclosure of data
-            ie.addEvidence("con" + str(these_consequences[4].id), [consequence_values/100 -1,consequence_values/100])  # Unauthorised modification of data
-            ie.addEvidence("con" + str(these_consequences[5].id), [consequence_values/100 -1,consequence_values/100])  # Infrastructure malfunction
+            ie.addEvidence("con" + str(these_consequences[1].id), [1 -consequence_values/100,consequence_values/100])  # Unauthorised Control
+            ie.addEvidence("con" + str(these_consequences[2].id), [1 -consequence_values/100,consequence_values/100])  # Disrupt Operations
+            ie.addEvidence("con" + str(these_consequences[3].id), [1 -consequence_values/100,consequence_values/100])  # Unauthorised disclosure of data
+            ie.addEvidence("con" + str(these_consequences[4].id), [1 -consequence_values/100,consequence_values/100])  # Unauthorised modification of data
+            ie.addEvidence("con" + str(these_consequences[5].id), [1 -consequence_values/100,consequence_values/100])  # Infrastructure malfunction
         elif threat_id == "12":
             # The order is different on purpose, this is how it is in the fixtures
-            ie.addEvidence("con" + str(these_consequences[1].id),[consequence_values / 100 - 1, consequence_values / 100])  # Unauthorised Control
-            ie.addEvidence("con" + str(these_consequences[2].id),[consequence_values / 100 - 1, consequence_values / 100])  # Disrupt Operations
-            ie.addEvidence("con" + str(these_consequences[3].id),[consequence_values / 100 - 1, consequence_values / 100])  # Unauthorised disclosure of data
-            ie.addEvidence("con" + str(these_consequences[4].id), [consequence_values / 100 - 1,consequence_values / 100])  # Unauthorised modification of data
-            ie.addEvidence("con" + str(these_consequences[5].id),[consequence_values / 100 - 1, consequence_values / 100])  # Infrastructure malfunction
+            ie.addEvidence("con" + str(these_consequences[1].id),[1-consequence_values/ 100 , consequence_values / 100])  # Unauthorised Control
+            ie.addEvidence("con" + str(these_consequences[2].id),[1-consequence_values/100 , consequence_values / 100])  # Disrupt Operations
+            ie.addEvidence("con" + str(these_consequences[3].id),[1-consequence_values/100, consequence_values / 100])  # Unauthorised disclosure of data
+            ie.addEvidence("con" + str(these_consequences[4].id), [1-consequence_values/100,consequence_values / 100])  # Unauthorised modification of data
+            ie.addEvidence("con" + str(these_consequences[5].id),[1-consequence_values/100, consequence_values / 100])  # Infrastructure malfunction
         else:
             print("-------SKIPPED------")
             pass

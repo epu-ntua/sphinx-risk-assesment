@@ -1660,7 +1660,9 @@ def repo_risk_assessment(threat_id=1, asset_id=-1):
         else:
             this_risk_assessment = this_risk_assessment.first()
             risk_assessment_result = start_risk_assessment(threat_id, asset_id)
-            # risk_assessment_result = start_risk_assessment_alert(threat_id, asset_id, exposure_value=100, materialisation_value=100, consequence_values=100)
+            # risk_assessment_result = start_risk_assessment_alert(threat_id, asset_id, materialisation_value_increase =10, exposure_value_increase=50)
+            # risk_assessment_result = start_risk_assessment_alert(threat_id, asset_id, exposure_value=100, materialisation_value=70, consequence_values=70)
+            # risk_assessment_result = start_risk_assessment_alert(threat_id, asset_id, exposure_value=100, materialisation_value=100, consequence_values=100, materialisation_value_increase =10, exposure_value_increase=10)
             flash('New Function run ok'.format(asset_id))
             # return redirect("/repo/risk/assessment/" + threat_id + "/asset/" + asset_id + "/")
             # print(risk_assessment_result)

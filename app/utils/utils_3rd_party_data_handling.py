@@ -524,7 +524,12 @@ def siem_alerts(report_details):
                 if other_net_assets:
                     print("Assets on this Networks")
                     for each_asset in other_net_assets:
-
+                        # Check if the asset and threat pair has a risk assessment report ready
+                        # If there isnt continue
+                        this_risk_assessment = RepoRiskAssessment.query.filter_by(repo_threat_id=my_threat.id,
+                                                                                  repo_asset_id=each_asset.id).first()
+                        if this_risk_assessment is None:
+                            continue
 
                         if not each_asset.verified:
                             print("I'm not verified")
@@ -590,8 +595,15 @@ def siem_alerts(report_details):
                                         # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,1]  obviously <=100%
                 else:
                     print("Assets on other Networks")
+                    # Check if the asset and threat pair has a risk assessment report ready
+                    # If there isnt continue
                     assets_not_on_net = get_assets_not_on_netgroup_with_threat_vuln(my_asset, my_threat.id)
                     for each_asset in assets_not_on_net:
+                        this_risk_assessment = RepoRiskAssessment.query.filter_by(repo_threat_id=my_threat.id,
+                                                                                  repo_asset_id=each_asset.id).first()
+                        if this_risk_assessment is None:
+                            continue
+
                         if not each_asset.verified:
                             print("I'm not verified")
                             start_risk_assessment_alert(my_threat.id, my_asset.id, materialisation_value=100,
