@@ -312,7 +312,8 @@ def send_risk_report(report_id, asset_id, threat_id):
 
     exposure_inference_values = this_risk_assessment_report.exposure_inference.split("|")
     objectives_inference_values = this_risk_assessment_report.objectives_inference.split("|")
-    utility_inference_values = ""
+    utility_inference_values = this_risk_assessment_report.utilities_inference.split("|")
+    alerts_triggered = this_risk_assessment_report.alerts_triggered.split("|")
     # utility_inference_values = this_risk_assessment_report.responses_inference.split("|") # TODO Change to correct field after the model is fixed itself
     static_info_to_add = {}
     # Load static info to the report
@@ -352,6 +353,17 @@ def send_risk_report(report_id, asset_id, threat_id):
             materialisation_to_add[this_materialisation.name] = materialisations_set[it + 1]
         static_info_to_add["materialisations"] = materialisation_to_add
 
+
+    alerts_to_add = []
+    for alert in alerts_triggered:
+        if alert == "":
+            continue
+        print("-------ALERT WITH ERROR")
+        print(alert)
+        print(type(alert))
+        alerts_to_add.append(json.loads(alert))
+
+
     # Need to add the other static info
     report_to_send["risk"] = {
         "static_info": static_info_to_add,
@@ -384,72 +396,80 @@ def send_risk_report(report_id, asset_id, threat_id):
                 "medium": str(objectives_inference_values[18]),
                 "high": str(objectives_inference_values[19])
             },
+            #
+            # },
             "utilities": {
-                "CIA": {
-                    "most_probable_scenarios" : [
-                        {
-                            "confidentiality" : "medium",
-                            "integrity" : "medium",
-                            "availability" : "low",
-                            "probability" : "0.2891"
-
-                        },
-                        {
-                            "confidentiality": "high",
-                            "integrity": "high",
-                            "availability": "medium",
-                            "probability": "0.2654"
-
-                        },
-                        {
-                            "confidentiality": "medium",
-                            "integrity": "medium",
-                            "availability": "medium",
-                            "probability": "0.1266"
-
-                        },
-                    ],
-                    "optimal_scenario":{
-                        "confidentiality": "low",
-                        "integrity": "low",
-                        "availability": "low",
-                        "probability": "0.0225"
-                    }
-                },
-                "Evaluation":{
-                    "most_probable_scenarios" : [
-                        {
-                            "monetary" : "low",
-                            "safety" : "low",
-                            "probability" : "0.6275"
-                        },
-                        {
-                            "monetary" : "medium",
-                            "safety" : "medium",
-                            "probability": "0.1573"
-
-                        },
-                        {
-                            "monetary" : "low",
-                            "safety" : "medium",
-                            "probability": "0.0853"
-                        },
-                    ],
-                    "optimal_scenario":{
-                        "monetary" : "low",
-                            "safety" : "low",
-                            "probability" : "0.6275"
-                    }
-                },
+                    "CIA" : { "optimal_scenario" : json.loads(utility_inference_values[0])["optimal_scenario"], "most_probable_scenarios": json.loads(utility_inference_values[1])["most_probable_scenarios"]},
+                    "Evaluation" : { "optimal_scenario" : json.loads(utility_inference_values[2])["optimal_scenario"], "most_probable_scenarios": json.loads(utility_inference_values[3])["most_probable_scenarios"]},
+                    # "Evaluation" : [json.loads(utility_inference_values[1]), json.loads(utility_inference_values[2])]
             },
-            "alerts": {
-                "objectives": {
-                    "confidentiality": {
-                        "level" : "high",
-                        "threshold" : "0.4"
-                    }
-                }
-            }
+            "alerts" : alerts_to_add,
+            # "utilities": {
+            #     "CIA": {
+            #         "most_probable_scenarios" : [
+            #             {
+            #                 "confidentiality" : "medium",
+            #                 "integrity" : "medium",
+            #                 "availability" : "low",
+            #                 "probability" : "0.2891"
+            #
+            #             },
+            #             {
+            #                 "confidentiality": "high",
+            #                 "integrity": "high",
+            #                 "availability": "medium",
+            #                 "probability": "0.2654"
+            #
+            #             },
+            #             {
+            #                 "confidentiality": "medium",
+            #                 "integrity": "medium",
+            #                 "availability": "medium",
+            #                 "probability": "0.1266"
+            #
+            #             },
+            #         ],
+            #         "optimal_scenario":{
+            #             "confidentiality": "low",
+            #             "integrity": "low",
+            #             "availability": "low",
+            #             "probability": "0.0225"
+            #         }
+            #     },
+            #     "Evaluation":{
+            #         "most_probable_scenarios" : [
+            #             {
+            #                 "monetary" : "low",
+            #                 "safety" : "low",
+            #                 "probability" : "0.6275"
+            #             },
+            #             {
+            #                 "monetary" : "medium",
+            #                 "safety" : "medium",
+            #                 "probability": "0.1573"
+            #
+            #             },
+            #             {
+            #                 "monetary" : "low",
+            #                 "safety" : "medium",
+            #                 "probability": "0.0853"
+            #             },
+            #         ],
+            #         "optimal_scenario":{
+            #             "monetary" : "low",
+            #                 "safety" : "low",
+            #                 "probability" : "0.6275"
+            #         }
+            #     },
+            # },
+            # "alerts": {
+            #     "objectives": {
+            #         "confidentiality": {
+            #             "level" : "high",
+            #             "threshold" : "0.4"
+            #         }
+            #     }
+            # }
         }
     }
 
