@@ -64,6 +64,17 @@ def mlflow_data_test():
     response = get_mlflow_experiment()
 
     print("Response is --------------", response, flush=True)
+    return Response(status=200)\
+
+@app.route('/risk/siem/alert/test/')
+def risk_siem_alert_test():
+    rep = json.loads('{"attackType":"Worm", "agent.ip":"10.10.50.41"}')
+    xx = siem_alerts(rep)
+    # response = get_mlflow_experiment()
+
+    print("Response is --------------", flush=True)
+    print(xx)
+
     return Response(status=200)
 
 @app.route('/mlflow/data/clean/test/')

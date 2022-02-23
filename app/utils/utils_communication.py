@@ -273,7 +273,7 @@ def send_risk_report(report_id, asset_id, threat_id):
 
     vulnerabilities_to_add = []
     for vulnerability in these_vulnerabilities:
-        temp_to_add = {"cve_id": vulnerability.cve.id, "controls": []}
+        temp_to_add = {"cve_id": vulnerability.cve.CVEId, "controls": []}
         try:
             these_controls = RepoControl.query.filter_by( vulnerability_id=vulnerability.id).all()
         except SQLAlchemyError:

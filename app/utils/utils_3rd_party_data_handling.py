@@ -1,7 +1,12 @@
 from copy import deepcopy
 
-from flask import flash
+from flask import flash, Response
+from kafka import KafkaProducer
+from kafka.errors import KafkaError
+from kafka.oauth import AbstractTokenProvider
 from sqlalchemy.exc import SQLAlchemyError
+
+from app.globals import GLOBAL_IP
 from app.models import *
 # from app.csv_to_json_converter_util import *
 from sqlalchemy import exists, func
@@ -15,10 +20,473 @@ import stix2validator
 import app.utils.stix2_custom as stix2_custom
 
 # region Insert all CAPEC records from Excel
-from app.utils.utils_risk_assessment import start_risk_assessment_alert
+# from app.utils.utils_communication import send_alert_info_update_needed
+# from app.producer import SendKafkaReport
+from app.utils.utils_risk_assessment import start_risk_assessment_alert, risk_assessment_save_report
+
 
 # def start_risk_assessment_alert ():
 #     pass
+
+# ################ SHOULD BE REMOVED AND USE SendKafkaReport from producer #################
+path_to_kafka_cert = os.path.join(os.path.abspath(os.getcwd()), 'app', 'auth_files', 'for_clients.crt')
+
+SM_IP = os.environ.get('SM_IP') if os.environ.get(
+    'SM_IP') else "http://sphinx-toolkit.intracom-telecom.com/SMPlatform/manager/rst"
+KAFKA_USERNAME = os.environ.get('KAFKA_USERNAME') if os.environ.get('KAFKA_USERNAME') else "kafkauser"
+KAFKA_PASSWORD = os.environ.get('KAFKA_PASSWORD') if os.environ.get('KAFKA_PASSWORD') else "kafkauser123"
+OAUTH_CLIENT_ID = os.environ.get('OAUTH_CLIENT_ID') if os.environ.get('OAUTH_CLIENT_ID') else "SIEM"
+OAUTH_TOKEN_ENDPOINT_URI = os.environ.get('OAUTH_TOKEN_ENDPOINT_URI') if os.environ.get(
+    'OAUTH_TOKEN_ENDPOINT_URI') else "http://sphinx-toolkit.intracom-telecom.com/SMPlatform/manager/rst/getKafkaToken"
+BOOTSTRAP_SERVERS = os.environ.get('BOOTSTRAP_SERVERS') if os.environ.get(
+    'BOOTSTRAP_SERVERS') else "'bootstrap.146.124.106.181.nip.io:443"
+KAFKA_CERT = os.environ.get('KAFKA_CERT')  # FULL PATH OF THE CERTIFICATE LOCATION
+
+class TokenProvider(AbstractTokenProvider):
+
+    def __init__(self):
+        self.kafka_ticket = json.loads(requests.post(SM_IP + '/KafkaAuthentication', data={'username': KAFKA_USERNAME,
+                                                                                           'password': KAFKA_PASSWORD}).text)[
+            'data']
+
+    def token(self):
+        kafka_token = \
+        json.loads(requests.get(OAUTH_TOKEN_ENDPOINT_URI, auth=(OAUTH_CLIENT_ID, self.kafka_ticket)).text)[
+            'access_token']
+
+        return kafka_token
+
+def SendKafkaReport(report, topic_to_write):
+    # return ;
+    # KAFKA CLIENT PRODUCER
+    print("Initialising Kafka Producer")
+    producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
+                             security_protocol='SASL_SSL',
+                             sasl_mechanism='OAUTHBEARER',
+                             sasl_oauth_token_provider=TokenProvider(),
+                             ssl_cafile=path_to_kafka_cert,
+                             value_serializer=lambda value: value.encode(),
+                             api_version=(2, 5, 0))
+    # print(BOOTSTRAP_SERVERS)
+    # print(os.environ.get('BOOTSTRAP_SERVERS'))
+    # # producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
+    # #                         security_protocol='SASL_SSL',
+    # #                         sasl_mechanism='OAUTHBEARER',
+    # #                         sasl_oauth_token_provider=TokenProvider(),
+    # #                         ssl_cafile= path_to_kafka_cert,
+    # #                         value_serializer=lambda value: value.encode())
+    #
+    #
+    print("Trying to send with Kafka Producer")
+    try:
+        producer.send(topic_to_write, json.dumps(report))
+    except KafkaError:
+        print("Kafka producing sending data encountered an error")
+
+    result = producer.flush()
+    print(result, flush=True)
+    producer.close()
+
+# ############################## UNITL HERE ######################################
+def send_risk_report(report_id, asset_id, threat_id):
+    try:
+        this_asset = RepoAsset.query.filter_by(id=asset_id).first()
+    except SQLAlchemyError:
+        return Response("SQLAlchemyError", 500)
+
+    try:
+        this_risk_assessment_report = RepoRiskAssessmentReports.query.filter_by(id=report_id).first()
+    except SQLAlchemyError:
+        return "SQLAlchemyError"
+
+    try:
+        this_threat = RepoThreat.query.filter_by(id=threat_id).first()
+    except SQLAlchemyError:
+        return Response("SQLAlchemyError", 500)
+
+    try:
+        this_threat_asset_exposure = RepoAssetRepoThreatRelationship.query.filter_by(repo_asset_id=asset_id,
+                                                                                     repo_threat_id=threat_id).first()
+    except SQLAlchemyError:
+        return Response("SQLAlchemyError", 500)
+
+    report_to_send = {}
+    report_to_send["report_info"] = {
+        "date_time": this_risk_assessment_report.date_time,
+        "type": this_risk_assessment_report.type
+    }
+
+    try:
+        these_vulnerabilities = VulnerabilityReportVulnerabilitiesLink.query.filter_by(
+                        asset_id=asset_id).all()
+    except SQLAlchemyError:
+        return Response("SQLAlchemyError", 500)
+
+
+
+    report_to_send["assset"] = {
+        "id": this_asset.id,
+        "name": this_asset.name,
+        # "asset_reputation": 0,  # placeholder
+        "ip": this_asset.ip,
+        "mac": this_asset.mac_address,
+        "last_touched": this_asset.last_touch_date,
+        # "vulnerabilities" : [
+        #     {
+        #         "cve_id": "CVE-2020-0645",
+        #         "controls": []
+        #     },
+        #     {
+        #         "cve_id": "CVE-2020-0774",
+        #         "controls": [ {"description":"Updated software",
+        #                        "effectiveness" : "high"
+        #                        }]
+        #     }
+        # ],
+
+        # "type": this_asset.type, #aSSETS DONT HAVE TYPE SHOULD BE ADDED
+        # "related_services": SHould this be added?
+    }
+
+    vulnerabilities_to_add = []
+    for vulnerability in these_vulnerabilities:
+        temp_to_add = {"cve_id": vulnerability.cve.CVEId, "controls": []}
+        try:
+            these_controls = RepoControl.query.filter_by( vulnerability_id=vulnerability.id).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        for control in these_controls:
+            temp_effectiveness = ""
+            if control.effectiveness:
+                temp_effectiveness = str(control.effectiveness)
+
+            temp_to_add["controls"].append({"description": control.name,
+                               "effectiveness": temp_effectiveness
+                               })
+
+        vulnerabilities_to_add.append(temp_to_add)
+
+    report_to_send["vulnerabilities"] = vulnerabilities_to_add
+
+    report_to_send["threat"] = {
+        "name": this_threat.name,
+        "capec_info": {
+            "capec_id": "",
+            "name": "",
+            "abstraction": "",
+            "likelihood": "",
+            "typical_severity": ""
+        },
+        "threat_asset_info": {
+            "skill_level": this_threat_asset_exposure.risk_skill_level,
+            "motive": this_threat_asset_exposure.risk_motive,
+            "source": this_threat_asset_exposure.risk_source,
+            "actor": this_threat_asset_exposure.risk_actor,
+            "opportunity": this_threat_asset_exposure.risk_opportunity,
+        }
+    }
+
+    exposure_inference_values = this_risk_assessment_report.exposure_inference.split("|")
+    objectives_inference_values = this_risk_assessment_report.objectives_inference.split("|")
+    utility_inference_values = this_risk_assessment_report.utilities_inference.split("|")
+    alerts_triggered = this_risk_assessment_report.alerts_triggered.split("|")
+    # utility_inference_values = this_risk_assessment_report.responses_inference.split("|") # TODO Change to correct field after the model is fixed itself
+    static_info_to_add = {}
+    # Load static info to the report
+    # exposure_set = []
+    # materialisations_set = []
+    # responses_set = []
+    # consequences_set = []
+    # services_set = []
+    # impacts_set = []
+    # objectives_set = []
+    if this_risk_assessment_report.exposure_set:
+        exposure_to_add = {}
+        exposure_set = this_risk_assessment_report.exposure_set.split("|")
+        for it in range(0, len(exposure_set) - 1, 2):
+            exposure_to_add[this_threat.name] = exposure_set[it + 1]
+
+        static_info_to_add["exposure"] = exposure_to_add
+
+    static_info_to_add = {
+        "service_insurance_check" : "1",
+        # "threat_occurance": "1",
+        # "materialisation": "1",
+        # "Unauthorised modifications of data": "1",
+        # "Under maintenance": "0",
+        # "Safety": "0",
+        # "Integrity": "0"
+    }
+    if this_risk_assessment_report.materialisations_set:
+        materialisation_to_add = {}
+        materialisations_set = this_risk_assessment_report.materialisations_set.split("|")
+        for it in range(0, len(materialisations_set) - 1, 2):
+            try:
+                this_materialisation = RepoMaterialisation.query.filter_by(id=materialisations_set[it]).first()
+            except SQLAlchemyError:
+                return Response("SQLAlchemyError", 500)
+
+            materialisation_to_add[this_materialisation.name] = materialisations_set[it + 1]
+        static_info_to_add["materialisations"] = materialisation_to_add
+
+
+    alerts_to_add = []
+    for alert in alerts_triggered:
+        if alert == "":
+            continue
+        print("-------ALERT WITH ERROR")
+        print(alert)
+        print(type(alert))
+        alerts_to_add.append(json.loads(alert))
+
+
+    # Need to add the other static info
+    report_to_send["risk"] = {
+        "static_info": static_info_to_add,
+        "exposure_threat": {
+            "occurrence": str(exposure_inference_values[1])
+        },
+        "objectives": {
+            "confidentiality": {
+                "low": str(objectives_inference_values[1]),
+                "medium": str(objectives_inference_values[2]),
+                "high": str(objectives_inference_values[3])
+            },
+            "integrity": {
+                "low": str(objectives_inference_values[5]),
+                "medium": str(objectives_inference_values[6]),
+                "high": str(objectives_inference_values[7])
+            },
+            "availability": {
+                "low": str(objectives_inference_values[9]),
+                "medium": str(objectives_inference_values[10]),
+                "high": str(objectives_inference_values[11])
+            },
+            "monetary": {
+                "low": str(objectives_inference_values[13]),
+                "medium": str(objectives_inference_values[14]),
+                "high": str(objectives_inference_values[15])
+            },
+            "safety": {
+                "low": str(objectives_inference_values[17]),
+                "medium": str(objectives_inference_values[18]),
+                "high": str(objectives_inference_values[19])
+            },
+            #
+            # },
+            "utilities": {
+                    "CIA" : { "optimal_scenario" : json.loads(utility_inference_values[0])["optimal_scenario"], "most_probable_scenarios": json.loads(utility_inference_values[1])["most_probable_scenarios"]},
+                    "Evaluation" : { "optimal_scenario" : json.loads(utility_inference_values[2])["optimal_scenario"], "most_probable_scenarios": json.loads(utility_inference_values[3])["most_probable_scenarios"]},
+                    # "Evaluation" : [json.loads(utility_inference_values[1]), json.loads(utility_inference_values[2])]
+            },
+            "alerts" : alerts_to_add,
+            # "utilities": {
+            #     "CIA": {
+            #         "most_probable_scenarios" : [
+            #             {
+            #                 "confidentiality" : "medium",
+            #                 "integrity" : "medium",
+            #                 "availability" : "low",
+            #                 "probability" : "0.2891"
+            #
+            #             },
+            #             {
+            #                 "confidentiality": "high",
+            #                 "integrity": "high",
+            #                 "availability": "medium",
+            #                 "probability": "0.2654"
+            #
+            #             },
+            #             {
+            #                 "confidentiality": "medium",
+            #                 "integrity": "medium",
+            #                 "availability": "medium",
+            #                 "probability": "0.1266"
+            #
+            #             },
+            #         ],
+            #         "optimal_scenario":{
+            #             "confidentiality": "low",
+            #             "integrity": "low",
+            #             "availability": "low",
+            #             "probability": "0.0225"
+            #         }
+            #     },
+            #     "Evaluation":{
+            #         "most_probable_scenarios" : [
+            #             {
+            #                 "monetary" : "low",
+            #                 "safety" : "low",
+            #                 "probability" : "0.6275"
+            #             },
+            #             {
+            #                 "monetary" : "medium",
+            #                 "safety" : "medium",
+            #                 "probability": "0.1573"
+            #
+            #             },
+            #             {
+            #                 "monetary" : "low",
+            #                 "safety" : "medium",
+            #                 "probability": "0.0853"
+            #             },
+            #         ],
+            #         "optimal_scenario":{
+            #             "monetary" : "low",
+            #                 "safety" : "low",
+            #                 "probability" : "0.6275"
+            #         }
+            #     },
+            # },
+            # "alerts": {
+            #     "objectives": {
+            #         "confidentiality": {
+            #             "level" : "high",
+            #             "threshold" : "0.4"
+            #         }
+            #     }
+            # }
+        }
+    }
+
+    print("----- THE REPORT IS -----")
+    print(report_to_send)
+    print(json.dumps(report_to_send))
+    with open('example_output.json', 'w', encoding='utf-8') as f:
+        json.dump(report_to_send, f, ensure_ascii=False, indent=4)
+    report_to_send = json.dumps(report_to_send)
+
+    # print(report_to_send)
+    # SendKafkaReport(report_to_send, "rcra-report-topic")
+
+
+def send_alert_new_asset(asset_id):
+    now = datetime.now()
+
+    try:
+        asset_obj = RepoAsset.query.filter_by(id=asset_id).first()
+    except SQLAlchemyError:
+        return Response("SQLAlchemyError", 500)
+
+    print("1")
+    try:
+        asset_vulnerabilities_count = VulnerabilityReportVulnerabilitiesLink.query.join(RepoAsset).filter(
+            RepoAsset.id == asset_obj.id).count()
+    except SQLAlchemyError:
+        return Response("SQLAlchemyError", 500)
+    print("2")
+    alert_to_send = {
+        "alert_type": "new_asset_detected",
+        "date_time": now.strftime("%m/%d/%Y, %H:%M:%S"),
+        "asset": {
+            "asset_ip": asset_obj.ip if asset_obj.ip else "",
+            "asset_common_id": asset_obj.common_id if asset_obj.common_id else "",
+            "asset_vulnerabilities": str(asset_vulnerabilities_count),
+        },
+        "asset_url": GLOBAL_IP + "repo/assets/" + str(asset_obj.id) + "/"
+    }
+
+    print("Alerts is --------", alert_to_send, flush=True)
+    with open('send_alert_new_asset'+ str(asset_id) +'.json', 'w', encoding='utf-8') as f:
+        json.dump(alert_to_send, f, ensure_ascii=False, indent=4)
+
+    # SendKafkaReport(alert_to_send, "rcra-report-topic")
+    return alert_to_send
+
+def send_alert_info_update_needed(asset_id=None, threat_id=None, threat_exposure_info=-1,
+                                  threat_materialisation_info=-1, threat_impact_info=-1, objective_info=-1,
+                                  utility_info=-1):
+    now = datetime.now()
+
+    try:
+        asset_obj = RepoAsset.query.filter_by(id=asset_id).first()
+    except SQLAlchemyError:
+        return Response("SQLAlchemyError", 500)
+
+    try:
+        threat_obj = RepoThreat.query.filter_by(id=threat_id).first()
+    except SQLAlchemyError:
+        return Response("SQLAlchemyError", 500)
+
+    pages_to_send = []
+    # Add exposure info in alert
+    if threat_exposure_info != -1:
+        pages_to_send.append(
+            GLOBAL_IP + "repo/risk/configuration/threat/exposure/" + str(threat_obj.id) + "/asset/" + str(asset_obj.id) + "/")
+
+    # Add mat and cons info in alert
+    if threat_materialisation_info != -1:
+        pages_to_send.append(
+            GLOBAL_IP + "repo/risk/configuration/threat/" + str(threat_obj.id) + "/asset/" + str(asset_obj.id) + "/")
+
+    # Add impact info in alert
+    if threat_impact_info != -1:
+        pages_to_send.append(
+            GLOBAL_IP + "repo/risk/configuration/impact/1/threat" + str(threat_obj.id) + "/asset/" + str(asset_obj.id) + "/")
+        pages_to_send.append(
+            GLOBAL_IP + "repo/risk/configuration/impact/2/threat" + str(threat_obj.id) + "/asset/" + str(asset_obj.id) + "/")
+        pages_to_send.append(
+            GLOBAL_IP + "repo/risk/configuration/impact/3/threat" + str(threat_obj.id) + "/asset/" + str(asset_obj.id) + "/")
+        pages_to_send.append(
+            GLOBAL_IP + "repo/risk/configuration/impact/4/threat" + str(threat_obj.id) + "/asset/" + str(asset_obj.id) + "/")
+        pages_to_send.append(
+            GLOBAL_IP + "repo/risk/configuration/impact/5/threat" + str(threat_obj.id) + "/asset/" + str(asset_obj.id) + "/")
+
+    # Add Objective info in alert
+    if objective_info != -1:
+        pages_to_send.append(GLOBAL_IP + "repo/risk/configuration/objective/1/")
+        pages_to_send.append(GLOBAL_IP + "repo/risk/configuration/objective/2/")
+        pages_to_send.append(GLOBAL_IP + "repo/risk/configuration/objective/3/")
+        pages_to_send.append(GLOBAL_IP + "repo/risk/configuration/objective/4/")
+        pages_to_send.append(GLOBAL_IP + "repo/risk/configuration/objective/5/")
+
+    # Add Utility info in alert
+    if utility_info != -1:
+        pages_to_send.append(GLOBAL_IP + "/repo/risk/configuration/utility/1/")
+        pages_to_send.append(GLOBAL_IP + "/repo/risk/configuration/utility/2/")
+
+    alert_to_send = {
+        "alert_type": "risk_assessment_info_update_needed",
+        "date_time": now.strftime("%m/%d/%Y, %H:%M:%S"),
+        "asset": {
+            "asset_ip": asset_obj.ip if asset_obj.ip else "",
+            "asset_common_id": asset_obj.common_id if asset_obj.common_id else "",
+        },
+        "threat": threat_obj.name,
+        "pages_update_url": pages_to_send
+    }
+
+    print("Alerts is --------", alert_to_send, flush=True)
+    with open('send_alert_info_update_needed' + str(asset_id) + '.json', 'w', encoding='utf-8') as f:
+        json.dump(alert_to_send, f, ensure_ascii=False, indent=4)
+    return alert_to_send
+
+
+def security_event_risk_reports(report_id):
+    now = datetime.now()
+
+    try:
+        report_obj = RepoRiskAssessmentReports.query.filter_by(id=report_id).first()
+    except SQLAlchemyError:
+        return Response("SQLAlchemyError", 500)
+
+    alert_to_send = {
+        "alert_type": "security_event_risk_reports",
+        "date_time": now.strftime("%m/%d/%Y, %H:%M:%S"),
+        "risk_reports": [
+            {
+                "report_url": GLOBAL_IP + "repo/dashboard/risk/objectives/threat/"+ report_obj.risk_assessment.repo_threat_id +"/asset/"+report_obj.risk_assessment.repo_asset_id +"/assessment/"+ report_id + "/"
+            }
+        ]
+    }
+
+    print("Alerts is --------", alert_to_send, flush=True)
+    with open('security_event_risk_reports' + report_id + '.json', 'w', encoding='utf-8') as f:
+        json.dump(alert_to_send, f, ensure_ascii=False, indent=4)
+
+
+
 
 def CAPEC_excel_insertData(capecexcelpath):
     theFile = openpyxl.load_workbook(capecexcelpath)
@@ -231,6 +699,8 @@ def v_report_json(report_name, report_details):
                 # TODO: Send alert for the new Asset to the EndUser
             except SQLAlchemyError as e:
                 db.session.rollback()
+
+            send_alert_new_asset(my_repo_asset.id)
         else:
             my_repo_asset = db.session.query(RepoAsset).filter_by(ip = my_asset_IP).first()
             my_repo_asset.mac_address = my_asset_MAC if my_asset_MAC is not None else ""
@@ -442,9 +912,11 @@ def certification_report_json(report_details):
                     try:
                         db.session.commit()
                         # flash('Asset "{}" Added Succesfully'.format(my_repo_asset.ip))
+
                         # TODO: Send alert for the new Asset to the EndUser
                     except SQLAlchemyError as e:
                         db.session.rollback()
+                    send_alert_new_asset(my_repo_asset.id)
                 else:
                     my_repo_asset = db.session.query(RepoAsset).filter_by(ip=my_asset_IP).first()
 
@@ -503,6 +975,8 @@ def getAssetsfromDTM(report_details):
         except SQLAlchemyError as e:
             db.session.rollback()
             return -1
+        send_alert_new_asset(my_db_asset.id)
+    #     TODO FLAG TO ENSURE CREATE IS CALLED ONLY ON CREATE NOT UPDATE WHICH IS FIRST IF
     return 1
 
 # endregion Insert Asset information from DTM
@@ -518,7 +992,27 @@ def siem_alerts(report_details):
             if db.session.query(RepoAsset.ip).filter_by(ip=alert_asset_ip).first() is not None:
                 my_asset = db.session.query(RepoAsset).filter_by(ip=alert_asset_ip).first()
 
-                start_risk_assessment_alert(my_threat.id, my_asset.id, materialisation_value=100,consequence_values=100)
+                print("_______MYASSETIS____________")
+                print(my_asset)
+                print("_______MYTHREATIS____________")
+                print(my_threat)
+                this_risk_assessment = RepoRiskAssessment.query.filter_by(repo_threat_id=my_threat.id,
+                                                                          repo_asset_id=my_asset.id).first()
+                if this_risk_assessment is None:
+                    pass
+                else:
+                    print("HELLO 1")
+                    risk_assessment_result = start_risk_assessment_alert(my_threat.id, my_asset.id,
+                                                                         materialisation_value=100,
+                                                                         consequence_values=100)
+                    print("HELLO 1.5")
+                    risk_assessment_saved = risk_assessment_save_report(my_threat.id, my_asset.id,
+                                                                        risk_assessment_result, "incident")
+                    send_risk_report(risk_assessment_saved.id, my_asset.id, my_threat.id)
+                    print("HELLO 2")
+                    security_event_risk_reports(risk_assessment_saved)
+
+                print("HELLO 3")
                 # TODO: Initiate Risk Assessment for this asset with mat1 and the rest nodes = 100% [we will define these for each threat- in RA call]
                 other_net_assets = get_all_assets_of_network_group(my_asset)
                 if other_net_assets:
@@ -529,13 +1023,18 @@ def siem_alerts(report_details):
                         this_risk_assessment = RepoRiskAssessment.query.filter_by(repo_threat_id=my_threat.id,
                                                                                   repo_asset_id=each_asset.id).first()
                         if this_risk_assessment is None:
+                            # TODO SEND ALERT TO UPDATE INFORMATION FOR THIS ASSET THREAT PAIR TO CONDUCT RISK ASSESSMENT
+                            send_alert_info_update_needed(asset_id=each_asset.id, threat_id=my_threat.id, threat_exposure_info=0,
+                                  threat_materialisation_info=0, threat_impact_info=0, objective_info=0,
+                                  utility_info=0)
                             continue
 
                         if not each_asset.verified:
                             print("I'm not verified")
-                            start_risk_assessment_alert(my_threat.id, each_asset.id, materialisation_value=100,consequence_values=100)
-                        # TODO: Initiate Risk Assessment for this asset with mat1 and the rest nodes = 100% [we will define these for each threat- in RA call]
-                        #      if we have enough data, otherwise WHAT???
+                            send_alert_new_asset(each_asset.id)
+                            # risk_assessment_result = start_risk_assessment_alert(my_threat.id, each_asset.id, materialisation_value=100,consequence_values=100)
+                            # risk_assessment_saved = risk_assessment_save_report(my_threat.id, my_asset.id,
+                            #                                                     risk_assessment_result, "incident_secondary")
                         else:
                             asset_reputation_value = get_asset_reputation(each_asset.common_id)
                             print(asset_reputation_value)
@@ -545,53 +1044,84 @@ def siem_alerts(report_details):
                                 print("Asset of the same type on the same network: {0}, type: {1}".format(each_asset.name, each_asset.type_fk))
                                 if (asset_vulnerability_value[0] >= 7.5) or ((asset_vulnerability_value[0] + asset_vulnerability_value[1])/2 >= 7.5):
                                     print("Over 7.5 : {0}".format(asset_vulnerability_value[0]))
-                                    start_risk_assessment_alert(my_threat.id, each_asset.id, materialisation_value=100)
+                                    risk_assessment_result = start_risk_assessment_alert(my_threat.id, each_asset.id, materialisation_value=100)
+                                    risk_assessment_saved = risk_assessment_save_report(my_threat.id, each_asset.id,
+                                                                                        risk_assessment_result, "incident_secondary")
+                                    send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
                                     # TODO: Initiate Risk Assessment for these assets with mat1 = 100%
                                 elif 5 <= asset_vulnerability_value[0] < 7.5:
                                     print("5 to 7.5 the average: {0}".format(asset_vulnerability_value[0]))
-                                    start_risk_assessment_alert(my_threat.id, each_asset.id, materialisation_value_increase=10)
+                                    risk_assessment_result = start_risk_assessment_alert(my_threat.id, each_asset.id, materialisation_value_increase=asset_vulnerability_value[0]*10)
+                                    risk_assessment_saved = risk_assessment_save_report(my_threat.id, each_asset.id,
+                                                                                        risk_assessment_result, "incident_secondary")
+                                    send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
                                     # TODO: Initiate Risk Assessment for these assets with mat1 = mat1 * (1+ asset_vulnerability_value[0]/10)
                                     #   obviously it should be <=100%
                                 else:
                                     if asset_reputation_value < 100 and each_asset.value == 3 and asset_reputation_value != -1:
                                         print("Reputation <100 and Asset value =3: {0} - {1}".format(asset_reputation_value, each_asset.value))
-                                        start_risk_assessment_alert(my_threat.id, my_asset.id,
+                                        risk_assessment_result = start_risk_assessment_alert(my_threat.id, each_asset.id,
                                                                     materialisation_value_increase=100)
+                                        risk_assessment_saved = risk_assessment_save_report(my_threat.id, each_asset.id,
+                                                                                            risk_assessment_result, "incident_secondary")
+                                        send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
                                         # TODO: Initiate Risk Assessment for these assets with exposure = 100%
                                     elif asset_reputation_value < 100 and each_asset.value == 2 and asset_reputation_value != -1:
                                         print("Reputation <100 and Asset value =2: {0} - {1}".format(asset_reputation_value, each_asset.value))
-                                        start_risk_assessment_alert(my_threat.id, my_asset.id, exposure_value_increase=20)
+                                        risk_assessment_result = start_risk_assessment_alert(my_threat.id, each_asset.id, exposure_value_increase=20)
+                                        risk_assessment_saved = risk_assessment_save_report(my_threat.id, each_asset.id,
+                                                                                            risk_assessment_result, "incident_secondary")
+                                        send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
                                         # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,2]  obviously <=100%
                                     else:
                                         print("Other: {0} - {1}".format(asset_reputation_value, each_asset.value))
-                                        start_risk_assessment_alert(my_threat.id, my_asset.id, exposure_value_increase=10)
+                                        risk_assessment_result = start_risk_assessment_alert(my_threat.id, each_asset.id, exposure_value_increase=10)
+                                        risk_assessment_saved = risk_assessment_save_report(my_threat.id, each_asset.id,
+                                                                                            risk_assessment_result, "incident_secondary")
+                                        send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
                                         # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,1]  obviously <=100%
 
                             else:
                                 print("Asset of different type on the same network: {0}, type: {1}".format(each_asset.name, each_asset.type_fk))
                                 if (asset_vulnerability_value[0] >= 7.5) or ((asset_vulnerability_value[0] + asset_vulnerability_value[1])/2 >= 7.5):
                                     print("Other type of Asset - Over 7.5 : {0}".format(asset_vulnerability_value[0]))
-                                    start_risk_assessment_alert(my_threat.id, my_asset.id,
-                                                                materialisation_value_increase=10)
+                                    risk_assessment_result = start_risk_assessment_alert(my_threat.id, each_asset.id,
+                                                                materialisation_value_increase=asset_vulnerability_value[0]*10)
+                                    risk_assessment_saved = risk_assessment_save_report(my_threat.id, each_asset.id,
+                                                                                        risk_assessment_result,
+                                                                                        "incident_secondary")
+                                    send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
                                     # TODO: Initiate Risk Assessment for these assets with mat1 = mat1 * (1+ asset_vulnerability_value[0]/10)
                                     #   obviously it should be <=100%
                                 else:
                                     if asset_reputation_value < 100 and each_asset.value == 3 and asset_reputation_value != -1:
                                         print("Reputation <100 and Asset value =3: {0} - {1}".format(
                                             asset_reputation_value, each_asset.value))
-                                        start_risk_assessment_alert(my_threat.id, my_asset.id,
+                                        risk_assessment_result = start_risk_assessment_alert(my_threat.id, each_asset.id,
                                                                     exposure_value=100)
+                                        risk_assessment_saved = risk_assessment_save_report(my_threat.id, each_asset.id,
+                                                                                           risk_assessment_result,
+                                                                                           "incident_secondary")
+                                        send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
                                         # TODO: Initiate Risk Assessment for these assets with exposure = 100%
                                     elif asset_reputation_value < 100 and each_asset.value == 2 and asset_reputation_value != -1:
                                         print("Reputation <100 and Asset value =2: {0} - {1}".format(
                                             asset_reputation_value, each_asset.value))
-                                        start_risk_assessment_alert(my_threat.id, my_asset.id,
+                                        risk_assessment_result = start_risk_assessment_alert(my_threat.id, each_asset.id,
                                                                     exposure_value_increase=20)
+                                        risk_assessment_saved = risk_assessment_save_report(my_threat.id, each_asset.id,
+                                                                                            risk_assessment_result,
+                                                                                            "incident_secondary")
+                                        send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
                                         # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,2]  obviously <=100%
                                     else:
-                                        start_risk_assessment_alert(my_threat.id, my_asset.id,
+                                        risk_assessment_result = start_risk_assessment_alert(my_threat.id, each_asset.id,
                                                                     exposure_value_increase=10)
+                                        risk_assessment_saved = risk_assessment_save_report(my_threat.id, each_asset.id,
+                                                                                            risk_assessment_result,
+                                                                                            "incident_secondary")
                                         print("Other: {0} - {1}".format(asset_reputation_value, each_asset.value))
+                                        send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
                                         # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,1]  obviously <=100%
                 else:
                     print("Assets on other Networks")
@@ -606,10 +1136,7 @@ def siem_alerts(report_details):
 
                         if not each_asset.verified:
                             print("I'm not verified")
-                            start_risk_assessment_alert(my_threat.id, my_asset.id, materialisation_value=100,
-                                                        consequence_values=100)
-                            # TODO: Initiate Risk Assessment for this asset with mat1 and the rest nodes = 100% [we will define these for each threat- in RA call]
-                            #      if we have enough data, otherwise WHAT???
+                            send_alert_new_asset(each_asset.id)
                         else:
                             asset_reputation_value = get_asset_reputation(each_asset.common_id)
                             print(asset_reputation_value)
@@ -618,17 +1145,44 @@ def siem_alerts(report_details):
                             print("Asset on different network: {0}, type: {1}".format(each_asset.name, each_asset.type_fk))
                             if (asset_vulnerability_value[0] >= 5) or ((asset_vulnerability_value[0] + asset_vulnerability_value[1])/2 >= 7.5):
                                 print("Over 5 and average 7.5 : {0}".format(asset_vulnerability_value[0]))
+                                risk_assessment_result = start_risk_assessment_alert(my_threat.id, each_asset.id,
+                                                                                     materialisation_value_increase=asset_vulnerability_value[0]*10)
+                                risk_assessment_saved = risk_assessment_save_report(my_threat.id, each_asset.id,
+                                                                                    risk_assessment_result,
+                                                                                    "incident_secondary")
+                                send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
                                 # TODO: Initiate Risk Assessment for these assets with mat1 = mat1 * (1+ asset_vulnerability_value[0]/10)
                                 #   obviously it should be <=100%
                             else:
                                 if asset_reputation_value < 100 and each_asset.value == 3 and asset_reputation_value != -1:
                                     print("Reputation <100 and Asset value =3: {0} - {1}".format(asset_reputation_value, each_asset.value))
+                                    risk_assessment_result = start_risk_assessment_alert(my_threat.id, each_asset.id,
+                                                                                         exposure_value=100
+                                                                                         )
+                                    risk_assessment_saved = risk_assessment_save_report(my_threat.id, each_asset.id,
+                                                                                        risk_assessment_result,
+                                                                                        "incident_secondary")
+                                    send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
                                     # TODO: Initiate Risk Assessment for these assets with exposure = 100%
                                 elif asset_reputation_value < 100 and each_asset.value == 2 and asset_reputation_value != -1:
                                     print("Reputation <100 and Asset value =2: {0} - {1}".format(asset_reputation_value, each_asset.value))
+                                    risk_assessment_result = start_risk_assessment_alert(my_threat.id, each_asset.id,
+                                                                                         exposure_value_increase=20
+                                                                                         )
+                                    risk_assessment_saved = risk_assessment_save_report(my_threat.id, each_asset.id,
+                                                                                        risk_assessment_result,
+                                                                                        "incident_secondary")
+                                    send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
                                     # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,2]  obviously <=100%
                                 else:
                                     print("Other: {0} - {1}".format(asset_reputation_value, each_asset.value))
+                                    risk_assessment_result = start_risk_assessment_alert(my_threat.id, each_asset.id,
+                                                                                         exposure_value_increase=10
+                                                                                         )
+                                    risk_assessment_saved = risk_assessment_save_report(my_threat.id, each_asset.id,
+                                                                                        risk_assessment_result,
+                                                                                        "incident_secondary")
+                                    send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
                                     # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,1]  obviously <=100%
             else:
                 print("No such asset")
@@ -647,19 +1201,47 @@ def siem_alerts(report_details):
                         if (asset_vulnerability_value[0] >= 5) or (
                                 (asset_vulnerability_value[0] + asset_vulnerability_value[1]) / 2 >= 7.5):
                             print("Over 5 and average 7.5 : {0}".format(asset_vulnerability_value[0]))
+                            risk_assessment_result = start_risk_assessment_alert(my_threat.id, each_asset.id,
+                                                                                 materialisation_value_increase=asset_vulnerability_value[0]*10
+                                                                                 )
+                            risk_assessment_saved = risk_assessment_save_report(my_threat.id, each_asset.id,
+                                                                                risk_assessment_result,
+                                                                                "incident_secondary")
+                            send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
                             # TODO: Initiate Risk Assessment for these assets with mat1 = mat1 * (1+ asset_vulnerability_value[0]/10)
                             #   obviously it should be <=100%
                         else:
                             if asset_reputation_value < 100 and each_asset.value == 3 and asset_reputation_value != -1:
                                 print("Reputation <100 and Asset value =3: {0} - {1}".format(asset_reputation_value,
                                                                                              each_asset.value))
+                                risk_assessment_result = start_risk_assessment_alert(my_threat.id, each_asset.id,
+                                                                                     exposure_value= 100
+                                                                                     )
+                                risk_assessment_saved = risk_assessment_save_report(my_threat.id, each_asset.id,
+                                                                                    risk_assessment_result,
+                                                                                    "incident_secondary")
+                                send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
                                 # TODO: Initiate Risk Assessment for these assets with exposure = 100%
                             elif asset_reputation_value < 100 and each_asset.value == 2 and asset_reputation_value != -1:
                                 print("Reputation <100 and Asset value =2: {0} - {1}".format(asset_reputation_value,
                                                                                              each_asset.value))
+                                risk_assessment_result = start_risk_assessment_alert(my_threat.id, each_asset.id,
+                                                                                     exposure_value_increase=20
+                                                                                     )
+                                risk_assessment_saved = risk_assessment_save_report(my_threat.id, each_asset.id,
+                                                                                    risk_assessment_result,
+                                                                                    "incident_secondary")
+                                send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
                                 # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,2]  obviously <=100%
                             else:
                                 print("Other: {0} - {1}".format(asset_reputation_value, each_asset.value))
+                                risk_assessment_result = start_risk_assessment_alert(my_threat.id, each_asset.id,
+                                                                                     exposure_value=10
+                                                                                     )
+                                risk_assessment_saved = risk_assessment_save_report(my_threat.id, each_asset.id,
+                                                                                    risk_assessment_result,
+                                                                                    "incident_secondary")
+                                send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
                                 # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,1]  obviously <=100%
         else:   # If we can not identify the threat then do nothing
             return -1
@@ -875,7 +1457,7 @@ def get_capec_recommendations(selected_cve_id):
 #     print(y)
 
 # TEST 1
-# rep = json.loads('{"attackType":"Data Integrity Violation", "agent.ip":"10.10.48.2"}')
+# rep = json.loads('{"attackType":"Data Integrity Violation", "agent.ip":"10.10.50.41"}')
 # xx = siem_alerts(rep)
 # print(xx)
 
