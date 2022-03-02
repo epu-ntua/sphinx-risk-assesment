@@ -21,7 +21,7 @@
             } else {
                 return [
                     '<a type="button" class="btn btn-primary fa fa-edit" href="/repo/dashboard/risk/objectives/threat/{{ threat_id }}/asset/{{ asset_id }}/assessment/' + row.id + '/">\n' +
-                    '<span class= "custom-font">Select specific manual assessment</span>' +
+                    '<span class= "custom-font">Select specific assessment</span>' +
                     '</a>'
                 ].join('')
             }
@@ -178,7 +178,8 @@
                             </select>
                         </div>
                         <div class="col-6">
-                            {{ risk_assessment_result["te1"] | safe }}
+                            {{ risk_assessment_result["te" + threat_id] | safe }}
+{#                            {{ temp_series | safe }}#}
                         </div>
 
                     </div>
@@ -493,7 +494,7 @@
                     </table>
                 </div>
 
-                <h3>Existing Manual Reports</h3>
+                <h3>Existing Reports</h3>
                 <table
                         id="table2"
                         data-toolbar="#toolbar"

@@ -368,6 +368,12 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, report_id=-1):
                     this_risk_assessment = RepoRiskAssessmentReports.query.filter_by(id=report_id).all()
                 except SQLAlchemyError:
                     return "SQLAlchemyError"
+            # else:
+            #     try:
+            #         this_risk_assessment = RepoRiskAssessmentReports.query.filter(RepoRiskAssessmentReports.risk_assessment.any(repo_asset_id=asset_id, repo_threat_id=threat_id)).first()
+            #     except SQLAlchemyError:
+            #         return "SQLAlchemyError"
+            #     report_id=this_risk_assessment.id
 
             this_exposure = convert_database_items_to_json_table(this_exposure)
             these_responses = convert_database_items_to_json_table(these_responses)
@@ -443,10 +449,158 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, report_id=-1):
             #  0.0000  | 0.0000  | 0.0000  |
             #         """
             risk_assessment_result = start_risk_assessment(threat_id, asset_id)
-            # print("--------------RESSSSSSSSSSSSSSUUUUUUUUUUUUUUUUUUULLLLLLLLLLLLLLLLLTTTTTTTTT-----------")
-            # print(risk_assessment_result)
-            # print("--------------RESSSSSSSSSSSSSSUUUUUUUUUUUUUUUUUUULLLLLLLLLLLLLLLLLTTTTTTTTT-----------")
-            # print(repo_threats)
+
+            # CONVERT RESULTS SAVED IN DATABASE TO FORMAT PRODUCED BY START RISK ASSESSMENT function
+
+            if report_id != -1:
+                new_risk_assessment_result = {}
+                print("--------------ACTUAL-----------")
+                print(this_risk_assessment)
+                # print(type())
+                # print(this_risk_assessment[0]["exposure_inference"])
+                exposure_inference_values = this_risk_assessment[0]["exposure_inference"].split("|")
+                materialisation_inference_values = this_risk_assessment[0]["materialisations_inference"].split("|")
+                consequence_inference_values = this_risk_assessment[0]["consequences_inference"].split("|")
+                impact_inference_values = this_risk_assessment[0]["impacts_inference"].split("|")
+                services_inference_values = this_risk_assessment[0]["services_inference"].split("|")
+                objectives_inference_values = this_risk_assessment[0]["objectives_inference"].split("|")
+                utility_inference_values = this_risk_assessment[0]["utilities_inference"].split("|")
+                alerts_triggered = this_risk_assessment[0]["alerts_triggered"].split("|")
+
+                # Exposure
+                new_risk_assessment_result["te"+exposure_inference_values[0]] = pd.Series(data={"Threat Doesnt Happen": exposure_inference_values[1], "Threat Happens" :exposure_inference_values[2]}).to_frame()
+
+                # Materialisation
+                new_risk_assessment_result["mat" +materialisation_inference_values[0]] = pd.Series(data={"Materialsiation Doesnt Happen": materialisation_inference_values[1], "Materialisation Happens" :materialisation_inference_values[2]}).to_frame()
+
+                # Consequences
+                num_consequences = len(consequence_inference_values)
+                for it in range(0, num_consequences-1, 3):
+                    new_risk_assessment_result["con" + consequence_inference_values[it]] = pd.Series(
+                        data={"Consequence Doesnt Happen": consequence_inference_values[it+1],
+                              "Consequence Happens": consequence_inference_values[it+2]}).to_frame()
+
+                # Services
+                num_services = len(services_inference_values)
+                for it in range(0, num_services - 1, 3):
+                    new_risk_assessment_result["serv" + services_inference_values[it]] = pd.Series(
+                        data={"Consequence Doesnt Happen": services_inference_values[it + 1],
+                              "Consequence Happens": services_inference_values[it + 2]}).to_frame()
+
+                # Impacts
+                new_risk_assessment_result["imp"+impact_inference_values[0]] = pd.Series(
+                    data={"Low": impact_inference_values[1],
+                          "Medium": impact_inference_values[2],
+                          "High": impact_inference_values[3],
+                          }).to_frame()
+
+                new_risk_assessment_result["imp" + impact_inference_values[4]] = pd.Series(
+                    data={"Low": impact_inference_values[5],
+                          "Medium": impact_inference_values[6],
+                          "High": impact_inference_values[7],
+                          }).to_frame()
+
+                new_risk_assessment_result["imp" + impact_inference_values[8]] = pd.Series(
+                    data={"Low": impact_inference_values[9],
+                          "Medium": impact_inference_values[10],
+                          "High": impact_inference_values[11],
+                          }).to_frame()
+
+                new_risk_assessment_result["imp" + impact_inference_values[12]] = pd.Series(
+                    data={"Low": impact_inference_values[13],
+                          "Medium": impact_inference_values[14],
+                          "High": impact_inference_values[15],
+                          }).to_frame()
+
+                new_risk_assessment_result["imp" + impact_inference_values[16]] = pd.Series(
+                    data={"Low": impact_inference_values[17],
+                          "Medium": impact_inference_values[18],
+                          "High": impact_inference_values[19],
+                          }).to_frame()
+
+                new_risk_assessment_result["imp" + impact_inference_values[20]] = pd.Series(
+                    data={"Low": impact_inference_values[21],
+                          "Medium": impact_inference_values[22],
+                          "High": impact_inference_values[23],
+                          }).to_frame()
+
+
+                # Objectives
+                new_risk_assessment_result["obj" + objectives_inference_values[0]] = pd.Series(
+                    data={"Low": objectives_inference_values[1],
+                          "Medium": objectives_inference_values[2],
+                          "High": objectives_inference_values[3],
+                          }).to_frame()
+
+                new_risk_assessment_result["obj" + objectives_inference_values[4]] = pd.Series(
+                    data={"Low": objectives_inference_values[5],
+                          "Medium": objectives_inference_values[6],
+                          "High": objectives_inference_values[7],
+                          }).to_frame()
+
+                new_risk_assessment_result["obj" + objectives_inference_values[8]] = pd.Series(
+                    data={"Low": objectives_inference_values[9],
+                          "Medium": objectives_inference_values[10],
+                          "High": objectives_inference_values[11],
+                          }).to_frame()
+
+                new_risk_assessment_result["obj" + objectives_inference_values[12]] = pd.Series(
+                    data={"Low": objectives_inference_values[13],
+                          "Medium": objectives_inference_values[14],
+                          "High": objectives_inference_values[15],
+                          }).to_frame()
+
+                new_risk_assessment_result["obj" + objectives_inference_values[16]] = pd.Series(
+                    data={"Low": objectives_inference_values[17],
+                          "Medium": objectives_inference_values[18],
+                          "High": objectives_inference_values[19],
+                          }).to_frame()
+
+                risk_assessment_result = new_risk_assessment_result
+                # to_print = pd.DataFrame(
+                #             {
+                #                 str(exposure_inference_values[0]) : exposure_inference_values[1],
+                #                 str(exposure_inference_values[0]) : exposure_inference_values[2]
+                #             }
+                #         )
+                # print(to_print)
+
+
+                # temp_exposure_df = {
+                #     "te"+str(exposure_inference_values) : pd.DataFrame(
+                #         {
+                #             str(exposure_inference_values[0]) : exposure_inference_values[1],
+                #             str(exposure_inference_values[0]) : exposure_inference_values[2]
+                #         }
+                #     )
+                # }
+                print("--------------ACTUAL-----------")
+
+                print("--------------NEW ACTUAL-----------")
+                # print(temp_exposure_df)
+                print("--------------NEW ACTUAL-----------")
+
+                print("--------------RESSSSSSSSSSSSSSUUUUUUUUUUUUUUUUUUULLLLLLLLLLLLLLLLLTTTTTTTTT-----------")
+                # print(risk_assessment_result)
+                real_te12 = risk_assessment_result["te12"]
+                print(real_te12)
+                print(real_te12.get(key= "te12"))
+                # print(type(real_te12.get([0])))
+                # print(real_te12.get([1]))
+                # print(type(real_te12.get([1])))
+
+                temp_pre_series = { 0 : 0.678, 1 :0.322}
+
+                # temp_pre_series = {"te12": ["0", 0.678], "te12" :["1" ,0.322]}
+                # temp_pre_series = {"te12": [0.678,0.322]}
+                temp_series = pd.Series(data=temp_pre_series)
+                temp_series = pd.DataFrame(temp_series.to_frame()).to_html()
+                # temp_series = {"te12": temp_series}
+                actual_temp = pd.Series(data= temp_series)
+                print("TEMPSERIES IS")
+                print(actual_temp)
+                print("--------------RESSSSSSSSSSSSSSUUUUUUUUUUUUUUUUUUULLLLLLLLLLLLLLLLLTTTTTTTTT-----------")
+                # print(repo_threats)
 
             # Table showing objective results
             try:
@@ -494,10 +648,18 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, report_id=-1):
                 "Availability": "",
                 "Safety": ""
             }
+            print(risk_assessment_result)
             for objective in these_objectives:
-                value_low = risk_assessment_result["obj" + str(objective.id)].values[0]
-                value_med = risk_assessment_result["obj" + str(objective.id)].values[1]
-                value_high = risk_assessment_result["obj" + str(objective.id)].values[2]
+
+                # Due to differences between the values loaded from report and default risk assessment need different call
+                if report_id == -1:
+                    value_low = risk_assessment_result["obj" + str(objective.id)].values[0]
+                    value_med = risk_assessment_result["obj" + str(objective.id)].values[1]
+                    value_high = risk_assessment_result["obj" + str(objective.id)].values[2]
+                else:
+                    value_low =json.loads(risk_assessment_result["obj" + str(objective.id)].values[0][0])
+                    value_med = json.loads(risk_assessment_result["obj" + str(objective.id)].values[1][0])
+                    value_high = json.loads(risk_assessment_result["obj" + str(objective.id)].values[2][0])
 
                 # print(objective.name)
                 # print(value_low)

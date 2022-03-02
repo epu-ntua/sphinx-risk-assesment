@@ -245,7 +245,7 @@ def send_risk_report(report_id, asset_id, threat_id):
     report_to_send["risk"] = {
         "static_info": static_info_to_add,
         "exposure_threat": {
-            "occurrence": str(exposure_inference_values[1])
+            "occurrence": str(exposure_inference_values[2])
         },
         "objectives": {
             "confidentiality": {
@@ -381,8 +381,7 @@ def send_alert_new_asset(asset_id):
         "date_time": now.strftime("%m/%d/%Y, %H:%M:%S"),
         "asset": {
             "asset_ip": asset_obj.ip if asset_obj.ip else "",
-            "asset_common_id": asset_obj.common_id if asset_obj.common_id else "",
-            "asset_vulnerabilities": str(asset_vulnerabilities_count),
+            "asset_common_id": asset_obj.common_id if asset_obj.common_id else ""
         },
         "asset_url": GLOBAL_IP + "repo/assets/" + str(asset_obj.id) + "/"
     }
@@ -471,18 +470,28 @@ def security_event_risk_reports(report_id):
     except SQLAlchemyError:
         return Response("SQLAlchemyError", 500)
 
+    try:
+        asset_obj = RepoAsset.query.filter_by(id=report_obj.risk_assessment.repo_asset_id).first()
+    except SQLAlchemyError:
+        return Response("SQLAlchemyError", 500)
+
     alert_to_send = {
         "alert_type": "security_event_risk_reports",
+        "alert_severity": 3,
         "date_time": now.strftime("%m/%d/%Y, %H:%M:%S"),
+        "asset": {
+            "asset_ip": asset_obj.ip if asset_obj.ip else "",
+            "asset_common_id": asset_obj.common_id if asset_obj.common_id else "",
+        },
         "risk_reports": [
             {
-                "report_url": GLOBAL_IP + "repo/dashboard/risk/objectives/threat/"+ report_obj.risk_assessment.repo_threat_id +"/asset/"+report_obj.risk_assessment.repo_asset_id +"/assessment/"+ report_id + "/"
+                "report_url": GLOBAL_IP + "repo/dashboard/risk/objectives/threat/"+ str(report_obj.risk_assessment.repo_threat_id) +"/asset/"+ str(report_obj.risk_assessment.repo_asset_id) +"/assessment/"+ str(report_id) + "/"
             }
         ]
     }
 
     print("Alerts is --------", alert_to_send, flush=True)
-    with open('security_event_risk_reports' + report_id + '.json', 'w', encoding='utf-8') as f:
+    with open('security_event_risk_reports' + str(report_id) + '.json', 'w', encoding='utf-8') as f:
         json.dump(alert_to_send, f, ensure_ascii=False, indent=4)
 
 
@@ -1010,11 +1019,13 @@ def siem_alerts(report_details):
                                                                         risk_assessment_result, "incident")
                     send_risk_report(risk_assessment_saved.id, my_asset.id, my_threat.id)
                     print("HELLO 2")
-                    security_event_risk_reports(risk_assessment_saved)
+                    security_event_risk_reports(risk_assessment_saved.id)
 
                 print("HELLO 3")
                 # TODO: Initiate Risk Assessment for this asset with mat1 and the rest nodes = 100% [we will define these for each threat- in RA call]
                 other_net_assets = get_all_assets_of_network_group(my_asset)
+                print("---- OTHER ASSETS ARE ----")
+                print(other_net_assets)
                 if other_net_assets:
                     print("Assets on this Networks")
                     for each_asset in other_net_assets:
@@ -1022,20 +1033,25 @@ def siem_alerts(report_details):
                         # If there isnt continue
                         this_risk_assessment = RepoRiskAssessment.query.filter_by(repo_threat_id=my_threat.id,
                                                                                   repo_asset_id=each_asset.id).first()
-                        if this_risk_assessment is None:
-                            # TODO SEND ALERT TO UPDATE INFORMATION FOR THIS ASSET THREAT PAIR TO CONDUCT RISK ASSESSMENT
-                            send_alert_info_update_needed(asset_id=each_asset.id, threat_id=my_threat.id, threat_exposure_info=0,
-                                  threat_materialisation_info=0, threat_impact_info=0, objective_info=0,
-                                  utility_info=0)
-                            continue
+
 
                         if not each_asset.verified:
                             print("I'm not verified")
                             send_alert_new_asset(each_asset.id)
+                            continue
                             # risk_assessment_result = start_risk_assessment_alert(my_threat.id, each_asset.id, materialisation_value=100,consequence_values=100)
                             # risk_assessment_saved = risk_assessment_save_report(my_threat.id, my_asset.id,
                             #                                                     risk_assessment_result, "incident_secondary")
                         else:
+                            if this_risk_assessment is None:
+                                # TODO SEND ALERT TO UPDATE INFORMATION FOR THIS ASSET THREAT PAIR TO CONDUCT RISK ASSESSMENT
+                                send_alert_info_update_needed(asset_id=each_asset.id, threat_id=my_threat.id,
+                                                              threat_exposure_info=0,
+                                                              threat_materialisation_info=0, threat_impact_info=0,
+                                                              objective_info=0,
+                                                              utility_info=0)
+                                continue
+
                             asset_reputation_value = get_asset_reputation(each_asset.common_id)
                             print(asset_reputation_value)
                             asset_vulnerability_value = get_asset_vulnerabilities_status(each_asset.id, my_threat.id)
@@ -1048,6 +1064,7 @@ def siem_alerts(report_details):
                                     risk_assessment_saved = risk_assessment_save_report(my_threat.id, each_asset.id,
                                                                                         risk_assessment_result, "incident_secondary")
                                     send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
+                                    security_event_risk_reports(risk_assessment_saved.id)
                                     # TODO: Initiate Risk Assessment for these assets with mat1 = 100%
                                 elif 5 <= asset_vulnerability_value[0] < 7.5:
                                     print("5 to 7.5 the average: {0}".format(asset_vulnerability_value[0]))
@@ -1055,6 +1072,7 @@ def siem_alerts(report_details):
                                     risk_assessment_saved = risk_assessment_save_report(my_threat.id, each_asset.id,
                                                                                         risk_assessment_result, "incident_secondary")
                                     send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
+                                    security_event_risk_reports(risk_assessment_saved.id)
                                     # TODO: Initiate Risk Assessment for these assets with mat1 = mat1 * (1+ asset_vulnerability_value[0]/10)
                                     #   obviously it should be <=100%
                                 else:
@@ -1065,6 +1083,7 @@ def siem_alerts(report_details):
                                         risk_assessment_saved = risk_assessment_save_report(my_threat.id, each_asset.id,
                                                                                             risk_assessment_result, "incident_secondary")
                                         send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
+                                        security_event_risk_reports(risk_assessment_saved.id)
                                         # TODO: Initiate Risk Assessment for these assets with exposure = 100%
                                     elif asset_reputation_value < 100 and each_asset.value == 2 and asset_reputation_value != -1:
                                         print("Reputation <100 and Asset value =2: {0} - {1}".format(asset_reputation_value, each_asset.value))
@@ -1072,6 +1091,7 @@ def siem_alerts(report_details):
                                         risk_assessment_saved = risk_assessment_save_report(my_threat.id, each_asset.id,
                                                                                             risk_assessment_result, "incident_secondary")
                                         send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
+                                        security_event_risk_reports(risk_assessment_saved.id)
                                         # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,2]  obviously <=100%
                                     else:
                                         print("Other: {0} - {1}".format(asset_reputation_value, each_asset.value))
@@ -1079,6 +1099,7 @@ def siem_alerts(report_details):
                                         risk_assessment_saved = risk_assessment_save_report(my_threat.id, each_asset.id,
                                                                                             risk_assessment_result, "incident_secondary")
                                         send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
+                                        security_event_risk_reports(risk_assessment_saved.id)
                                         # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,1]  obviously <=100%
 
                             else:
@@ -1091,6 +1112,7 @@ def siem_alerts(report_details):
                                                                                         risk_assessment_result,
                                                                                         "incident_secondary")
                                     send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
+                                    security_event_risk_reports(risk_assessment_saved.id)
                                     # TODO: Initiate Risk Assessment for these assets with mat1 = mat1 * (1+ asset_vulnerability_value[0]/10)
                                     #   obviously it should be <=100%
                                 else:
@@ -1103,6 +1125,7 @@ def siem_alerts(report_details):
                                                                                            risk_assessment_result,
                                                                                            "incident_secondary")
                                         send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
+                                        security_event_risk_reports(risk_assessment_saved.id)
                                         # TODO: Initiate Risk Assessment for these assets with exposure = 100%
                                     elif asset_reputation_value < 100 and each_asset.value == 2 and asset_reputation_value != -1:
                                         print("Reputation <100 and Asset value =2: {0} - {1}".format(
@@ -1113,6 +1136,7 @@ def siem_alerts(report_details):
                                                                                             risk_assessment_result,
                                                                                             "incident_secondary")
                                         send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
+                                        security_event_risk_reports(risk_assessment_saved.id)
                                         # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,2]  obviously <=100%
                                     else:
                                         risk_assessment_result = start_risk_assessment_alert(my_threat.id, each_asset.id,
@@ -1122,6 +1146,7 @@ def siem_alerts(report_details):
                                                                                             "incident_secondary")
                                         print("Other: {0} - {1}".format(asset_reputation_value, each_asset.value))
                                         send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
+                                        security_event_risk_reports(risk_assessment_saved.id)
                                         # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,1]  obviously <=100%
                 else:
                     print("Assets on other Networks")
@@ -1131,13 +1156,21 @@ def siem_alerts(report_details):
                     for each_asset in assets_not_on_net:
                         this_risk_assessment = RepoRiskAssessment.query.filter_by(repo_threat_id=my_threat.id,
                                                                                   repo_asset_id=each_asset.id).first()
-                        if this_risk_assessment is None:
-                            continue
+
 
                         if not each_asset.verified:
                             print("I'm not verified")
                             send_alert_new_asset(each_asset.id)
+                            continue
                         else:
+                            if this_risk_assessment is None:
+                                send_alert_info_update_needed(asset_id=each_asset.id, threat_id=my_threat.id,
+                                                              threat_exposure_info=0,
+                                                              threat_materialisation_info=0, threat_impact_info=0,
+                                                              objective_info=0,
+                                                              utility_info=0)
+                                continue
+
                             asset_reputation_value = get_asset_reputation(each_asset.common_id)
                             print(asset_reputation_value)
                             asset_vulnerability_value = get_asset_vulnerabilities_status(each_asset.id, my_threat.id)
@@ -1151,6 +1184,7 @@ def siem_alerts(report_details):
                                                                                     risk_assessment_result,
                                                                                     "incident_secondary")
                                 send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
+                                security_event_risk_reports(risk_assessment_saved.id)
                                 # TODO: Initiate Risk Assessment for these assets with mat1 = mat1 * (1+ asset_vulnerability_value[0]/10)
                                 #   obviously it should be <=100%
                             else:
@@ -1163,6 +1197,7 @@ def siem_alerts(report_details):
                                                                                         risk_assessment_result,
                                                                                         "incident_secondary")
                                     send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
+                                    security_event_risk_reports(risk_assessment_saved.id)
                                     # TODO: Initiate Risk Assessment for these assets with exposure = 100%
                                 elif asset_reputation_value < 100 and each_asset.value == 2 and asset_reputation_value != -1:
                                     print("Reputation <100 and Asset value =2: {0} - {1}".format(asset_reputation_value, each_asset.value))
@@ -1173,6 +1208,7 @@ def siem_alerts(report_details):
                                                                                         risk_assessment_result,
                                                                                         "incident_secondary")
                                     send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
+                                    security_event_risk_reports(risk_assessment_saved.id)
                                     # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,2]  obviously <=100%
                                 else:
                                     print("Other: {0} - {1}".format(asset_reputation_value, each_asset.value))
@@ -1183,6 +1219,7 @@ def siem_alerts(report_details):
                                                                                         risk_assessment_result,
                                                                                         "incident_secondary")
                                     send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
+                                    security_event_risk_reports(risk_assessment_saved.id)
                                     # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,1]  obviously <=100%
             else:
                 print("No such asset")
@@ -1208,6 +1245,7 @@ def siem_alerts(report_details):
                                                                                 risk_assessment_result,
                                                                                 "incident_secondary")
                             send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
+                            security_event_risk_reports(risk_assessment_saved.id)
                             # TODO: Initiate Risk Assessment for these assets with mat1 = mat1 * (1+ asset_vulnerability_value[0]/10)
                             #   obviously it should be <=100%
                         else:
@@ -1221,6 +1259,7 @@ def siem_alerts(report_details):
                                                                                     risk_assessment_result,
                                                                                     "incident_secondary")
                                 send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
+                                security_event_risk_reports(risk_assessment_saved.id)
                                 # TODO: Initiate Risk Assessment for these assets with exposure = 100%
                             elif asset_reputation_value < 100 and each_asset.value == 2 and asset_reputation_value != -1:
                                 print("Reputation <100 and Asset value =2: {0} - {1}".format(asset_reputation_value,
@@ -1232,6 +1271,7 @@ def siem_alerts(report_details):
                                                                                     risk_assessment_result,
                                                                                     "incident_secondary")
                                 send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
+                                security_event_risk_reports(risk_assessment_saved.id)
                                 # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,2]  obviously <=100%
                             else:
                                 print("Other: {0} - {1}".format(asset_reputation_value, each_asset.value))
@@ -1242,6 +1282,7 @@ def siem_alerts(report_details):
                                                                                     risk_assessment_result,
                                                                                     "incident_secondary")
                                 send_risk_report(risk_assessment_saved.id, each_asset.id, my_threat.id)
+                                security_event_risk_reports(risk_assessment_saved.id)
                                 # TODO: Initiate Risk Assessment for these assets with [exposure = exposure * 1,1]  obviously <=100%
         else:   # If we can not identify the threat then do nothing
             return -1
@@ -1469,5 +1510,9 @@ def get_capec_recommendations(selected_cve_id):
 # xx = get_asset_vulnerabilities_status(3, 7)
 # print(xx)
 
+# send_alert_new_asset(7)
+security_event_risk_reports(8)
+security_event_risk_reports(9)
+security_event_risk_reports(10)
 # endregion test Area
 

@@ -77,6 +77,7 @@ def risk_siem_alert_test():
 
     return Response(status=200)
 
+
 @app.route('/mlflow/data/clean/test/')
 def mlflow_data_clean_test():
     result = get_RiskML_value([], [], "action.Hacking", "5021")

@@ -2179,7 +2179,13 @@ def view_repo_risk_reports():
             materialisations_list = each_report.materialisations_inference.split("|")
             materialisations_list.pop()
             print(materialisations_list)
+            json_detailed_report_to_add["exposure"] = []
             json_detailed_report_to_add["materialisations"] = []
+            json_detailed_report_to_add["consequences"] = []
+            json_detailed_report_to_add["impacts"] = []
+            json_detailed_report_to_add["objectives"] = []
+            json_detailed_report_to_add["utilities"] = []
+            json_detailed_report_to_add["alerts"] = []
 
             for custom_it_mat in range(0, len(materialisations_list), 3):
                 this_mat_name = RepoMaterialisation.query.filter_by(
@@ -2187,6 +2193,7 @@ def view_repo_risk_reports():
                 json_detailed_report_to_add["materialisations"].append(
                     {"name": this_mat_name, "occurs": materialisations_list[custom_it_mat + 1],
                      "Nothing": materialisations_list[custom_it_mat + 2]})
+
 
             json_reports[custom_it]["detailed"] = json_detailed_report_to_add
             custom_it = custom_it + 1

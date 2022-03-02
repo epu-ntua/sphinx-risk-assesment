@@ -27,7 +27,8 @@
                 {#'<i class="fa fa-edit"></i>',#}
                 {#'</a>  ',#}
                 '<button type="button" class="btn btn-primary fa fa-edit" data-toggle="modal" data-target="#editModal">\n' +
-                '<span class= "custom-font">Verification & Edit</span>' +
+                '<span class= "custom-font"></span>' +
+                {#'<span class= "custom-font">Verification & EditVerification & Edit</span>' +#}
                 '</button>',
 
             ].join('')
@@ -39,7 +40,8 @@
             if (random_test % 2 == 0) {
                 return [
                     '<a href="/repo/assets/threats-relations/1/" style="background-color: #ff1a1a; color: #ffffff" type="button" class="btn btn-primary fa fa-edit">\n' +
-                    '<span class= "custom-font">Security Protocol</span>' +
+                    '<span class= "custom-font"></span>' +
+                    {#'<span class= "custom-font">Security Protocol</span>' +#}
                     '</a>'
                 ].join('')
             } else {
@@ -59,7 +61,8 @@
                 {#'<i class="fa fa-edit"></i>',#}
                 {#'</a>  ',#}
                 '<a href="' + href_custom + '" style="background-color: #00cc00; color: #ffffff" type="button" class="btn btn-primary fa fa-edit">\n' +
-                '<span class= "custom-font">Edit Organisation Functions Relations</span>' +
+                '<span class= "custom-font"></span>' +
+                {#'<span class= "custom-font">Edit Organisation Functions Relations</span>' +#}
                 '</a>'
             ].join('')
         }
@@ -169,6 +172,14 @@
         * It needs for the subtype to start with the first letter of the type
         * If it doesnt start with x. it will default to other
         * */
+        function detailFormatter(index, row) {
+        var html = []
+        $.each(row, function (key, value) {
+        html.push('<p><b>' + key + ':</b> ' + value + '</p>')
+        })
+        return html.join('')
+        }
+
         function setFormTypeNames() {
             {#console.log("start")#}
             const optionToChange = $("#type_fk").children('option')
@@ -222,6 +233,11 @@
             var data = {{ repo_assets | safe }};
             {#console.log(data)#}
             $table.bootstrapTable({data: data});
+
+            {% if asset_id != -1 %}
+                $table.bootstrapTable('showAllColumns')
+                $table.bootstrapTable('toggleView')
+            {% endif %}
         })
     </script>
 {% endblock %}
@@ -256,37 +272,40 @@
             data-page-list="[5, 10, 25, 50, 100, all]"
             show-button-icons="true"
             data-row-style="rowStyle"
+            data-detail-view="true"
+            data-detail-formatter="detailFormatter"
     >
         <thead>
         <tr>
-            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents"></th>
-            <th data-field="operate" data-formatter="operateFormatter1" ></th>
-            <th data-field="operate" data-formatter="operateFormatter2" ></th>
-            <th data-field="operate" data-formatter="operateFormatter3" >ID</th>
+
+            <th data-field="operate" data-formatter="operateFormatter3"data-card-visible="true" >ID</th>
 {#            <th data-field="id" data-sortable="true">ID</th>#}
-            <th data-field="name" data-sortable="true">Name</th>
-            <th data-field="description" data-sortable="true">Description</th>
-            <th data-field="owner" data-sortable="true">Asset Owner</th>
-            <th data-field="location" data-sortable="true">Location</th>
-            <th data-field="verified" data-sortable="true">Verified</th>
-            <th data-field="verified_by" data-sortable="true">Verified by</th>
-            <th data-field="mac_address" data-sortable="true">Mac_address</th>
-            <th data-field="has_static_ip" data-sortable="true">Has static IP</th>
+            <th data-field="name" data-sortable="true" data-card-visible="true">Name</th>
+            <th data-field="description" data-sortable="true" data-card-visible="true" data-visible="false">Description</th>
+            <th data-field="owner" data-sortable="true"data-card-visible="true" data-visible="false">Asset Owner</th>
+            <th data-field="location" data-sortable="true" data-card-visible="true" data-visible="false">Location</th>
+            <th data-field="verified" data-sortable="true" data-card-visible="true">Verified</th>
+            <th data-field="verified_by" data-sortable="true" data-card-visible="true" data-visible="false">Verified by</th>
+            <th data-field="mac_address" data-sortable="true" >Mac_address</th>
+            <th data-field="has_static_ip" data-sortable="true" data-card-visible="true" data-visible="false">Has static IP</th>
             <th data-field="ip">IP</th>
-            <th data-field="net_group_fk" data-sortable="true">Network Group</th>
+            <th data-field="net_group_fk" data-sortable="true">Net Group</th>
             <th data-field="value" data-sortable="true">Value</th>
-            <th data-field="loss_of_revenue" data-sortable="true">Loss of Revenue</th>
-            <th data-field="additional_expenses" data-sortable="true">Repair time</th>
-            <th data-field="security_levels" data-sortable="true">Security Levels</th>
-            <th data-field="customer_service" data-sortable="true">Customer_service</th>
-            <th data-field="operating_zone" data-sortable="true">operating_zone</th>
+            <th data-field="loss_of_revenue" data-sortable="true" data-card-visible="true" data-visible="false">Loss of Revenue</th>
+            <th data-field="additional_expenses" data-sortable="true" data-card-visible="true" data-visible="false">Repair time</th>
+            <th data-field="security_levels" data-sortable="true" data-card-visible="true" data-visible="false">Security Levels</th>
+            <th data-field="customer_service" data-sortable="true" data-card-visible="true" data-visible="false">Customer_service</th>
+            <th data-field="operating_zone" data-sortable="true" data-card-visible="true" data-visible="false">operating_zone</th>
             <th data-field="last_touch_date" data-sortable="true">Last Touch Date</th>
-            <th data-field="integrity" data-sortable="true">Integrity</th>
-            <th data-field="availability" data-sortable="true">Availability</th>
-            <th data-field="confidentiality" data-sortable="true">Confidentiality</th>
+            <th data-field="integrity" data-sortable="true" data-card-visible="true" data-visible="false">Integrity</th>
+            <th data-field="availability" data-sortable="true" data-card-visible="true" data-visible="false">Availability</th>
+            <th data-field="confidentiality" data-sortable="true" data-card-visible="true" data-visible="false">Confidentiality</th>
             {#            <th data-field="type_fk" data-sortable="true">Type</th>#}
             <th data-field="type" data-sortable="true">Type</th>
             <th data-field="subtype" data-sortable="true">Subtype</th>
+            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents">Edit&Verify</th>
+            <th data-field="operate" data-formatter="operateFormatter2" data-card-visible="true">Org. Functions Relations</th>
+            <th data-field="operate" data-formatter="operateFormatter1" data-card-visible="true">Security Protocol</th>
         </tr>
         </thead>
     </table>

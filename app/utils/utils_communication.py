@@ -368,7 +368,7 @@ def send_risk_report(report_id, asset_id, threat_id):
     report_to_send["risk"] = {
         "static_info": static_info_to_add,
         "exposure_threat": {
-            "occurrence": str(exposure_inference_values[1])
+            "occurrence": str(exposure_inference_values[2])
         },
         "objectives": {
             "confidentiality": {
