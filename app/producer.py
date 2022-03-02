@@ -265,7 +265,8 @@ def get_kafka_data_print_test(kafka_topic):
             elif msg.topic == "vaaas-report":
                 print("--------------Kafka Received: vaaas-report -------------------------")
                 # print(dat)
-                vuln_report_dict = json.load(dat)
+                result = msg.value
+                vuln_report_dict = json.load(result)
                 v_report_json(vuln_report_dict)
                 print("-------------------------------------------------------------------------", flush=True)
             elif msg.topic == "vaaas-reports":

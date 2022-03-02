@@ -1,0 +1,867 @@
+{
+  "one": {
+    "type": "bundle",
+    "id": "bundle--081f687e-16e8-4c1e-8211-31d8c52517d4",
+    "objects": [
+      {
+        "type": "ipv4-addr",
+        "spec_version": "2.1",
+        "id": "ipv4-addr--3b80feff-4cda-5c09-bf07-17e70ed9cd8e",
+        "value": "10.10.2.60"
+      },
+      {
+        "type": "mac-addr",
+        "spec_version": "2.1",
+        "id": "mac-addr--ce997e14-53a1-523c-89ae-fbbc8d791d0f",
+        "value": "00:0C:29:06:67:F0"
+      },
+      {
+        "type": "relationship",
+        "spec_version": "2.1",
+        "id": "relationship--b12e9d82-43a1-42cc-852f-34aed5db0d2f",
+        "created": "2021-10-25T18:54:28.877035Z",
+        "modified": "2021-10-25T18:54:28.877035Z",
+        "relationship_type": "has",
+        "source_ref": "ipv4-addr--3b80feff-4cda-5c09-bf07-17e70ed9cd8e",
+        "target_ref": "mac-addr--ce997e14-53a1-523c-89ae-fbbc8d791d0f"
+      },
+      {
+        "type": "x-discovered-service",
+        "spec_version": "2.1",
+        "id": "x-discovered-service--633326af-815f-4fb5-a30e-0b472981bd69",
+        "created": "2021-10-25T18:54:28.877408Z",
+        "modified": "2021-10-25T18:54:28.877408Z",
+        "port": "22",
+        "protocol": "tcp",
+        "state": "open",
+        "service_name": "ssh",
+        "service_product": "OpenSSH",
+        "service_product_version": "7.6p1 Ubuntu 4ubuntu0.5",
+        "service_cpe_list": [
+          "cpe:/a:openbsd:openssh:7.6p1",
+          "cpe:/o:linux:linux_kernel"
+        ],
+        "scripts_list": [
+          {
+            "id": "vulners",
+            "output": [
+              "  cpe:/a:openbsd:openssh:7.6p1: ",
+              "    \\tMSF:ILITIES/UBUNTU-CVE-2019-6111/\\t5.8\\thttps://vulners.com/metasploit/MSF:ILITIES/UBUNTU-CVE-2019-6111/\\t*EXPLOIT*",
+              "    \\tMSF:ILITIES/SUSE-CVE-2019-6111/\\t5.8\\thttps://vulners.com/metasploit/MSF:ILITIES/SUSE-CVE-2019-6111/\\t*EXPLOIT*",
+              "    \\tMSF:ILITIES/SUSE-CVE-2019-25017/\\t5.8\\thttps://vulners.com/metasploit/MSF:ILITIES/SUSE-CVE-2019-25017/\\t*EXPLOIT*",
+              "    \\tMSF:ILITIES/REDHAT_LINUX-CVE-2019-6111/\\t5.8\\thttps://vulners.com/metasploit/MSF:ILITIES/REDHAT_LINUX-CVE-2019-6111/\\t*EXPLOIT*",
+              "    \\tMSF:ILITIES/REDHAT-OPENSHIFT-CVE-2019-6111/\\t5.8\\thttps://vulners.com/metasploit/MSF:ILITIES/REDHAT-OPENSHIFT-CVE-2019-6111/\\t*EXPLOIT*",
+              "    \\tMSF:ILITIES/ORACLE-SOLARIS-CVE-2019-6111/\\t5.8\\thttps://vulners.com/metasploit/MSF:ILITIES/ORACLE-SOLARIS-CVE-2019-6111/\\t*EXPLOIT*",
+              "    \\tMSF:ILITIES/OPENBSD-OPENSSH-CVE-2019-6111/\\t5.8\\thttps://vulners.com/metasploit/MSF:ILITIES/OPENBSD-OPENSSH-CVE-2019-6111/\\t*EXPLOIT*",
+              "    \\tMSF:ILITIES/IBM-AIX-CVE-2019-6111/\\t5.8\\thttps://vulners.com/metasploit/MSF:ILITIES/IBM-AIX-CVE-2019-6111/\\t*EXPLOIT*",
+              "    \\tMSF:ILITIES/HUAWEI-EULEROS-2_0_SP8-CVE-2019-6111/\\t5.8\\thttps://vulners.com/metasploit/MSF:ILITIES/HUAWEI-EULEROS-2_0_SP8-CVE-2019-6111/\\t*EXPLOIT*",
+              "    \\tMSF:ILITIES/HUAWEI-EULEROS-2_0_SP5-CVE-2019-6111/\\t5.8\\thttps://vulners.com/metasploit/MSF:ILITIES/HUAWEI-EULEROS-2_0_SP5-CVE-2019-6111/\\t*EXPLOIT*",
+              "    \\tMSF:ILITIES/HUAWEI-EULEROS-2_0_SP3-CVE-2019-6111/\\t5.8\\thttps://vulners.com/metasploit/MSF:ILITIES/HUAWEI-EULEROS-2_0_SP3-CVE-2019-6111/\\t*EXPLOIT*",
+              "    \\tMSF:ILITIES/HUAWEI-EULEROS-2_0_SP2-CVE-2019-6111/\\t5.8\\thttps://vulners.com/metasploit/MSF:ILITIES/HUAWEI-EULEROS-2_0_SP2-CVE-2019-6111/\\t*EXPLOIT*",
+              "    \\tMSF:ILITIES/GENTOO-LINUX-CVE-2019-6111/\\t5.8\\thttps://vulners.com/metasploit/MSF:ILITIES/GENTOO-LINUX-CVE-2019-6111/\\t*EXPLOIT*",
+              "    \\tMSF:ILITIES/F5-BIG-IP-CVE-2019-6111/\\t5.8\\thttps://vulners.com/metasploit/MSF:ILITIES/F5-BIG-IP-CVE-2019-6111/\\t*EXPLOIT*",
+              "    \\tMSF:ILITIES/DEBIAN-CVE-2019-6111/\\t5.8\\thttps://vulners.com/metasploit/MSF:ILITIES/DEBIAN-CVE-2019-6111/\\t*EXPLOIT*",
+              "    \\tMSF:ILITIES/CENTOS_LINUX-CVE-2019-6111/\\t5.8\\thttps://vulners.com/metasploit/MSF:ILITIES/CENTOS_LINUX-CVE-2019-6111/\\t*EXPLOIT*",
+              "    \\tMSF:ILITIES/AMAZON_LINUX-CVE-2019-6111/\\t5.8\\thttps://vulners.com/metasploit/MSF:ILITIES/AMAZON_LINUX-CVE-2019-6111/\\t*EXPLOIT*",
+              "    \\tMSF:ILITIES/AMAZON-LINUX-AMI-2-CVE-2019-6111/\\t5.8\\thttps://vulners.com/metasploit/MSF:ILITIES/AMAZON-LINUX-AMI-2-CVE-2019-6111/\\t*EXPLOIT*",
+              "    \\tMSF:ILITIES/ALPINE-LINUX-CVE-2019-6111/\\t5.8\\thttps://vulners.com/metasploit/MSF:ILITIES/ALPINE-LINUX-CVE-2019-6111/\\t*EXPLOIT*",
+              "    \\tEXPLOITPACK:98FE96309F9524B8C84C508837551A19\\t5.8\\thttps://vulners.com/exploitpack/EXPLOITPACK:98FE96309F9524B8C84C508837551A19\\t*EXPLOIT*",
+              "    \\tEXPLOITPACK:5330EA02EBDE345BFC9D6DDDD97F9E97\\t5.8\\thttps://vulners.com/exploitpack/EXPLOITPACK:5330EA02EBDE345BFC9D6DDDD97F9E97\\t*EXPLOIT*",
+              "    \\tEDB-ID:46516\\t5.8\\thttps://vulners.com/exploitdb/EDB-ID:46516\\t*EXPLOIT*",
+              "    \\tCVE-2019-6111\\t5.8\\thttps://vulners.com/cve/CVE-2019-6111",
+              "    \\t1337DAY-ID-32328\\t5.8\\thttps://vulners.com/zdt/1337DAY-ID-32328\\t*EXPLOIT*",
+              "    \\t1337DAY-ID-32009\\t5.8\\thttps://vulners.com/zdt/1337DAY-ID-32009\\t*EXPLOIT*",
+              "    \\tSSH_ENUM\\t5.0\\thttps://vulners.com/canvas/SSH_ENUM\\t*EXPLOIT*",
+              "    \\tPACKETSTORM:150621\\t5.0\\thttps://vulners.com/packetstorm/PACKETSTORM:150621\\t*EXPLOIT*",
+              "    \\tMSF:AUXILIARY/SCANNER/SSH/SSH_ENUMUSERS\\t5.0\\thttps://vulners.com/metasploit/MSF:AUXILIARY/SCANNER/SSH/SSH_ENUMUSERS\\t*EXPLOIT*",
+              "    \\tEXPLOITPACK:F957D7E8A0CC1E23C3C649B764E13FB0\\t5.0\\thttps://vulners.com/exploitpack/EXPLOITPACK:F957D7E8A0CC1E23C3C649B764E13FB0\\t*EXPLOIT*",
+              "    \\tEXPLOITPACK:EBDBC5685E3276D648B4D14B75563283\\t5.0\\thttps://vulners.com/exploitpack/EXPLOITPACK:EBDBC5685E3276D648B4D14B75563283\\t*EXPLOIT*",
+              "    \\tEDB-ID:45939\\t5.0\\thttps://vulners.com/exploitdb/EDB-ID:45939\\t*EXPLOIT*",
+              "    \\tCVE-2018-15919\\t5.0\\thttps://vulners.com/cve/CVE-2018-15919",
+              "    \\tCVE-2018-15473\\t5.0\\thttps://vulners.com/cve/CVE-2018-15473",
+              "    \\t1337DAY-ID-31730\\t5.0\\thttps://vulners.com/zdt/1337DAY-ID-31730\\t*EXPLOIT*",
+              "    \\tEDB-ID:45233\\t4.6\\thttps://vulners.com/exploitdb/EDB-ID:45233\\t*EXPLOIT*",
+              "    \\tCVE-2021-41617\\t4.4\\thttps://vulners.com/cve/CVE-2021-41617",
+              "    \\tMSF:ILITIES/OPENBSD-OPENSSH-CVE-2020-14145/\\t4.3\\thttps://vulners.com/metasploit/MSF:ILITIES/OPENBSD-OPENSSH-CVE-2020-14145/\\t*EXPLOIT*",
+              "    \\tMSF:ILITIES/HUAWEI-EULEROS-2_0_SP9-CVE-2020-14145/\\t4.3\\thttps://vulners.com/metasploit/MSF:ILITIES/HUAWEI-EULEROS-2_0_SP9-CVE-2020-14145/\\t*EXPLOIT*",
+              "    \\tMSF:ILITIES/HUAWEI-EULEROS-2_0_SP8-CVE-2020-14145/\\t4.3\\thttps://vulners.com/metasploit/MSF:ILITIES/HUAWEI-EULEROS-2_0_SP8-CVE-2020-14145/\\t*EXPLOIT*",
+              "    \\tMSF:ILITIES/HUAWEI-EULEROS-2_0_SP5-CVE-2020-14145/\\t4.3\\thttps://vulners.com/metasploit/MSF:ILITIES/HUAWEI-EULEROS-2_0_SP5-CVE-2020-14145/\\t*EXPLOIT*",
+              "    \\tMSF:ILITIES/F5-BIG-IP-CVE-2020-14145/\\t4.3\\thttps://vulners.com/metasploit/MSF:ILITIES/F5-BIG-IP-CVE-2020-14145/\\t*EXPLOIT*",
+              "    \\tCVE-2020-14145\\t4.3\\thttps://vulners.com/cve/CVE-2020-14145",
+              "    \\tCVE-2019-6110\\t4.0\\thttps://vulners.com/cve/CVE-2019-6110",
+              "    \\tCVE-2019-6109\\t4.0\\thttps://vulners.com/cve/CVE-2019-6109",
+              "    \\tCVE-2018-20685\\t2.6\\thttps://vulners.com/cve/CVE-2018-20685",
+              "    \\tPACKETSTORM:151227\\t0.0\\thttps://vulners.com/packetstorm/PACKETSTORM:151227\\t*EXPLOIT*",
+              "    \\tEDB-ID:46193\\t0.0\\thttps://vulners.com/exploitdb/EDB-ID:46193\\t*EXPLOIT*",
+              "    \\t1337DAY-ID-30937\\t0.0\\thttps://vulners.com/zdt/1337DAY-ID-30937\\t*EXPLOIT*"
+            ],
+            "elements": {
+              "cpe:/a:openbsd:openssh:7.6p1": {
+                "null": [
+                  {
+                    "is_exploit": "true",
+                    "id": "MSF:ILITIES/UBUNTU-CVE-2019-6111/",
+                    "type": "metasploit",
+                    "cvss": "5.8"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "MSF:ILITIES/SUSE-CVE-2019-6111/",
+                    "type": "metasploit",
+                    "cvss": "5.8"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "MSF:ILITIES/SUSE-CVE-2019-25017/",
+                    "type": "metasploit",
+                    "cvss": "5.8"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "MSF:ILITIES/REDHAT_LINUX-CVE-2019-6111/",
+                    "type": "metasploit",
+                    "cvss": "5.8"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "MSF:ILITIES/REDHAT-OPENSHIFT-CVE-2019-6111/",
+                    "type": "metasploit",
+                    "cvss": "5.8"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "MSF:ILITIES/ORACLE-SOLARIS-CVE-2019-6111/",
+                    "type": "metasploit",
+                    "cvss": "5.8"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "MSF:ILITIES/OPENBSD-OPENSSH-CVE-2019-6111/",
+                    "type": "metasploit",
+                    "cvss": "5.8"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "MSF:ILITIES/IBM-AIX-CVE-2019-6111/",
+                    "type": "metasploit",
+                    "cvss": "5.8"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "MSF:ILITIES/HUAWEI-EULEROS-2_0_SP8-CVE-2019-6111/",
+                    "type": "metasploit",
+                    "cvss": "5.8"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "MSF:ILITIES/HUAWEI-EULEROS-2_0_SP5-CVE-2019-6111/",
+                    "type": "metasploit",
+                    "cvss": "5.8"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "MSF:ILITIES/HUAWEI-EULEROS-2_0_SP3-CVE-2019-6111/",
+                    "type": "metasploit",
+                    "cvss": "5.8"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "MSF:ILITIES/HUAWEI-EULEROS-2_0_SP2-CVE-2019-6111/",
+                    "type": "metasploit",
+                    "cvss": "5.8"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "MSF:ILITIES/GENTOO-LINUX-CVE-2019-6111/",
+                    "type": "metasploit",
+                    "cvss": "5.8"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "MSF:ILITIES/F5-BIG-IP-CVE-2019-6111/",
+                    "type": "metasploit",
+                    "cvss": "5.8"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "MSF:ILITIES/DEBIAN-CVE-2019-6111/",
+                    "type": "metasploit",
+                    "cvss": "5.8"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "MSF:ILITIES/CENTOS_LINUX-CVE-2019-6111/",
+                    "type": "metasploit",
+                    "cvss": "5.8"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "MSF:ILITIES/AMAZON_LINUX-CVE-2019-6111/",
+                    "type": "metasploit",
+                    "cvss": "5.8"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "MSF:ILITIES/AMAZON-LINUX-AMI-2-CVE-2019-6111/",
+                    "type": "metasploit",
+                    "cvss": "5.8"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "MSF:ILITIES/ALPINE-LINUX-CVE-2019-6111/",
+                    "type": "metasploit",
+                    "cvss": "5.8"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "EXPLOITPACK:98FE96309F9524B8C84C508837551A19",
+                    "type": "exploitpack",
+                    "cvss": "5.8"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "EXPLOITPACK:5330EA02EBDE345BFC9D6DDDD97F9E97",
+                    "type": "exploitpack",
+                    "cvss": "5.8"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "EDB-ID:46516",
+                    "type": "exploitdb",
+                    "cvss": "5.8"
+                  },
+                  {
+                    "is_exploit": "false",
+                    "id": "CVE-2019-6111",
+                    "type": "cve",
+                    "cvss": "5.8"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "1337DAY-ID-32328",
+                    "type": "zdt",
+                    "cvss": "5.8"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "1337DAY-ID-32009",
+                    "type": "zdt",
+                    "cvss": "5.8"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "SSH_ENUM",
+                    "type": "canvas",
+                    "cvss": "5.0"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "PACKETSTORM:150621",
+                    "type": "packetstorm",
+                    "cvss": "5.0"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "MSF:AUXILIARY/SCANNER/SSH/SSH_ENUMUSERS",
+                    "type": "metasploit",
+                    "cvss": "5.0"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "EXPLOITPACK:F957D7E8A0CC1E23C3C649B764E13FB0",
+                    "type": "exploitpack",
+                    "cvss": "5.0"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "EXPLOITPACK:EBDBC5685E3276D648B4D14B75563283",
+                    "type": "exploitpack",
+                    "cvss": "5.0"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "EDB-ID:45939",
+                    "type": "exploitdb",
+                    "cvss": "5.0"
+                  },
+                  {
+                    "is_exploit": "false",
+                    "id": "CVE-2018-15919",
+                    "type": "cve",
+                    "cvss": "5.0"
+                  },
+                  {
+                    "is_exploit": "false",
+                    "id": "CVE-2018-15473",
+                    "type": "cve",
+                    "cvss": "5.0"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "1337DAY-ID-31730",
+                    "type": "zdt",
+                    "cvss": "5.0"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "EDB-ID:45233",
+                    "type": "exploitdb",
+                    "cvss": "4.6"
+                  },
+                  {
+                    "is_exploit": "false",
+                    "id": "CVE-2021-41617",
+                    "type": "cve",
+                    "cvss": "4.4"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "MSF:ILITIES/OPENBSD-OPENSSH-CVE-2020-14145/",
+                    "type": "metasploit",
+                    "cvss": "4.3"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "MSF:ILITIES/HUAWEI-EULEROS-2_0_SP9-CVE-2020-14145/",
+                    "type": "metasploit",
+                    "cvss": "4.3"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "MSF:ILITIES/HUAWEI-EULEROS-2_0_SP8-CVE-2020-14145/",
+                    "type": "metasploit",
+                    "cvss": "4.3"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "MSF:ILITIES/HUAWEI-EULEROS-2_0_SP5-CVE-2020-14145/",
+                    "type": "metasploit",
+                    "cvss": "4.3"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "MSF:ILITIES/F5-BIG-IP-CVE-2020-14145/",
+                    "type": "metasploit",
+                    "cvss": "4.3"
+                  },
+                  {
+                    "is_exploit": "false",
+                    "id": "CVE-2020-14145",
+                    "type": "cve",
+                    "cvss": "4.3"
+                  },
+                  {
+                    "is_exploit": "false",
+                    "id": "CVE-2019-6110",
+                    "type": "cve",
+                    "cvss": "4.0"
+                  },
+                  {
+                    "is_exploit": "false",
+                    "id": "CVE-2019-6109",
+                    "type": "cve",
+                    "cvss": "4.0"
+                  },
+                  {
+                    "is_exploit": "false",
+                    "id": "CVE-2018-20685",
+                    "type": "cve",
+                    "cvss": "2.6"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "PACKETSTORM:151227",
+                    "type": "packetstorm",
+                    "cvss": "0.0"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "EDB-ID:46193",
+                    "type": "exploitdb",
+                    "cvss": "0.0"
+                  },
+                  {
+                    "is_exploit": "true",
+                    "id": "1337DAY-ID-30937",
+                    "type": "zdt",
+                    "cvss": "0.0"
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "service_vulnerabilities": [
+          {
+            "cpeaopenbsdopenssh76p1": {
+              "null": [
+                {
+                  "is_exploit": "true",
+                  "id": "MSF:ILITIES/UBUNTU-CVE-2019-6111/",
+                  "type": "metasploit",
+                  "cvss": "5.8"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "MSF:ILITIES/SUSE-CVE-2019-6111/",
+                  "type": "metasploit",
+                  "cvss": "5.8"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "MSF:ILITIES/SUSE-CVE-2019-25017/",
+                  "type": "metasploit",
+                  "cvss": "5.8"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "MSF:ILITIES/REDHAT_LINUX-CVE-2019-6111/",
+                  "type": "metasploit",
+                  "cvss": "5.8"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "MSF:ILITIES/REDHAT-OPENSHIFT-CVE-2019-6111/",
+                  "type": "metasploit",
+                  "cvss": "5.8"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "MSF:ILITIES/ORACLE-SOLARIS-CVE-2019-6111/",
+                  "type": "metasploit",
+                  "cvss": "5.8"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "MSF:ILITIES/OPENBSD-OPENSSH-CVE-2019-6111/",
+                  "type": "metasploit",
+                  "cvss": "5.8"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "MSF:ILITIES/IBM-AIX-CVE-2019-6111/",
+                  "type": "metasploit",
+                  "cvss": "5.8"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "MSF:ILITIES/HUAWEI-EULEROS-2_0_SP8-CVE-2019-6111/",
+                  "type": "metasploit",
+                  "cvss": "5.8"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "MSF:ILITIES/HUAWEI-EULEROS-2_0_SP5-CVE-2019-6111/",
+                  "type": "metasploit",
+                  "cvss": "5.8"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "MSF:ILITIES/HUAWEI-EULEROS-2_0_SP3-CVE-2019-6111/",
+                  "type": "metasploit",
+                  "cvss": "5.8"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "MSF:ILITIES/HUAWEI-EULEROS-2_0_SP2-CVE-2019-6111/",
+                  "type": "metasploit",
+                  "cvss": "5.8"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "MSF:ILITIES/GENTOO-LINUX-CVE-2019-6111/",
+                  "type": "metasploit",
+                  "cvss": "5.8"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "MSF:ILITIES/F5-BIG-IP-CVE-2019-6111/",
+                  "type": "metasploit",
+                  "cvss": "5.8"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "MSF:ILITIES/DEBIAN-CVE-2019-6111/",
+                  "type": "metasploit",
+                  "cvss": "5.8"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "MSF:ILITIES/CENTOS_LINUX-CVE-2019-6111/",
+                  "type": "metasploit",
+                  "cvss": "5.8"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "MSF:ILITIES/AMAZON_LINUX-CVE-2019-6111/",
+                  "type": "metasploit",
+                  "cvss": "5.8"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "MSF:ILITIES/AMAZON-LINUX-AMI-2-CVE-2019-6111/",
+                  "type": "metasploit",
+                  "cvss": "5.8"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "MSF:ILITIES/ALPINE-LINUX-CVE-2019-6111/",
+                  "type": "metasploit",
+                  "cvss": "5.8"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "EXPLOITPACK:98FE96309F9524B8C84C508837551A19",
+                  "type": "exploitpack",
+                  "cvss": "5.8"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "EXPLOITPACK:5330EA02EBDE345BFC9D6DDDD97F9E97",
+                  "type": "exploitpack",
+                  "cvss": "5.8"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "EDB-ID:46516",
+                  "type": "exploitdb",
+                  "cvss": "5.8"
+                },
+                {
+                  "is_exploit": "false",
+                  "id": "CVE-2019-6111",
+                  "type": "cve",
+                  "cvss": "5.8"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "1337DAY-ID-32328",
+                  "type": "zdt",
+                  "cvss": "5.8"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "1337DAY-ID-32009",
+                  "type": "zdt",
+                  "cvss": "5.8"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "SSH_ENUM",
+                  "type": "canvas",
+                  "cvss": "5.0"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "PACKETSTORM:150621",
+                  "type": "packetstorm",
+                  "cvss": "5.0"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "MSF:AUXILIARY/SCANNER/SSH/SSH_ENUMUSERS",
+                  "type": "metasploit",
+                  "cvss": "5.0"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "EXPLOITPACK:F957D7E8A0CC1E23C3C649B764E13FB0",
+                  "type": "exploitpack",
+                  "cvss": "5.0"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "EXPLOITPACK:EBDBC5685E3276D648B4D14B75563283",
+                  "type": "exploitpack",
+                  "cvss": "5.0"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "EDB-ID:45939",
+                  "type": "exploitdb",
+                  "cvss": "5.0"
+                },
+                {
+                  "is_exploit": "false",
+                  "id": "CVE-2018-15919",
+                  "type": "cve",
+                  "cvss": "5.0"
+                },
+                {
+                  "is_exploit": "false",
+                  "id": "CVE-2018-15473",
+                  "type": "cve",
+                  "cvss": "5.0"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "1337DAY-ID-31730",
+                  "type": "zdt",
+                  "cvss": "5.0"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "EDB-ID:45233",
+                  "type": "exploitdb",
+                  "cvss": "4.6"
+                },
+                {
+                  "is_exploit": "false",
+                  "id": "CVE-2021-41617",
+                  "type": "cve",
+                  "cvss": "4.4"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "MSF:ILITIES/OPENBSD-OPENSSH-CVE-2020-14145/",
+                  "type": "metasploit",
+                  "cvss": "4.3"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "MSF:ILITIES/HUAWEI-EULEROS-2_0_SP9-CVE-2020-14145/",
+                  "type": "metasploit",
+                  "cvss": "4.3"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "MSF:ILITIES/HUAWEI-EULEROS-2_0_SP8-CVE-2020-14145/",
+                  "type": "metasploit",
+                  "cvss": "4.3"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "MSF:ILITIES/HUAWEI-EULEROS-2_0_SP5-CVE-2020-14145/",
+                  "type": "metasploit",
+                  "cvss": "4.3"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "MSF:ILITIES/F5-BIG-IP-CVE-2020-14145/",
+                  "type": "metasploit",
+                  "cvss": "4.3"
+                },
+                {
+                  "is_exploit": "false",
+                  "id": "CVE-2020-14145",
+                  "type": "cve",
+                  "cvss": "4.3"
+                },
+                {
+                  "is_exploit": "false",
+                  "id": "CVE-2019-6110",
+                  "type": "cve",
+                  "cvss": "4.0"
+                },
+                {
+                  "is_exploit": "false",
+                  "id": "CVE-2019-6109",
+                  "type": "cve",
+                  "cvss": "4.0"
+                },
+                {
+                  "is_exploit": "false",
+                  "id": "CVE-2018-20685",
+                  "type": "cve",
+                  "cvss": "2.6"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "PACKETSTORM:151227",
+                  "type": "packetstorm",
+                  "cvss": "0.0"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "EDB-ID:46193",
+                  "type": "exploitdb",
+                  "cvss": "0.0"
+                },
+                {
+                  "is_exploit": "true",
+                  "id": "1337DAY-ID-30937",
+                  "type": "zdt",
+                  "cvss": "0.0"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "type": "x-discovered-service",
+        "spec_version": "2.1",
+        "id": "x-discovered-service--12b94e8e-2c84-4a44-a344-e40bce4e3b5e",
+        "created": "2021-10-25T18:54:28.877774Z",
+        "modified": "2021-10-25T18:54:28.877774Z",
+        "port": "80",
+        "protocol": "tcp",
+        "state": "filtered",
+        "service_name": "http"
+      },
+      {
+        "type": "x-discovered-service",
+        "spec_version": "2.1",
+        "id": "x-discovered-service--fa963926-49e8-4ecc-b886-19deb68285dd",
+        "created": "2021-10-25T18:54:28.878057Z",
+        "modified": "2021-10-25T18:54:28.878057Z",
+        "port": "179",
+        "protocol": "tcp",
+        "state": "open",
+        "service_name": "tcpwrapped"
+      },
+      {
+        "type": "x-discovered-service",
+        "spec_version": "2.1",
+        "id": "x-discovered-service--17765b5f-879f-4330-b9d2-8d5d8bd9c7de",
+        "created": "2021-10-25T18:54:28.878334Z",
+        "modified": "2021-10-25T18:54:28.878334Z",
+        "port": "443",
+        "protocol": "tcp",
+        "state": "filtered",
+        "service_name": "https"
+      },
+      {
+        "type": "x-discovered-service",
+        "spec_version": "2.1",
+        "id": "x-discovered-service--cbd8c9d1-e2d2-4537-83a7-b9cd9f7438f8",
+        "created": "2021-10-25T18:54:28.878628Z",
+        "modified": "2021-10-25T18:54:28.878628Z",
+        "port": "9000",
+        "protocol": "tcp",
+        "state": "filtered",
+        "service_name": "cslistener"
+      },
+      {
+        "type": "x-discovered-service",
+        "spec_version": "2.1",
+        "id": "x-discovered-service--37b64a8f-a012-4c44-a85d-5a6fa47b87eb",
+        "created": "2021-10-25T18:54:28.879128Z",
+        "modified": "2021-10-25T18:54:28.879128Z",
+        "port": "9100",
+        "protocol": "tcp",
+        "state": "open",
+        "service_name": "jetdirect",
+        "scripts_list": [
+          {
+            "id": "fingerprint-strings",
+            "output": [
+              "  GenericLines, Hello, Help, RTSPRequest, SSLSessionReq, SSLv23SessionReq, TLSSessionReq, TerminalServerCookie, hp-pjl: ",
+              "    HTTP/1.1 400 Bad Request",
+              "    Content-Type: text/plain; charset=utf-8",
+              "    Connection: close",
+              "    Request",
+              "  GetRequest, HTTPOptions: ",
+              "    HTTP/1.0 200 OK",
+              "    Date: Mon, 25 Oct 2021 18:37:36 GMT",
+              "    Content-Length: 150",
+              "    Content-Type: text/html; charset=utf-8",
+              "    <html>",
+              "    <head><title>Node Exporter</title></head>",
+              "    <body>",
+              "    <h1>Node Exporter</h1>",
+              "    <p></p>",
+              "    </body>",
+              "    </html>"
+            ],
+            "elements": {
+              "GenericLines, Hello, Help, RTSPRequest, SSLSessionReq, SSLv23SessionReq, TLSSessionReq, TerminalServerCookie, hp-pjl": "\\n    HTTP/1.1 400 Bad Request\\n    Content-Type: text/plain; charset=utf-8\\n    Connection: close\\n    Request",
+              "GetRequest, HTTPOptions": "\\n    HTTP/1.0 200 OK\\n    Date: Mon, 25 Oct 2021 18:37:36 GMT\\n    Content-Length: 150\\n    Content-Type: text/html; charset=utf-8\\n    <html>\\n    <head><title>Node Exporter</title></head>\\n    <body>\\n    <h1>Node Exporter</h1>\\n    <p></p>\\n    </body>\\n    </html>"
+            }
+          }
+        ],
+        "service_vulnerabilities": [
+          {
+            "GenericLinesHelloHelpRTSPRequestSSLSessionReqSSLv23SessionReqTLSSessionReqTerminalServerCookiehppjl": "\\n    HTTP/1.1 400 Bad Request\\n    Content-Type: text/plain; charset=utf-8\\n    Connection: close\\n    Request"
+          },
+          {
+            "GetRequestHTTPOptions": "\\n    HTTP/1.0 200 OK\\n    Date: Mon, 25 Oct 2021 18:37:36 GMT\\n    Content-Length: 150\\n    Content-Type: text/html; charset=utf-8\\n    <html>\\n    <head><title>Node Exporter</title></head>\\n    <body>\\n    <h1>Node Exporter</h1>\\n    <p></p>\\n    </body>\\n    </html>"
+          }
+        ]
+      },
+      {
+        "type": "x-discovered-service",
+        "spec_version": "2.1",
+        "id": "x-discovered-service--2cc8b814-3acd-48d7-8189-1ab029beaf60",
+        "created": "2021-10-25T18:54:28.879449Z",
+        "modified": "2021-10-25T18:54:28.879449Z",
+        "port": "10000",
+        "protocol": "tcp",
+        "state": "filtered",
+        "service_name": "snet-sensor-mgmt"
+      },
+      {
+        "type": "x-discovered-service",
+        "spec_version": "2.1",
+        "id": "x-discovered-service--de93a3fa-a14d-4d64-910b-e02886ddc9f1",
+        "created": "2021-10-25T18:54:28.879726Z",
+        "modified": "2021-10-25T18:54:28.879726Z",
+        "port": "10001",
+        "protocol": "tcp",
+        "state": "filtered",
+        "service_name": "scp-config"
+      },
+      {
+        "type": "x-discovered-service",
+        "spec_version": "2.1",
+        "id": "x-discovered-service--9caa253e-9e48-449d-88dc-2d3d15cdc430",
+        "created": "2021-10-25T18:54:28.879999Z",
+        "modified": "2021-10-25T18:54:28.879999Z",
+        "port": "10002",
+        "protocol": "tcp",
+        "state": "filtered",
+        "service_name": "documentum"
+      },
+      {
+        "type": "x-discovered-service",
+        "spec_version": "2.1",
+        "id": "x-discovered-service--5f01eb5a-082b-44cc-a470-b1d58f320bba",
+        "created": "2021-10-25T18:54:28.880267Z",
+        "modified": "2021-10-25T18:54:28.880267Z",
+        "port": "10003",
+        "protocol": "tcp",
+        "state": "filtered",
+        "service_name": "documentum_s"
+      },
+      {
+        "type": "x-discovered-service",
+        "spec_version": "2.1",
+        "id": "x-discovered-service--458573f3-1fe0-433d-b3b6-7c8ab0bb0864",
+        "created": "2021-10-25T18:54:28.880535Z",
+        "modified": "2021-10-25T18:54:28.880535Z",
+        "port": "10004",
+        "protocol": "tcp",
+        "state": "filtered",
+        "service_name": "emcrmirccd"
+      },
+      {
+        "type": "x-discovered-service",
+        "spec_version": "2.1",
+        "id": "x-discovered-service--cd87ea27-38f3-4f59-9388-7197c89b870b",
+        "created": "2021-10-25T18:54:28.880813Z",
+        "modified": "2021-10-25T18:54:28.880813Z",
+        "port": "10009",
+        "protocol": "tcp",
+        "state": "filtered",
+        "service_name": "swdtp-sv"
+      },
+      {
+        "type": "x-discovered-service",
+        "spec_version": "2.1",
+        "id": "x-discovered-service--ea8eb7a3-7284-491a-a7f1-63c27df832f6",
+        "created": "2021-10-25T18:54:28.8812Z",
+        "modified": "2021-10-25T18:54:28.8812Z",
+        "port": "10010",
+        "protocol": "tcp",
+        "state": "filtered",
+        "service_name": "rxapi"
+      }
+    ],
+    "assessment_date": "Mon Oct 25 13:59:32 2021",
+    "cvss_score": 5.8,
+    "start": "1635188068",
+    "stop": "1635170388",
+    "task_name": "10.10.2.60",
+    "total_services": 13
+  }
+}

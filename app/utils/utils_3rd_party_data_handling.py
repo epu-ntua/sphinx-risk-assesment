@@ -696,7 +696,8 @@ def v_report_json(report_name, report_details):
             try:
                 db.session.commit()
                 flash('Asset "{}" Added Succesfully'.format(my_repo_asset.ip))
-                # TODO: Send alert for the new Asset to the EndUser
+                send_alert_new_asset(my_repo_asset.id)
+                # DONE: Send alert for the new Asset to the EndUser
             except SQLAlchemyError as e:
                 db.session.rollback()
 
@@ -744,14 +745,11 @@ def v_report_json(report_name, report_details):
                             my_link.comments = vulnerability_item['is_exploit'] if vulnerability_item['is_exploit'] is not None else ""
                             try:
                                 db.session.commit()
-                                # flash('Vulnerability "" Added Succesfully')
-                                # flash('Vulnerability "{}" Added Succesfully'.format(my_link.cve_id))
                             except SQLAlchemyError as e:
                                 db.session.rollback()
                                 continue
                             # update_cve_scores(reprow_cveId)
-                            # TODO: It's not needed to call the update CVE and CWE functions
-
+                            # DONE: It's not needed to call the update CVE and CWE functions
             else:
                 continue
         return 1
