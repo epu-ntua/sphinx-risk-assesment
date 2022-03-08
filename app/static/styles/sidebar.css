@@ -160,12 +160,14 @@ wrapper {
     -ms-transform: translate(-50%, -45%);
 }
 
+
 .tab-button{
     width: 100%;
     background-color: #00a79d;
     font-size: 150%;
     color: white;
     border: 3px solid #00a79d;
+    border-bottom: 3px solid white;
     /*border-right: 50px;*/
     /*border-left: 15px;*/
     /*padding-right: 15px;*/

@@ -235,7 +235,7 @@ def send_risk_report(report_id, asset_id, threat_id):
 
     report_to_send = {}
     report_to_send["report_info"] = {
-        "date_time": this_risk_assessment_report.date_time,
+        "date_time": this_risk_assessment_report.date_time.strftime("%m/%d/%Y, %H:%M:%S"),
         "type": this_risk_assessment_report.type
     }
 

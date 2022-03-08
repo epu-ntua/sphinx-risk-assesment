@@ -66,6 +66,9 @@
 
 
         $(function () {
+            $('#security_posture_tab').hide()
+            $('#param_estimation_tab').hide()
+            $('#automated_estimation_tab').hide()
             var data_vulnerabilities = {{ json_controls | safe }};
             var data_controls = {{ json_vulnerabilities | safe }};
             {#console.log(data)#}
@@ -91,6 +94,24 @@
                 $('#param_estimation_tab').hide()
             } else {
                 $('#param_estimation_tab').show()
+            }
+
+        }
+
+        function open_close_tab_1() {
+            if ($('#security_posture_tab').is(":visible")) {
+                $('#security_posture_tab').hide()
+            } else {
+                $('#security_posture_tab').show()
+            }
+
+        }
+
+        function open_close_tab_2() {
+            if ($('#automated_estimation_tab').is(":visible")) {
+                $('#automated_estimation_tab').hide()
+            } else {
+                $('#automated_estimation_tab').show()
             }
 
         }
@@ -178,7 +199,7 @@
             </div>
             {% if asset_id != -1 %}
                 <hr/>
-                <button class="tab-button" onclick="open_close_tab()"> Parameter Estimation Tab</button>
+                <button class="tab-button " onclick="open_close_tab()"> Vulnerabilities Estimation Tab ></button>
                 <div id="param_estimation_tab" class="row dashboard-row param_estimation_tab">
                     <div class="col-6">
                         <h5>Vulnerabilities</h5>
@@ -218,10 +239,145 @@
                     </div>
                     <hr/>
                 </div>
+                <div class="row">'</div>
                 {#                <div id="param_estimation_tab" class="row dashboard-row">#}
                 {#                <h5>Automated Parameter Estimation</h5>#}
                 {#                </div>#}
-                <div id="param_estimation_tab" class="row dashboard-row param_estimation_tab">
+                <button class="tab-button" onclick="open_close_tab_1()"> Relevant Security Posture Tab ></button>
+                <div id="security_posture_tab" class="row dashboard-row param_estimation_tab" >
+                    <div class="col-12">
+                        {#                        <h5>Relevant Organisation Posture: </h5>#}
+                        <nav class="nav nav-fill w-100">
+                            <div class="nav nav-pills nav-fill" id="nav-tab" role="tablist">
+                                <a class="nav-item nav-link active" id="nav-s1-tab" data-toggle="tab" href="#nav-s1"
+                                   role="tab" aria-controls="nav-s1" aria-selected="true">Section 1</a>
+                                <a class="nav-item nav-link" id="nav-s2-tab" data-toggle="tab" href="#nav-s2" role="tab"
+                                   aria-controls="nav-s2" aria-selected="false">Section 2</a>
+                                <a class="nav-item nav-link" id="nav-s3-tab" data-toggle="tab" href="#nav-s3" role="tab"
+                                   aria-controls="nav-s3" aria-selected="false">Section 3</a>
+                                <a class="nav-item nav-link" id="nav-s4-tab" data-toggle="tab" href="#nav-s4" role="tab"
+                                   aria-controls="nav-s4" aria-selected="false">Section 4</a>
+                            </div>
+                        </nav>
+                        <div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
+                            <div class="tab-pane fade show active" id="nav-s1" role="tabpanel"
+                                 aria-labelledby="nav-s1-tab">
+                                <h6 class="text-danger">{{ new_security_posture_form.q1_completedSRA.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q1_completedSRA) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q2_include_IS_SRA.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q2_include_IS_SRA) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q3_compliance.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q3_compliance) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q4_respond.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q4_respond) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q5_respond_personnel.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q5_respond_personnel) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q6_communicate_responses.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q6_communicate_responses) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q7_documented_policies.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q7_documented_policies) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q8_reflect_business_practices.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q8_reflect_business_practices) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q9_documentation_availability.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q9_documentation_availability) }}
+                            </div>
+                            <div class="tab-pane fade" id="nav-s2" role="tabpanel" aria-labelledby="nav-s2-tab">
+                                <h6 class="text-danger">{{ new_security_posture_form.q10_responsible.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q10_responsible) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q11_defined_access.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q11_defined_access) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q12_member_screening.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q12_member_screening) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q13_security_training.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q13_security_training) }}
+                            </div>
+                            <div class="tab-pane fade" id="nav-s3" role="tabpanel" aria-labelledby="nav-s3-tab">
+                                <h6 class="text-danger">{{ new_security_posture_form.q14_monitoring_login.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q14_monitoring_login) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q15_protection_malicious.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q15_protection_malicious) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q16_password_security.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q16_password_security) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q17_awareness_training.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q17_awareness_training) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q18_sanction_policy.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q18_sanction_policy) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q19_personnel_access.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q19_personnel_access) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q20_access_to_PHI.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q20_access_to_PHI) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q21_kind_of_access.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q21_kind_of_access) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q22_use_of_encryption.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q22_use_of_encryption) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q23_periodic_review_of_IS.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q23_periodic_review_of_IS) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q24_monitor_system_activity.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q24_monitor_system_activity) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q25_logoff_policy.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q25_logoff_policy) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q26_user_authentication_policy.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q26_user_authentication_policy) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q27_unauthorised_modification.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q27_unauthorised_modification) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q28_unauthorised_modification_transmitted.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q28_unauthorised_modification_transmitted) }}
+                            </div>
+                            <div class="tab-pane fade" id="nav-s4" role="tabpanel" aria-labelledby="nav-s4-tab">
+                                <h6 class="text-danger">{{ new_security_posture_form.q29_manage_facility_access.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q29_manage_facility_access) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q30_manage_device_access.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q30_manage_device_access) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q31_device_inventory.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q31_device_inventory) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q32_validate_facility_access.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q32_validate_facility_access) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q33_activity_on_IS_with_PHI.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q33_activity_on_IS_with_PHI) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q34_backup_PHI.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q34_backup_PHI) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q35_sanitise_disposed_devices.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q35_sanitise_disposed_devices) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q36_connected_devices.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q36_connected_devices) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q37_necessary_access_rules.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q37_necessary_access_rules) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q38_monitor_3rd_access.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q38_monitor_3rd_access) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q39_sanitise_new_devices.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q39_sanitise_new_devices) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q40_BAA.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q40_BAA) }}
+                                <h6 class="text-danger"
+                                    style="overflow-wrap: break-word">{{ new_security_posture_form.q41_monitor_BA.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q41_monitor_BA) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q42_contingency_plan.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q42_contingency_plan) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q43_determine_critical_IS.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q43_determine_critical_IS) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q44_pdr_security_incidents.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q44_pdr_security_incidents) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q45_incident_response_plan.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q45_incident_response_plan) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q46_incident_response_team.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q46_incident_response_team) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q47_necessary_IS.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q47_necessary_IS) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q48_access_when_emergency.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q48_access_when_emergency) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q49_backup_plan.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q49_backup_plan) }}
+                                <h6 class="text-danger">{{ new_security_posture_form.q50_disaster_recovery_plan.label }}</h6>
+                                {{ wtf.form_field(new_security_posture_form.q50_disaster_recovery_plan) }}
+                                <h6 class="text-danger" style="font-weight:Bold"></h6>
+                                {{ wtf.form_field(new_security_posture_form.submit) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">'</div>
+                <button class="tab-button" onclick="open_close_tab_2()"> Automated Estimation Tab ></button>
+                <div id="automated_estimation_tab" class="row dashboard-row param_estimation_tab">
                     <div class="col-6">
                         <h5>Automated Calculated Effect on Materialisation Calculation</h5>
                         <span> Total Effect Of Controls: </span>
@@ -233,6 +389,7 @@
                         <br/>
                     </div>
                 </div>
+
                 <hr/>
                 <form action="/repo/risk/configuration/threat/{{ threat_id }}/asset/{{ asset_id }}/" method="post">
                     <div class="row dashboard-row">
@@ -322,7 +479,8 @@
                             <div class="row">
                                 <div class="col-12">
                                     {% for consequence_calculation_wrapper in array_threat_consequence_calculation %}
-                                        <h4 class="group-row-header">Consequence | {{ consequence_calculation_wrapper[0].consequence.name }}</h4>
+                                        <h4 class="group-row-header">Consequence
+                                            | {{ consequence_calculation_wrapper[0].consequence.name }}</h4>
                                         {% for consequence_calculation in consequence_calculation_wrapper %}
                                             <div class="row entry-row">
                                                 <div class="col-12">
@@ -378,13 +536,14 @@
                                                                         </div>
                                                                     </div>
                                                                     <input type="range" class="form-control-range"
-                                                                       name="cons|{{ consequence_calculation.consequence.id }}|{{ consequence_calculation.response.id }}|{{ consequence_calculation.threat_occurrence }}"
-                                                                       id="cons|{{ consequence_calculation.consequence.id }}|{{ consequence_calculation.response.id }}|{{ consequence_calculation.threat_occurrence }}"
-                                                                       step="1"
-                                                                       min="0"
-                                                                       max="100" value="{{ consequence_calculation.prob }}"
-                                                                       ,
-                                                                       name="objective_state_alert_3">
+                                                                           name="cons|{{ consequence_calculation.consequence.id }}|{{ consequence_calculation.response.id }}|{{ consequence_calculation.threat_occurrence }}"
+                                                                           id="cons|{{ consequence_calculation.consequence.id }}|{{ consequence_calculation.response.id }}|{{ consequence_calculation.threat_occurrence }}"
+                                                                           step="1"
+                                                                           min="0"
+                                                                           max="100"
+                                                                           value="{{ consequence_calculation.prob }}"
+                                                                           ,
+                                                                           name="objective_state_alert_3">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -399,43 +558,43 @@
 
 
 
-{#                                            <div class="row dashboard-row">#}
-{#                                                <div class="col-2 custom-select-column">#}
-{#                                                    Response: {{ consequence_calculation.response.name }}#}
-{#                                                    Threat Occurs: {{ consequence_calculation.response.name }}#}
-{#                                                </div>#}
-{#                                                <div class="col-10">#}
-{#                                                    <div class="row dashboard-row">#}
-{#                                                        <div class="col-2">#}
-{#                                                            Very Low#}
-{#                                                        </div>#}
-{#                                                        <div class="col-2">#}
-{#                                                            Low#}
-{#                                                        </div>#}
-{#                                                        <div class="col-2">#}
-{#                                                            Medium#}
-{#                                                        </div>#}
-{#                                                        <div class="col-2 ">#}
-{#                                                            High#}
-{#                                                        </div>#}
-{#                                                        <div class="col-2">#}
-{#                                                            Critical#}
-{#                                                        </div>#}
-{#                                                    </div>#}
-{#                                                    <div class="row dashboard-row">#}
-{#                                                        <div class="col-10">#}
-{#                                                            <input type="range" class="form-control-range"#}
-{#                                                                   name="cons|{{ consequence_calculation.consequence.id }}|{{ consequence_calculation.response.id }}|{{ consequence_calculation.threat_occurrence }}"#}
-{#                                                                   id="cons|{{ consequence_calculation.consequence.id }}|{{ consequence_calculation.response.id }}|{{ consequence_calculation.threat_occurrence }}"#}
-{#                                                                   step="1"#}
-{#                                                                   min="0"#}
-{#                                                                   max="100" value="{{ consequence_calculation.prob }}"#}
-{#                                                                   ,#}
-{#                                                                   name="objective_state_alert_3">#}
-{#                                                        </div>#}
-{#                                                    </div>#}
-{#                                                </div>#}
-{#                                            </div>#}
+                                            {#                                            <div class="row dashboard-row">#}
+                                            {#                                                <div class="col-2 custom-select-column">#}
+                                            {#                                                    Response: {{ consequence_calculation.response.name }}#}
+                                            {#                                                    Threat Occurs: {{ consequence_calculation.response.name }}#}
+                                            {#                                                </div>#}
+                                            {#                                                <div class="col-10">#}
+                                            {#                                                    <div class="row dashboard-row">#}
+                                            {#                                                        <div class="col-2">#}
+                                            {#                                                            Very Low#}
+                                            {#                                                        </div>#}
+                                            {#                                                        <div class="col-2">#}
+                                            {#                                                            Low#}
+                                            {#                                                        </div>#}
+                                            {#                                                        <div class="col-2">#}
+                                            {#                                                            Medium#}
+                                            {#                                                        </div>#}
+                                            {#                                                        <div class="col-2 ">#}
+                                            {#                                                            High#}
+                                            {#                                                        </div>#}
+                                            {#                                                        <div class="col-2">#}
+                                            {#                                                            Critical#}
+                                            {#                                                        </div>#}
+                                            {#                                                    </div>#}
+                                            {#                                                    <div class="row dashboard-row">#}
+                                            {#                                                        <div class="col-10">#}
+                                            {#                                                            <input type="range" class="form-control-range"#}
+                                            {#                                                                   name="cons|{{ consequence_calculation.consequence.id }}|{{ consequence_calculation.response.id }}|{{ consequence_calculation.threat_occurrence }}"#}
+                                            {#                                                                   id="cons|{{ consequence_calculation.consequence.id }}|{{ consequence_calculation.response.id }}|{{ consequence_calculation.threat_occurrence }}"#}
+                                            {#                                                                   step="1"#}
+                                            {#                                                                   min="0"#}
+                                            {#                                                                   max="100" value="{{ consequence_calculation.prob }}"#}
+                                            {#                                                                   ,#}
+                                            {#                                                                   name="objective_state_alert_3">#}
+                                            {#                                                        </div>#}
+                                            {#                                                    </div>#}
+                                            {#                                                </div>#}
+                                            {#                                            </div>#}
                                         {% endfor %}
                                     {% endfor %}
                                 </div>

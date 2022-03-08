@@ -112,7 +112,7 @@ def send_risk_report(report_id, asset_id, threat_id):
 
     report_to_send = {}
     report_to_send["report_info"] = {
-        "date_time": this_risk_assessment_report.date_time,
+        "date_time": this_risk_assessment_report.date_time.strftime("%m/%d/%Y, %H:%M:%S"),
         "type": this_risk_assessment_report.type
     }
 
@@ -1511,8 +1511,8 @@ def get_capec_recommendations(selected_cve_id):
 # print(xx)
 
 # send_alert_new_asset(7)
-security_event_risk_reports(8)
-security_event_risk_reports(9)
-security_event_risk_reports(10)
+# security_event_risk_reports(8)
+# security_event_risk_reports(9)
+# security_event_risk_reports(10)
 # endregion test Area
 

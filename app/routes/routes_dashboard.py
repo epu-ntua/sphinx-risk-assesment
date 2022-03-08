@@ -368,12 +368,14 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, report_id=-1):
                     this_risk_assessment = RepoRiskAssessmentReports.query.filter_by(id=report_id).all()
                 except SQLAlchemyError:
                     return "SQLAlchemyError"
-            # else:
-            #     try:
-            #         this_risk_assessment = RepoRiskAssessmentReports.query.filter(RepoRiskAssessmentReports.risk_assessment.any(repo_asset_id=asset_id, repo_threat_id=threat_id)).first()
-            #     except SQLAlchemyError:
-            #         return "SQLAlchemyError"
-            #     report_id=this_risk_assessment.id
+            else:
+                try:
+                    this_risk_assessment = RepoRiskAssessmentReports.query.filter(RepoRiskAssessmentReports.risk_assessment.has(repo_asset_id=asset_id, repo_threat_id=threat_id)).all()
+                except SQLAlchemyError as er:
+                    print(er)
+                    return "SQLAlchemyError"
+                print(this_risk_assessment)
+                report_id=this_risk_assessment[0].id
 
             this_exposure = convert_database_items_to_json_table(this_exposure)
             these_responses = convert_database_items_to_json_table(these_responses)

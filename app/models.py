@@ -365,7 +365,7 @@ class RepoRiskAssessmentReports(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     risk_assessment_id = db.Column(db.Integer, db.ForeignKey('repo_risk_assessment.id'))
     risk_assessment = db.relationship("RepoRiskAssessment", back_populates="reports")
-    date_time = db.Column(db.DateTime)
+    date_time = db.Column(db.DateTime, default=datetime.utcnow())
     type = db.Column(db.String)  # Possible values are Initial - Manual - Baseline - Incident
     exposure_set = db.Column(db.String)
     responses_set = db.Column(db.String)

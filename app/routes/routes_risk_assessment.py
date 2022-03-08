@@ -7,7 +7,8 @@ from app.globals import *
 from app.utils import *
 from app.forms import *
 from app import app
-from app.utils.utils_communication import send_risk_report
+# from app.utils.utils_communication import send_risk_report
+from app.utils.utils_3rd_party_data_handling import send_risk_report
 from app.utils.utils_database import *
 from sqlalchemy.exc import SQLAlchemyError
 from copy import deepcopy
@@ -346,6 +347,68 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
         flash('User input for threat "{}" and asset "{}" Added Succesfully'.format(threat_id, asset_id))
         return redirect("/repo/risk/configuration/threat/" + threat_id + "/asset/" + asset_id + "/")
     else:
+        if db.session.query(RepoOrganisationSecurityPosture.id).first():
+            repo_organisation_security_posture = RepoOrganisationSecurityPosture.query.first()
+        else:
+            repo_organisation_security_posture = RepoOrganisationSecurityPosture()
+            db.session.add(repo_organisation_security_posture)
+            db.session.commit()
+        new_security_posture_form = FormEditRepoOrganisationSecurityPosture()
+        new_security_posture_form.id.data = repo_organisation_security_posture.id
+        new_security_posture_form.q1_completedSRA.data = str(repo_organisation_security_posture.q1_completedSRA)
+        new_security_posture_form.q2_include_IS_SRA.data = str(repo_organisation_security_posture.q2_include_IS_SRA)
+        new_security_posture_form.q3_compliance.data = str(repo_organisation_security_posture.q3_compliance)
+        new_security_posture_form.q4_respond.data = str(repo_organisation_security_posture.q4_respond)
+        new_security_posture_form.q5_respond_personnel.data = str(repo_organisation_security_posture.q5_respond_personnel)
+
+        new_security_posture_form.q6_communicate_responses.data =str(repo_organisation_security_posture.q6_communicate_responses)
+        new_security_posture_form.q7_documented_policies.data =str(repo_organisation_security_posture.q7_documented_policies)
+        new_security_posture_form.q8_reflect_business_practices.data =str(repo_organisation_security_posture.q8_reflect_business_practices)
+        new_security_posture_form.q9_documentation_availability.data =str(repo_organisation_security_posture.q9_documentation_availability)
+        new_security_posture_form.q10_responsible.data =str(repo_organisation_security_posture.q10_responsible)
+        new_security_posture_form.q11_defined_access.data =str(repo_organisation_security_posture.q11_defined_access)
+        new_security_posture_form.q12_member_screening.data =str(repo_organisation_security_posture.q12_member_screening)
+        new_security_posture_form.q13_security_training.data =str(repo_organisation_security_posture.q13_security_training)
+        new_security_posture_form.q14_monitoring_login.data =str(repo_organisation_security_posture.q14_monitoring_login)
+        new_security_posture_form.q15_protection_malicious.data =str(repo_organisation_security_posture.q15_protection_malicious)
+        new_security_posture_form.q16_password_security.data =str(repo_organisation_security_posture.q16_password_security)
+        new_security_posture_form.q17_awareness_training.data =str(repo_organisation_security_posture.q17_awareness_training)
+        new_security_posture_form.q18_sanction_policy.data =str(repo_organisation_security_posture.q18_sanction_policy)
+        new_security_posture_form.q19_personnel_access.data =str(repo_organisation_security_posture.q19_personnel_access)
+        new_security_posture_form.q20_access_to_PHI.data =str(repo_organisation_security_posture.q20_access_to_PHI)
+        new_security_posture_form.q21_kind_of_access.data =str(repo_organisation_security_posture.q21_kind_of_access)
+        new_security_posture_form.q22_use_of_encryption.data =str(repo_organisation_security_posture.q22_use_of_encryption)
+        new_security_posture_form.q23_periodic_review_of_IS.data =str(repo_organisation_security_posture.q23_periodic_review_of_IS)
+        new_security_posture_form.q24_monitor_system_activity.data =str(repo_organisation_security_posture.q24_monitor_system_activity)
+        new_security_posture_form.q25_logoff_policy.data =str(repo_organisation_security_posture.q25_logoff_policy)
+        new_security_posture_form.q26_user_authentication_policy.data =str(repo_organisation_security_posture.q26_user_authentication_policy)
+        new_security_posture_form.q27_unauthorised_modification.data =str(repo_organisation_security_posture.q27_unauthorised_modification)
+        new_security_posture_form.q28_unauthorised_modification_transmitted.data =str(repo_organisation_security_posture.q28_unauthorised_modification_transmitted)
+        new_security_posture_form.q29_manage_facility_access.data =str(repo_organisation_security_posture.q29_manage_facility_access)
+        new_security_posture_form.q30_manage_device_access.data =str(repo_organisation_security_posture.q30_manage_device_access)
+        new_security_posture_form.q31_device_inventory.data =str(repo_organisation_security_posture.q31_device_inventory)
+        new_security_posture_form.q32_validate_facility_access.data =str(repo_organisation_security_posture.q32_validate_facility_access)
+        new_security_posture_form.q33_activity_on_IS_with_PHI.data =str(repo_organisation_security_posture.q33_activity_on_IS_with_PHI)
+        new_security_posture_form.q34_backup_PHI.data =str(repo_organisation_security_posture.q34_backup_PHI)
+        new_security_posture_form.q35_sanitise_disposed_devices.data =str(repo_organisation_security_posture.q35_sanitise_disposed_devices)
+        new_security_posture_form.q36_connected_devices.data =str(repo_organisation_security_posture.q36_connected_devices)
+        new_security_posture_form.q37_necessary_access_rules.data =str(repo_organisation_security_posture.q37_necessary_access_rules)
+        new_security_posture_form.q38_monitor_3rd_access.data =str(repo_organisation_security_posture.q38_monitor_3rd_access)
+        new_security_posture_form.q39_sanitise_new_devices.data =str(repo_organisation_security_posture.q39_sanitise_new_devices)
+        new_security_posture_form.q40_BAA.data =str(repo_organisation_security_posture.q40_BAA)
+        new_security_posture_form.q41_monitor_BA.data =str(repo_organisation_security_posture.q41_monitor_BA)
+        new_security_posture_form.q42_contingency_plan.data =str(repo_organisation_security_posture.q42_contingency_plan)
+        new_security_posture_form.q43_determine_critical_IS.data =str(repo_organisation_security_posture.q43_determine_critical_IS)
+        new_security_posture_form.q44_pdr_security_incidents.data =str(repo_organisation_security_posture.q44_pdr_security_incidents)
+        new_security_posture_form.q45_incident_response_plan.data =str(repo_organisation_security_posture.q45_incident_response_plan)
+        new_security_posture_form.q46_incident_response_team.data =str(repo_organisation_security_posture.q46_incident_response_team)
+        new_security_posture_form.q47_necessary_IS.data =str(repo_organisation_security_posture.q47_necessary_IS)
+        new_security_posture_form.q48_access_when_emergency.data =str(repo_organisation_security_posture.q48_access_when_emergency)
+        new_security_posture_form.q49_backup_plan.data =str(repo_organisation_security_posture.q49_backup_plan)
+        new_security_posture_form.q50_disaster_recovery_plan.data =str(repo_organisation_security_posture.q50_disaster_recovery_plan)
+
+
+
         print("Threat id is" + str(threat_id))
         try:
             repo_threats = RepoThreat.query.all()
@@ -601,7 +664,8 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
                                json_vulnerabilities=json_vulnerabilities,
                                repo_threats=repo_threats, this_threat=this_threat, repo_assets=repo_assets,
                                array_threat_consequence_calculation=array_threat_consequence_calculation,
-                               array_threat_materialisation_calculation=array_threat_materialisation_calculation)
+                               array_threat_materialisation_calculation=array_threat_materialisation_calculation,
+                               new_security_posture_form=new_security_posture_form)
 
 
 @app.route('/repo/risk/configuration/impact/threat/<threat_id>/', methods=['GET', 'POST'])
@@ -2170,34 +2234,132 @@ def view_repo_risk_reports():
             json_reports[custom_it]["asset_name"] = this_risk_assessment.asset.name
             json_reports[custom_it]["asset_ip"] = this_risk_assessment.asset.ip
             json_reports[custom_it]["threat_name"] = this_risk_assessment.threat.name
+            json_reports[custom_it]["date_time"] = json_reports[custom_it]["date_time"].strftime("%m/%d/%Y, %H:%M:%S")
             # print(each_report)
 
             # Create detailed report jsons
             json_detailed_report_to_add = {}
             json_detailed_report_to_add["type"] = each_report.type
-            json_detailed_report_to_add["date_time"] = each_report.date_time
+            if each_report.date_time is None:
+                json_detailed_report_to_add["date_time"] = None
+            else:
+                json_detailed_report_to_add["date_time"] = each_report.date_time.strftime("%m/%d/%Y, %H:%M:%S")
+
+            # Get cvalues from database
             materialisations_list = each_report.materialisations_inference.split("|")
+
+            exposure_inference_list = each_report.exposure_inference.split("|")
+            consequence_inference_list = each_report.consequences_inference.split("|")
+            impact_inference_list = each_report.impacts_inference.split("|")
+            services_inference_list = each_report.services_inference.split("|")
+            objectives_inference_list = each_report.objectives_inference.split("|")
+            utility_inference_list = each_report.utilities_inference.split("|")
+            alerts_triggered = each_report.alerts_triggered.split("|")
+
             materialisations_list.pop()
+            exposure_inference_list.pop()
+            consequence_inference_list.pop()
+            impact_inference_list.pop()
+            services_inference_list.pop()
+            objectives_inference_list.pop()
+            utility_inference_list.pop()
+            alerts_triggered.pop()
             print(materialisations_list)
             json_detailed_report_to_add["exposure"] = []
             json_detailed_report_to_add["materialisations"] = []
             json_detailed_report_to_add["consequences"] = []
+            json_detailed_report_to_add["services"] = []
             json_detailed_report_to_add["impacts"] = []
             json_detailed_report_to_add["objectives"] = []
             json_detailed_report_to_add["utilities"] = []
             json_detailed_report_to_add["alerts"] = []
 
+            # Exposure
+            json_detailed_report_to_add["exposure"].append(
+                {"name": exposure_inference_list[0], "occurs": exposure_inference_list[2],
+                 "Nothing": exposure_inference_list[1]}
+            )
+
+            # Materialisation
             for custom_it_mat in range(0, len(materialisations_list), 3):
                 this_mat_name = RepoMaterialisation.query.filter_by(
                     id=materialisations_list[custom_it_mat]).first().name
                 json_detailed_report_to_add["materialisations"].append(
-                    {"name": this_mat_name, "occurs": materialisations_list[custom_it_mat + 1],
-                     "Nothing": materialisations_list[custom_it_mat + 2]})
+                    {"name": this_mat_name, "occurs": materialisations_list[custom_it_mat + 2],
+                     "Nothing": materialisations_list[custom_it_mat + 1]})
 
+            # Consequence
+            for custom_it_mat in range(0, len(consequence_inference_list), 3):
+                # this_cons_name = RepoMaterialisation.query.filter_by(
+                #     id=consequence_inference_list[custom_it_mat]).first().name
+                json_detailed_report_to_add["consequences"].append(
+                    {"name": consequence_inference_list[custom_it_mat], "occurs": consequence_inference_list[custom_it_mat + 2],
+                     "Nothing": consequence_inference_list[custom_it_mat + 1]})
+
+            # Service
+            for custom_it_mat in range(0, len(services_inference_list), 3):
+                # this_cons_name = RepoMaterialisation.query.filter_by(
+                #     id=consequence_inference_list[custom_it_mat]).first().name
+                json_detailed_report_to_add["services"].append(
+                    {"name": services_inference_list[custom_it_mat],
+                     "Working": services_inference_list[custom_it_mat + 2],
+                     "Not working": services_inference_list[custom_it_mat + 1]})
+
+            # Impact
+            for custom_it_mat in range(0, len(impact_inference_list), 4):
+                # this_cons_name = RepoMaterialisation.query.filter_by(
+                #     id=consequence_inference_list[custom_it_mat]).first().name
+                json_detailed_report_to_add["impacts"].append(
+                    {"name": impact_inference_list[custom_it_mat],
+                     "low": impact_inference_list[custom_it_mat + 1],
+                     "medium": impact_inference_list[custom_it_mat + 2],
+                     "high": impact_inference_list[custom_it_mat + 3]
+                     }
+                )
+
+            # Objective
+            for custom_it_mat in range(0, len(objectives_inference_list), 4):
+                # this_cons_name = RepoMaterialisation.query.filter_by(
+                #     id=consequence_inference_list[custom_it_mat]).first().name
+                json_detailed_report_to_add["objectives"].append(
+                    {"name": objectives_inference_list[custom_it_mat],
+                     "low": objectives_inference_list[custom_it_mat + 1],
+                     "medium": objectives_inference_list[custom_it_mat + 2],
+                     "high": objectives_inference_list[custom_it_mat + 3]
+                     }
+                )
+
+            # # Utilities
+            # for custom_it_mat in range(0, len(objectives_inference_list), 4):
+            #     # this_cons_name = RepoMaterialisation.query.filter_by(
+            #     #     id=consequence_inference_list[custom_it_mat]).first().name
+            #     json_detailed_report_to_add["objectives"].append(
+            #         {"name": objectives_inference_list[custom_it_mat],
+            #          "low": objectives_inference_list[custom_it_mat + 1],
+            #          "medium": objectives_inference_list[custom_it_mat + 2],
+            #          "high": objectives_inference_list[custom_it_mat + 3]
+            #          }
+            #     )
+            #
+            # # Alerts
+            # for custom_it_mat in range(0, len(objectives_inference_list), 4):
+            #     # this_cons_name = RepoMaterialisation.query.filter_by(
+            #     #     id=consequence_inference_list[custom_it_mat]).first().name
+            #     json_detailed_report_to_add["objectives"].append(
+            #         {"name": objectives_inference_list[custom_it_mat],
+            #          "low": objectives_inference_list[custom_it_mat + 1],
+            #          "medium": objectives_inference_list[custom_it_mat + 2],
+            #          "high": objectives_inference_list[custom_it_mat + 3]
+            #          }
+            #     )
 
             json_reports[custom_it]["detailed"] = json_detailed_report_to_add
             custom_it = custom_it + 1
 
+            # print("--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+            # print(json_reports)
+            # to_test_report = json.dumps(json_reports)
+            # print(to_test_report)
             # {
             #     "type": "Initial",
             #     "dateTime": "12/04/2021 12:00:00",
@@ -2215,7 +2377,9 @@ def view_repo_risk_reports():
             #
             # }
 
+        print(json_reports)
         json_reports = json.dumps(json_reports)
+        # json_reports = json.dumps(json_reports)
 
         # print("Proper is  --------")
         # print(repo_reports)
