@@ -556,8 +556,8 @@ def start_risk_assessment(threat_id, asset_id):
             #     response_bool_num = 0
 
             diag.cpt(nodeMatId)[{exposureNodeId: occurance_bool_num, nodeReId: response_bool_num}] = [
-                node_value.prob / 100,
-                1 - (node_value.prob / 100)]
+                1 - (node_value.prob / 100),
+                node_value.prob / 100]
 
         # print(these_materialisation_values)
 
@@ -592,9 +592,7 @@ def start_risk_assessment(threat_id, asset_id):
                     response_bool_num = it
 
             nodeMatId = "mat" + str(node_value.repo_consequence.materialisation_id)
-            diag.cpt(nodeConsId)[{nodeMatId: occurance_bool_num, nodeReId: response_bool_num}] = [node_value.prob / 100,
-                                                                                                  1 - (
-                                                                                                          node_value.prob / 100)]
+            diag.cpt(nodeConsId)[{nodeMatId: occurance_bool_num, nodeReId: response_bool_num}] = [1 - (node_value.prob / 100),node_value.prob / 100]
         # print(these_cosnequence_values)
 
     # Service node values
@@ -844,6 +842,9 @@ def start_risk_assessment(threat_id, asset_id):
         results[nodeUtilId] = to_result_util
 
     print(ie.posteriorUtility("util2"))
+
+    print("----------EXPOSURE POSTERIOR LIST -----------")
+    print(ie.posterior("te" + str(this_threat.id)).tolist())
     return results
     # Print Graph
     # with open(os.path.join("out", "GiraDynamic.bifxml"), "r") as out:
@@ -1067,8 +1068,8 @@ def start_risk_assessment_alert(threat_id, asset_id, exposure_value = None, mate
             #     response_bool_num = 0
 
             diag.cpt(nodeMatId)[{exposureNodeId: occurance_bool_num, nodeReId: response_bool_num}] = [
-                node_value.prob / 100,
-                1 - (node_value.prob / 100)]
+                1 - (node_value.prob / 100),
+                node_value.prob / 100]
 
         # print(these_materialisation_values)
 
@@ -1103,9 +1104,7 @@ def start_risk_assessment_alert(threat_id, asset_id, exposure_value = None, mate
                     response_bool_num = it
 
             nodeMatId = "mat" + str(node_value.repo_consequence.materialisation_id)
-            diag.cpt(nodeConsId)[{nodeMatId: occurance_bool_num, nodeReId: response_bool_num}] = [node_value.prob / 100,
-                                                                                                  1 - (
-                                                                                                          node_value.prob / 100)]
+            diag.cpt(nodeConsId)[{nodeMatId: occurance_bool_num, nodeReId: response_bool_num}] = [ 1 - (node_value.prob / 100), node_value.prob / 100]
         # print(these_cosnequence_values)
 
     # Service node values
@@ -1282,8 +1281,10 @@ def start_risk_assessment_alert(threat_id, asset_id, exposure_value = None, mate
 
             exposureNodeId = "te" + str(this_threat.id)
             ie.addEvidence(exposureNodeId, [1-exposure_new_evidence, exposure_new_evidence])
-            # print("==========PREVIOUS EXP VALUE================")
-            # print(exposure_value_increase)
+            print("==========PREVIOUS EXP VALUE================")
+            print(exposure_value_increase)
+            print(exposure_new_evidence)
+            print(1-exposure_new_evidence)
 
         if materialisation_value_increase is not None:
             temp_list = temp_ie.posterior(nodeMatId).tolist()
@@ -1650,8 +1651,8 @@ def risk_assessment_manual(threat_id, asset_id, exposures_set, materialisations_
             #     response_bool_num = 0
 
             diag.cpt(nodeMatId)[{exposureNodeId: occurance_bool_num, nodeReId: response_bool_num}] = [
-                node_value.prob / 100,
-                1 - (node_value.prob / 100)]
+                1 - (node_value.prob / 100),
+                node_value.prob / 100]
 
         # print(these_materialisation_values)
 
@@ -1686,9 +1687,7 @@ def risk_assessment_manual(threat_id, asset_id, exposures_set, materialisations_
                     response_bool_num = it
 
             nodeMatId = "mat" + str(node_value.repo_consequence.materialisation_id)
-            diag.cpt(nodeConsId)[{nodeMatId: occurance_bool_num, nodeReId: response_bool_num}] = [node_value.prob / 100,
-                                                                                                  1 - (
-                                                                                                          node_value.prob / 100)]
+            diag.cpt(nodeConsId)[{nodeMatId: occurance_bool_num, nodeReId: response_bool_num}] = [ 1 - (node_value.prob / 100),node_value.prob / 100]
         # print(these_cosnequence_values)
 
     # Impact Node Values
