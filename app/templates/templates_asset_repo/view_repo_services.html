@@ -87,18 +87,18 @@
         <tr>
             <th data-field="id" data-sortable="true">ID</th>
             <th data-field="name" data-sortable="true">Name</th>
-            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents">Item Price</th>
+            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents"></th>
             <th data-field="operate" data-formatter="operateFormatter1" data-events="operateEvents1"></th>
         </tr>
         </thead>
     </table>
     <hr/>
-    <h2>Add New Organisation Service</h2>
-    <form action="/repo/services/" method="post" novalidate>
-     {{ wtf.quick_form(new_service_form) }}
+{#    <h2>Add New Organisation Service</h2>#}
+{#    <form action="/repo/services/" method="post" novalidate>#}
+{#     {{ wtf.quick_form(new_service_form) }}#}
 {#        <p>{{ wtf.form_field(new_actor_form.submit()) }}</p>#}
-    </p>
-    </form>
+{#    </p>#}
+{#    </form>#}
 
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
          aria-hidden="true">

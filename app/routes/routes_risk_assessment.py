@@ -353,6 +353,8 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
             repo_organisation_security_posture = RepoOrganisationSecurityPosture()
             db.session.add(repo_organisation_security_posture)
             db.session.commit()
+
+
         new_security_posture_form = FormEditRepoOrganisationSecurityPosture()
         new_security_posture_form.id.data = repo_organisation_security_posture.id
         new_security_posture_form.q1_completedSRA.data = str(repo_organisation_security_posture.q1_completedSRA)
@@ -406,6 +408,8 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
         new_security_posture_form.q48_access_when_emergency.data =str(repo_organisation_security_posture.q48_access_when_emergency)
         new_security_posture_form.q49_backup_plan.data =str(repo_organisation_security_posture.q49_backup_plan)
         new_security_posture_form.q50_disaster_recovery_plan.data =str(repo_organisation_security_posture.q50_disaster_recovery_plan)
+
+        # Setting Histogram
 
 
 

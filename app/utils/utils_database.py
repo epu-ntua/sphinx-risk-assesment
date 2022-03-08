@@ -208,6 +208,13 @@ def rcra_db_init():
         # to_add_asset_service = RepoAsset(**asset_service)
         # db.session.add(to_add_asset_service)
 
+    #Adding security postures
+    to_add_security_postures = import_fixture_from_file("repo_organisation_security_posture")
+    for security_question_json in to_add_security_postures:
+        to_add_security_question = RepoOrganisationSecurityPosture(**security_question_json)
+        db.session.add(to_add_security_question)
+
+
     # Adding cves
     to_add_cves = import_fixture_from_file("common_vulnerabilities_and_exposures")
     for cve in to_add_cves:

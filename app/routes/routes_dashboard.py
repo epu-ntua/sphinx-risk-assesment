@@ -755,7 +755,7 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, report_id=-1):
                 # Create detailed report jsons
                 json_detailed_report_to_add = {}
                 json_detailed_report_to_add["type"] = each_report.type
-                json_detailed_report_to_add["date_time"] = each_report.date_time
+                json_detailed_report_to_add["date_time"] = each_report.date_time.strftime("%m/%d/%Y, %H:%M:%S")
                 materialisations_list = each_report.materialisations_inference.split("|")
                 materialisations_list.pop()
                 # print(materialisations_list)
@@ -768,8 +768,16 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, report_id=-1):
                         {"name": this_mat_name, "occurs": materialisations_list[custom_it_mat + 1],
                          "Nothing": materialisations_list[custom_it_mat + 2]})
 
+
+                # json_detailed_report_to_add["date_time"].strftime("%m/%d/%Y, %H:%M:%S")
                 json_reports[custom_it]["detailed"] = json_detailed_report_to_add
                 custom_it = custom_it + 1
+
+            print(json_reports)
+            for each_report in json_reports:
+                each_report["date_time"] = each_report["date_time"].strftime("%m/%d/%Y, %H:%M:%S")
+            print("==============================================")
+            print(json_reports)
             json_reports = json.dumps(json_reports)
 
         # existing_report_data = {

@@ -284,7 +284,7 @@ def get_kafka_data_print_test(kafka_topic):
                     print(value)
                     print(type(attribute))
                     print(type(value))
-                    # v_report_json(attribute,value)
+                    v_report_json(attribute,value)
                 # utils.handle_kafka_input(msg, "vaaas-reports")
                 print("-------------------------------------------------------------------------", flush=True)
             elif msg.topic == "dtm-asset":

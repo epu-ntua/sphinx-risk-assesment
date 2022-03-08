@@ -122,6 +122,9 @@
                     {#                    <span class="menu-collapsed">Software License</span>#}
                     {#                </a>#}
                 </div>
+                <li class="list-group-item sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
+                    <small>OPTIONS</small>
+                </li>
                 <a href="#submenu2" data-toggle="collapse" aria-expanded="false"
                    class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
                     <div class="d-flex w-100 justify-content-start align-items-center">
@@ -285,49 +288,49 @@
                 {#                    </div>#}
                 {#                </a>#}
                 <!--             Separator with title -->
-                <li class="list-group-item sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
-                    <small>OPTIONS</small>
-                </li>
+{#                <li class="list-group-item sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">#}
+{#                    <small>OPTIONS</small>#}
+{#                </li>#}
                 <!--             /END Separator -->
-                <a href="#submenu4" data-toggle="collapse" aria-expanded="false"
-                   class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
-                    <div class="d-flex w-100 justify-content-start align-items-center">
-                        <span class="fa fa-cogs fa-fw mr-3"></span>
-                        <span class="menu-collapsed">Settings</span>
-                        <span class="submenu-icon ml-auto"></span>
-                    </div>
-                </a>
-                <!--            Submenu content -->
-                <div id='submenu4' class="collapse sidebar-submenu">
-                    <a href="http://{{ serverAddress }}:{{ serverPort }}/gira_overview/gira_threat_exposure/"
-                       class="list-group-item list-group-item-action bg-dark text-white">
-                        <span class="menu-collapsed">Threat Exposure</span>
-                    </a>
-                    <a href="http://{{ serverAddress }}:{{ serverPort }}/gira_overview/gira_threat_materialisation/"
-                       class="list-group-item list-group-item-action bg-dark text-white">
-                        <span class="menu-collapsed">Threat Materialisations</span>
-                    </a>
-                    <a href="http://{{ serverAddress }}:{{ serverPort }}/gira_overview/gira_threat_response/"
-                       class="list-group-item list-group-item-action bg-dark text-white">
-                        <span class="menu-collapsed">Response</span>
-                    </a>
-                    <a href="http://{{ serverAddress }}:{{ serverPort }}/gira_overview/gira_consequence/"
-                       class="list-group-item list-group-item-action bg-dark text-white">
-                        <span class="menu-collapsed">Consequence</span>
-                    </a>
-                    <a href="http://{{ serverAddress }}:{{ serverPort }}/gira_overview/gira_asset_status/"
-                       class="list-group-item list-group-item-action bg-dark text-white">
-                        <span class="menu-collapsed">Asset Status</span>
-                    </a>
-                    <a href="http://{{ serverAddress }}:{{ serverPort }}/gira_overview/gira_asset_impact/"
-                       class="list-group-item list-group-item-action bg-dark text-white">
-                        <span class="menu-collapsed">Impact</span>
-                    </a>
-                    <a href="http://{{ serverAddress }}:{{ serverPort }}/gira_overview/gira_objective/"
-                       class="list-group-item list-group-item-action bg-dark text-white">
-                        <span class="menu-collapsed">Objective</span>
-                    </a>
-                </div>
+{#                <a href="#submenu4" data-toggle="collapse" aria-expanded="false"#}
+{#                   class="bg-dark list-group-item list-group-item-action flex-column align-items-start">#}
+{#                    <div class="d-flex w-100 justify-content-start align-items-center">#}
+{#                        <span class="fa fa-cogs fa-fw mr-3"></span>#}
+{#                        <span class="menu-collapsed">Settings</span>#}
+{#                        <span class="submenu-icon ml-auto"></span>#}
+{#                    </div>#}
+{#                </a>#}
+{#                <!--            Submenu content -->#}
+{#                <div id='submenu4' class="collapse sidebar-submenu">#}
+{#                    <a href="http://{{ serverAddress }}:{{ serverPort }}/gira_overview/gira_threat_exposure/"#}
+{#                       class="list-group-item list-group-item-action bg-dark text-white">#}
+{#                        <span class="menu-collapsed">Threat Exposure</span>#}
+{#                    </a>#}
+{#                    <a href="http://{{ serverAddress }}:{{ serverPort }}/gira_overview/gira_threat_materialisation/"#}
+{#                       class="list-group-item list-group-item-action bg-dark text-white">#}
+{#                        <span class="menu-collapsed">Threat Materialisations</span>#}
+{#                    </a>#}
+{#                    <a href="http://{{ serverAddress }}:{{ serverPort }}/gira_overview/gira_threat_response/"#}
+{#                       class="list-group-item list-group-item-action bg-dark text-white">#}
+{#                        <span class="menu-collapsed">Response</span>#}
+{#                    </a>#}
+{#                    <a href="http://{{ serverAddress }}:{{ serverPort }}/gira_overview/gira_consequence/"#}
+{#                       class="list-group-item list-group-item-action bg-dark text-white">#}
+{#                        <span class="menu-collapsed">Consequence</span>#}
+{#                    </a>#}
+{#                    <a href="http://{{ serverAddress }}:{{ serverPort }}/gira_overview/gira_asset_status/"#}
+{#                       class="list-group-item list-group-item-action bg-dark text-white">#}
+{#                        <span class="menu-collapsed">Asset Status</span>#}
+{#                    </a>#}
+{#                    <a href="http://{{ serverAddress }}:{{ serverPort }}/gira_overview/gira_asset_impact/"#}
+{#                       class="list-group-item list-group-item-action bg-dark text-white">#}
+{#                        <span class="menu-collapsed">Impact</span>#}
+{#                    </a>#}
+{#                    <a href="http://{{ serverAddress }}:{{ serverPort }}/gira_overview/gira_objective/"#}
+{#                       class="list-group-item list-group-item-action bg-dark text-white">#}
+{#                        <span class="menu-collapsed">Objective</span>#}
+{#                    </a>#}
+{#                </div>#}
                 {#            <a href="#" class="bg-dark list-group-item list-group-item-action">#}
                 {#                <div class="d-flex w-100 justify-content-start align-items-center">#}
                 {#                    <span class="fa fa-envelope-o fa-fw mr-3"></span>#}
@@ -337,13 +340,13 @@
                 <!--             Separator without title -->
                 <li class="list-group-item sidebar-separator menu-collapsed"></li>
                 <!--            /END Separator -->
-                <a href="#" data-toggle="sidebar-colapse"
-                   class="bg-dark list-group-item list-group-item-action d-flex align-items-center">
-                    <div class="d-flex w-100 justify-content-start align-items-center">
-                        <span id="collapse-icon" class="fa fa-2x mr-3"></span>
-                        <span id="collapse-text" class="menu-collapsed">Collapse</span>
-                    </div>
-                </a>
+{#                <a href="#" data-toggle="sidebar-colapse"#}
+{#                   class="bg-dark list-group-item list-group-item-action d-flex align-items-center">#}
+{#                    <div class="d-flex w-100 justify-content-start align-items-center">#}
+{#                        <span id="collapse-icon" class="fa fa-2x mr-3"></span>#}
+{#                        <span id="collapse-text" class="menu-collapsed">Collapse</span>#}
+{#                    </div>#}
+{#                </a>#}
 
             </ul><!-- List Group END-->
         </div><!-- sidebar-container END -->
