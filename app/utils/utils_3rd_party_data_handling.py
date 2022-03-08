@@ -1,4 +1,5 @@
 from copy import deepcopy
+from typing import Dict
 
 from flask import flash, Response
 from kafka import KafkaProducer
@@ -655,8 +656,8 @@ def v_report_json(report_name, report_details):
     # obj = json.load(fp)
     obj = report_details
     print("VRERPORT")
-    print(obj)
-    print(type(obj))
+    # print(obj)
+    # print(type(obj))
     if obj["id"] is not None:
         reprow_reportId = obj["id"]
         if db.session.query(VulnerabilityReport.id).filter_by(reportId = reprow_reportId).first() is not None:
@@ -675,7 +676,6 @@ def v_report_json(report_name, report_details):
             db.session.commit()
             # flash('Vulnerability Report "{}" Added Succesfully'.format(my_json_report.reportId))
         except SQLAlchemyError as e:
-            db.session.rollback()
             return -1
 
         # Get asset IP
@@ -684,72 +684,83 @@ def v_report_json(report_name, report_details):
         for item in obj['objects']:
             if item['type'] == "ipv4-addr":
                 my_asset_IP = item["value"]
-            elif item[''] != "":
+            elif item['type'] == "mac-addr":
                 my_asset_MAC = item["value"]
             else:
                 continue
         # TODO: Change to search with MAC address???
-        if not db.session.query(RepoAsset.id).filter_by(ip = my_asset_IP).first() in None:
+        print(my_asset_IP)
+        if db.session.query(RepoAsset.id).filter_by(ip=my_asset_IP).first() is None:
             my_repo_asset = RepoAsset(ip=my_asset_IP)
             my_repo_asset.mac_address = my_asset_MAC if my_asset_MAC is not None else ""
             db.session.add(my_repo_asset)
             try:
                 db.session.commit()
-                flash('Asset "{}" Added Succesfully'.format(my_repo_asset.ip))
-                send_alert_new_asset(my_repo_asset.id)
-                # DONE: Send alert for the new Asset to the EndUser
             except SQLAlchemyError as e:
-                db.session.rollback()
-
+                return -1
             send_alert_new_asset(my_repo_asset.id)
         else:
-            my_repo_asset = db.session.query(RepoAsset).filter_by(ip = my_asset_IP).first()
+            my_repo_asset = db.session.query(RepoAsset).filter_by(ip=my_asset_IP).first()
             my_repo_asset.mac_address = my_asset_MAC if my_asset_MAC is not None else ""
-
+            try:
+                db.session.commit()
+            except SQLAlchemyError as e:
+                return -1
+        my_repo_asset_id = my_repo_asset.id
         # Get CVE from the result nodes of the report
         for item in obj['objects']:
             if item['type'] == "x-discovered-service":
                 reprow_service_name = item['service_name']
-                if db.session.query(RepoAssetService.id).filter_by(asset_id = my_repo_asset.ip, service_name = reprow_service_name).first() is None:
+                if db.session.query(RepoAssetService.id).filter_by(asset_id=my_repo_asset.id, service_name=reprow_service_name).first() is None:
                     my_asset_service = RepoAssetService(asset_id=my_repo_asset.id, service_name=reprow_service_name)
                     db.session.add(my_asset_service)
                 else:
-                    my_asset_service = db.session.query(RepoAssetService).filter_by(asset_id=reprow_cveId, service_name=reprow_service_name).one()
+                    my_asset_service = db.session.query(RepoAssetService).filter_by(asset_id=my_repo_asset.id, service_name=reprow_service_name).one()
                 my_asset_service.vreport_id = my_json_report.id if my_json_report.id is not None else ""
                 my_asset_service.port = item['port'] if item['port'] is not None else ""
                 my_asset_service.protocol = item['protocol'] if item['protocol'] is not None else ""
                 my_asset_service.state = item['state'] if item['state'] is not None else ""
-                my_asset_service.service_product = item['service_product'] if item['service_product'] is not None else ""
-                my_asset_service.service_product_version = item['service_product_version'] if item['service_product_version'] is not None else ""
-
-                for service_attr, service_data in item['service_vulnerabilities'].items():
-                    for vulnerability_item in service_data['null']:
-                        if vulnerability_item['type'] == "cve":
-                            reprow_cveId = vulnerability_item['id']
-                            if db.session.query(CommonVulnerabilitiesAndExposures.id).filter_by(CVEId = reprow_cveId).first() is None:
-                                my_cve = CommonVulnerabilitiesAndExposures(CVEId=reprow_cveId)
-                                db.session.add(my_cve)
-                            else:
-                                my_cve = db.session.query(CommonVulnerabilitiesAndExposures).filter_by(CVEId=reprow_cveId).one()
-
-                            if VulnerabilityReport.query.join(VulnerabilityReportVulnerabilitiesLink).join(CommonVulnerabilitiesAndExposures).filter((VulnerabilityReportVulnerabilitiesLink.vreport_id == my_json_report.id) & (VulnerabilityReportVulnerabilitiesLink.cve_id == my_cve.id)).first() is None:
-                                my_link = VulnerabilityReportVulnerabilitiesLink(vreport_id=my_json_report.id, cve_id=my_cve.id)
-                                db.session.add(my_link)
-                            else:
-                                my_link = VulnerabilityReport.query.join(VulnerabilityReportVulnerabilitiesLink).join(CommonVulnerabilitiesAndExposures).filter((VulnerabilityReportVulnerabilitiesLink.vreport_id == my_json_report.id) & (VulnerabilityReportVulnerabilitiesLink.cve_id == my_cve.id)).first()
-                            my_link.asset_id = my_repo_asset.id
-                            my_link.VReport_assetID = my_asset_IP if my_asset_IP is not None else ""
-                            my_link.VReport_assetIp = my_asset_IP if my_asset_IP is not None else ""
-                            my_link.VReport_port = item['port'] if item['port'] is not None else ""
-                            my_link.VReport_CVSS_score = vulnerability_item['cvss'] if vulnerability_item['cvss'] is not None else ""
-                            my_link.comments = vulnerability_item['is_exploit'] if vulnerability_item['is_exploit'] is not None else ""
-                            try:
-                                db.session.commit()
-                            except SQLAlchemyError as e:
-                                db.session.rollback()
-                                continue
-                            # update_cve_scores(reprow_cveId)
-                            # DONE: It's not needed to call the update CVE and CWE functions
+                if item.get('service_product'):
+                    my_asset_service.service_product = item['service_product'] if item['service_product'] is not None else ""
+                if item.get('service_product_version'):
+                    my_asset_service.service_product_version = item['service_product_version'] if item['service_product_version'] is not None else ""
+                try:
+                    db.session.commit()
+                except SQLAlchemyError as e:
+                    continue
+                if item.get('service_vulnerabilities'):
+                    for service_data in item['service_vulnerabilities'][0].items():
+                        vulnerability_item = service_data[1]
+                        print(vulnerability_item)
+                        print(type(vulnerability_item))
+                        if isinstance(vulnerability_item, Dict) and vulnerability_item.get('null'):
+                            for cve_item in vulnerability_item['null']:
+                                if cve_item['type'] == "cve":
+                                    reprow_cveId = cve_item['id']
+                                    if db.session.query(CommonVulnerabilitiesAndExposures.id).filter_by(CVEId = reprow_cveId).first() is None:
+                                        my_cve = CommonVulnerabilitiesAndExposures(CVEId=reprow_cveId)
+                                        db.session.add(my_cve)
+                                    else:
+                                        my_cve = db.session.query(CommonVulnerabilitiesAndExposures).filter_by(CVEId=reprow_cveId).one()
+                                    # print(my_repo_asset.id)
+                                    if VulnerabilityReport.query.join(VulnerabilityReportVulnerabilitiesLink).join(CommonVulnerabilitiesAndExposures).filter((VulnerabilityReportVulnerabilitiesLink.vreport_id == my_json_report.id) & (VulnerabilityReportVulnerabilitiesLink.cve_id == my_cve.id)).first() is None:
+                                        my_link = VulnerabilityReportVulnerabilitiesLink(vreport_id=my_json_report.id, cve_id=my_cve.id)
+                                        db.session.add(my_link)
+                                    else:
+                                        my_link = VulnerabilityReport.query.join(VulnerabilityReportVulnerabilitiesLink).join(CommonVulnerabilitiesAndExposures).filter((VulnerabilityReportVulnerabilitiesLink.vreport_id == my_json_report.id) & (VulnerabilityReportVulnerabilitiesLink.cve_id == my_cve.id)).first()
+                                    # print(my_repo_asset.id)
+                                    my_link.asset_id = my_repo_asset.id
+                                    my_link.VReport_assetID = my_asset_IP if my_asset_IP is not None else ""
+                                    my_link.VReport_assetIp = my_asset_IP if my_asset_IP is not None else ""
+                                    my_link.VReport_port = item['port'] if item['port'] is not None else ""
+                                    my_link.VReport_CVSS_score = cve_item['cvss'] if cve_item['cvss'] is not None else ""
+                                    my_link.comments = cve_item['is_exploit'] if cve_item['is_exploit'] is not None else ""
+                                    try:
+                                        db.session.commit()
+                                    except SQLAlchemyError as e:
+                                        continue
+                                    # update_cve_scores(reprow_cveId)
+                                    # DONE: It's not needed to call the update CVE and CWE functions
             else:
                 continue
         return 1
@@ -1442,8 +1453,15 @@ def get_capec_recommendations(selected_cve_id):
 # endregion OLD functions
 
 # region test Area
-# path_to_VAaaS_report = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)), 'Json_texts', 'report_example_stix.json')
-# x = v_report(path_to_VAaaS_report)
+path_to_VAaaS_report = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)),
+                                        'Json_texts', 'vaaas_output.json')
+# vaaas_output
+# VaaS Output 2022
+with open(path_to_VAaaS_report, "r") as fp:
+    obj = json.load(fp)
+    for attribute, value in obj.items():
+        y = v_report_json(attribute, value)
+
 #
 # print(x)
 

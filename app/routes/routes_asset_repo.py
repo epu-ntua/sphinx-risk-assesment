@@ -652,13 +652,14 @@ def view_repo_net_groups():
 @app.route('/repo/vulnerabilities/', methods=['GET', 'POST'])
 def view_repo_vulnerabilities():
     path_to_VAaaS_report = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)),
-                                        'Json_texts', 'vaaas_output.json')
+                                        'Json_texts', 'VaaS Output 2022.json')
     path_to_SIEM_report = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)),
                                         'Json_texts', 'siem-certification-vulnerabilities.json')
     # x = v_report(path_to_VAaaS_report)
     with open(path_to_VAaaS_report,"r") as fp:
         obj = json.load(fp)
-        y = v_report_json(obj)
+        for attribute, value in obj.items():
+            y = v_report_json(attribute, value)
 
     with open(path_to_SIEM_report, "r") as fp:
         obj = json.load(fp)
