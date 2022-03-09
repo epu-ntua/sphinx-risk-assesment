@@ -354,64 +354,159 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
             db.session.add(repo_organisation_security_posture)
             db.session.commit()
 
+        mon_risk=0
+        est_pol_proc=0
+        wrk_awar=0
+        phi_prot = 0
+        fac_acc=0
+        thi_par_acc=0
+        res_red=0
+        if repo_organisation_security_posture.q1_completedSRA==2:
+            mon_risk += 1
+        if repo_organisation_security_posture.q2_include_IS_SRA==1:
+            mon_risk += 1
+        if repo_organisation_security_posture.q3_compliance==1:
+            est_pol_proc += 1
+        if repo_organisation_security_posture.q4_respond==1:
+            mon_risk += 1
+        if repo_organisation_security_posture.q5_respond_personnel==1:
+            mon_risk += 1
+            est_pol_proc += 1
+        if repo_organisation_security_posture.q6_communicate_responses==1:
+            mon_risk += 1
+        if repo_organisation_security_posture.q7_documented_policies==1:
+            est_pol_proc += 1
+        if repo_organisation_security_posture.q8_reflect_business_practices==1:
+            est_pol_proc += 1
+        if repo_organisation_security_posture.q9_documentation_availability==1:
+            est_pol_proc += 1
+        if repo_organisation_security_posture.q10_responsible==1:
+            est_pol_proc += 1
+            wrk_awar += 1
+        if repo_organisation_security_posture.q11_defined_access==1:
+            est_pol_proc += 1
+            wrk_awar += 1
+        if repo_organisation_security_posture.q12_member_screening==1:
+            wrk_awar += 1
+            phi_prot += 1
+            fac_acc += 1
+        if repo_organisation_security_posture.q13_security_training==1:
+            wrk_awar += 1
+        if repo_organisation_security_posture.q14_monitoring_login==1:
+            mon_risk += 1
+            wrk_awar += 1
+            phi_prot += 1
+            fac_acc += 1
+        if repo_organisation_security_posture.q15_protection_malicious==1:
+            mon_risk += 1
+            wrk_awar += 1
+            phi_prot += 1
+        if repo_organisation_security_posture.q16_password_security==1:
+            est_pol_proc += 1
+            wrk_awar += 1
+        if repo_organisation_security_posture.q17_awareness_training==1:
+            wrk_awar += 1
+        if repo_organisation_security_posture.q18_sanction_policy==1:
+            est_pol_proc += 1
+            wrk_awar += 1
+            phi_prot += 1
+        if repo_organisation_security_posture.q19_personnel_access==1:
+            est_pol_proc += 1
+            phi_prot += 1
+        if repo_organisation_security_posture.q20_access_to_PHI==1:
+            est_pol_proc += 1
+            phi_prot += 1
+        if repo_organisation_security_posture.q21_kind_of_access==1:
+            est_pol_proc += 1
+            phi_prot += 1
+        if repo_organisation_security_posture.q22_use_of_encryption==1:
+            est_pol_proc += 1
+            phi_prot += 1
+        if repo_organisation_security_posture.q23_periodic_review_of_IS==1:
+            mon_risk += 1
+            phi_prot += 1
+        if repo_organisation_security_posture.q24_monitor_system_activity==1:
+            res_red += 1
+        if repo_organisation_security_posture.q25_logoff_policy==1:
+            est_pol_proc += 1
+            phi_prot += 1
+        if repo_organisation_security_posture.q26_user_authentication_policy==1:
+            est_pol_proc += 1
+            phi_prot += 1
+        if repo_organisation_security_posture.q27_unauthorised_modification==1:
+            phi_prot += 1
+        if repo_organisation_security_posture.q28_unauthorised_modification_transmitted==1:
+            phi_prot += 1
+        if repo_organisation_security_posture.q29_manage_facility_access==1:
+            fac_acc += 1
+        if repo_organisation_security_posture.q30_manage_device_access==1:
+            phi_prot += 1
+            fac_acc += 1
+        if repo_organisation_security_posture.q31_device_inventory==1:
+            phi_prot += 1
+            fac_acc += 1
+        if repo_organisation_security_posture.q32_validate_facility_access==1:
+            fac_acc += 1
+        if repo_organisation_security_posture.q33_activity_on_IS_with_PHI==1:
+            phi_prot += 1
+            fac_acc += 1
+            res_red += 1
+        if repo_organisation_security_posture.q34_backup_PHI==1:
+            phi_prot += 1
+            fac_acc += 1
+            res_red += 1
+        if repo_organisation_security_posture.q35_sanitise_disposed_devices==1:
+            est_pol_proc += 1
+            phi_prot += 1
+        if repo_organisation_security_posture.q36_connected_devices==1:
+            est_pol_proc += 1
+        if repo_organisation_security_posture.q37_necessary_access_rules==1:
+            est_pol_proc += 1
+            phi_prot += 1
+        if repo_organisation_security_posture.q38_monitor_3rd_access==1:
+            phi_prot += 1
+            thi_par_acc += 1
+            res_red += 1
+        if repo_organisation_security_posture.q39_sanitise_new_devices==1:
+            est_pol_proc += 1
+        if repo_organisation_security_posture.q40_BAA==1:
+            est_pol_proc += 1
+            thi_par_acc += 1
+        if repo_organisation_security_posture.q41_monitor_BA==1:
+            thi_par_acc += 1
+            res_red += 1
+        if repo_organisation_security_posture.q42_contingency_plan==1:
+            res_red += 1
+        if repo_organisation_security_posture.q43_determine_critical_IS==1:
+            mon_risk += 1
+            res_red += 1
+        if repo_organisation_security_posture.q44_pdr_security_incidents==1:
+            est_pol_proc += 1
+            res_red += 1
+        if repo_organisation_security_posture.q45_incident_response_plan==1:
+            est_pol_proc += 1
+            res_red += 1
+        if repo_organisation_security_posture.q46_incident_response_team==1:
+            est_pol_proc += 1
+            wrk_awar += 1
+            res_red += 1
+        if repo_organisation_security_posture.q47_necessary_IS==1:
+            mon_risk += 1
+            res_red += 1
+        if repo_organisation_security_posture.q48_access_when_emergency==1:
+            est_pol_proc += 1
+            phi_prot += 1
+            res_red += 1
+        if repo_organisation_security_posture.q49_backup_plan==1:
+            est_pol_proc += 1
+            phi_prot += 1
+            res_red += 1
+        if repo_organisation_security_posture.q50_disaster_recovery_plan==1:
+            mon_risk += 1
+            est_pol_proc += 1
+            res_red += 1
 
-        new_security_posture_form = FormEditRepoOrganisationSecurityPosture()
-        new_security_posture_form.id.data = repo_organisation_security_posture.id
-        new_security_posture_form.q1_completedSRA.data = str(repo_organisation_security_posture.q1_completedSRA)
-        new_security_posture_form.q2_include_IS_SRA.data = str(repo_organisation_security_posture.q2_include_IS_SRA)
-        new_security_posture_form.q3_compliance.data = str(repo_organisation_security_posture.q3_compliance)
-        new_security_posture_form.q4_respond.data = str(repo_organisation_security_posture.q4_respond)
-        new_security_posture_form.q5_respond_personnel.data = str(repo_organisation_security_posture.q5_respond_personnel)
-
-        new_security_posture_form.q6_communicate_responses.data =str(repo_organisation_security_posture.q6_communicate_responses)
-        new_security_posture_form.q7_documented_policies.data =str(repo_organisation_security_posture.q7_documented_policies)
-        new_security_posture_form.q8_reflect_business_practices.data =str(repo_organisation_security_posture.q8_reflect_business_practices)
-        new_security_posture_form.q9_documentation_availability.data =str(repo_organisation_security_posture.q9_documentation_availability)
-        new_security_posture_form.q10_responsible.data =str(repo_organisation_security_posture.q10_responsible)
-        new_security_posture_form.q11_defined_access.data =str(repo_organisation_security_posture.q11_defined_access)
-        new_security_posture_form.q12_member_screening.data =str(repo_organisation_security_posture.q12_member_screening)
-        new_security_posture_form.q13_security_training.data =str(repo_organisation_security_posture.q13_security_training)
-        new_security_posture_form.q14_monitoring_login.data =str(repo_organisation_security_posture.q14_monitoring_login)
-        new_security_posture_form.q15_protection_malicious.data =str(repo_organisation_security_posture.q15_protection_malicious)
-        new_security_posture_form.q16_password_security.data =str(repo_organisation_security_posture.q16_password_security)
-        new_security_posture_form.q17_awareness_training.data =str(repo_organisation_security_posture.q17_awareness_training)
-        new_security_posture_form.q18_sanction_policy.data =str(repo_organisation_security_posture.q18_sanction_policy)
-        new_security_posture_form.q19_personnel_access.data =str(repo_organisation_security_posture.q19_personnel_access)
-        new_security_posture_form.q20_access_to_PHI.data =str(repo_organisation_security_posture.q20_access_to_PHI)
-        new_security_posture_form.q21_kind_of_access.data =str(repo_organisation_security_posture.q21_kind_of_access)
-        new_security_posture_form.q22_use_of_encryption.data =str(repo_organisation_security_posture.q22_use_of_encryption)
-        new_security_posture_form.q23_periodic_review_of_IS.data =str(repo_organisation_security_posture.q23_periodic_review_of_IS)
-        new_security_posture_form.q24_monitor_system_activity.data =str(repo_organisation_security_posture.q24_monitor_system_activity)
-        new_security_posture_form.q25_logoff_policy.data =str(repo_organisation_security_posture.q25_logoff_policy)
-        new_security_posture_form.q26_user_authentication_policy.data =str(repo_organisation_security_posture.q26_user_authentication_policy)
-        new_security_posture_form.q27_unauthorised_modification.data =str(repo_organisation_security_posture.q27_unauthorised_modification)
-        new_security_posture_form.q28_unauthorised_modification_transmitted.data =str(repo_organisation_security_posture.q28_unauthorised_modification_transmitted)
-        new_security_posture_form.q29_manage_facility_access.data =str(repo_organisation_security_posture.q29_manage_facility_access)
-        new_security_posture_form.q30_manage_device_access.data =str(repo_organisation_security_posture.q30_manage_device_access)
-        new_security_posture_form.q31_device_inventory.data =str(repo_organisation_security_posture.q31_device_inventory)
-        new_security_posture_form.q32_validate_facility_access.data =str(repo_organisation_security_posture.q32_validate_facility_access)
-        new_security_posture_form.q33_activity_on_IS_with_PHI.data =str(repo_organisation_security_posture.q33_activity_on_IS_with_PHI)
-        new_security_posture_form.q34_backup_PHI.data =str(repo_organisation_security_posture.q34_backup_PHI)
-        new_security_posture_form.q35_sanitise_disposed_devices.data =str(repo_organisation_security_posture.q35_sanitise_disposed_devices)
-        new_security_posture_form.q36_connected_devices.data =str(repo_organisation_security_posture.q36_connected_devices)
-        new_security_posture_form.q37_necessary_access_rules.data =str(repo_organisation_security_posture.q37_necessary_access_rules)
-        new_security_posture_form.q38_monitor_3rd_access.data =str(repo_organisation_security_posture.q38_monitor_3rd_access)
-        new_security_posture_form.q39_sanitise_new_devices.data =str(repo_organisation_security_posture.q39_sanitise_new_devices)
-        new_security_posture_form.q40_BAA.data =str(repo_organisation_security_posture.q40_BAA)
-        new_security_posture_form.q41_monitor_BA.data =str(repo_organisation_security_posture.q41_monitor_BA)
-        new_security_posture_form.q42_contingency_plan.data =str(repo_organisation_security_posture.q42_contingency_plan)
-        new_security_posture_form.q43_determine_critical_IS.data =str(repo_organisation_security_posture.q43_determine_critical_IS)
-        new_security_posture_form.q44_pdr_security_incidents.data =str(repo_organisation_security_posture.q44_pdr_security_incidents)
-        new_security_posture_form.q45_incident_response_plan.data =str(repo_organisation_security_posture.q45_incident_response_plan)
-        new_security_posture_form.q46_incident_response_team.data =str(repo_organisation_security_posture.q46_incident_response_team)
-        new_security_posture_form.q47_necessary_IS.data =str(repo_organisation_security_posture.q47_necessary_IS)
-        new_security_posture_form.q48_access_when_emergency.data =str(repo_organisation_security_posture.q48_access_when_emergency)
-        new_security_posture_form.q49_backup_plan.data =str(repo_organisation_security_posture.q49_backup_plan)
-        new_security_posture_form.q50_disaster_recovery_plan.data =str(repo_organisation_security_posture.q50_disaster_recovery_plan)
-
-        # Setting Histogram
-
-
+        radar_data = [str(mon_risk / 11), str(est_pol_proc / 26), str(wrk_awar / 10), str(phi_prot / 22), str(fac_acc / 8), str(thi_par_acc / 3), str(res_red / 14)]
 
         print("Threat id is" + str(threat_id))
         try:
@@ -669,7 +764,7 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
                                repo_threats=repo_threats, this_threat=this_threat, repo_assets=repo_assets,
                                array_threat_consequence_calculation=array_threat_consequence_calculation,
                                array_threat_materialisation_calculation=array_threat_materialisation_calculation,
-                               new_security_posture_form=new_security_posture_form)
+                               new_security_posture=radar_data)
 
 
 @app.route('/repo/risk/configuration/impact/threat/<threat_id>/', methods=['GET', 'POST'])

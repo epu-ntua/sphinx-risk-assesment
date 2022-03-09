@@ -1494,14 +1494,14 @@ def get_capec_recommendations(selected_cve_id):
 # endregion OLD functions
 
 # region test Area
-path_to_VAaaS_report = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)),
-                                        'Json_texts', 'vaaas_output.json')
-# vaaas_output
-# VaaS Output 2022
-with open(path_to_VAaaS_report, "r") as fp:
-    obj = json.load(fp)
-    for attribute, value in obj.items():
-        y = v_report_json(attribute, value)
+# path_to_VAaaS_report = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)),
+#                                         'Json_texts', 'vaaas_output.json')
+# # vaaas_output
+# # VaaS Output 2022
+# with open(path_to_VAaaS_report, "r") as fp:
+#     obj = json.load(fp)
+#     for attribute, value in obj.items():
+#         y = v_report_json(attribute, value)
 
 #
 # print(x)
