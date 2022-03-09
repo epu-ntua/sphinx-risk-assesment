@@ -899,3 +899,527 @@ def repo_dashboard_vulnerability():
                                vulnerability_months_list_values = vulnerability_months_list_values,
                                asset_types_list=asset_types_list, vulnerability_cve_id_list=vulnerability_cve_id_list,
                                vulnerability_cve_id_occurrence=vulnerability_cve_id_occurrence)
+
+
+@app.route('/repo/dashboard/risk/events/threat/<threat_id>/asset/<asset_id>/', methods=['GET', 'POST'])
+# @app.route('/repo/dashboard/risk/objectives/threat/<threat_id>/asset/<asset_id>/', methods=['GET', 'POST'])
+def repo_dashboard_risk_events(threat_id=1, asset_id=-1):
+    if request.method == 'POST':
+        pass
+    else:
+        # assetsArray = get_assetsfromrepository()
+        # if assetsArray != -1:
+        #     return render_template('asset_dashboard.html', assets=assetsArray)
+        # else:
+        try:
+            these_threats = RepoThreat.query.all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        # Select assets that have active risk assessments with this threat
+        try:
+            these_assets = RepoAsset.query.filter(RepoAsset.risk_assessment.any(RepoRiskAssessment.repo_threat_id == threat_id)).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        try:
+            this_asset = RepoAsset.query.filter_by(id=asset_id).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        try:
+            this_threat = RepoThreat.query.filter_by(id=threat_id).all()
+        except SQLAlchemyError:
+            return Response("SQLAlchemyError", 500)
+
+        this_threat = convert_database_items_to_json_table(this_threat)
+        these_threats = convert_database_items_to_json_table(these_threats)
+        these_assets = convert_database_items_to_json_table(these_assets)
+
+        this_exposure = []
+        these_materialisations = []
+        these_consequences = []
+        these_services = []
+        these_impacts = []
+        these_objectives = []
+        these_utils = []
+        this_risk_assessment = None
+
+        repo_threats = []
+        json_reports = ""
+        these_responses = []
+        risk_assessment_result = []
+        if int(threat_id) != -1 and int(asset_id) != -1:
+            try:
+                this_exposure = RepoAssetRepoThreatRelationship.query.filter_by(repo_threat_id=threat_id).all()
+            except SQLAlchemyError:
+                return "SQLAlchemyError"
+
+            try:
+                these_responses = RepoResponse.query.filter_by(threat_id=threat_id).all()
+            except SQLAlchemyError:
+                return "SQLAlchemyError"
+
+            try:
+                these_materialisations = RepoMaterialisation.query.filter_by(threat_id=threat_id).all()
+            except SQLAlchemyError:
+                return "SQLAlchemyError"
+
+            try:
+                these_consequences = RepoConsequence.query.filter_by(threat_id=threat_id).all()
+            except SQLAlchemyError:
+                return "SQLAlchemyError"
+
+            try:
+                these_services = RepoService.query.filter(RepoService.assets.any(id=asset_id)).all()
+            except SQLAlchemyError:
+                return "SQLAlchemyError"
+
+            try:
+                these_impacts = RepoImpact.query.all()
+            except SQLAlchemyError:
+                return "SQLAlchemyError"
+
+            try:
+                these_objectives = RepoObjective.query.all()
+            except SQLAlchemyError:
+                return "SQLAlchemyError"
+
+            try:
+                these_utils = RepoUtility.query.all()
+            except SQLAlchemyError:
+                return "SQLAlchemyError"
+
+            if report_id != -1:
+                try:
+                    this_risk_assessment = RepoRiskAssessmentReports.query.filter_by(id=report_id).all()
+                except SQLAlchemyError:
+                    return "SQLAlchemyError"
+            else:
+                try:
+                    this_risk_assessment = RepoRiskAssessmentReports.query.filter(RepoRiskAssessmentReports.risk_assessment.has(repo_asset_id=asset_id, repo_threat_id=threat_id)).all()
+                except SQLAlchemyError as er:
+                    print(er)
+                    return "SQLAlchemyError"
+                print(this_risk_assessment)
+                report_id=this_risk_assessment[0].id
+
+            this_exposure = convert_database_items_to_json_table(this_exposure)
+            these_responses = convert_database_items_to_json_table(these_responses)
+            these_materialisations = convert_database_items_to_json_table(these_materialisations)
+            these_consequences = convert_database_items_to_json_table(these_consequences)
+            these_services = convert_database_items_to_json_table(these_services)
+            these_impacts = convert_database_items_to_json_table(these_impacts)
+            these_objectives = convert_database_items_to_json_table(these_objectives)
+            these_utils = convert_database_items_to_json_table(these_utils)
+            this_risk_assessment = convert_database_items_to_json_table(this_risk_assessment)
+            # print("-------------------- RETRIEVED RISK ASSESSMENT IS -------------------------")
+            # print(this_risk_assessment)
+            # print("---DASHBOARD DATA IS---")
+            # print(this_risk_assessment)
+            # print(this_exposure)
+            # print(these_responses)
+            # print(these_materialisations)
+            # print(these_consequences)
+            # print(these_services)
+            # print(these_impacts)
+            # print(these_objectives)
+            # print(these_utils)
+
+            # repo_threats = [
+            #     {
+            #         "likelihood": "Certain",
+            #         "monetary": "(Low) No monetary loss",
+            #         "confidentiality": "(Low) No records leaked",
+            #         "integrity": "(Low) No records lost or altered",
+            #         "availability": "(Low) No disruption of services",
+            #         "safety": "-"
+            #     },
+            #     {
+            #         "likelihood": "Possible",
+            #         "monetary": "-",
+            #         "confidentiality": "-",
+            #         "integrity": "-",
+            #         "availability": "-",
+            #         "safety": "(Low) No injuries or fatalities likely"
+            #     },
+            #     {
+            #         "likelihood": "Rare",
+            #         "monetary": "-",
+            #         "confidentiality": "-",
+            #         "integrity": "(Medium) Some records lost or altered",
+            #         "availability": "(Medium) Some disruption of services",
+            #         "safety": "(Medium) Injuries are likely"
+            #     },
+            #     {
+            #         "likelihood": "Rare than Rare",
+            #         "monetary": "(High) Significant monetary loss",
+            #         "confidentiality": "(High) Many records leaked",
+            #         "integrity": "(High) Many records lost or altered",
+            #         "availability": "-",
+            #         "safety": "-"
+            #     },
+            #     {
+            #         "likelihood": "Oddness 3 or higher",
+            #         "monetary": "(Medium) Some monetary loss",
+            #         "confidentiality": "(Medium) Some records leaked",
+            #         "integrity": "-",
+            #         "availability": "(High) Significant disruption of services",
+            #         "safety": "(High) Fatalities are likley"
+            #     }
+            # ]
+
+            # print(repo_threats)
+            # print(this_threat)
+            #         test_variable = """
+            #           obj5                       |
+            # 0        |1        |2        |
+            # ---------|---------|---------|
+            #  0.0000  | 0.0000  | 0.0000  |
+            #         """
+            risk_assessment_result = start_risk_assessment(threat_id, asset_id)
+
+            # CONVERT RESULTS SAVED IN DATABASE TO FORMAT PRODUCED BY START RISK ASSESSMENT function
+
+            if report_id != -1:
+                new_risk_assessment_result = {}
+                print("--------------ACTUAL-----------")
+                print(this_risk_assessment)
+                # print(type())
+                # print(this_risk_assessment[0]["exposure_inference"])
+                exposure_inference_values = this_risk_assessment[0]["exposure_inference"].split("|")
+                materialisation_inference_values = this_risk_assessment[0]["materialisations_inference"].split("|")
+                consequence_inference_values = this_risk_assessment[0]["consequences_inference"].split("|")
+                impact_inference_values = this_risk_assessment[0]["impacts_inference"].split("|")
+                services_inference_values = this_risk_assessment[0]["services_inference"].split("|")
+                objectives_inference_values = this_risk_assessment[0]["objectives_inference"].split("|")
+                utility_inference_values = this_risk_assessment[0]["utilities_inference"].split("|")
+                alerts_triggered = this_risk_assessment[0]["alerts_triggered"].split("|")
+
+                # Exposure
+                new_risk_assessment_result["te"+exposure_inference_values[0]] = pd.Series(data={"Threat Doesnt Happen": exposure_inference_values[1], "Threat Happens" :exposure_inference_values[2]}).to_frame()
+
+                # Materialisation
+                new_risk_assessment_result["mat" +materialisation_inference_values[0]] = pd.Series(data={"Materialsiation Doesnt Happen": materialisation_inference_values[1], "Materialisation Happens" :materialisation_inference_values[2]}).to_frame()
+
+                # Consequences
+                num_consequences = len(consequence_inference_values)
+                for it in range(0, num_consequences-1, 3):
+                    new_risk_assessment_result["con" + consequence_inference_values[it]] = pd.Series(
+                        data={"Consequence Doesnt Happen": consequence_inference_values[it+1],
+                              "Consequence Happens": consequence_inference_values[it+2]}).to_frame()
+
+                # Services
+                num_services = len(services_inference_values)
+                for it in range(0, num_services - 1, 3):
+                    new_risk_assessment_result["serv" + services_inference_values[it]] = pd.Series(
+                        data={"Consequence Doesnt Happen": services_inference_values[it + 1],
+                              "Consequence Happens": services_inference_values[it + 2]}).to_frame()
+
+                # Impacts
+                new_risk_assessment_result["imp"+impact_inference_values[0]] = pd.Series(
+                    data={"Low": impact_inference_values[1],
+                          "Medium": impact_inference_values[2],
+                          "High": impact_inference_values[3],
+                          }).to_frame()
+
+                new_risk_assessment_result["imp" + impact_inference_values[4]] = pd.Series(
+                    data={"Low": impact_inference_values[5],
+                          "Medium": impact_inference_values[6],
+                          "High": impact_inference_values[7],
+                          }).to_frame()
+
+                new_risk_assessment_result["imp" + impact_inference_values[8]] = pd.Series(
+                    data={"Low": impact_inference_values[9],
+                          "Medium": impact_inference_values[10],
+                          "High": impact_inference_values[11],
+                          }).to_frame()
+
+                new_risk_assessment_result["imp" + impact_inference_values[12]] = pd.Series(
+                    data={"Low": impact_inference_values[13],
+                          "Medium": impact_inference_values[14],
+                          "High": impact_inference_values[15],
+                          }).to_frame()
+
+                new_risk_assessment_result["imp" + impact_inference_values[16]] = pd.Series(
+                    data={"Low": impact_inference_values[17],
+                          "Medium": impact_inference_values[18],
+                          "High": impact_inference_values[19],
+                          }).to_frame()
+
+                new_risk_assessment_result["imp" + impact_inference_values[20]] = pd.Series(
+                    data={"Low": impact_inference_values[21],
+                          "Medium": impact_inference_values[22],
+                          "High": impact_inference_values[23],
+                          }).to_frame()
+
+
+                # Objectives
+                new_risk_assessment_result["obj" + objectives_inference_values[0]] = pd.Series(
+                    data={"Low": objectives_inference_values[1],
+                          "Medium": objectives_inference_values[2],
+                          "High": objectives_inference_values[3],
+                          }).to_frame()
+
+                new_risk_assessment_result["obj" + objectives_inference_values[4]] = pd.Series(
+                    data={"Low": objectives_inference_values[5],
+                          "Medium": objectives_inference_values[6],
+                          "High": objectives_inference_values[7],
+                          }).to_frame()
+
+                new_risk_assessment_result["obj" + objectives_inference_values[8]] = pd.Series(
+                    data={"Low": objectives_inference_values[9],
+                          "Medium": objectives_inference_values[10],
+                          "High": objectives_inference_values[11],
+                          }).to_frame()
+
+                new_risk_assessment_result["obj" + objectives_inference_values[12]] = pd.Series(
+                    data={"Low": objectives_inference_values[13],
+                          "Medium": objectives_inference_values[14],
+                          "High": objectives_inference_values[15],
+                          }).to_frame()
+
+                new_risk_assessment_result["obj" + objectives_inference_values[16]] = pd.Series(
+                    data={"Low": objectives_inference_values[17],
+                          "Medium": objectives_inference_values[18],
+                          "High": objectives_inference_values[19],
+                          }).to_frame()
+
+                risk_assessment_result = new_risk_assessment_result
+                # to_print = pd.DataFrame(
+                #             {
+                #                 str(exposure_inference_values[0]) : exposure_inference_values[1],
+                #                 str(exposure_inference_values[0]) : exposure_inference_values[2]
+                #             }
+                #         )
+                # print(to_print)
+
+
+                # temp_exposure_df = {
+                #     "te"+str(exposure_inference_values) : pd.DataFrame(
+                #         {
+                #             str(exposure_inference_values[0]) : exposure_inference_values[1],
+                #             str(exposure_inference_values[0]) : exposure_inference_values[2]
+                #         }
+                #     )
+                # }
+                print("--------------ACTUAL-----------")
+
+                print("--------------NEW ACTUAL-----------")
+                # print(temp_exposure_df)
+                print("--------------NEW ACTUAL-----------")
+
+                print("--------------RESSSSSSSSSSSSSSUUUUUUUUUUUUUUUUUUULLLLLLLLLLLLLLLLLTTTTTTTTT-----------")
+                # print(risk_assessment_result)
+                real_te12 = risk_assessment_result["te12"]
+                print(real_te12)
+                print(real_te12.get(key= "te12"))
+                # print(type(real_te12.get([0])))
+                # print(real_te12.get([1]))
+                # print(type(real_te12.get([1])))
+
+                temp_pre_series = { 0 : 0.678, 1 :0.322}
+
+                # temp_pre_series = {"te12": ["0", 0.678], "te12" :["1" ,0.322]}
+                # temp_pre_series = {"te12": [0.678,0.322]}
+                temp_series = pd.Series(data=temp_pre_series)
+                temp_series = pd.DataFrame(temp_series.to_frame()).to_html()
+                # temp_series = {"te12": temp_series}
+                actual_temp = pd.Series(data= temp_series)
+                print("TEMPSERIES IS")
+                print(actual_temp)
+                print("--------------RESSSSSSSSSSSSSSUUUUUUUUUUUUUUUUUUULLLLLLLLLLLLLLLLLTTTTTTTTT-----------")
+                # print(repo_threats)
+
+            # Table showing objective results
+            try:
+                these_objectives = RepoObjective.query.all()
+            except SQLAlchemyError:
+                return "SQLAlchemyError"
+
+            repo_threats_values_certain = {
+                "Likelihood": "Certain",
+                "Monetary": "",
+                "Confidentiality": "",
+                "Integrity": "",
+                "Availability": "",
+                "Safety": ""
+            }
+            repo_threats_values_possible = {
+                "Likelihood": "Possible",
+                "Monetary": "",
+                "Confidentiality": "",
+                "Integrity": "",
+                "Availability": "",
+                "Safety": ""
+            }
+            repo_threats_values_rare = {
+                "Likelihood": "Rare",
+                "Monetary": "",
+                "Confidentiality": "",
+                "Integrity": "",
+                "Availability": "",
+                "Safety": ""
+            }
+            repo_threats_values_rare_2 = {
+                "Likelihood": "Rare than Rare",
+                "Monetary": "",
+                "Confidentiality": "",
+                "Integrity": "",
+                "Availability": "",
+                "Safety": ""
+            }
+            repo_threats_values_rare_3 = {
+                "Likelihood": "Oddness 3 or higher",
+                "Monetary": "",
+                "Confidentiality": "",
+                "Integrity": "",
+                "Availability": "",
+                "Safety": ""
+            }
+            print(risk_assessment_result)
+            for objective in these_objectives:
+
+                # Due to differences between the values loaded from report and default risk assessment need different call
+                if report_id == -1:
+                    value_low = risk_assessment_result["obj" + str(objective.id)].values[0]
+                    value_med = risk_assessment_result["obj" + str(objective.id)].values[1]
+                    value_high = risk_assessment_result["obj" + str(objective.id)].values[2]
+                else:
+                    value_low =json.loads(risk_assessment_result["obj" + str(objective.id)].values[0][0])
+                    value_med = json.loads(risk_assessment_result["obj" + str(objective.id)].values[1][0])
+                    value_high = json.loads(risk_assessment_result["obj" + str(objective.id)].values[2][0])
+
+                # print(objective.name)
+                # print(value_low)
+                # print(value_med)
+                # print(value_high)
+                if value_low < 0.00005:
+                    repo_threats_values_rare_3[objective.name] = repo_threats_values_rare_3[
+                                                                     objective.name] + "Low" + "|"
+                    # print("---------------------------------------------1")
+                elif value_low < 0.0005:
+                    repo_threats_values_rare_2[objective.name] = repo_threats_values_rare_2[
+                                                                     objective.name] + "Low" + "|"
+                    # print("---------------------------------------------2")
+                elif value_low < 0.10:
+                    repo_threats_values_rare[objective.name] = repo_threats_values_rare[objective.name] + "Low" + "|"
+                    # print("---------------------------------------------3")
+                elif value_low < 0.50:
+                    repo_threats_values_possible[objective.name] = repo_threats_values_possible[
+                                                                       objective.name] + "Low" + "|"
+                    # print("---------------------------------------------4")
+                else:
+                    # print("---------------------------------------------5")
+                    repo_threats_values_certain[objective.name] = repo_threats_values_certain[
+                                                                      objective.name] + "Low" + "|"
+
+                if value_med < 0.00005:
+                    repo_threats_values_rare_3[objective.name] = repo_threats_values_rare_3[
+                                                                     objective.name] + "med" + "|"
+                elif value_med < 0.0005:
+                    repo_threats_values_rare_2[objective.name] = repo_threats_values_rare_2[
+                                                                     objective.name] + "med" + "|"
+                elif value_med < 0.10:
+                    repo_threats_values_rare[objective.name] = repo_threats_values_rare[objective.name] + "med" + "|"
+                elif value_med < 0.50:
+                    repo_threats_values_possible[objective.name] = repo_threats_values_possible[
+                                                                       objective.name] + "med" + "|"
+                else:
+                    # print("============================================")
+                    repo_threats_values_certain[objective.name] = repo_threats_values_certain[
+                                                                      objective.name] + "med" + "|"
+
+                if value_high < 0.00005:
+                    repo_threats_values_rare_3[objective.name] = repo_threats_values_rare_3[objective.name] + "high"
+                elif value_high < 0.0005:
+                    repo_threats_values_rare_2[objective.name] = repo_threats_values_rare_2[objective.name] + "high"
+                elif value_high < 0.10:
+                    repo_threats_values_rare[objective.name] = repo_threats_values_rare[objective.name] + "high"
+                elif value_high < 0.50:
+                    repo_threats_values_possible[objective.name] = repo_threats_values_possible[objective.name] + "high"
+                else:
+                    # print("++++++++++++++++++++++++++++++++++++++++++++++")
+                    repo_threats_values_certain[objective.name] = repo_threats_values_certain[objective.name] + "high"
+
+            repo_threats = [repo_threats_values_certain, repo_threats_values_possible, repo_threats_values_rare,
+                            repo_threats_values_rare_2, repo_threats_values_rare_3]
+            # print("==================================================")
+            # print(repo_threats)
+            # # print(value_med)
+            # # print(value_low)
+            # print("==================================================")
+            # repo_threats_values_certain
+
+            for key, value in risk_assessment_result.items():
+                risk_assessment_result[key] = pd.DataFrame(value).to_html()
+                # risk_assessment_result[key] = pd.DataFrame(value).to_html()
+
+            try:
+                repo_reports = RepoRiskAssessmentReports.query.filter(
+                    RepoRiskAssessmentReports.risk_assessment.has(repo_asset_id=asset_id,
+                                                                  repo_threat_id=threat_id)).all()
+            except SQLAlchemyError:
+                return Response("SQLAlchemyError", 500)
+                # print("------------------------------")
+                # print(repo_actors, flush=True)
+                #
+                # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
+            # print(repo_reports)
+            json_reports = convert_database_items_to_json_table(repo_reports)
+            json_detailed_reports = []
+            custom_it = 0
+            for each_report in repo_reports:
+                # print("Example ARE --------")
+                # print(json_reports[custom_it])
+                #  Add basic info to dashboard
+                actual_risk_assessment = each_report.risk_assessment
+                json_reports[custom_it]["asset_name"] = actual_risk_assessment.asset.name
+                json_reports[custom_it]["asset_ip"] = actual_risk_assessment.asset.ip
+                json_reports[custom_it]["threat_name"] = actual_risk_assessment.threat.name
+                # print(each_report)
+
+                # Create detailed report jsons
+                json_detailed_report_to_add = {}
+                json_detailed_report_to_add["type"] = each_report.type
+                json_detailed_report_to_add["date_time"] = each_report.date_time.strftime("%m/%d/%Y, %H:%M:%S")
+                materialisations_list = each_report.materialisations_inference.split("|")
+                materialisations_list.pop()
+                # print(materialisations_list)
+                json_detailed_report_to_add["materialisations"] = []
+
+                for custom_it_mat in range(0, len(materialisations_list), 3):
+                    this_mat_name = RepoMaterialisation.query.filter_by(
+                        id=materialisations_list[custom_it_mat]).first().name
+                    json_detailed_report_to_add["materialisations"].append(
+                        {"name": this_mat_name, "occurs": materialisations_list[custom_it_mat + 1],
+                         "Nothing": materialisations_list[custom_it_mat + 2]})
+
+
+                # json_detailed_report_to_add["date_time"].strftime("%m/%d/%Y, %H:%M:%S")
+                json_reports[custom_it]["detailed"] = json_detailed_report_to_add
+                custom_it = custom_it + 1
+
+            print(json_reports)
+            for each_report in json_reports:
+                each_report["date_time"] = each_report["date_time"].strftime("%m/%d/%Y, %H:%M:%S")
+            print("==============================================")
+            print(json_reports)
+            json_reports = json.dumps(json_reports)
+
+        # existing_report_data = {
+        # }
+        # if assessment_id != -1:
+
+        # pd_results = pd.DataFrame(test_variable)
+        # print(risk_assessment_result)
+        return render_template('templates_dashboard/repo_risk_objectives_dashboard.html', repo_threats=repo_threats,
+                               these_threats=these_threats, threat_id=threat_id, asset_id=asset_id,
+                               repo_reports=json_reports, report_id=report_id,
+                               this_risk_assessment=this_risk_assessment,
+                               these_responses=these_responses, risk_assessment_result=risk_assessment_result,
+                               this_threat=this_threat, these_assets=these_assets, this_asset=this_asset,
+                               this_exposure=this_exposure, these_materialisations=these_materialisations,
+                               these_consequences=these_consequences, these_services=these_services,
+                               these_impacts=these_impacts, these_objectives=these_objectives, these_utils=these_utils
+                               )
