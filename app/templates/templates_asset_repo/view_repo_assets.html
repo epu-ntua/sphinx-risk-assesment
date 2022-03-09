@@ -28,7 +28,7 @@
                 {#'</a>  ',#}
                 '<button type="button" class="btn btn-primary fa fa-edit" data-toggle="modal" data-target="#editModal">\n' +
                 '<span class= "custom-font"></span>' +
-                {#'<span class= "custom-font">Verification & EditVerification & Edit</span>' +#}
+                '<span class= "custom-font">Edit&Verify</span>' +
                 '</button>',
 
             ].join('')
@@ -119,8 +119,8 @@
 
         window.operateEvents = {
             'click .fa-edit': function (e, value, row, index) {
+                 alert('You click like action, row: ' + JSON.stringify(row))
                 populateEditFields(row)
-                {#alert('You click like action, row: ' + JSON.stringify(row))#}
             }
         }
 
@@ -277,7 +277,7 @@
     >
         <thead>
         <tr>
-
+            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents">Edit&Verify</th>
             <th data-field="operate" data-formatter="operateFormatter3"data-card-visible="true" >ID</th>
 {#            <th data-field="id" data-sortable="true">ID</th>#}
             <th data-field="name" data-sortable="true" data-card-visible="true">Name</th>
@@ -303,7 +303,6 @@
             {#            <th data-field="type_fk" data-sortable="true">Type</th>#}
             <th data-field="type" data-sortable="true">Type</th>
             <th data-field="subtype" data-sortable="true">Subtype</th>
-            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents">Edit&Verify</th>
             <th data-field="operate" data-formatter="operateFormatter2" data-card-visible="true">Org. Functions Relations</th>
             <th data-field="operate" data-formatter="operateFormatter1" data-card-visible="true">Security Protocol</th>
         </tr>

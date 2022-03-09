@@ -215,7 +215,7 @@ networks:
         name: backend
         driver: bridge
 
-volumes:
-    database:
-    artifact-store:
-    code:
+#volumes:
+#    database:
+#    artifact-store:
+#    code:
