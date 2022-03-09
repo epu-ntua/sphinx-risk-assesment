@@ -1,0 +1,699 @@
+{% extends "templates_supporting/sidebar_asset_management.html" %}
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/risk_dashboard.css') }}">
+
+{% endblock %}
+{% block script %}
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@3.2.0/dist/chart.min.js"></script>
+
+    <script>
+
+        var $table = $('#table')
+
+        var ctx1 = document.getElementById('confidentiality_chart').getContext('2d');
+        const data_confidentiality_chart = {
+            labels:
+                {{ all_reports_datetimes | safe}},
+
+            datasets: [
+                {
+                    label: 'Low',
+                    fill: "start",
+                    data: {{ all_objectives_confidentiality_low | safe}},
+                    borderColor: "rgba(0, 153, 51)",
+                    backgroundColor:
+                    "rgba(0, 153, 51, 0.5)"
+                },
+                {
+                    label: 'Medium',
+                    fill: "start",
+                    data: {{ all_objectives_confidentiality_med | safe}},
+                    borderColor: "rgba(204, 204, 0)",
+                    backgroundColor:
+                        'rgba(204, 204, 0, 0.5)'
+                },
+                {
+                    label: 'High',
+                    fill: "start",
+                    data: {{ all_objectives_confidentiality_high | safe}},
+                    borderColor: "rgb(189, 41, 15)",
+                    backgroundColor:
+                        "rgb(189, 41, 15, 0.5)"
+                }
+            ]
+        };
+
+        var line_confidentiality_chart = new Chart(ctx1, {
+            type: 'line',
+            data: data_confidentiality_chart,
+            options: {
+                responsive: true,
+                color: '#ffffff',
+                {#borderColor: '#ffffff',#}
+                {#backgroundColor: '#ffffff',#}
+                scales: {
+                    x: {
+                        grid: {
+                            color: '#ffffff'
+                        },
+                        ticks: {
+                            color: '#ffffff'
+                        }
+                    },
+                    y: {
+                         suggestedMin: 0, // minimum value
+                        suggestedMax: 1, // maximum value
+                        grid: {
+                            color: '#ffffff'
+                        },
+                        ticks: {
+                            color: '#ffffff'
+                        }
+                    },
+
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    filler: {
+                        drawTime: "beforeDatasetsDraw",
+                    },
+                    title: {
+                        display: true,
+                        text: 'Confidentiality Impacts',
+                        color: '#ffffff'
+                    }
+                }
+            },
+        })
+
+        var ctx2 = document.getElementById('integrity_chart').getContext('2d');
+        const data_integrity_chart = {
+            labels:
+                {{ all_reports_datetimes | safe}},
+            {#options: {#}
+            {#        plugins: {#}
+            {#            filler: {#}
+            {#                propagate: true#}
+            {#            }#}
+            {#        }#}
+            {#    },#}
+            datasets: [
+                {
+                    label: 'Low',
+                    fill: "start",
+                    data: {{ all_objectives_integrity_low | safe}},
+                    borderColor: "rgba(0, 153, 51)",
+                    backgroundColor:
+                    "rgba(0, 153, 51, 0.5)"
+                },
+                {
+                    label: 'Medium',
+                    fill: "start",
+                    data: {{ all_objectives_integrity_med | safe}},
+                    borderColor: "rgba(204, 204, 0)",
+                    backgroundColor:
+                        'rgba(204, 204, 0, 0.5)'
+                },
+                {
+                    label: 'High',
+                    fill: "start",
+                    data: {{ all_objectives_integrity_high | safe}},
+                    borderColor: "rgb(189, 41, 15)",
+                    backgroundColor:
+                        "rgb(189, 41, 15, 0.5)"
+                }
+            ]
+        };
+
+        var line_integrity_chart = new Chart(ctx2, {
+            type: 'line',
+            data: data_integrity_chart,
+            options: {
+                responsive: true,
+                color: '#ffffff',
+                interaction: {
+                  mode: 'nearest',
+                  axis: 'x',
+                  intersect: false
+                },
+                {#borderColor: '#ffffff',#}
+                {#backgroundColor: '#ffffff',#}
+                scales: {
+                    x: {
+                        grid: {
+                            color: '#ffffff'
+                        },
+                        ticks: {
+                            color: '#ffffff'
+                        }
+                    },
+                    y: {
+                         suggestedMin: 0, // minimum value
+                        suggestedMax: 1, // maximum value
+                        {#stacked: true,#}
+                        grid: {
+                            color: '#ffffff'
+                        },
+                        ticks: {
+                            color: '#ffffff',
+                        }
+                    },
+
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    filler: {
+                        drawTime: "beforeDatasetsDraw",
+                    },
+                    title: {
+                        display: true,
+                        text: 'Integrity Impacts',
+                        color: '#ffffff'
+                    }
+                }
+            },
+        })
+
+        var ctx3 = document.getElementById('availability_chart').getContext('2d');
+        const data_availability_chart = {
+            labels:
+                {{ all_reports_datetimes | safe}},
+
+            datasets: [
+                {
+                    label: 'Low',
+                    fill: "start",
+                    data: {{ all_objectives_availability_low | safe}},
+                    borderColor: "rgba(0, 153, 51)",
+                    backgroundColor:
+                    "rgba(0, 153, 51, 0.5)"
+                },
+                {
+                    label: 'Medium',
+                    fill: "start",
+                    data: {{ all_objectives_availability_med | safe}},
+                    borderColor: "rgba(204, 204, 0)",
+                    backgroundColor:
+                        'rgba(204, 204, 0, 0.5)'
+                },
+                {
+                    label: 'High',
+                    fill: "start",
+                    data: {{ all_objectives_availability_high | safe}},
+                    borderColor: "rgb(189, 41, 15)",
+                    backgroundColor:
+                        "rgb(189, 41, 15, 0.5)"
+                }
+            ]
+        };
+
+        var line_availability_chart = new Chart(ctx3, {
+            type: 'line',
+            data: data_availability_chart,
+            options: {
+                responsive: true,
+                color: '#ffffff',
+                {#borderColor: '#ffffff',#}
+                {#backgroundColor: '#ffffff',#}
+                scales: {
+                    x: {
+                        grid: {
+                            color: '#ffffff'
+                        },
+                        ticks: {
+                            color: '#ffffff'
+                        }
+                    },
+                    y: {
+                         suggestedMin: 0, // minimum value
+                        suggestedMax: 1, // maximum value
+                        grid: {
+                            color: '#ffffff'
+                        },
+                        ticks: {
+                            color: '#ffffff'
+                        }
+                     },
+
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    filler: {
+                        drawTime: "beforeDatasetsDraw",
+                    },
+                    title: {
+                        display: true,
+                        text: 'Availability Impacts',
+                        color: '#ffffff'
+                    }
+                }
+            },
+        })
+
+        var ctx4 = document.getElementById('monetary_chart').getContext('2d');
+        const data_monetary_chart = {
+            labels:
+                {{ all_reports_datetimes | safe}},
+
+            datasets: [
+                {
+                    label: 'Low',
+                    fill: "start",
+                    data: {{ all_objectives_monetary_low | safe}},
+                    borderColor: "rgba(0, 153, 51)",
+                    backgroundColor:
+                    "rgba(0, 153, 51, 0.5)"
+                },
+                {
+                    label: 'Medium',
+                    fill: "start",
+                    data: {{ all_objectives_monetary_med | safe}},
+                    borderColor: "rgba(204, 204, 0)",
+                    backgroundColor:
+                        'rgba(204, 204, 0, 0.5)'
+                },
+                {
+                    label: 'High',
+                    fill: "start",
+                    data: {{ all_objectives_monetary_high | safe}},
+                    borderColor: "rgb(189, 41, 15)",
+                    backgroundColor:
+                        "rgb(189, 41, 15, 0.5)"
+                }
+            ]
+        };
+
+        var line_monetary_chart = new Chart(ctx4, {
+            type: 'line',
+            data: data_monetary_chart,
+            options: {
+                responsive: true,
+                color: '#ffffff',
+                {#borderColor: '#ffffff',#}
+                {#backgroundColor: '#ffffff',#}
+                scales: {
+                    x: {
+                        grid: {
+                            color: '#ffffff'
+                        },
+                        ticks: {
+                            color: '#ffffff'
+                        }
+                    },
+                    y: {
+                         suggestedMin: 0, // minimum value
+                        suggestedMax: 1, // maximum value
+                        grid: {
+                            color: '#ffffff'
+                        },
+                        ticks: {
+                            color: '#ffffff'
+                        }
+                    },
+
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    filler: {
+                        drawTime: "beforeDatasetsDraw",
+                    },
+                    title: {
+                        display: true,
+                        text: 'Monetary Impacts',
+                        color: '#ffffff'
+                    }
+                }
+            },
+        })
+
+        var ctx5 = document.getElementById('safety_chart').getContext('2d');
+        const data_safety_chart = {
+            labels:
+                {{ all_reports_datetimes | safe}},
+
+            datasets: [
+                {
+                    label: 'Low',
+                    fill: "start",
+                    data: {{ all_objectives_safety_low | safe}},
+                    borderColor: "rgba(0, 153, 51)",
+                    backgroundColor:
+                    "rgba(0, 153, 51, 0.5)"
+                },
+                {
+                    label: 'Medium',
+                    fill: "start",
+                    data: {{ all_objectives_safety_med | safe}},
+                    borderColor: "rgba(204, 204, 0)",
+                    backgroundColor:
+                        'rgba(204, 204, 0, 0.5)'
+                },
+                {
+                    label: 'High',
+                    fill: "start",
+                    data: {{ all_objectives_safety_high | safe}},
+                    borderColor: "rgb(189, 41, 15)",
+                    backgroundColor:
+                        "rgb(189, 41, 15, 0.5)"
+                }
+            ]
+        };
+
+        var line_safety_chart = new Chart(ctx5, {
+            type: 'line',
+            data: data_safety_chart,
+            options: {
+                responsive: true,
+                color: '#ffffff',
+                {#borderColor: '#ffffff',#}
+                {#backgroundColor: '#ffffff',#}
+                scales: {
+                    x: {
+                        grid: {
+                            color: '#ffffff'
+                        },
+                        ticks: {
+                            color: '#ffffff'
+                        }
+                    },
+                    y: {
+                         suggestedMin: 0, // minimum value
+                        suggestedMax: 1, // maximum value
+                        grid: {
+                            color: '#ffffff'
+                        },
+                        ticks: {
+                            color: '#ffffff'
+                        }
+                    },
+
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    filler: {
+                        drawTime: "beforeDatasetsDraw",
+                    },
+                    title: {
+                        display: true,
+                        text: 'Safety Impacts',
+                        color: '#ffffff'
+                    }
+                }
+            },
+        })
+
+        var ctx6 = document.getElementById('cia_chart').getContext('2d');
+        const data_cia_chart = {
+            labels:
+                {{ all_reports_datetimes | safe}},
+
+            datasets: [
+                {
+                    label: 'CIA',
+                    fill: "start",
+                    data: {{ all_reports_utilities_optimal_1 | safe}},
+                    borderColor: "rgb(0, 167, 157)",
+                    backgroundColor:
+                        'rgba(0, 167, 157,0.5)'
+                },
+            ]
+        };
+
+        var line_cia_chart = new Chart(ctx6, {
+            type: 'line',
+            data: data_cia_chart,
+            options: {
+                responsive: true,
+                color: '#ffffff',
+                {#borderColor: '#ffffff',#}
+                {#backgroundColor: '#ffffff',#}
+                scales: {
+                    x: {
+                        grid: {
+                            color: '#ffffff'
+                        },
+                        ticks: {
+                            color: '#ffffff'
+                        }
+                    },
+                    y: {
+                        suggestedMin: 0, // minimum value
+                        suggestedMax: 1, // maximum value
+                        grid: {
+                            color: '#ffffff'
+                        },
+                        ticks: {
+                            color: '#ffffff',
+
+                        }
+                    },
+
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'CIA',
+                        color: '#ffffff'
+                    }
+                }
+            },
+        })
+
+        var ctx7 = document.getElementById('evaluation_chart').getContext('2d');
+        const data_evaluation_chart = {
+            labels:
+                {{ all_reports_datetimes | safe}},
+
+            datasets: [
+                {
+                    label: 'Evaluation',
+                    fill: "start",
+                    data: {{ all_reports_utilities_optimal_2 | safe}},
+                    borderColor: "rgba(0, 167, 157,1)",
+                    backgroundColor:
+                        'rgba(0, 167, 157,0.5)'
+                }
+            ]
+        };
+
+        var line_evaluation_chart = new Chart(ctx7, {
+            type: 'line',
+            data: data_evaluation_chart,
+            options: {
+                responsive: true,
+                color: '#ffffff',
+                {#borderColor: '#ffffff',#}
+                {#backgroundColor: '#ffffff',#}
+                scales: {
+
+                    x: {
+                        grid: {
+                            color: '#ffffff'
+                        },
+                        ticks: {
+                            color: '#ffffff'
+                        }
+                    },
+                    y: {
+                         suggestedMin: 0, // minimum value
+                        suggestedMax: 1, // maximum value
+                        grid: {
+                            color: '#ffffff'
+                        },
+                        ticks: {
+                            color: '#ffffff',
+                        }
+                    },
+
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Evaluation Impacts',
+                        color: '#ffffff'
+                    }
+                }
+            },
+        })
+        {#function operateFormatter(value, row, index) {#}
+        {#    if (row.id == {{ report_id|string }}) {#}
+        {#        return [#}
+        {#            '<a type="button" class="btn btn-primary fa fa-check" href="/repo/dashboard/risk/objectives/threat/{{ threat_id }}/asset/{{ asset_id }}/assessment/' + row.id + '/">\n' +#}
+        {#            '<span class= "custom-font">Selected</span>' +#}
+        {#            '</a>'#}
+        {#        ].join('')#}
+        {#    } else {#}
+        {#        return [#}
+        {#            '<a type="button" class="btn btn-primary fa fa-edit" href="/repo/dashboard/risk/objectives/threat/{{ threat_id }}/asset/{{ asset_id }}/assessment/' + row.id + '/">\n' +#}
+        {#            '<span class= "custom-font">Select specific assessment</span>' +#}
+        {#            '</a>'#}
+        {#        ].join('')#}
+        {#    }#}
+        {##}
+        {# }#}
+
+        $(function () {
+            {#var data = {{ repo_threats | safe }};#}
+            var data2 = {{ repo_reports | safe }};
+            {#console.log(data)#}
+            console.log(data2)
+            {#var $table = $("#table")#}
+            var $table2 = $("#table2")
+            {#$table.bootstrapTable({data: data})#}
+            $table2.bootstrapTable({data: data2})
+            {#$table.bootstrapTable({data: data});#}
+            {#$table2.bootstrapTable({data: data2});#}
+        })
+    </script>
+
+{% endblock %}
+
+
+{% block content %}
+    <h1>Risk History Dashboard</h1>
+    <hr/>
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-6">
+                    <h3>Current Selected Threat:
+                        <div class="dropdown">
+                            <button class="btn btn-primary">{{ this_threat[0].name }}</button>
+                            <div class="dropdown-list">
+                                {% for threat in these_threats %}
+                                    <a href="/repo/dashboard/risk/history/threat/{{ threat.id }}/asset/-1/">{{ threat.name }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </h3>
+                </div>
+                <div class="col-6">
+                    <h3>Current Selected Asset:
+                        <div class="dropdown">
+                            <button class="btn btn-primary">
+                                {% if asset_id|string == "-1"|string %}
+                                    Please select an asset >
+                                {% else %}
+                                    {{ this_asset[0].name }} >
+                                {% endif %}
+                            </button>
+                            <div class="dropdown-list">
+                                {% for asset in these_assets %}
+                                    <a href="/repo/dashboard/risk/history/threat/{{ threat_id }}/asset/{{ asset.id }}/">{{ asset.name }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                    </h3>
+                </div>
+            </div>
+            <hr/>
+
+            {% if threat_id != '-1' and asset_id != '-1' %}
+                <div class="row">
+                    <div class="col-3">
+                    </div>
+                    <div class="col-6">
+                        <h3>Current Selected Type of Reports:
+                            <div class="dropdown">
+                                <button class="btn btn-primary">{{ type_display }}</button>
+                                <div class="dropdown-list">
+                                    <a href="/repo/dashboard/risk/history/threat/{{ threat_id }}/asset/{{ asset_id }}/">All</a>
+                                    <a href="/repo/dashboard/risk/history/threat/{{ threat_id }}/asset/{{ asset_id }}/type/1/">Baseline</a>
+                                    <a href="/repo/dashboard/risk/history/threat/{{ threat_id }}/asset/{{ asset_id }}/type/2/">Incident</a>
+                                    <a href="/repo/dashboard/risk/history/threat/{{ threat_id }}/asset/{{ asset_id }}/type/3/">Incident Secondary</a>
+                                </div>
+                            </div>
+                        </h3>
+                    </div>
+                </div>
+                <hr/>
+                <div class="row dashboard-row">
+                    <div class="col-6 custom-select-column">
+                        <canvas id="confidentiality_chart" ></canvas>
+                    </div>
+                    <div class="col-6 custom-select-column">
+                        <canvas id="integrity_chart" ></canvas>
+                    </div>
+                </div>
+                <div class="row dashboard-row">
+                    <div class="col-6 custom-select-column">
+                        <canvas id="availability_chart" ></canvas>
+                    </div>
+                    <div class="col-6 custom-select-column">
+                        <canvas id="monetary_chart" ></canvas>
+                    </div>
+                </div>
+                <div class="row dashboard-row">
+                    <div class="col-3 custom-select-column">
+                    </div>
+                    <div class="col-6 custom-select-column">
+                        <canvas id="safety_chart" ></canvas>
+                    </div>
+                    <div class="col-3 custom-select-column">
+                    </div>
+                </div>
+                <div class="row dashboard-row">
+                    <div class="col-6 custom-select-column">
+                        <canvas id="cia_chart" ></canvas>
+                    </div>
+                    <div class="col-6 custom-select-column">
+                        <canvas id="evaluation_chart" ></canvas>
+                    </div>
+                </div>
+                <h3>Existing Reports</h3>
+                <table
+                        id="table2"
+                        data-toolbar="#toolbar"
+                        data-search="true"
+                        data-search-on-enter-key="true"
+                        data-show-search-button="true"
+                        data-show-refresh="true"
+                        data-show-toggle="true"
+                        data-show-fullscreen="true"
+                        data-show-columns="true"
+                        data-show-columns-toggle-all="true"
+                        data-loading-template="loadingTemplate"
+                        data-pagination="true"
+                        data-page-list="[10, 25, 50, 100, all]"
+                        show-button-icons="true"
+                        class="normal-table"
+                >
+                    <thead>
+                    <tr>
+                        <th data-field="id" data-sortable="true">ID</th>
+                        <th data-field="type" data-sortable="true">Report Type</th>
+                        <th data-field="date_time" data-sortable="true">Date&Time of Occurance</th>
+                        <th data-field="threat_name" data-sortable="true">Threat</th>
+                        <th data-field="asset_name" data-sortable="true">Asset Name</th>
+                        <th data-field="asset_ip" data-sortable="true">Asset Ip</th>
+{#                        <th data-field="operate" data-formatter="operateFormatter">-</th>#}
+                        {#                        <th data-field="operate" data-formatter="operateFormatter1" data-events="operateEvents1"></th>#}
+                    </tr>
+                    </thead>
+                </table>
+                <hr/>
+
+                </div>
+            {% else %}
+                <h2>Please Select a threat asset to show its history</h2>
+            {% endif %}
+    </div>
+{% endblock %}
