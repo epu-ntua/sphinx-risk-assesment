@@ -1,0 +1,20 @@
+[
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "1",
+        "risk_skill_level": "77",
+        "risk_motive": "65",
+        "risk_source": "87",
+        "risk_actor": "69",
+        "risk_opportunity": "62"
+    },
+    {
+        "repo_asset_id": "2",
+        "repo_threat_id": "7",
+        "risk_skill_level": "20",
+        "risk_motive": "71",
+        "risk_source": "29",
+        "risk_actor": "18",
+        "risk_opportunity": "74"
+    }
+]

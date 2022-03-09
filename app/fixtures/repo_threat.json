@@ -1,0 +1,93 @@
+[
+    {
+        "id": "1",
+        "name": "Malware",
+        "CAPEC_id": "",
+        "prob": "",
+        "user_prob": ""
+    },
+    {
+        "id": "2",
+        "name": "Hijacking",
+        "CAPEC_id": "",
+        "prob": "",
+        "user_prob": ""
+    },
+    {
+        "id": "3",
+        "name": "Dos/DDoS",
+        "CAPEC_id": "",
+        "prob": "",
+        "user_prob": ""
+    },
+    {
+        "id": "4",
+        "name": "SQL Injection",
+        "CAPEC_id": "",
+        "prob": "",
+        "user_prob": ""
+    },
+    {
+        "id": "5",
+        "name": "Port Scanning",
+        "CAPEC_id": "",
+        "prob": "",
+        "user_prob": ""
+    },
+    {
+        "id": "6",
+        "name": "MiTM",
+        "CAPEC_id": "",
+        "prob": "",
+        "user_prob": ""
+    },
+    {
+        "id": "7",
+        "name": "Data Integrity Violation",
+        "CAPEC_id": "",
+        "prob": "",
+        "user_prob": ""
+    },
+    {
+        "id": "8",
+        "name": "Unauthorised Remote Access",
+        "CAPEC_id": "",
+        "prob": "",
+        "user_prob": ""
+    },
+    {
+        "id": "9",
+        "name": "Unauthorised Device Connection",
+        "CAPEC_id": "",
+        "prob": "",
+        "user_prob": ""
+    },
+    {
+        "id": "10",
+        "name": "Suspicious/Abnormal Network Activity",
+        "CAPEC_id": "",
+        "prob": "",
+        "user_prob": ""
+    },
+    {
+        "id": "11",
+        "name": "Suspicious Human Action",
+        "CAPEC_id": "",
+        "prob": "",
+        "user_prob": ""
+    },
+    {
+        "id": "12",
+        "name": "Worm",
+        "CAPEC_id": "",
+        "prob": "",
+        "user_prob": ""
+    },
+    {
+        "id": "13",
+        "name": "Bruteforce Attack",
+        "CAPEC_id": "",
+        "prob": "",
+        "user_prob": ""
+    }
+]

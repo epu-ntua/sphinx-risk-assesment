@@ -1,0 +1,226 @@
+{% extends "templates_supporting/sidebar_asset_management.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{#{% block header %}#}
+{#<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/repo.css') }}">#}
+{#{% endblock %}#}
+{#{% block head %}#}
+{##}
+{#{% endblock %}#}
+{% block script %}
+    <script>
+        var valueBubble = '<output class="rangeslider__value-bubble" />';
+
+        var unit = $('input[type="range"]').attr('unit');
+
+        function updateValueBubble(pos, value, context) {
+            pos = pos || context.position;
+            value = value || context.value;
+            var $valueBubble = $('.rangeslider__value-bubble', context.$range);
+            var tempPosition = pos + context.grabPos;
+            var position = (tempPosition <= context.handleDimension) ? context.handleDimension : (tempPosition >= context.maxHandlePos) ? context.maxHandlePos : tempPosition;
+
+            if ($valueBubble.length) {
+                $valueBubble[0].style.left = Math.ceil(position) + 'px';
+                $valueBubble[0].innerHTML = value;
+            }
+        }
+
+        $('input[type="range"]').rangeslider({
+            polyfill: false,
+            onInit: function () {
+                this.$range.append($(valueBubble));
+                updateValueBubble(null, null, this);
+            },
+            onSlide: function (pos, value) {
+                updateValueBubble(pos, value, this);
+            }
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <h1>Asset-Threat Exposure Risk Configuration</h1>
+    <hr/>
+    <div class="row">
+        <div class="col-12">
+
+            <h3>Current Selected Threat:
+                <div class="dropdown">
+                    <button class="btn btn-primary">{{ this_threat[0].name }}</button>
+                    <div class="dropdown-list">
+                        {% for threat in repo_threats %}
+                            <a href="/repo/risk/configuration/threat/exposure/{{ threat.id }}/">{{ threat.name }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {#                {% for threat in repo_threats %}#}
+                {#                    <option value="{{ threat.id }}">#}
+                {#                        <a href="http://{{ serverAddress }}:{{ serverPort }}/repo/dashboard/risk/objectives/"#}
+                {#                           class="list-group-item list-group-item-action bg-dark text-white">#}
+                {#                    <span class="fa fa-dashboard fa-fw mr-3"></span>#}
+                {#                            {{ threat.name }}#}
+                {#                        </a>#}
+                {#                    </option>#}
+                {#                {% endfor %}#}
+            </h3>
+            <br/>
+
+{#                        <div class="row dashboard-row">#}
+{#                            <div class="col-2">#}
+{#                                |None#}
+{#                            </div>#}
+{#                            <div class="col-2">#}
+{#                                |Very Low#}
+{#                            </div>#}
+{#                            <div class="col-2">#}
+{#                                |Low#}
+{#                            </div>#}
+{#                            <div class="col-2 ">#}
+{#                                |Medium#}
+{#                            </div>#}
+{#                            <div class="col-2">#}
+{#                                |High#}
+{#                            </div>#}
+{#                            <div class="col-2">#}
+{#                                |Critical#}
+{#                            </div>#}
+{#                        </div>#}
+            {#            <input type="range" class="form-control-range" id="objective_state_alert_3" step="1"#}
+            {#                   min="0"#}
+            {#                   max="5" value="0" , name="objective_state_alert_3">#}
+            {#            <br/>#}
+            {#    <a class="btn btn-primary" href="/repo/threats/"> Detailed Threat View </a>#}
+            <h4>Assets</h4>
+            <h6>Select each asset to setup the relation between the assetand the threat. This process needs to be
+                completed for each asset individually.</h6>
+            <h6>These values are supplemented with available asset information.</h6>
+            <hr/>
+
+            <div class="row dashboard-row">
+                {% for asset in repo_assets %}
+                    {% if asset.id|string == asset_id|string %}
+                        <a href="/repo/risk/configuration/threat/exposure/{{ threat_id }}/asset/{{ asset.id }}/"
+                           class="btn btn-primary fa fa-edit"
+                           style="margin-bottom: 3px; background-color: #447e9b">
+                            Asset | {{ asset.name }}
+                        </a>
+                    {% else %}
+                        <a href="/repo/risk/configuration/threat/exposure/{{ threat_id }}/asset/{{ asset.id }}/"
+                           class="btn btn-primary fa fa-check"
+                           style="margin-bottom: 3px; background-color: #00cc00">
+                            Asset | {{ asset.name }}
+                        </a>
+                    {% endif %}
+                {% endfor %}
+
+            </div>
+        </div>
+
+
+        {#        <div class="col-2">#}
+        {#            <h3>Current Selections</h3>#}
+        {#            <hr/>#}
+        {#            Threat: Ransomware#}
+        {#            <br/>#}
+        {#            Asset: Asset1#}
+        {#        </div>#}
+    </div>
+    {% if asset_id != -1 %}
+        <h4>Threat Exposure</h4>
+        <h6> These values is the user estimation about the specific threat characteristics and is optional.</h6>
+        <h6>The final value is calculated in conjuction with
+            threat forecasting</h6>
+        <hr/>
+        <form action="/repo/risk/configuration/threat/exposure/{{ threat_id }}/asset/{{ asset_id }}/" method="post">
+            <div class="row">
+                <div class="col-6">
+                    {#            <div class="row flex-grow custom-select-column-header">#}
+                    {#            <h3> Likelihood &lt Medium 50% &gt </h3>#}
+                    <h4> Threat Agent Factory </h4>
+                    <label for="formControlRange">Skill Level</label>
+                    <div class="d-flex justify-content-between" style= "font-size:12px; word-wrap: break-word">
+                        <label style="max-width: 15%">Not Applicable</label>
+                        <label style="max-width: 15%">Security penetration skills</label>
+                        <label style="max-width: 15%">Network and programming skills</label>
+                        <label style="max-width: 15%">Advanced computer user</label>
+                        <label style="max-width: 15%">Advanced technical skills</label>
+                        <label style="max-width: 15%">No technical skills</label>
+                    </div>
+                    <input type="range" class="form-control-range" id="formControlRange" min="0" max="100" step="1"
+                           name="risk_skill" value="{{ risk_skill_level }}">
+                    <br/>
+                    <br/>
+                    <label for="formControlRange">Motive</label>
+                    <div class="d-flex justify-content-between" style= "font-size:12px; word-wrap: break-word">
+                        <label style="max-width: 20%">Not Applicable</label>
+                        <label style="max-width: 20%">Low or no reward</label>
+                        <label style="max-width: 20%">Possible reward</label>
+                        <label style="max-width: 20%">High reward</label>
+                        <label style="max-width: 20%">High-value reward</label>
+                    </div>
+                    <input type="range" class="form-control-range" id="formControlRange" min="0" max="100" step="1"
+                           name="risk_motive" value="{{ risk_motive }}">
+                    <br/>
+                    <br/>
+                    <br/>
+                    <label for="formControlRange">Source (group)</label>
+                    <div class="d-flex justify-content-between" style= "font-size:12px; word-wrap: break-word">
+                        <label style="max-width: 16%">Not Applicable</label>
+                        <label style="max-width: 16%">System Administrators</label>
+                        <label style="max-width: 16%">Intranet users</label>
+                        <label style="max-width: 16%">Third parties</label>
+                        <label style="max-width: 16%">Authorised users</label>
+                        <label>Anonymous Internet users</label>
+                    </div>
+                    <input type="range" class="form-control-range" id="formControlRange" min="0" max="100" step="1"
+                           name="risk_source" value="{{ risk_source }}">
+                    {#            </div>#}
+
+                </div>
+                <div class="col-6">
+                    {#            <div class="row flex-grow custom-select-column-header">#}
+                    {#            <h4> </h4>#}
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+
+                    <label for="formControlRange">Actor</label>
+                    <div class="d-flex justify-content-between" style= "font-size:12px; word-wrap: break-word">
+                        <label style="max-width: 20%">Not Applicable</label>
+                        <label style="max-width: 20%">Insider threats</label>
+                        <label style="max-width: 20%">Hacktivists, cyber-terrorists, thrill-seekers</label>
+                        <label style="max-width: 20%">Cybercriminals </label>
+                        <label style="max-width: 20%">Nation-states</label>
+                    </div>
+                    <input type="range" class="form-control-range" id="formControlRange" min="0" max="100" step="1"
+                           name="risk_actor" value="{{ risk_actor }}">
+                    <br/>
+                    <br/>
+                    <br/>
+                    <label for="formControlRange">Opportunity</label>
+                    <div class="d-flex justify-content-between" style= "font-size:12px; word-wrap: break-word">
+                        <label style="max-width: 20%">Full access</label>
+                        <label style="max-width: 20%">Special access</label>
+                        <label style="max-width: 20%">Some access</label>
+                        <label style="max-width: 20%">Common access</label>
+                        <label style="max-width: 20%">No access</label>
+                    </div>
+                    <input type="range" class="form-control-range" id="formControlRange" min="0" max="100" step="1"
+                           name="risk_opportunity" value="{{ risk_opportunity }}">
+                    {#            <label for="formControlRange">Awareness</label>#}
+                    {#            <input type="range" class="form-control-range" id="formControlRange">#}
+                    {#            </div>#}
+
+                </div>
+
+
+            </div>
+            <br/>
+            <button type="submit" class="btn btn-primary" style="margin-right: 3px; ">
+                Submit
+            </button>
+        </form>
+    {% endif %}
+{% endblock %}

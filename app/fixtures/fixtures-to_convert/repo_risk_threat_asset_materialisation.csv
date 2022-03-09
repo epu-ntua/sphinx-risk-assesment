@@ -1,0 +1,9 @@
+repo_asset_id,repo_threat_id,repo_response_id,repo_materialisation_id,threat_occurrence,prob
+2,1,1,1,1,78
+2,1,1,1,0,28
+2,1,2,1,1,84
+2,1,2,1,0,33
+2,7,13,7,1,88
+2,7,13,7,0,17
+2,7,14,7,1,94
+2,7,14,7,0,33

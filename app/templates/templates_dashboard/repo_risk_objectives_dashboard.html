@@ -1,0 +1,540 @@
+{% extends "templates_supporting/sidebar_asset_management.html" %}
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/risk_dashboard.css') }}">
+
+{% endblock %}
+{% block script %}
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@3.2.0/dist/chart.min.js"></script>
+
+    <script>
+
+        var $table = $('#table')
+
+        function operateFormatter(value, row, index) {
+            if (row.id == {{ report_id|string }}) {
+                return [
+                    '<a type="button" class="btn btn-primary fa fa-check" href="/repo/dashboard/risk/objectives/threat/{{ threat_id }}/asset/{{ asset_id }}/assessment/' + row.id + '/">\n' +
+                    '<span class= "custom-font">Selected</span>' +
+                    '</a>'
+                ].join('')
+            } else {
+                return [
+                    '<a type="button" class="btn btn-primary fa fa-edit" href="/repo/dashboard/risk/objectives/threat/{{ threat_id }}/asset/{{ asset_id }}/assessment/' + row.id + '/">\n' +
+                    '<span class= "custom-font">Select specific assessment</span>' +
+                    '</a>'
+                ].join('')
+            }
+
+        }
+
+        $(function () {
+            var data = {{ repo_threats | safe }};
+            var data2 = {{ repo_reports | safe }};
+            {#console.log(data)#}
+            console.log(data2)
+            var $table = $("#table")
+            var $table2 = $("#table2")
+            $table.bootstrapTable({data: data})
+            $table2.bootstrapTable({data: data2})
+            {#$table.bootstrapTable({data: data});#}
+            {#$table2.bootstrapTable({data: data2});#}
+        })
+    </script>
+
+{% endblock %}
+
+
+{% block content %}
+    {% if report_id|string != -1|string %}
+        {# Load values of existing report in array#}
+        {# Each array checks if it exists and if not is set as none to avoid errors#}
+        {% if this_risk_assessment[0].exposure_set != None %}
+            {% set exposure_set_values = this_risk_assessment[0].exposure_set.split("|") %}
+        {% else %}
+            {% set exposure_set_values = None %}
+        {% endif %}
+        {% if this_risk_assessment[0].responses_set != None %}
+            {% set responses_set_values = this_risk_assessment[0].responses_set.split("|") %}
+        {% else %}
+            {% set responses_set_values = None %}
+        {% endif %}
+        {% if this_risk_assessment[0].materialisations_set != None %}
+            {% set materialisations_set_values = this_risk_assessment[0].materialisations_set.split("|") %}
+        {% else %}
+            {% set materialisations_set_values = None %}
+        {% endif %}
+        {% if this_risk_assessment[0].consequences_set != None %}
+            {% set consequences_set_values = this_risk_assessment[0].consequences_set.split("|") %}
+        {% else %}
+            {% set consequences_set_values = None %}
+        {% endif %}
+        {% if this_risk_assessment[0].services_set != None %}
+            {% set services_set_values = this_risk_assessment[0].services_set.split("|") %}
+        {% else %}
+            {% set services_set_values = None %}
+        {% endif %}
+        {% if this_risk_assessment[0].impacts_set != None %}
+            {% set impacts_set_values = this_risk_assessment[0].impacts_set.split("|") %}
+        {% else %}
+            {% set impacts_set_values = None %}
+        {% endif %}
+        {% if this_risk_assessment[0].objectives_set != None %}
+            {% set objectives_set_values = this_risk_assessment[0].objectives_set.split("|") %}
+        {% else %}
+            {% set objectives_set_values = None %}
+        {% endif %}
+    {% else %}
+        {# Values still need to be initialised to avoid errors when there is no loaded report#}
+        {% set responses_set_values = None %}
+        {% set materialisations_set_values = None %}
+        {% set consequences_set_values = None %}
+        {% set services_set_values = None %}
+        {% set impacts_set_values = None %}
+        {% set objectives_set_values = None %}
+        {% set exposure_set_values = None %}
+    {% endif %}
+    <h1>Risk Dashboard</h1>
+    <hr/>
+    <div class="row">
+        <div class="col-10">
+            <div class="row">
+                <div class="col-6">
+                    <h3>Current Selected Threat:
+                        <div class="dropdown">
+                            <button class="btn btn-primary">{{ this_threat[0].name }}</button>
+                            <div class="dropdown-list">
+                                {% for threat in these_threats %}
+                                    <a href="/repo/dashboard/risk/objectives/threat/{{ threat.id }}/asset/-1/">{{ threat.name }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </h3>
+                </div>
+                <div class="col-6">
+                    <h3>Current Selected Asset:
+                        <div class="dropdown">
+                            <button class="btn btn-primary">
+                                {% if asset_id|string == "-1"|string %}
+                                    Please select an asset >
+                                {% else %}
+                                    {{ this_asset[0].name }} >
+                                {% endif %}
+                            </button>
+                            <div class="dropdown-list">
+                                {% for asset in these_assets %}
+                                    <a href="/repo/dashboard/risk/objectives/threat/{{ threat_id }}/asset/{{ asset.id }}/">{{ asset.name }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                    </h3>
+                </div>
+            </div>
+            <hr/>
+            {% if threat_id != '-1' and asset_id != '-1' %}
+                <form action="/repo/dashboard/risk/objectives/threat/{{ threat_id }}/asset/{{ asset_id }}/"
+                      method="post">
+                    {#    <a class="btn btn-primary" href="/repo/threats/"> Detailed Threat View </a>#}
+                    <div class="row">
+                        <div class="col-3"></div>
+                        <div class="col-3"></div>
+                    </div>
+                    <h2>Scenario Static Information</h2>
+                    <p>You can set any information about the scenario as static i.e. as having happened or not in order
+                        to
+                        explore different outcomes</p>
+                    <h3>Threat Exposure {{ exposure_set_values[1] }}</h3>
+                    <hr/>
+                    <div class="row">
+                        <div class="col-3">
+                            <label for=""> Label</label>
+                        </div>
+                        <div class="col-3">
+                            <select
+                                    name="te{{ this_exposure[0].repo_threat_id }}"
+                                    id="te{{ this_exposure[0].repo_threat_id }}">
+                                {% if exposure_set_values == None %}
+                                    <option value="automatic">Automatic</option>
+                                    <option value="occurs">Occurs</option>
+                                    <option value="nothing">Doesnt Occur</option>
+                                {% elif exposure_set_values[1] == "automatic" %}
+                                    <option value="automatic" selected>Automatic</option>
+                                    <option value="occurs">Occurs</option>
+                                    <option value="nothing">Doesnt Occur</option>
+                                {% elif exposure_set_values[1] == "occurs" %}
+                                    <option value="automatic">Automatic</option>
+                                    <option value="occurs" selected>Occurs</option>
+                                    <option value="nothing">Doesnt Occur</option>
+                                {% elif exposure_set_values[1] == "nothing" %}
+                                    <option value="automatic">Automatic</option>
+                                    <option value="occurs">Occurs</option>
+                                    <option value="nothing" selected>Doesnt Occur</option>
+                                {% else %}
+                                    <option value="automatic">Automatic</option>
+                                    <option value="occurs">Occurs</option>
+                                    <option value="nothing">Doesnt Occur</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            {{ risk_assessment_result["te" + threat_id] | safe }}
+{#                            {{ temp_series | safe }}#}
+                        </div>
+
+                    </div>
+                    <h3>Response</h3>
+                    <hr/>
+                    {% set res_it = [0,0] %}
+                    {% for response in these_responses %}
+                        <div class="row">
+                            <div class="col-3">
+                                <label for="re{{ response.id }}"> {{ response.name }}</label>
+                            </div>
+                            <div class="col-3">
+                                <select name="re{{ response.id }}"
+                                        id="re{{ response.id }}">
+
+                                    {% if responses_set_values == None %}
+                                        <option value="automatic">Automatic</option>
+                                        <option value="occurs">Occurs</option>
+                                        <option value="nothing">Doesnt Occur</option>
+                                    {% elif responses_set_values[res_it|length - 1] == "automatic" %}
+                                        <option value="automatic" selected>Automatic</option>
+                                        <option value="occurs">Occurs</option>
+                                        <option value="nothing">Doesnt Occur</option>
+                                    {% elif responses_set_values[res_it|length - 1] == "occurs" %}
+                                        <option value="automatic">Automatic</option>
+                                        <option value="occurs" selected>Occurs</option>
+                                        <option value="nothing">Doesnt Occur</option>
+                                    {% elif responses_set_values[res_it|length - 1] == "nothing" %}
+                                        <option value="automatic">Automatic</option>
+                                        <option value="occurs">Occurs</option>
+                                        <option value="nothing" selected>Doesnt Occur</option>
+                                    {% else %}
+                                        <option value="automatic">Automatic</option>
+                                        <option value="occurs">Occurs</option>
+                                        <option value="nothing">Doesnt Occur</option>
+                                    {% endif %}
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                {{ risk_assessment_result["re" ] | safe }}
+                            </div>
+                        </div>
+                        <br/>
+                        {% set __ = res_it.append(1) %}
+                        {% set __ = res_it.append(1) %}
+                    {% endfor %}
+                    <h3>Threat Materialisation</h3>
+                    <hr/>
+                    {# Increase iterator like this because scoping doesnt let you increate it like a variable#}
+                    {# So we create an array and count its length#}
+                    {# The array starts at 2 and we increase the length by two everytime, the informatoin we need #}
+                    {# Is at 1 ,3 ,5 .... #}
+                    {% set mat_it = [0,0] %}
+                    {% for materialisation in these_materialisations %}
+                        <div class="row">
+                            <div class="col-3"><label
+                                    for="mat{{ materialisation.id }}"> {{ materialisation.name }}</label>
+                            </div>
+                            <div class="col-3"><select
+                                    name="mat{{ materialisation.id }}"
+                                    id="mat{{ materialisation.id }}">
+                                {% if materialisations_set_values == None %}
+                                    <option value="automatic">Automatic</option>
+                                    <option value="occurs">Occurs</option>
+                                    <option value="nothing">Doesnt Occur</option>
+                                {% elif materialisations_set_values[mat_it|length - 1] == "automatic" %}
+                                    <option value="automatic" selected>Automatic</option>
+                                    <option value="occurs">Occurs</option>
+                                    <option value="nothing">Doesnt Occur</option>
+                                {% elif materialisations_set_values[mat_it|length - 1] == "occurs" %}
+                                    <option value="automatic">Automatic</option>
+                                    <option value="occurs" selected>Occurs</option>
+                                    <option value="nothing">Doesnt Occur</option>
+                                {% elif materialisations_set_values[mat_it|length - 1] == "nothing" %}
+                                    <option value="automatic">Automatic</option>
+                                    <option value="occurs">Occurs</option>
+                                    <option value="nothing" selected>Doesnt Occur</option>
+                                {% else %}
+                                    <option value="automatic">Automatic</option>
+                                    <option value="occurs">Occurs</option>
+                                    <option value="nothing">Doesnt Occur</option>
+                                {% endif %}
+                            </select></div>
+                            <div class="col-6">
+                                {{ risk_assessment_result["mat"+materialisation.id|string ] | safe }}
+                            </div>
+                        </div>
+                        <br/>
+                        {% set __ = mat_it.append(1) %}
+                        {% set __ = mat_it.append(1) %}
+                        {#                        {% set mat_it = mat_it + 2 %}#}
+                    {% endfor %}
+                    {#                    {{ test_variable | safe }}#}
+                    <h3>Threat Consequence</h3>
+                    <hr/>
+                    {% set cons_it = [0,0] %}
+                    {% for consequence in these_consequences %}
+                        <div class="row">
+                            <div class="col-3"><label for="con{{ consequence.id }}"> {{ consequence.name }}</label>
+                            </div>
+                            <div class="col-3"><select
+                                    name="con{{ consequence.id }}"
+                                    id="con{{ consequence.id }}">
+                                {% if consequences_set_values == None %}
+                                    <option value="automatic">Automatic</option>
+                                    <option value="occurs">Occurs</option>
+                                    <option value="nothing">Doesnt Occur</option>
+                                {% elif consequences_set_values[cons_it|length - 1] == "automatic" %}
+                                    <option value="automatic" selected>Automatic</option>
+                                    <option value="occurs">Occurs</option>
+                                    <option value="nothing">Doesnt Occur</option>
+                                {% elif consequences_set_values[cons_it|length - 1] == "occurs" %}
+                                    <option value="automatic">Automatic</option>
+                                    <option value="occurs" selected>Occurs</option>
+                                    <option value="nothing">Doesnt Occur</option>
+                                {% elif consequences_set_values[cons_it|length - 1] == "nothing" %}
+                                    <option value="automatic">Automatic</option>
+                                    <option value="occurs">Occurs</option>
+                                    <option value="nothing" selected>Doesnt Occur</option>
+                                {% else %}
+                                    <option value="automatic">Automatic</option>
+                                    <option value="occurs">Occurs</option>
+                                    <option value="nothing">Doesnt Occur</option>
+                                {% endif %}
+                            </select></div>
+                            <div class="col-6">
+                                {{ risk_assessment_result["con"+consequence.id|string ] | safe }}
+                            </div>
+                        </div>
+                        <br/>
+                        {% set __ = cons_it.append(1) %}
+                        {% set __ = cons_it.append(1) %}
+                    {% endfor %}
+                    <h3>Service State</h3>
+                    <hr/>
+                    {% set serv_it = [0,0] %}
+                    {% for service in these_services %}
+                        <div class="row">
+                            <div class="col-3"><label for="serv{{ service.id }}"> {{ service.name }}</label></div>
+                            <div class="col-3"><select
+                                    name="serv{{ service.id }}"
+                                    id="serv{{ service.id }}">
+                                {% if services_set_values == None %}
+                                    <option value="automatic">Automatic</option>
+                                    <option value="occurs">Occurs</option>
+                                    <option value="nothing">Doesnt Occur</option>
+                                {% elif services_set_values[serv_it|length - 1] == "automatic" %}
+                                    <option value="automatic" selected>Automatic</option>
+                                    <option value="occurs">Occurs</option>
+                                    <option value="nothing">Doesnt Occur</option>
+                                {% elif services_set_values[serv_it|length - 1] == "occurs" %}
+                                    <option value="automatic">Automatic</option>
+                                    <option value="occurs" selected>Occurs</option>
+                                    <option value="nothing">Doesnt Occur</option>
+                                {% elif services_set_values[serv_it|length - 1] == "nothing" %}
+                                    <option value="automatic">Automatic</option>
+                                    <option value="occurs">Occurs</option>
+                                    <option value="nothing" selected>Doesnt Occur</option>
+                                {% else %}
+                                    <option value="automatic">Automatic</option>
+                                    <option value="occurs">Occurs</option>
+                                    <option value="nothing">Doesnt Occur</option>
+                                {% endif %}
+                            </select></div>
+                            <div class="col-6">
+                                {{ risk_assessment_result["serv"+service.id|string ] | safe }}
+                            </div>
+                        </div>
+                        <br/>
+                        {% set __ = serv_it.append(1) %}
+                        {% set __ = serv_it.append(1) %}
+                    {% endfor %}
+                    <h3>Threat Impact</h3>
+                    <hr/>
+                    {% set imp_it = [0,0] %}
+                    {% for impact in these_impacts %}
+                        <div class="row">
+                            <div class="col-3"><label for="serv{{ impact.id }}"> {{ impact.name }}</label>
+                            </div>
+                            <div class="col-3"><select
+                                    name="serv{{ impact.id }}"
+                                    id="serv{{ impact.id }}">
+                                {% if impacts_set_values == None %}
+                                    <option value="automatic">Automatic</option>
+                                    <option value="none">No Impact</option>
+                                    <option value="impact">Impact</option>
+                                    <option value="high">High Impact</option>
+                                {% elif impacts_set_values[imp_it|length - 1] == "automatic" %}
+                                    <option value="automatic" selected>Automatic</option>
+                                    <option value="none">No Impact</option>
+                                    <option value="impact">Impact</option>
+                                    <option value="high">High Impact</option>
+                                {% elif impacts_set_values[imp_it|length - 1] == "none" %}
+                                    <option value="automatic">Automatic</option>
+                                    <option value="none" selected>No Impact</option>
+                                    <option value="impact">Impact</option>
+                                    <option value="high">High Impact</option>
+                                {% elif impacts_set_values[imp_it|length - 1] == "impact" %}
+                                    <option value="automatic">Automatic</option>
+                                    <option value="none">No Impact</option>
+                                    <option value="impact" selected>Impact</option>
+                                    <option value="high">High Impact</option>
+                                {% elif impacts_set_values[imp_it|length - 1] == "high" %}
+                                    <option value="automatic">Automatic</option>
+                                    <option value="none">No Impact</option>
+                                    <option value="impact">Impact</option>
+                                    <option value="high" selected>High Impact</option>
+                                {% else %}
+                                    <option value="automatic">Automatic</option>
+                                    <option value="none">No Impact</option>
+                                    <option value="impact">Impact</option>
+                                    <option value="high">High Impact</option>
+                                {% endif %}
+                            </select></div>
+                            <div class="col-6">
+                                {{ risk_assessment_result["imp"+impact.id|string ] | safe }}
+                            </div>
+                        </div>
+                        <br/>
+                        {% set __ = imp_it.append(1) %}
+                        {% set __ = imp_it.append(1) %}
+                    {% endfor %}
+                    <h3>Objective State</h3>
+                    <hr/>
+                    {% set obj_it = [0,0] %}
+                    {% for objective in these_objectives %}
+                        <div class="row">
+                            <div class="col-3">
+                                <label for="serv{{ objective.id }}"> {{ objective.name }}</label>
+                            </div>
+                            <div class="col-3">
+                                <select name="serv{{ objective.id }}"
+                                        id="serv{{ objective.id }}">
+
+                                    {% if objectives_set_values == None %}
+                                        <option value="automatic">Automatic</option>
+                                        <option value="low">Low</option>
+                                        <option value="med">Med</option>
+                                        <option value="high">High</option>
+                                    {% elif objectives_set_values[obj_it|length - 1] == "automatic" %}
+                                        <option value="automatic" selected>Automatic</option>
+                                        <option value="low">Low</option>
+                                        <option value="med">Med</option>
+                                        <option value="high">High</option>
+                                    {% elif objectives_set_values[obj_it|length - 1] == "low" %}
+                                        <option value="automatic">Automatic</option>
+                                        <option value="low" selected>Low</option>
+                                        <option value="med">Med</option>
+                                        <option value="high">High</option>
+                                    {% elif objectives_set_values[obj_it|length - 1] == "med" %}
+                                        <option value="automatic">Automatic</option>
+                                        <option value="low">Low</option>
+                                        <option value="med" selected>Med</option>
+                                        <option value="high">High</option>
+                                    {% elif objectives_set_values[obj_it|length - 1] == "high" %}
+                                        <option value="automatic">Automatic</option>
+                                        <option value="low">Low</option>
+                                        <option value="med">Med</option>
+                                        <option value="high" selected>High</option>
+                                    {% else %}
+                                        <option value="automatic">Automatic</option>
+                                        <option value="low">Low</option>
+                                        <option value="med">Med</option>
+                                        <option value="high">High</option>
+                                    {% endif %}
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                {{ risk_assessment_result["obj"+objective.id|string ] | safe }}
+                            </div>
+                        </div>
+                        <br/>
+                        {% set __ = obj_it.append(1) %}
+                        {% set __ = obj_it.append(1) %}
+                    {% endfor %}
+                    <button type="submit" name="new_risk_assessment" class="btn btn-primary">Submit ></button>
+                    {#                <div class="row dashboard-row">#}
+                    {#                    <button type="button" class="btn btn-primary" style="margin-right: 3px; ">#}
+                    {#                        Blood Test: Normal Work#}
+                    {#                    </button>#}
+                    {#                    <button type="button" class="btn btn-primary" style="margin-right: 3px; ">#}
+                    {#                        Catering: Normal Work#}
+                    {#                    </button>#}
+                    {#                    <button type="button" class="btn btn-primary" style="margin-right: 3px; ">#}
+                    {#                        Pharmacy: Normal Work#}
+                    {#                    </button>#}
+                    {#                </div>#}
+                    {#                <h6>User Response</h6>#}
+                    {#                <hr/>#}
+                    {#                <div class="row dashboard-row">#}
+                    {#                    <button type="button" class="btn btn-primary" style="margin-right: 3px; ">#}
+                    {#                        Do Nothing#}
+                    {#                    </button>#}
+                    {#                </div>#}
+                </form>
+                <h1>Objective Possibilities Matrix </h1>
+                <div class="row dashboard-row">
+                    <br/>
+                    <table id="table"
+                           class="normal-table"
+                    >
+                        <thead>
+                        <tr>
+                            <th data-field="Likelihood">Likelihood</th>
+                            <th data-field="Monetary">Objective: Monetary</th>
+                            <th data-field="Confidentiality">Objective: Confidentiality</th>
+                            <th data-field="Integrity">Objective: Integrity</th>
+                            <th data-field="Availability">Objective: Availability</th>
+                            <th data-field="Safety">Objective: Safety</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+
+                <h3>Existing Reports</h3>
+                <table
+                        id="table2"
+                        data-toolbar="#toolbar"
+                        data-search="true"
+                        data-search-on-enter-key="true"
+                        data-show-search-button="true"
+                        data-show-refresh="true"
+                        data-show-toggle="true"
+                        data-show-fullscreen="true"
+                        data-show-columns="true"
+                        data-show-columns-toggle-all="true"
+                        data-loading-template="loadingTemplate"
+                        data-pagination="true"
+                        data-page-list="[10, 25, 50, 100, all]"
+                        show-button-icons="true"
+                        class="normal-table"
+                >
+                    <thead>
+                    <tr>
+                        <th data-field="id" data-sortable="true">ID</th>
+                        <th data-field="type" data-sortable="true">Report Type</th>
+                        <th data-field="date_time" data-sortable="true">Date&Time of Occurance</th>
+                        <th data-field="threat_name" data-sortable="true">Threat</th>
+                        <th data-field="asset_name" data-sortable="true">Asset Name</th>
+                        <th data-field="asset_ip" data-sortable="true">Asset Ip</th>
+                        <th data-field="operate" data-formatter="operateFormatter">-</th>
+                        {#                        <th data-field="operate" data-formatter="operateFormatter1" data-events="operateEvents1"></th>#}
+                    </tr>
+                    </thead>
+                </table>
+                <hr/>
+
+                </div>
+                <div class="col-2">
+                    <h3>Alerts</h3>
+                    No Alerts Triggered
+                    <hr/>
+                </div>
+            {% else %}
+                <h2>Please Select a threat to show its dashboard</h2>
+            {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,132 @@
+{#{% extends "base.html" %}#}
+{% extends "templates_supporting/sidebar_asset_management.html" %}
+
+{% block script %}
+    <script>
+        addedConsequences = 1
+
+          function addConsequenceOptions() {
+            var newObject = $.parseHTML('<div class="form-group row" id="new-consequences">\n' +
+                '                    <label>Consequences of Materialisations (If one of the consequences doesn\'t\n' +
+                '                        appear here, add it to its page)</label>\n' +
+                '                    <select name="consequence'+ addedConsequences+ '" id="consequence'+ addedConsequences+ '">\n' +
+                '                        {% for tempConsequence in consequences %}\n'+
+                    '                        <option value="{{ tempConsequence.id }}">{{ tempConsequence.name }} </option>\n'
+                    +
+                    '                        {% endfor %}\n' +
+                '                    </select>\n' +
+                '                </div>')
+
+            document.getElementById('new_consequences').appendChild(newObject);
+        }
+
+
+    </script>
+
+
+{% endblock %}
+
+
+{% block content %}
+    <form action="/gira_overview/gira_threat_materialisation/" , method="post">
+        <div id="gira-bar" class="row d-flex flex-grow-1 gira-bar">
+            <div class="col-2 gira-bar-nav">
+                {#                <img id="gira-background-response" src={{  url_for('static', filename='/images/gira_menu_response.jpg') }}#}
+                {#                     class="gira-menu-background">#}
+                <a class="gira-bar-nav-link  custom-white-color" href="/gira_overview/gira_threat_exposure">
+                    <h5> Threat Exposure </h5>
+                </a>
+            </div>
+            <div class="col-2 gira-bar-nav custom-border-finished">
+                {#                <img id="gira-background-response" src={{  url_for('static', filename='/images/gira_menu_response.jpg') }}#}
+                {#                     class="gira-menu-background">#}
+                <a class="gira-bar-nav-link  custom-white-color" href="/gira_overview/gira_threat_materialisation">
+                    <h5> Threat Materialisations </h5>
+                </a>
+            </div>
+            <div class="col-1 gira-bar-nav ">
+                {#                <img id="gira-background-response" src={{  url_for('static', filename='/images/gira_menu_response.jpg') }}#}
+                {#                     class="gira-menu-background">#}
+                <a class="gira-bar-nav-link  custom-white-color" href="/gira_overview/gira_threat_response">
+                    <h5> Response </h5>
+                </a>
+            </div>
+            <div class="col-2 gira-bar-nav ">
+                {#                <img id="gira-background-consequence" src={{  url_for('static', filename='/images/gira_menu_consequences.jpg') }}#}
+                {#                     class="gira-menu-background">#}
+                <a class="gira-bar-nav-link   custom-white-color" href="/gira_overview/gira_consequence">
+                    <h5> Consequence </h5>
+                </a>
+            </div>
+            <div class="col-2 gira-bar-nav ">
+                {#                <img id="gira-background-asset" src={{  url_for('static', filename='/images/gira_menu_asset.jpg') }}#}
+                {#                     class="gira-menu-background">#}
+                <a class="gira-bar-nav-link   custom-white-color" href="/gira_overview/gira_asset_status">
+                    <h5> Asset Status</h5>
+                </a>
+            </div>
+            <div class="col-1 gira-bar-nav ">
+                {#                <img id="gira-background-impact" src={{  url_for('static', filename='/images/gira_menu_impact.jpg') }}#}
+                {#                     class="gira-menu-background">#}
+                <a class="gira-bar-nav-link   custom-white-color" href="/gira_overview/gira_asset_impact">
+                    <h5>Impact</h5>
+                </a>
+            </div>
+            <div class="col-1 gira-bar-nav  ">
+                {#                <img id="gira-background-objective" src={{  url_for('static', filename='/images/gira_menu_objective.jpg') }}#}
+                {#                     class="gira-menu-background">#}
+                <a class="gira-bar-nav-link   custom-white-color" href="/gira_overview/gira_objective">
+                    <h5> Objective</h5>
+                </a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2 custom-select-column">
+                <h4> Add new Threat Materialisation </h4>
+                <hr>
+                <div class="form-group row">
+                    <label for="name">Materialisation Title</label>
+                    <input type="text" class="form-control" name="name" id="name" placeholder="Name">
+                </div>
+                <div class="form-group row">
+                    <label for="description">Materialisation Description</label>
+                    <input type="text" class="form-control" name="description" id="description"
+                           placeholder="Description">
+                </div>
+                 <div class="form-group row">
+                    <label for="probability">Default Effect of Materialisation in percentage</label>
+                    <input type="text" class="form-control" name="probability" id="probability"
+                           placeholder="Default Effect of Response in percentage">
+                </div>
+                <div class="form-group row" id="new_consequences">
+                    <label>Consequences of Materialisations (If one of the consequences doesn't
+                        appear here, add it to its page)</label>
+                    <select name="consequence0" id="consequence0">
+                        {% for tempConsequence in consequences %}
+                        <option value="{{ tempConsequence.id }}">{{ tempConsequence.name }} </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <hr/>
+                <button type="submit" name="new_group_flow_form" class="btn btn-primary">Submit ></button>
+            </div>
+            <div class="col-10 d-flex flex-wrap align-content-start custom-select-column">
+                 {% for tempMaterialisation in materialisations %}
+                <div class="card bg-light mb-3 custom-card" style="max-width: 18rem;">
+                    <div class="card-header"> Materialisation #{{ tempMaterialisation.id }}:
+                        {{ tempMaterialisation.name }}
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title">Description</h4>
+                        <p class="card-text"> {{ tempMaterialisation.description }} </p>
+                        <h4 class="card-title">Probability Effect</h4>
+                        <p class="card-text"> {{ tempMaterialisation.probability }} </p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </form>
+
+
+{% endblock %}

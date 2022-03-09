@@ -1,12 +1,38 @@
 from app import db
+from datetime import datetime
 
+# from app.mixins import ModelMixin
+repo_asset_common_vulnerabilities_and_exposures_association_table = db.Table(
+    'repo_asset_common_vulnerabilities_and_exposures_association_table',
+    db.Model.metadata,
+    db.Column('repo_asset_id', db.Integer, db.ForeignKey('repo_asset.id')),
+    db.Column('common_vulnerabilities_and_exposures_id', db.Integer,
+              db.ForeignKey('common_vulnerabilities_and_exposures.id'))
+)
+
+repo_threat_common_vulnerabilities_and_exposures_association_table = db.Table(
+    'repo_threat_common_vulnerabilities_and_exposures_association_table',
+    db.Model.metadata,
+    db.Column('repo_threat_id', db.Integer, db.ForeignKey('repo_threat.id')),
+    db.Column('common_vulnerabilities_and_exposures_id', db.Integer,
+              db.ForeignKey('common_vulnerabilities_and_exposures.id'))
+)
 
 class VulnerabilityReport(db.Model):
     __tablename__ = 'vulnerability_report'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     reportId = db.Column(db.String(), index=True, unique=True)
-    creation_time = db.Column(db.String())
-    name = db.Column(db.String())
+    assessment_date = db.Column(db.String())  # only from VAaaS report
+    scan_start_time = db.Column(db.String())
+    scan_end_time = db.Column(db.String())
+    source_component = db.Column(db.Integer)  # 1 for VAaaS, 2 for Certification
+    target_name = db.Column(db.String())  # only from VAaaS report
+    cvss_score = db.Column(db.String())  # only from VAaaS report
+    total_services = db.Column(db.String())  # only from VAaaS report
+    source_attackType = db.Column(db.String())  # only from Certification report
+    source_eventsCount = db.Column(db.String())  # only from Certification report
+    source_riskScore = db.Column(db.String())  # only from Certification report
+    source_severity = db.Column(db.String())  # only from Certification report
     comments = db.Column(db.String())
 
     # CVEs = db.relationship("VReportCVELink", back_populates="vreport_s")
@@ -35,6 +61,12 @@ class CommonVulnerabilitiesAndExposures(db.Model):
     obtainUserPrivilege = db.Column(db.Boolean)
     obtainOtherPrivilege = db.Column(db.Boolean)
     userInteractionRequired = db.Column(db.Boolean)
+    assets = db.relationship("RepoAsset",
+                             secondary=repo_asset_common_vulnerabilities_and_exposures_association_table,
+                             back_populates="cves")
+    threats = db.relationship("RepoThreat",
+                             secondary=repo_threat_common_vulnerabilities_and_exposures_association_table,
+                             back_populates="cves")
 
     # # Relationships
     # VReports = db.relationship("VReportCVELink", back_populates="cve_s")
@@ -45,18 +77,50 @@ class CommonVulnerabilitiesAndExposures(db.Model):
 
 class VulnerabilityReportVulnerabilitiesLink(db.Model):
     __tablename__ = 'vulnerability_report_vulnerabilities_link'
-    vreport_id = db.Column(db.Integer, db.ForeignKey('vulnerability_report.id'), primary_key=True)
-    cve_id = db.Column(db.Integer, db.ForeignKey('common_vulnerabilities_and_exposures.id'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    vreport_id = db.Column(db.Integer, db.ForeignKey('vulnerability_report.id'), nullable=False)
+    vreport = db.relationship("VulnerabilityReport")
+    cve_id = db.Column(db.Integer, db.ForeignKey('common_vulnerabilities_and_exposures.id'), nullable=False)
+    cve = db.relationship("CommonVulnerabilitiesAndExposures")
+    asset_id = db.Column(db.Integer, db.ForeignKey('repo_asset.id'), nullable=False)
+    asset = db.relationship("RepoAsset")
     VReport_assetID = db.Column(db.String())
     VReport_assetIp = db.Column(db.String())
     VReport_port = db.Column(db.String())
+    VReport_CVSS_score = db.Column(db.String())
+    date = db.Column(db.DateTime, default=datetime.utcnow(), nullable=True)
     comments = db.Column(db.String(50))
+    controls = db.relationship("RepoControl", uselist=False, back_populates="vulnerabilities")
 
     #     cve_s = db.relationship("CVE", back_populates="VReports")
     #     vreport_s = db.relationship("VReport", back_populates="CVEs")
 
     def __repr__(self):
         return '<VulnerabilityReportVulnerabilitiesLink {}>'.format(self.vreport_id)
+
+
+class RepoAssetService(db.Model):
+    __tablename__ = 'repo_asset_service'
+    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    asset_id = db.Column(db.Integer, db.ForeignKey('repo_asset.id'), nullable=False)
+    asset = db.relationship("RepoAsset", back_populates="asset_services")
+    vreport_id = db.Column(db.Integer, db.ForeignKey('vulnerability_report.id'), nullable=True)
+    port = db.Column(db.String())
+    protocol = db.Column(db.String())
+    state = db.Column(db.String())
+    service_name = db.Column(db.String())
+    service_product = db.Column(db.String())
+    service_product_version = db.Column(db.String())
+
+
+class RepoControl(db.Model):
+    __tablename__ = 'repo_control'
+    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    name = db.Column(db.String())
+    description = db.Column(db.String())
+    effectiveness = db.Column(db.Integer)
+    vulnerability_id = db.Column(db.Integer, db.ForeignKey('vulnerability_report_vulnerabilities_link.id'))
+    vulnerabilities = db.relationship("VulnerabilityReportVulnerabilitiesLink", back_populates="controls")
 
 
 class CommonWeaknessEnumeration(db.Model):
@@ -119,6 +183,7 @@ class CommonAttackPatternEnumerationClassification(db.Model):
         return '<CAPEC {}>'.format(self.capecId)
 
 
+# ---------------------------------------------------------------------------------------------------------------------
 class VulnerabilitiesWeaknessLink(db.Model):
     __tablename__ = 'vulnerabilities_weakness_link'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -127,173 +192,506 @@ class VulnerabilitiesWeaknessLink(db.Model):
     date = db.Column(db.DateTime)
 
     def __repr__(self):
-        return '<cVecWe {}>'.format(self.Id)
+        return '<cVecWe {}>'.format(self.id)
 
 
+class RepoRiskThreatAssetMaterialisation(db.Model):
+    """Each entry at this table servers as an entry to the risk assessment matrix risk materialisation node"""
+    __tablename__ = "repo_risk_threat_asset_materialisation"
+    repo_asset_id = db.Column(db.Integer, db.ForeignKey('repo_asset.id'), primary_key=True)
+    repo_threat_id = db.Column(db.Integer, db.ForeignKey('repo_threat.id'), primary_key=True)
+    repo_response_id = db.Column(db.Integer, db.ForeignKey('repo_response.id'), primary_key=True)
+    repo_materialisation_id = db.Column(db.Integer, db.ForeignKey('repo_materialisation.id'), primary_key=True)
+    threat_occurrence = db.Column(db.Boolean(), primary_key=True)
+    prob = db.Column(db.Integer)
 
-class HardwareAsset(db.Model):
-    __tablename__ = 'hardware_asset'
+
+class RepoAssetThreatConsequenceServiceImpactRelationship(db.Model):
+    """Each entry at this table servers as an entry to the risk assessment matrix risk impact node, it needs the
+    corresponding entries for consequences and services to figure out which is which in the following table.
+    RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany
+    RepoAssetThreatConsequenceServiceImpactRelationshipServiceManyToMany
+    """
+    __tablename__ = 'repo_asset_threat_consequence_service_impact_relationship'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    assetID = db.Column(db.String())
-    assetIp = db.Column(db.String())
-    date = db.Column(db.DateTime)
-    assetName = db.Column(db.String())
-    assetModel = db.Column(db.String())
-    assetSerialNumber = db.Column(db.String())
-    assetRecoveryKey = db.Column(db.String())
-    assetVendor = db.Column(db.String())
-    assetDomain = db.Column(db.String())
-    assetWarranty = db.Column(db.String())
-    assetWarrantyExpDate = db.Column(db.DateTime())
-    assetStatus = db.Column(db.Integer, db.ForeignKey('asset_hardware_status.AssetHardwareStatusID'))
-    assetType = db.Column(db.Integer, db.ForeignKey('asset_hardware_type.AssetHardwareTypeID'))
-    assetPurchasePrice = db.Column(db.Float())
-    assetPurchaseDate = db.Column(db.DateTime)
-    assetCreatedBy = db.Column(db.String())
-    assetCreatedDate = db.Column(db.DateTime)
-    assetAssignedTo = db.Column(db.String())
-    assetManagedBy = db.Column(db.String())
-    assetOwner = db.Column(db.String())
-    assetUsageType = db.Column(db.String()) #--add hoc or permanent
-    assetLocation = db.Column(db.String())
-    assetClassification = db.Column(db.Integer, db.ForeignKey('asset_classification.AssetClassificationID'))
-    assetInformationProcessed = db.Column(db.String()) #--Personal or Business
-    def __repr__(self):
-        return '<HardwareAsset {}>'.format(self.id)
+    repo_asset_id = db.Column(db.Integer, db.ForeignKey('repo_asset.id'))
+    repo_threat_id = db.Column(db.Integer, db.ForeignKey('repo_threat.id'))
+    repo_impact_id = db.Column(db.Integer, db.ForeignKey('repo_impact.id'))
+    high_prob = db.Column(db.Integer)
+    med_prob = db.Column(db.Integer)
+    low_prob = db.Column(db.Integer)
+    consequences_state = db.Column(db.String)
+    services_state = db.Column(db.String)
+    consequences = db.relationship("RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany",
+                                   back_populates="repo_this_entry")
+    services = db.relationship("RepoAssetThreatConsequenceServiceImpactRelationshipServiceManyToMany",
+                               back_populates="repo_this_entry")
 
-class AssetHardwareStatus(db.Model):
-    __tablename__ = 'asset_hardware_status'
-    AssetHardwareStatusID = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    AssetHardwareStatusDescr = db.Column(db.String())
-    AssetHardwareStatusInsertedDate = db.Column(db.DateTime)
-    def __repr__(self):
-        return '<AssetHardwareStatus {}>'.format(self.AssetHardwareStatusID)
 
-class AssetHardwareType(db.Model):
-    __tablename__ = 'asset_hardware_type'
-    AssetHardwareTypeID = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    AssetHardwareTypeDescr = db.Column(db.String())
-    AssetHardwareTypeInsertedDate = db.Column(db.DateTime)
-    def __repr__(self):
-        return '<AssetHardwareType {}>'.format(self.AssetHardwareTypeID)
-
-class AssetClassification(db.Model):
-    __tablename__ = 'asset_classification'
-    AssetClassificationID = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    AssetClassificationDescr = db.Column(db.String())
-    AssetClassificationInsertedDate = db.Column(db.DateTime)
-    def __repr__(self):
-        return '<AssetClassification {}>'.format(self.AssetClassificationID)
-
-class SoftwareAsset(db.Model):
-    __tablename__ = 'software_asset'
+# Obsolete should be removed
+class RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany(db.Model):
+    __tablename__ = 'repo_asset_threat_consequence_service_impact_relationship_consequence_many_to_many'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    softwareName = db.Column(db.String())
-    softwareManufacturer = db.Column(db.String())
-    softwareCategory = db.Column(db.String())
-    softwareType = db.Column(db.Integer, db.ForeignKey('asset_software_type.AssetSoftwareTypeID'))
-    softwarePurchaseDate = db.Column(db.DateTime)
-    softwareInstalled = db.Column(db.String())
-    def __repr__(self):
-        return '<SoftwareAsset {}>'.format(self.id)
+    repo_this_entry_id = db.Column(db.Integer,
+                                   db.ForeignKey('repo_asset_threat_consequence_service_impact_relationship.id'))
+    repo_this_entry = db.relationship("RepoAssetThreatConsequenceServiceImpactRelationship",
+                                      back_populates="consequences")
+    repo_consequence_id = db.Column(db.Integer, db.ForeignKey('repo_consequence.id'))
+    repo_consequence = db.relationship("RepoConsequence", back_populates="impact_risk_relationship")
+    repo_consequence_state = db.Column(db.Boolean())
 
-class AssetSoftwareType(db.Model):
-    __tablename__ = 'asset_software_type'
-    AssetSoftwareTypeID = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    AssetSoftwareTypeshortDescr = db.Column(db.String())
-    AssetSoftwareTypeDescr = db.Column(db.String())
-    AssetSoftwareTypeInsertedDate = db.Column(db.DateTime)
-    def __repr__(self):
-        return '<AssetSoftwareType {}>'.format(self.AssetSoftwareTypeID)
 
-class RiskAssessment(db.Model):
-    __tablename__ = 'risk_assessment'
+# Obsolete should be removed
+class RepoAssetThreatConsequenceServiceImpactRelationshipServiceManyToMany(db.Model):
+    __tablename__ = 'repo_asset_threat_consequence_service_impact_relationship_service_many_to_many'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    asset_id = db.Column(db.Integer, db.ForeignKey('hardware_asset.id'), nullable=False)
-    date = db.Column(db.DateTime)
+    repo_this_entry_id = db.Column(db.Integer,
+                                   db.ForeignKey('repo_asset_threat_consequence_service_impact_relationship.id'))
+    repo_this_entry = db.relationship("RepoAssetThreatConsequenceServiceImpactRelationship",
+                                      back_populates="services")
+    repo_service_id = db.Column(db.Integer, db.ForeignKey('repo_service.id'))
+    repo_service = db.relationship("RepoService", back_populates='impact_risk_relationship')
+    repo_service_state = db.Column(db.Boolean())
 
-    def __repr__(self):
-        return '<Risk_Assessment {}>'.format(self.Id)
 
-class RiskVulnerabilityThreat(db.Model):
-    __tablename__ = 'risk_vulnerability_threat'
+class RepoObjectiveImpactRelationship(db.Model):
+    """Each entry at this table servers as an entry to the risk assessment matrix risk objective node, it needs the
+    corresponding entries for impacts to figure out which is which in the following table.
+    RepoObjectiveImpactRelationshipImpactManyToMany
+    """
+    __tablename__ = 'repo_objective_impact_relationship'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    risk_id = db.Column(db.Integer, db.ForeignKey('risk_assessment.id'), nullable=False)
-    CVE_id = db.Column(db.Integer, db.ForeignKey('common_vulnerabilities_and_exposures.id'), nullable=False)
-    CAPEC_id = db.Column(db.Integer, db.ForeignKey('common_attack_pattern_enumeration_classification.id'), nullable=False)
-    date = db.Column(db.DateTime)
-
-    def __repr__(self):
-        return '<Risk_Vulnerability_Threat {}>'.format(self.Id)
-
-
-# region Static GiraModels
-
-# High level Gira assets describing business logic or high level assets like doctors or patients(not network assets)
+    # repo_asset_id = db.Column(db.Integer, db.ForeignKey('repo_asset.id'))
+    # repo_threat_id = db.Column(db.Integer, db.ForeignKey('repo_threat.id'))
+    # repo_impact_id = db.Column(db.Integer, db.ForeignKey('repo_impact.id'))
+    repo_objective_id = db.Column(db.Integer, db.ForeignKey('repo_objective.id'))
+    high_prob = db.Column(db.Integer)
+    med_prob = db.Column(db.Integer)
+    low_prob = db.Column(db.Integer)
+    impacts_state = db.Column(db.String)
+    impacts = db.relationship("RepoObjectiveImpactRelationshipImpactManyToMany",
+                              back_populates="repo_this_entry")
 
 
-# Gira Asset status table has all the different status of a single Gira asset since they are dynamic
-class GiraIncidentResponse(db.Model):
-    __tablename__ = 'gira_incident_response'
+class RepoObjectiveImpactRelationshipImpactManyToMany(db.Model):
+    __tablename__ = 'repo_objective_impact_relationship_impact_many_to_many'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String, nullable=False)
-    description = db.Column(db.String)
+    repo_this_entry_id = db.Column(db.Integer,
+                                   db.ForeignKey('repo_objective_impact_relationship.id'))
+    repo_this_entry = db.relationship("RepoObjectiveImpactRelationship",
+                                      back_populates="impacts")
+    repo_impact_id = db.Column(db.Integer, db.ForeignKey('repo_impact.id'))
+    repo_impact = db.relationship("RepoImpact", back_populates='objective_risk_relationship')
+    repo_impact_state = db.Column(db.Integer)
 
-class GiraAsset(db.Model):
-    __tablename__ = 'gira_asset'
+
+class RepoUtilityObjectiveRelationship(db.Model):
+    __tablename__ = "repo_utility_objective_relationship"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String, nullable=False)
-    number_of_options = db.Column(db.Integer)
-    status = db.relationship('GiraAssetStatus', backref='asset', lazy=True)
+    repo_utility_id = db.Column(db.Integer, db.ForeignKey('repo_utility.id'))
+    objectives = db.relationship("RepoUtilityObjectiveRelationshipManyToMany", back_populates="repo_this_entry")
+    utility_value = db.Column(db.Integer)
 
 
-class GiraAssetStatus(db.Model):
-    __tablename__ = 'gira_asset_status'
+class RepoUtilityObjectiveRelationshipManyToMany(db.Model):
+    __tablename__ = "repo_utility_objective_relationship_many_to_many"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String, nullable=False)
-    asset_fk = db.Column(db.Integer, db.ForeignKey('gira_asset.id'), nullable=False)
+    repo_this_entry_id = db.Column(db.Integer,
+                                   db.ForeignKey('repo_utility_objective_relationship.id'))
+    repo_this_entry = db.relationship("RepoUtilityObjectiveRelationship",
+                                      back_populates="objectives")
+    repo_objective_id = db.Column(db.Integer, db.ForeignKey('repo_objective.id'))
+    repo_objective = db.relationship("RepoObjective", back_populates='utility_risk_relationship')
+    repo_objective_state = db.Column(db.Integer)
 
 
+class RepoRiskThreatAssetConsequence(db.Model):
+    """Each entry at this table servers as an entry to the risk assessment matrix risk consequence node"""
+    __tablename__ = "repo_risk_threat_asset_consequence"
+    repo_asset_id = db.Column(db.Integer, db.ForeignKey('repo_asset.id'), primary_key=True)
+    repo_threat_id = db.Column(db.Integer, db.ForeignKey('repo_threat.id'), primary_key=True)
+    repo_response_id = db.Column(db.Integer, db.ForeignKey('repo_response.id'), primary_key=True)
+    repo_consequence = db.relationship("RepoConsequence", back_populates="consequence_risk_relationship")
+    repo_consequence_id = db.Column(db.Integer, db.ForeignKey('repo_consequence.id'), primary_key=True)
+    threat_occurrence = db.Column(db.Boolean(), primary_key=True)
+    prob = db.Column(db.Integer)
 
 
-# region Gira Consequences
-scope_impact_table = db.Table('scope_impact_helper',
-                               db.Column('scope_id', db.Integer, db.ForeignKey('gira_scope.id'), primary_key=True),
-                               db.Column('impact_id', db.Integer, db.ForeignKey('gira_impact.id'), primary_key=True)
-                               )
+# RepoThreatExposureRelation could change name
+class RepoAssetRepoThreatRelationship(db.Model):
+    __tablename__ = 'repo_asset_repo_threat_relationship'
+    repo_asset_id = db.Column(db.Integer, db.ForeignKey('repo_asset.id'), primary_key=True)
+    repo_threat_id = db.Column(db.Integer, db.ForeignKey('repo_threat.id'), primary_key=True)
+    asset = db.relationship('RepoAsset', back_populates='threats')
+    threat = db.relationship('RepoThreat', back_populates='assets')
+    risk_skill_level = db.Column(db.Integer, nullable=True)
+    risk_motive = db.Column(db.Integer, nullable=True)
+    risk_source = db.Column(db.Integer, nullable=True)
+    risk_actor = db.Column(db.Integer, nullable=True)
+    risk_opportunity = db.Column(db.Integer, nullable=True)
 
-class GiraImpact(db.Model):
-    __tablename__ = 'gira_impact'
+
+class RepoRiskAssessment(db.Model):
+    __tablename__ = 'repo_risk_assessment'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String, nullable=False)
-    note = db.Column(db.String)
-    scopes = db.relationship('GiraScope', secondary=scope_impact_table, lazy=True,
-                             backref = db.backref('impacts'))
+    repo_threat_id = db.Column(db.Integer, db.ForeignKey('repo_threat.id'))
+    repo_asset_id = db.Column(db.Integer, db.ForeignKey('repo_asset.id'))
+    asset = db.relationship("RepoAsset", back_populates="risk_assessment")
+    threat = db.relationship("RepoThreat", back_populates="risk_assessment")
+    reports = db.relationship("RepoRiskAssessmentReports", back_populates="risk_assessment")
 
+    # assets = db.relationship("RepoAsset", secondary=repo_risk_assessment_repo_asset_association_table,
+    #                           back_populates="risk_assessment")
 
-class GiraScope(db.Model):
-    __tablename__ = 'gira_scope'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String, nullable=False)
+    # assets = db.relationship("RepoRiskAssessmentManyToMany", back_populates="repo_this_assessment")
 
-
-
-
-# endregion
 
 #
-class GiraObjective(db.Model):
-    __tablename__ = 'gira_objective'
+# class RepoRiskAssessmentManyToMany(db.Model):
+#     __tablename__ = 'repo_risk_assessment'
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     repo_this_assessment = db.relationship("RepoRiskAssessment", back_populates="assets")
+#     repo_threat_id = db.Column(db.Integer, db.ForeignKey('repo_threat.id'))
+#     repo_asset_id = db.Column(db.Integer, db.ForeignKey('repo_asset.id'))
+
+
+class RepoRiskAssessmentReports(db.Model):
+    __tablename__ = 'repo_risk_assessment_reports'
+    """ The inference strings are stored in the form id|value1|value2|id2|value1|value2...
+        Each different inference entry uses its as many values as many states it has during the risk asssessment
+        Right now these values are hardcoded 
+        The set string are in the form id|state|id2|state...
+    """
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    risk_assessment_id = db.Column(db.Integer, db.ForeignKey('repo_risk_assessment.id'))
+    risk_assessment = db.relationship("RepoRiskAssessment", back_populates="reports")
+    date_time = db.Column(db.DateTime, default=datetime.utcnow())
+    type = db.Column(db.String)  # Possible values are Initial - Manual - Baseline - Incident
+    exposure_set = db.Column(db.String)
+    responses_set = db.Column(db.String)
+    materialisations_set = db.Column(db.String)
+    consequences_set = db.Column(db.String)
+    services_set = db.Column(db.String)
+    impacts_set = db.Column(db.String)
+    objectives_set = db.Column(db.String)
+
+    exposure_inference = db.Column(db.String)
+    responses_inference = db.Column(db.String)
+    materialisations_inference = db.Column(db.String)
+    consequences_inference = db.Column(db.String)
+    services_inference = db.Column(db.String)
+    impacts_inference = db.Column(db.String)
+    objectives_inference = db.Column(db.String)
+    utilities_inference = db.Column(db.String)
+    alerts_triggered = db.Column(db.String)
+
+
+class RepoThreat(db.Model):
+    __tablename__ = 'repo_threat'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String)
+    CAPEC_id = db.Column(db.Integer, db.ForeignKey('common_attack_pattern_enumeration_classification.id'))
+    assets = db.relationship("RepoAssetRepoThreatRelationship", back_populates="threat")
+    prob = db.Column(db.Integer)
+    user_prob = db.Column(db.Integer)
+    risk_assessment = db.relationship("RepoRiskAssessment", back_populates="threat")
+    cves = db.relationship("CommonVulnerabilitiesAndExposures",
+                           secondary=repo_threat_common_vulnerabilities_and_exposures_association_table,
+                           back_populates="threats")
+
+class RepoResponse(db.Model):
+    """ Responses are intrinsically tied to the threats and therefore are unique for each one"""
+    __tablename__ = 'repo_response'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String)
+    threat_id = db.Column(db.Integer, db.ForeignKey('repo_threat.id'))
+
+
+class RepoMaterialisation(db.Model):
+    """ Materialisations are intrinsically tied to the threats and assets and therefore are unique for each one"""
+    __tablename__ = 'repo_materialisation'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String)
+    threat_id = db.Column(db.Integer, db.ForeignKey('repo_threat.id'))
+
+
+repo_consequence_repo_impact_association_table = db.Table('repo_consequence_repo_impact_association_table',
+                                                          db.Model.metadata,
+                                                          db.Column('repo_consequence_id', db.Integer,
+                                                                    db.ForeignKey('repo_consequence.id')),
+                                                          db.Column('repo_impact_id', db.Integer,
+                                                                    db.ForeignKey('repo_impact.id'))
+                                                          )
+
+
+class RepoConsequence(db.Model):
+    """ Consequences are intrinsically tied to the threat materialisation and assets and therefore are unique for each one"""
+    __tablename__ = 'repo_consequence'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String)
+    threat_id = db.Column(db.Integer, db.ForeignKey('repo_threat.id'))
+    materialisation_id = db.Column(db.Integer, db.ForeignKey('repo_materialisation.id'))
+    impacts = db.relationship("RepoImpact", secondary=repo_consequence_repo_impact_association_table,
+                              back_populates="consequences")
+    consequence_risk_relationship = db.relationship("RepoRiskThreatAssetConsequence", back_populates="repo_consequence")
+    impact_risk_relationship = db.relationship(
+        "RepoAssetThreatConsequenceServiceImpactRelationshipConsequenceManyToMany", back_populates="repo_consequence")
+
+
+# class RepoVulnerability(db.Model):
+#     __tablename__ = 'repo_vulnerability'
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     name = db.Column(db.String)
+#     CVE_id = db.Column(db.Integer, db.ForeignKey('common_vulnerabilities_and_exposures.id'))
+
+
+repo_asset_repo_service_association_table = db.Table('repo_asset_repo_service_association_table', db.Model.metadata,
+                                                     db.Column('repo_asset_id', db.Integer,
+                                                               db.ForeignKey('repo_asset.id')),
+                                                     db.Column('repo_service_id', db.Integer,
+                                                               db.ForeignKey('repo_service.id'))
+                                                     )
+
+repo_service_repo_impact_association_table = db.Table('repo_service_repo_impact_association_table', db.Model.metadata,
+                                                      db.Column('repo_service_id', db.Integer,
+                                                                db.ForeignKey('repo_service.id')),
+                                                      db.Column('repo_impact_id', db.Integer,
+                                                                db.ForeignKey('repo_impact.id'))
+                                                      )
+
+repo_objective_repo_impact_association_table = db.Table('repo_objective_repo_impact_association_table',
+                                                        db.Model.metadata,
+                                                        db.Column('repo_objective_id', db.Integer,
+                                                                  db.ForeignKey('repo_objective.id')),
+                                                        db.Column('repo_impact_id', db.Integer,
+                                                                  db.ForeignKey('repo_impact.id'))
+                                                        )
+
+repo_utility_repo_objective_association_table = db.Table('repo_utility_repo_objective_association_table',
+                                                         db.Model.metadata,
+                                                         db.Column('repo_utility_id', db.Integer,
+                                                                   db.ForeignKey('repo_utility.id'))
+                                                         , db.Column('repo_objective_id', db.Integer,
+                                                                     db.ForeignKey('repo_objective.id'))
+                                                         )
+
+
+class RepoAsset(db.Model):
+    __tablename__ = 'repo_asset'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    common_id = db.Column(db.String)
+    name = db.Column(db.String)
+    description = db.Column(db.String)
+    owner = db.Column(db.Integer, db.ForeignKey('repo_actor.id'))
+    location = db.Column(db.String)
+    verified = db.Column(db.Boolean, default=False)
+    verified_by = db.Column(db.Integer, db.ForeignKey('repo_actor.id'))
+    mac_address = db.Column(db.String)
+    has_static_ip = db.Column(db.Boolean)
+    ip = db.Column(db.String)
+    net_group_fk = db.Column(db.Integer, db.ForeignKey('repo_net_group.id'))
+    value = db.Column(db.Integer)
+    loss_of_revenue = db.Column(db.Integer, default=1)     # this is related to Cost(revenue)
+    additional_expenses = db.Column(db.Integer, default=1)     # this is related to Repair time
+    security_levels = db.Column(db.Integer, default=1)
+    customer_service = db.Column(db.Integer, default=1)        # this is yet to be related
+    operating_zone = db.Column(db.Integer, default=1)      # this is yet to be related. It might help in cons2
+    last_touch_date = db.Column(db.DateTime)
+    type_fk = db.Column(db.Integer, db.ForeignKey('repo_assets_type.id'), default=1)
+    # TODO Maybe remove the default, and ensure that type is always applied instead another way
+    type = db.relationship("RepoAssetsType", back_populates="assets")
+    integrity = db.Column(db.Integer, default=1)
+    availability = db.Column(db.Integer, default=1)
+    confidentiality = db.Column(db.Integer, default=1)
+    current_status = db.Column(db.Integer, default=1)      # this is active, Inactive, Unknown, etc.
+    services = db.relationship("RepoService", secondary=repo_asset_repo_service_association_table,
+                               back_populates="assets")
+    cves = db.relationship("CommonVulnerabilitiesAndExposures",
+                           secondary=repo_asset_common_vulnerabilities_and_exposures_association_table,
+                           back_populates="assets")
+    # risk_assessment = db.relationship("RepoRiskAssessment", secondary=repo_risk_assessment_repo_asset_association_table,
+    #                            back_populates="assets")
+    threats = db.relationship("RepoAssetRepoThreatRelationship",
+                              back_populates="asset")
+    risk_assessment = db.relationship("RepoRiskAssessment", back_populates="asset")
+    asset_services = db.relationship("RepoAssetService", back_populates="asset")
+
+
+class RepoAssetsType(db.Model):
+    __tablename__ = 'repo_assets_type'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String)
+    daily_start_time = db.Column(db.DateTime, nullable=True)
+    daily_end_time = db.Column(db.DateTime, nullable=True)
+    role = db.Column(db.Integer)  # 1 low - 2 medium - 3 high
+    assets = db.relationship("RepoAsset", back_populates="type")
+    variety_fk = db.Column(db.Integer, db.ForeignKey('repo_assets_variety.id'))
+    variety = db.relationship('RepoAssetsVariety', back_populates="types")
+
+
+class RepoAssetsVariety(db.Model):
+    __tablename__ = 'repo_assets_variety'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String)
+    types = db.relationship('RepoAssetsType', back_populates="variety")
+
+
+class RepoActor(db.Model):
+    __tablename__ = 'repo_actor'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String)
+
+    # def keys(self):
+    #     return super().keys()
+
+
+class RepoNetGroup(db.Model):
+    __tablename__ = 'repo_net_group'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String)
+
+
+class RepoService(db.Model):
+    __tablename__ = 'repo_service'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String)
+    assets = db.relationship("RepoAsset", secondary=repo_asset_repo_service_association_table,
+                             back_populates="services")
+    impacts = db.relationship("RepoImpact", secondary=repo_service_repo_impact_association_table,
+                              back_populates="services")
+    impact_risk_relationship = db.relationship("RepoAssetThreatConsequenceServiceImpactRelationshipServiceManyToMany",
+                                               back_populates='repo_service')
+
+
+class RepoImpact(db.Model):
+    __tablename__ = 'repo_impact'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    description = db.Column(db.String, nullable=True)
+    name = db.Column(db.String, nullable=False)
+    services = db.relationship("RepoService", secondary=repo_service_repo_impact_association_table,
+                               back_populates="impacts")
+    consequences = db.relationship("RepoConsequence", secondary=repo_consequence_repo_impact_association_table,
+                                   back_populates="impacts")
+    objectives = db.relationship("RepoObjective", secondary=repo_objective_repo_impact_association_table,
+                                 back_populates="impacts")
+    objective_risk_relationship = db.relationship("RepoObjectiveImpactRelationshipImpactManyToMany",
+                                                  back_populates="repo_impact")
+
+
+class RepoObjective(db.Model):
+    __tablename__ = 'repo_objective'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    description = db.Column(db.String, nullable=True)
+    name = db.Column(db.String, nullable=False)
+    impacts = db.relationship("RepoImpact", secondary=repo_objective_repo_impact_association_table,
+                              back_populates="objectives")
+    utilities = db.relationship("RepoUtility", secondary=repo_utility_repo_objective_association_table,
+                                back_populates="objectives")
+    utility_risk_relationship = db.relationship("RepoUtilityObjectiveRelationshipManyToMany",
+                                                back_populates="repo_objective")
+    # status = db.relationship('modelObjectivesOptions', backref='objective', lazy=True)
+    # instances = db.relationship("ModelObjectiveAssociation", back_populates="objective")
+
+
+class RepoObjectivesOptions(db.Model):
+    __tablename__ = 'repo_objectives_options'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, nullable=False)
-    status = db.relationship('GiraObjectivesOptions', backref='objective', lazy=True)
+    objective_fk = db.Column(db.Integer, db.ForeignKey('repo_objective.id'), nullable=False)
+    objective_level = db.Column(db.Integer, nullable=True)
+    alert_level = db.Column(db.Integer, nullable=True,
+                            default=0)  # 0-No Alert #1-Oddness3> #2-RareThanRare #3-Rare #4-Possible #5-Certain
+    prob_likelihood = db.Column(db.Integer, nullable=True)
 
 
-class GiraObjectivesOptions(db.Model):
-    __tablename__ = 'gira_objectives_options'
+
+class RepoUtility(db.Model):
+    __tablename__ = 'repo_utility'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, nullable=False)
-    objective_fk = db.Column(db.Integer, db.ForeignKey('gira_objective.id'), nullable=False)
+    objectives = db.relationship("RepoObjective", secondary=repo_utility_repo_objective_association_table,
+                                 back_populates="utilities")
 
 
-# endregion
+class RepoAssetReputation(db.Model):
+    __tablename__ = 'repo_asset_reputation'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    source_hospital_id = db.Column(db.String)
+    # This asset id is not the same as the above one, but these should be merged in some way
+    global_asset_id = db.Column(db.String)
+    asset_value = db.Column(db.Integer)
+    global_asset_type = db.Column(db.String)
+    count = db.Column(db.Integer)
+    first_update = db.Column(db.String)
+    last_update = db.Column(db.String)
+    reputation = db.Column(db.Integer)
+    reputation_speed = db.Column(db.Integer)
+    weighted_importance = db.Column(db.Integer)
+    global_asset_ip = db.Column(db.String)
+
+
+class RepoOrganisationSecurityPosture(db.Model):
+    __tablename__ = 'repo_organisation_security_posture'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    q1_completedSRA = db.Column(db.Integer)
+    q2_include_IS_SRA = db.Column(db.Integer)
+    q3_compliance = db.Column(db.Integer)
+    q4_respond = db.Column(db.Integer)
+    q5_respond_personnel = db.Column(db.Integer)
+    q6_communicate_responses = db.Column(db.Integer)
+    q7_documented_policies = db.Column(db.Integer)
+    q8_reflect_business_practices = db.Column(db.Integer)
+    q9_documentation_availability = db.Column(db.Integer)
+    q10_responsible = db.Column(db.Integer)
+    q11_defined_access = db.Column(db.Integer)
+    q12_member_screening = db.Column(db.Integer)
+    q13_security_training = db.Column(db.Integer)
+    q14_monitoring_login = db.Column(db.Integer)
+    q15_protection_malicious = db.Column(db.Integer)
+    q16_password_security = db.Column(db.Integer)
+    q17_awareness_training = db.Column(db.Integer)
+    q18_sanction_policy = db.Column(db.Integer)
+    q19_personnel_access = db.Column(db.Integer)
+    q20_access_to_PHI = db.Column(db.Integer)
+    q21_kind_of_access = db.Column(db.Integer)
+    q22_use_of_encryption = db.Column(db.Integer)
+    q23_periodic_review_of_IS = db.Column(db.Integer)
+    q24_monitor_system_activity = db.Column(db.Integer)
+    q25_logoff_policy = db.Column(db.Integer)
+    q26_user_authentication_policy = db.Column(db.Integer)
+    q27_unauthorised_modification = db.Column(db.Integer)
+    q28_unauthorised_modification_transmitted = db.Column(db.Integer)
+    q29_manage_facility_access = db.Column(db.Integer)
+    q30_manage_device_access = db.Column(db.Integer)
+    q31_device_inventory = db.Column(db.Integer)
+    q32_validate_facility_access = db.Column(db.Integer)
+    q33_activity_on_IS_with_PHI = db.Column(db.Integer)
+    q34_backup_PHI = db.Column(db.Integer)
+    q35_sanitise_disposed_devices = db.Column(db.Integer)
+    q36_connected_devices = db.Column(db.Integer)
+    q37_necessary_access_rules = db.Column(db.Integer)
+    q38_monitor_3rd_access = db.Column(db.Integer)
+    q39_sanitise_new_devices = db.Column(db.Integer)
+    q40_BAA = db.Column(db.Integer)
+    q41_monitor_BA = db.Column(db.Integer)
+    q42_contingency_plan = db.Column(db.Integer)
+    q43_determine_critical_IS = db.Column(db.Integer)
+    q44_pdr_security_incidents = db.Column(db.Integer)
+    q45_incident_response_plan = db.Column(db.Integer)
+    q46_incident_response_team = db.Column(db.Integer)
+    q47_necessary_IS = db.Column(db.Integer)
+    q48_access_when_emergency = db.Column(db.Integer)
+    q49_backup_plan = db.Column(db.Integer)
+    q50_disaster_recovery_plan = db.Column(db.Integer)
+
+class RepoThreatMetricsReputation(db.Model):
+    __tablename__ = 'repo_threat_metrics_reputation'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    threat_timestamp = db.Column(db.String)
+    threat_id = db.Column(db.String)
+    threat_description = db.Column(db.String)
+    asset_type = db.Column(db.String)
+    threat_type_in_this_asset_type_hospital = db.Column(db.Float)
+    threats_in_this_asset_type = db.Column(db.Float)
+    threat_description_global = db.Column(db.Float)
+

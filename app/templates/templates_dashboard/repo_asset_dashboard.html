@@ -1,0 +1,311 @@
+{% extends "templates_supporting/sidebar_asset_management.html" %}
+
+{% block script %}
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@3.2.0/dist/chart.min.js"></script>
+
+    <script>
+
+        {#var ctx = document.getElementById('myChart').getContext('2d');#}
+        var ctx1 = document.getElementById('piePerType').getContext('2d');
+        var ctx2 = document.getElementById('piePerOwnedStatus').getContext('2d');
+        var ctx3 = document.getElementById('pieAssetsPerServices').getContext('2d');
+        const COLORS = ['#33cc33',
+                    '#00ffcc',
+                    '#3399ff',
+                    '#aa00ff',
+                    '#ff0000',
+                    '#e68a00',
+                    '#ffff00',
+                    '#666633',
+                    '#000066',
+                    '#cc0000',
+                    '#660066',
+                    '#000000',
+                    '#ffffff'
+                    ]
+        {#const COLORS = [#}
+        {#    '#4dc9f6',#}
+        {#    '#f67019',#}
+        {#    '#f53794',#}
+        {#    '#537bc4',#}
+        {#    '#acc236',#}
+        {#    '#166a8f',#}
+        {#    '#00a950',#}
+        {#    '#58595b',#}
+        {#    '#8549ba'#}
+        {#];#}
+        const dataPiePerType = {
+            labels:
+                {{ asset_types_list | safe }},
+                {#['Server',#}
+                {#    'Media',#}
+                {#    'User Dev',#}
+                {#    'Person',#}
+                {#    'Kiosk/Term',#}
+                {#    'Network',#}
+                {#    'Embedded',#}
+                {#    'Facilities',#}
+                {#    'Other'],#}
+
+            datasets: [
+                {
+                    label: 'Dataset 1',
+                    data: {{ asset_type_values_list | safe}},
+                    {#data: [1, 2, 3, 4, 5, 6, 7, 8, 9],#}
+                    color: '#ffffff',
+                    backgroundColor:
+                    COLORS
+                }
+            ]
+        };
+
+        const dataPiePerOwnedStatus = {
+            labels:
+                ['Verified',
+                    'Unverified',
+                ],
+
+            datasets: [
+                {
+                    label: 'Dataset Verified Assets',
+                    data: {{ assets_verified_list | safe }},
+                    backgroundColor: [ "#33cc33" , "#ff0000"]
+                }
+            ]
+        };
+
+        const dataPieAssetsPerServices = {
+            labels:
+            {{ assets_name_list | safe}},
+                {#['VDSL Modem',#}
+                {#    'Fortigate 200E firewall',#}
+                {#    'Cisco Catalyst 2960 Plus switch',#}
+                {#    'Domain Controller, DHCP, DNS (VM)',#}
+                {#    'HIS App server',#}
+                {#    'DB server',#}
+                {#    'LIS App server',#}
+                {#    'DB server',#}
+                {#    'master VM',#}
+                {#    'worker VM1',#}
+                {#    'worker VM2',#}
+                {#    'Lexmark printer B2236dw',#}
+                {#    'client VM',#}
+                {#    'Pathological Anatomy Lab user',#}
+                {#    'Blood test Lab user',#}
+                {#    'Pharmacy user',#}
+                {#    'Doctor PC',#}
+                {#    'Nurse PC',#}
+                {#    'Clerk PC',#}
+                {#],#}
+
+            datasets: [
+                {
+                    label: 'Dataset Owned Assets',
+                    data: {{ assets_services_counted_list | safe }},
+                    backgroundColor: COLORS
+                }
+            ]
+        };
+
+
+        var piePerType = new Chart(ctx1, {
+            type: 'pie',
+            data: dataPiePerType,
+            options: {
+                responsive: true,
+                color: '#ffffff',
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Subtypes of Assets',
+                        color: '#ffffff'
+                    },
+
+                }
+            },
+        })
+
+        var pieOwned = new Chart(ctx2, {
+            type: 'pie',
+            data: dataPiePerOwnedStatus,
+            options: {
+                responsive: true,
+                color: '#ffffff',
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Asset verification status',
+                        color: '#ffffff'
+                    }
+                }
+            },
+        })
+
+        var pieAssetsPerServices = new Chart(ctx3, {
+            type: 'polarArea',
+            data: dataPieAssetsPerServices,
+            options: {
+                responsive: true,
+                color: '#ffffff',
+                {#borderColor: '#ffffff',#}
+                {#backgroundColor: '#ffffff',#}
+                scales: {
+                    r: {
+                        grid: {
+                            color: '#ffffff'
+                        },
+                        ticks: {
+                            color: 'black'
+                        }
+                    },
+
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Business Services/Functions Supported Per Asset',
+                        color: '#ffffff'
+                    }
+                }
+            },
+        })
+
+        function rowStyle(row, index) {
+            console.log(row)
+            console.log(row.has_static_ip)
+            if (typeof row.has_static_ip !== "undefined") {
+                if (row.has_static_ip === true) {
+                    console.log("Is false")
+                    return {
+                        css: {
+                            color: 'blue'
+                        }
+                    }
+                } else {
+                    console.log("Is true")
+                    return {
+                        css: {
+                            color: 'red'
+                        }
+                    }
+                }
+            } else {
+                console.log("Is undefined")
+                return {
+                    css: {
+                        color: 'red'
+                    }
+                }
+            }
+
+        }
+
+        var $table = $('#table')
+
+        function operateFormatter(value, row, index) {
+            return [
+                {#'<a class="edit" href="javascript:void(0)" title="Edit">',#}
+                {#'<i class="fa fa-edit"></i>',#}
+                {#'</a>  ',#}
+                '<a type="button" class="btn btn-primary fa fa-edit" href="/repo/assets/">\n' +
+                '<span class= "custom-font">Verify Asset</span>' +
+                '</a>'
+            ].join('')
+        }
+
+        $(function () {
+            var data = {{ repo_asset_unverified | safe }};
+            console.log(data)
+            $table.bootstrapTable({data: data});
+        })
+    </script>
+
+{% endblock %}
+
+
+{% block content %}
+    <h1>Asset Dashboard</h1>
+    <hr/>
+    <a class="btn btn-primary" href="/repo/assets/"> Add new Asset </a>
+    <a class="btn btn-primary" href="/repo/assets/"> Detailed Asset View</a>
+    <hr/>
+    <div class="row dashboard-row">
+        <div class="col-5 custom-select-column">
+            <canvas id="piePerType" width="400" height="400"></canvas>
+        </div>
+        <div class="col-5 custom-select-column">
+            <canvas id="piePerOwnedStatus" width="400" height="400"></canvas>
+        </div>
+    </div>
+    <hr/>
+    <h5>Unverified Assets</h5>
+    <div class="row dashboard-row">
+        <br/>
+        <div id="toolbar">
+
+        </div>
+        <table
+                id="table"
+                data-toolbar="#toolbar"
+                data-search="true"
+                data-search-on-enter-key="true"
+                data-show-search-button="true"
+                data-show-refresh="true"
+                data-show-toggle="true"
+                data-show-fullscreen="true"
+                data-show-columns="true"
+                data-show-columns-toggle-all="true"
+                data-loading-template="loadingTemplate"
+                data-pagination="true"
+                data-page-list="[10, 25, 50, 100, all]"
+                show-button-icons="true"
+                data-row-style="rowStyle"
+        >
+            <thead>
+            <tr>
+                <th data-field="id" data-sortable="true">ID</th>
+                <th data-field="name" data-sortable="true">Name</th>
+                <th data-field="location" data-sortable="true">Location</th>
+                <th data-field="Verified" data-sortable="true">Verified</th>
+                <th data-field="type" data-sortable="true">Type</th>
+                <th data-field="subtype" data-sortable="true">Subtype</th>
+                <th data-field="mac_address" data-sortable="true">Mac_address</th>
+                <th data-field="ip">IP</th>
+                <th data-field="last_touch_date" data-sortable="true">Last Touch Date</th>
+                <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents">Item Price</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+    <hr/>
+    <div class="row dashboard-row">
+        <div class="col-6 custom-select-column">
+            <canvas id="pieAssetsPerServices" width="400" height="400"></canvas>
+        </div>
+
+    </div>
+
+    {#    <div class="row">#}
+    {#        <div class="col-5 custom-select-column">#}
+    {#            <canvas id="piePerType2" width="400" height="400"></canvas>#}
+    {#        </div>#}
+    {#        <div class="col-5 custom-select-column">#}
+    {#            <canvas id="myChart2" width="400" height="400"></canvas>#}
+    {#        </div>#}
+    {#    </div>#}
+    {#    <div class="row">#}
+    {#        <div class="col-5 custom-select-column">#}
+    {#            <canvas id="myChart" width="400" height="400"></canvas>#}
+    {#        </div>#}
+    {#    </div>#}
+
+{% endblock %}

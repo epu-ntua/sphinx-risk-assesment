@@ -1,0 +1,218 @@
+{% extends "templates_supporting/sidebar_asset_management.html" %}
+{% block head %}
+  <head>
+    <meta charset="utf-8">
+
+<!--    <title>Collapsible Tree Example</title>-->
+
+    <style>
+
+	.node circle {
+	  fill: #fff;
+	  stroke: steelblue;
+	  stroke-width: 3px;
+	}
+
+	.node text { font: 12px sans-serif; }
+
+	.link {
+	  fill: none;
+	  stroke: #ccc;
+	  stroke-width: 2px;
+	}
+
+    </style>
+
+  </head>
+{% endblock %}
+{% block content %}
+
+<!--    MAIN -->
+<h1>Organisation Structure</h1>
+<div style="text-align: right; padding-bottom: 20px">
+    <button type="button" class="btn btn-primary" onclick=""> Add new +></button>
+    <br/>
+</div>
+<table id="example" class="table  table table-striped table-bordered" style="width:100%">
+    <thead>
+        <tr>
+            <th>Entity</th>
+            <th>Parent Entity</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Department A</td>
+            <td>none</td>
+            <td>Department A</td>
+        </tr>
+        <tr>
+            <td>Department B</td>
+            <td>none</td>
+            <td>Department B</td>
+        </tr>
+        <tr>
+            <td>Department C</td>
+            <td>Department B</td>
+            <td>Department C</td>
+        </tr>
+        <tr>
+            <td>Clinic A.1</td>
+            <td>Department A</td>
+            <td>Clinic A</td>
+        </tr>
+        <tr>
+            <td>Clinic A.2</td>
+            <td>Department A</td>
+            <td>Clinic A</td>
+        </tr>
+        <tr>
+            <td>Lab A.2.1</td>
+            <td>Clinic A.2</td>
+            <td>Clinic A</td>
+        </tr>
+        <tr>
+            <td>Clinic B.1</td>
+            <td>Department B</td>
+            <td>Clinic B.1</td>
+        </tr>
+            </tbody>
+             <tfoot>
+                 <tr>
+                    <th>Entity</th>
+                    <th>Parent Entity</th>
+                    <th>Description</th>
+                </tr>
+             </tfoot>
+        </table>
+<h2>Topology</h2>
+<div class="myclass"></div>
+{% endblock %}
+
+{% block script %}
+<!-- load the d3.js library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+
+<script>
+
+var treeData = [
+  {
+    "name": "Provider",
+    "parent": "null",
+    "children": [
+      {
+        "name": "Department A",
+        "parent": "Provider",
+        "children": [
+          {
+            "name": "Clinic A.1",
+            "parent": "Department A"
+          },
+          {
+            "name": "Clinic A.2",
+            "parent": "Department A",
+            "children": [
+              {
+                "name": "Lab A.2.1",
+                "parent": "Clinic A.2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Department B",
+        "parent": "Provider",
+        "children": [
+          {
+            "name": "Department C",
+            "parent": "Department B"
+          },
+          {
+            "name": "Clinic B.1",
+            "parent": "Department B"
+          }
+        ]
+      },
+        {
+        "name": "Administration",
+        "parent": "Provider"
+      }
+    ]
+  }
+];
+
+// ************** Generate the tree diagram	 *****************
+var margin = {top: 40, right: 120, bottom: 20, left: 120},
+	width = 960 - margin.right - margin.left,
+	height = 500 - margin.top - margin.bottom;
+
+var i = 0;
+
+var tree = d3.layout.tree()
+	.size([height, width]);
+
+var diagonal = d3.svg.diagonal()
+	.projection(function(d) { return [d.x, d.y]; });
+
+var svg = d3.select(".myclass").append("svg")
+	.attr("width", width + margin.right + margin.left)
+	.attr("height", height + margin.top + margin.bottom)
+  .append("g")
+	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+root = treeData[0];
+
+update(root);
+
+function update(source) {
+
+  // Compute the new tree layout.
+  var nodes = tree.nodes(root).reverse(),
+	  links = tree.links(nodes);
+
+  // Normalize for fixed-depth.
+  nodes.forEach(function(d) { d.y = d.depth * 100; });
+
+  // Declare the nodes…
+  var node = svg.selectAll("g.node")
+	  .data(nodes, function(d) { return d.id || (d.id = ++i); });
+
+  // Enter the nodes.
+  var nodeEnter = node.enter().append("g")
+	  .attr("class", "node")
+	  .attr("transform", function(d) {
+		  return "translate(" + d.x + "," + d.y + ")"; });
+
+  nodeEnter.append("circle")
+	  .attr("r", 10)
+	  .style("fill", "#fff");
+
+  nodeEnter.append("text")
+	  .attr("y", function(d) {
+		  return d.children || d._children ? -18 : 18; })
+	  .attr("dy", ".35em")
+	  .attr("text-anchor", "middle")
+	  .text(function(d) { return d.name; })
+	  .style("fill-opacity", 1);
+
+  // Declare the links…
+  var link = svg.selectAll("path.link")
+	  .data(links, function(d) { return d.target.id; });
+
+  // Enter the links.
+  link.enter().insert("path", "g")
+	  .attr("class", "link")
+	  .attr("d", diagonal);
+
+}
+
+</script>
+ <script>
+    $(document).ready(function() {
+    $('#example').DataTable();
+    } );
+    </script>
+{% endblock %}
+

@@ -1,0 +1,22 @@
+[
+    {
+        "repo_utility_id": "1",
+        "repo_objective_id": "1"
+    },
+    {
+        "repo_utility_id": "1",
+        "repo_objective_id": "2"
+    },
+    {
+        "repo_utility_id": "1",
+        "repo_objective_id": "3"
+    },
+    {
+        "repo_utility_id": "2",
+        "repo_objective_id": "4"
+    },
+    {
+        "repo_utility_id": "2",
+        "repo_objective_id": "5"
+    }
+]

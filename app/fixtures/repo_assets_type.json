@@ -1,0 +1,230 @@
+[
+    {
+        "id": "1",
+        "name": "E.Other",
+        "variety_fk": "6"
+    },
+    {
+        "id": "2",
+        "name": "E - Telematics",
+        "variety_fk": "6"
+    },
+    {
+        "id": "3",
+        "name": "E - Temetry",
+        "variety_fk": "6"
+    },
+    {
+        "id": "4",
+        "name": "E - Uknown",
+        "variety_fk": "6"
+    },
+    {
+        "id": "5",
+        "name": "M - Disk Drive",
+        "variety_fk": "2"
+    },
+    {
+        "id": "6",
+        "name": "M - Disk Media",
+        "variety_fk": "2"
+    },
+    {
+        "id": "7",
+        "name": "M - Documents",
+        "variety_fk": "2"
+    },
+    {
+        "id": "8",
+        "name": "M - Fax",
+        "variety_fk": "2"
+    },
+    {
+        "id": "9",
+        "name": "M - Flash Drive",
+        "variety_fk": "2"
+    },
+    {
+        "id": "10",
+        "name": "M - Payment Card",
+        "variety_fk": "2"
+    },
+    {
+        "id": "11",
+        "name": "M - Smart Card",
+        "variety_fk": "2"
+    },
+    {
+        "id": "12",
+        "name": "M - Tapes",
+        "variety_fk": "2"
+    },
+    {
+        "id": "13",
+        "name": "N - Access reader",
+        "variety_fk": "5"
+    },
+    {
+        "id": "14",
+        "name": "N - Camera",
+        "variety_fk": "5"
+    },
+    {
+        "id": "15",
+        "name": "N - Firewall",
+        "variety_fk": "5"
+    },
+    {
+        "id": "16",
+        "name": "N - IDS",
+        "variety_fk": "5"
+    },
+    {
+        "id": "17",
+        "name": "N - NAS",
+        "variety_fk": "5"
+    },
+    {
+        "id": "18",
+        "name": "N - Private WAN",
+        "variety_fk": "5"
+    },
+    {
+        "id": "19",
+        "name": "N - Public WAN",
+        "variety_fk": "5"
+    },
+    {
+        "id": "20",
+        "name": "N - Router or switch",
+        "variety_fk": "5"
+    },
+    {
+        "id": "21",
+        "name": "N - SAN",
+        "variety_fk": "5"
+    },
+    {
+        "id": "22",
+        "name": "S - Authentication",
+        "variety_fk": "1"
+    },
+    {
+        "id": "23",
+        "name": "S - Backup",
+        "variety_fk": "1"
+    },
+    {
+        "id": "24",
+        "name": "S - Code repository",
+        "variety_fk": "1"
+    },
+    {
+        "id": "25",
+        "name": "S - Configuration or patch management",
+        "variety_fk": "1"
+    },
+    {
+        "id": "26",
+        "name": "S - Database",
+        "variety_fk": "1"
+    },
+    {
+        "id": "27",
+        "name": "S - DCS",
+        "variety_fk": "1"
+    },
+    {
+        "id": "28",
+        "name": "S - DHCP",
+        "variety_fk": "1"
+    },
+    {
+        "id": "29",
+        "name": "S - DNS",
+        "variety_fk": "1"
+    },
+    {
+        "id": "30",
+        "name": "S - Log",
+        "variety_fk": "1"
+    },
+    {
+        "id": "31",
+        "name": "S - Mail",
+        "variety_fk": "1"
+    },
+    {
+        "id": "32",
+        "name": "S - Other",
+        "variety_fk": "1"
+    },
+    {
+        "id": "33",
+        "name": "S - Proxy",
+        "variety_fk": "1"
+    },
+    {
+        "id": "34",
+        "name": "S - Web application",
+        "variety_fk": "1"
+    },
+    {
+        "id": "35",
+        "name": "S - VM host",
+        "variety_fk": "1"
+    },
+    {
+        "id": "36",
+        "name": "S - Proxy",
+        "variety_fk": "1"
+    },
+    {
+        "id": "37",
+        "name": "S - Unknown",
+        "variety_fk": "1"
+    },
+    {
+        "id": "38",
+        "name": "S - Remote access",
+        "variety_fk": "1"
+    },
+    {
+        "id": "39",
+        "name": "U - Desktop or laptop",
+        "variety_fk": "3"
+    },
+    {
+        "id": "40",
+        "name": "U - Auth token",
+        "variety_fk": "3"
+    },
+    {
+        "id": "41",
+        "name": "U - Media",
+        "variety_fk": "3"
+    },
+    {
+        "id": "42",
+        "name": "U - Mobile phone",
+        "variety_fk": "3"
+    },
+    {
+        "id": "43",
+        "name": "U - Peripheral",
+        "variety_fk": "3"
+    },
+    {
+        "id": "44",
+        "name": "U - Tablet",
+        "variety_fk": "3"
+    },
+    {
+        "id": "45",
+        "name": "U - Other",
+        "variety_fk": "3"
+    }
+]
+
+
+

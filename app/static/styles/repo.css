@@ -1,0 +1,87 @@
+.btn {
+    background-color: #00a79d;
+    color: white;
+}
+
+.alert-asset {
+    background-color: #9C1A1C;
+}
+
+.custom-font {
+    font-family: SansSerif;
+}
+
+.dashboard-row {
+    /*border-bottom: 1px solid grey;*/
+    /*border-top: 1px solid grey;*/
+    padding-top: 1px;
+    padding-left: 1px;
+    padding-right: 1px;
+    padding-bottom: 20px;
+
+}
+
+.btn-objective-alert {
+    margin-bottom: 3px;
+    margin-right: 10px
+}
+
+.btn-objective-alert-selected {
+    background-color: #00cc00;
+}
+
+.btn-asset-service-related {
+    margin-bottom: 3px;
+    background-color: #00cc00
+}
+
+.btn-asset-service-unrelated {
+    margin-bottom: 3px;
+    background-color: #9C1A1C;
+}
+
+
+
+/* Dropdown Button */
+.dropdown-button {
+    background-color: #0000b3;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+}
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+/* Dropdown Content (Hidden by Default) */
+.dropdown-list {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+/* Links inside the dropdown */
+.dropdown-list a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    font-family: verdana;
+}
+/* Change color of dropdown links on hover */
+.dropdown-list a:hover {
+    background-color: #ddd;
+}
+/* Show the dropdown list on hover */
+.dropdown:hover .dropdown-list {
+    display: block;
+}
+/* Change the background color of the dropdown button when the dropdown list is shown */
+.dropdown:hover .dropdown-button {
+    background-color: #6666ff;
+}
+
+
