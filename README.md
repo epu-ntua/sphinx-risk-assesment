@@ -39,3 +39,9 @@ In fresh installs always recreate database
 * Move to folder docker
 * Run `kompose convert`
 * Pre produced yaml can be found in docker file
+
+#Pushing container to intracom
+* docker login registry.sphinx-repo.intracom-telecom.com 
+* docker tag <container_name> registry.sphinx-repo.intracom-telecom.com/sphinx-project/real-time-cyber-risk-assessment/riskassessmentflask
+* container_name = docker_risk-assessment
+* docker push registry.sphinx-repo.intracom-telecom.com/sphinx-project/real-time-cyber-risk-assessment/riskassessmentflask
