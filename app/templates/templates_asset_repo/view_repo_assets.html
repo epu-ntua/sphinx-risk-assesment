@@ -39,7 +39,7 @@
             random_test = 2
             if (random_test % 2 == 0) {
                 return [
-                    '<a href="http://spa:3001" style="background-color: #ff1a1a; color: #ffffff" type="button" class="btn btn-primary fa fa-edit">\n' +
+                    '<a href="http://spa.146.124.106.181.nip.io/" style="background-color: #ff1a1a; color: #ffffff" type="button" class="btn btn-primary fa fa-edit">\n' +
                     '<span class= "custom-font"></span>' +
                     {#'<span class= "custom-font">Security Protocol</span>' +#}
                     '</a>'
@@ -80,7 +80,7 @@
         }
 
         function populateEditFields(row) {
-            console.log(row)
+            {#console.log(row)#}
             $("#editForm").find("#edit_id").val(row.id)
             $("#editForm").find("#edit_name").val(row.name)
             $("#editForm").find("#edit_description").val(row.description)

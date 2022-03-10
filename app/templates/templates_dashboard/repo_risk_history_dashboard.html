@@ -14,7 +14,7 @@
         var ctx1 = document.getElementById('confidentiality_chart').getContext('2d');
         const data_confidentiality_chart = {
             labels:
-                {{ all_reports_datetimes | safe}},
+            {{ all_reports_datetimes | safe}},
 
             datasets: [
                 {
@@ -23,7 +23,7 @@
                     data: {{ all_objectives_confidentiality_low | safe}},
                     borderColor: "rgba(0, 153, 51)",
                     backgroundColor:
-                    "rgba(0, 153, 51, 0.5)"
+                        "rgba(0, 153, 51, 0.5)"
                 },
                 {
                     label: 'Medium',
@@ -62,7 +62,7 @@
                         }
                     },
                     y: {
-                         suggestedMin: 0, // minimum value
+                        suggestedMin: 0, // minimum value
                         suggestedMax: 1, // maximum value
                         grid: {
                             color: '#ffffff'
@@ -82,7 +82,7 @@
                     },
                     title: {
                         display: true,
-                        text: 'Confidentiality Impacts',
+                        text: 'Objective Monitoring: Confidentiality',
                         color: '#ffffff'
                     }
                 }
@@ -92,7 +92,7 @@
         var ctx2 = document.getElementById('integrity_chart').getContext('2d');
         const data_integrity_chart = {
             labels:
-                {{ all_reports_datetimes | safe}},
+            {{ all_reports_datetimes | safe}},
             {#options: {#}
             {#        plugins: {#}
             {#            filler: {#}
@@ -107,7 +107,7 @@
                     data: {{ all_objectives_integrity_low | safe}},
                     borderColor: "rgba(0, 153, 51)",
                     backgroundColor:
-                    "rgba(0, 153, 51, 0.5)"
+                        "rgba(0, 153, 51, 0.5)"
                 },
                 {
                     label: 'Medium',
@@ -135,9 +135,9 @@
                 responsive: true,
                 color: '#ffffff',
                 interaction: {
-                  mode: 'nearest',
-                  axis: 'x',
-                  intersect: false
+                    mode: 'nearest',
+                    axis: 'x',
+                    intersect: false
                 },
                 {#borderColor: '#ffffff',#}
                 {#backgroundColor: '#ffffff',#}
@@ -151,7 +151,7 @@
                         }
                     },
                     y: {
-                         suggestedMin: 0, // minimum value
+                        suggestedMin: 0, // minimum value
                         suggestedMax: 1, // maximum value
                         {#stacked: true,#}
                         grid: {
@@ -172,7 +172,7 @@
                     },
                     title: {
                         display: true,
-                        text: 'Integrity Impacts',
+                        text: 'Objective Monitoring: Integrity',
                         color: '#ffffff'
                     }
                 }
@@ -182,7 +182,7 @@
         var ctx3 = document.getElementById('availability_chart').getContext('2d');
         const data_availability_chart = {
             labels:
-                {{ all_reports_datetimes | safe}},
+            {{ all_reports_datetimes | safe}},
 
             datasets: [
                 {
@@ -191,7 +191,7 @@
                     data: {{ all_objectives_availability_low | safe}},
                     borderColor: "rgba(0, 153, 51)",
                     backgroundColor:
-                    "rgba(0, 153, 51, 0.5)"
+                        "rgba(0, 153, 51, 0.5)"
                 },
                 {
                     label: 'Medium',
@@ -230,7 +230,7 @@
                         }
                     },
                     y: {
-                         suggestedMin: 0, // minimum value
+                        suggestedMin: 0, // minimum value
                         suggestedMax: 1, // maximum value
                         grid: {
                             color: '#ffffff'
@@ -238,7 +238,7 @@
                         ticks: {
                             color: '#ffffff'
                         }
-                     },
+                    },
 
                 },
                 plugins: {
@@ -250,7 +250,7 @@
                     },
                     title: {
                         display: true,
-                        text: 'Availability Impacts',
+                        text: 'Objective Monitoring: Availability',
                         color: '#ffffff'
                     }
                 }
@@ -260,7 +260,7 @@
         var ctx4 = document.getElementById('monetary_chart').getContext('2d');
         const data_monetary_chart = {
             labels:
-                {{ all_reports_datetimes | safe}},
+            {{ all_reports_datetimes | safe}},
 
             datasets: [
                 {
@@ -269,7 +269,7 @@
                     data: {{ all_objectives_monetary_low | safe}},
                     borderColor: "rgba(0, 153, 51)",
                     backgroundColor:
-                    "rgba(0, 153, 51, 0.5)"
+                        "rgba(0, 153, 51, 0.5)"
                 },
                 {
                     label: 'Medium',
@@ -308,7 +308,7 @@
                         }
                     },
                     y: {
-                         suggestedMin: 0, // minimum value
+                        suggestedMin: 0, // minimum value
                         suggestedMax: 1, // maximum value
                         grid: {
                             color: '#ffffff'
@@ -328,7 +328,7 @@
                     },
                     title: {
                         display: true,
-                        text: 'Monetary Impacts',
+                        text: 'Objective Monitoring: Monetary',
                         color: '#ffffff'
                     }
                 }
@@ -338,7 +338,7 @@
         var ctx5 = document.getElementById('safety_chart').getContext('2d');
         const data_safety_chart = {
             labels:
-                {{ all_reports_datetimes | safe}},
+            {{ all_reports_datetimes | safe}},
 
             datasets: [
                 {
@@ -347,7 +347,7 @@
                     data: {{ all_objectives_safety_low | safe}},
                     borderColor: "rgba(0, 153, 51)",
                     backgroundColor:
-                    "rgba(0, 153, 51, 0.5)"
+                        "rgba(0, 153, 51, 0.5)"
                 },
                 {
                     label: 'Medium',
@@ -386,7 +386,7 @@
                         }
                     },
                     y: {
-                         suggestedMin: 0, // minimum value
+                        suggestedMin: 0, // minimum value
                         suggestedMax: 1, // maximum value
                         grid: {
                             color: '#ffffff'
@@ -406,7 +406,7 @@
                     },
                     title: {
                         display: true,
-                        text: 'Safety Impacts',
+                        text: 'Objective Monitoring: Safety',
                         color: '#ffffff'
                     }
                 }
@@ -416,11 +416,11 @@
         var ctx6 = document.getElementById('cia_chart').getContext('2d');
         const data_cia_chart = {
             labels:
-                {{ all_reports_datetimes | safe}},
+            {{ all_reports_datetimes | safe}},
 
             datasets: [
                 {
-                    label: 'CIA',
+                    label: 'Optimal Scenario Probability',
                     fill: "start",
                     data: {{ all_reports_utilities_optimal_1 | safe}},
                     borderColor: "rgb(0, 167, 157)",
@@ -466,7 +466,7 @@
                     },
                     title: {
                         display: true,
-                        text: 'CIA',
+                        text: 'Utility Function: Confidentiality-Integrity-Availability (CIA)',
                         color: '#ffffff'
                     }
                 }
@@ -476,11 +476,11 @@
         var ctx7 = document.getElementById('evaluation_chart').getContext('2d');
         const data_evaluation_chart = {
             labels:
-                {{ all_reports_datetimes | safe}},
+            {{ all_reports_datetimes | safe}},
 
             datasets: [
                 {
-                    label: 'Evaluation',
+                    label: 'Optimal Scenario Probability',
                     fill: "start",
                     data: {{ all_reports_utilities_optimal_2 | safe}},
                     borderColor: "rgba(0, 167, 157,1)",
@@ -509,7 +509,7 @@
                         }
                     },
                     y: {
-                         suggestedMin: 0, // minimum value
+                        suggestedMin: 0, // minimum value
                         suggestedMax: 1, // maximum value
                         grid: {
                             color: '#ffffff'
@@ -526,7 +526,7 @@
                     },
                     title: {
                         display: true,
-                        text: 'Evaluation Impacts',
+                        text: 'Utility Function: Monetary - Safety (Evaluation)',
                         color: '#ffffff'
                     }
                 }
@@ -627,35 +627,35 @@
                 <hr/>
                 <div class="row dashboard-row">
                     <div class="col-6 custom-select-column">
-                        <canvas id="confidentiality_chart" ></canvas>
+                        <canvas id="confidentiality_chart"></canvas>
                     </div>
                     <div class="col-6 custom-select-column">
-                        <canvas id="integrity_chart" ></canvas>
+                        <canvas id="integrity_chart"></canvas>
                     </div>
                 </div>
                 <div class="row dashboard-row">
                     <div class="col-6 custom-select-column">
-                        <canvas id="availability_chart" ></canvas>
+                        <canvas id="availability_chart"></canvas>
                     </div>
                     <div class="col-6 custom-select-column">
-                        <canvas id="monetary_chart" ></canvas>
+                        <canvas id="monetary_chart"></canvas>
                     </div>
                 </div>
                 <div class="row dashboard-row">
                     <div class="col-3 custom-select-column">
                     </div>
                     <div class="col-6 custom-select-column">
-                        <canvas id="safety_chart" ></canvas>
+                        <canvas id="safety_chart"></canvas>
                     </div>
                     <div class="col-3 custom-select-column">
                     </div>
                 </div>
                 <div class="row dashboard-row">
                     <div class="col-6 custom-select-column">
-                        <canvas id="cia_chart" ></canvas>
+                        <canvas id="cia_chart"></canvas>
                     </div>
                     <div class="col-6 custom-select-column">
-                        <canvas id="evaluation_chart" ></canvas>
+                        <canvas id="evaluation_chart"></canvas>
                     </div>
                 </div>
                 <h3>Existing Reports</h3>
@@ -684,7 +684,7 @@
                         <th data-field="threat_name" data-sortable="true">Threat</th>
                         <th data-field="asset_name" data-sortable="true">Asset Name</th>
                         <th data-field="asset_ip" data-sortable="true">Asset Ip</th>
-{#                        <th data-field="operate" data-formatter="operateFormatter">-</th>#}
+                        {#                        <th data-field="operate" data-formatter="operateFormatter">-</th>#}
                         {#                        <th data-field="operate" data-formatter="operateFormatter1" data-events="operateEvents1"></th>#}
                     </tr>
                     </thead>

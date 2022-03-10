@@ -2429,6 +2429,16 @@ def view_repo_risk_reports():
                 )
 
             # # Utilities
+            for custom_it_mat in range(0, len(utility_inference_list), 1):
+                json_detailed_report_to_add["utilities"].append(
+                    json.loads(utility_inference_list[custom_it_mat])
+                )
+
+            # Alerts
+            for custom_it_mat in range(0, len(alerts_triggered), 1):
+                json_detailed_report_to_add["alerts"].append(
+                    json.loads(alerts_triggered[custom_it_mat])
+                )
             # for custom_it_mat in range(0, len(objectives_inference_list), 4):
             #     # this_cons_name = RepoMaterialisation.query.filter_by(
             #     #     id=consequence_inference_list[custom_it_mat]).first().name

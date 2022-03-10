@@ -1024,7 +1024,7 @@ def repo_dashboard_risk_history(threat_id=1, asset_id=-1,type_id=-1):
             print(type_id)
             for single_report in repo_reports:
                 # Add labels for the graphs
-                all_reports_datetimes.append(single_report.date_time.strftime("%m/%d/%Y, %H:%M:%S"))
+                all_reports_datetimes.append(single_report.date_time.strftime("%m/%d/%Y, %H:%M:%S") + " | " + single_report.type)
 
                 objectives_inference_values = single_report.objectives_inference.split("|")
 
