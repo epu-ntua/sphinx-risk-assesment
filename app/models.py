@@ -494,7 +494,7 @@ class RepoAsset(db.Model):
     loss_of_revenue = db.Column(db.Integer, default=1)     # this is related to Cost(revenue)
     additional_expenses = db.Column(db.Integer, default=1)     # this is related to Repair time
     security_levels = db.Column(db.Integer, default=1)
-    customer_service = db.Column(db.Integer, default=1)        # this is yet to be related
+    protocol_analysis_evaluation = db.Column(db.Integer, default=1)        # value provided by the User
     operating_zone = db.Column(db.Integer, default=1)      # this is yet to be related. It might help in cons2
     last_touch_date = db.Column(db.DateTime)
     type_fk = db.Column(db.Integer, db.ForeignKey('repo_assets_type.id'), default=1)

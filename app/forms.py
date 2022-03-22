@@ -224,7 +224,8 @@ class FormAddRepoAsset(FlaskForm):
     additional_expenses = SelectField('Repair time', choices=dropdown_dictionary, default='1', validators=[Optional()])
     dropdown_security_levels = [('1', 'No specific requirements or security protection necessary'), ('2', 'Protection against casual or coincidental violation'), ('3', 'Protection against intentional violation using simple means with low resources, generic skills and low motivation'), ('4', 'Protection against intentional violation using sophisticated means with moderate resources, specific skills and moderate motivation'), ('5', 'Protection against intentional violation using sophisticated means with extended resources, specific skills and high motivation')]
     security_levels = SelectField('Security Levels', choices=dropdown_security_levels, default='1', validators=[Optional()])
-    customer_service = IntegerField("Customer Service", validators=[Optional()])
+    dropdown_protocol = [('1', 'Secure protocol'), ('2', 'New release (newly introduced protocol or developed to address weaknesses on previous version'), ('3', 'Protocol with various discovered vulnerabilities'), ('4', 'Deprecated protocol')]
+    protocol_analysis_evaluation = SelectField("Security Protocol Risk", choices=dropdown_protocol, default='1', validators=[Optional()])
     dropdown_zone = [('1', 'Corporate Intranet'), ('2', 'Business Partners/Clients'), ('3', 'Employee Private networks'), ('4', 'Public space')]
     operating_zone = SelectField('Operating zone', choices=dropdown_zone, default='1', validators=[Optional()])
     last_touch_date = DateTimeField("Last Touch", validators=[Optional()])
@@ -263,7 +264,9 @@ class FormEditRepoAsset(FlaskForm):
                                 ('5', 'Protection against intentional violation using sophisticated means with extended resources, specific skills and high motivation')]
     edit_security_levels = SelectField('Security Levels', choices=edit_dropdown_security_levels, default='1',
                                   validators=[Optional()])
-    edit_customer_service = IntegerField("Customer Service", validators=[Optional()])
+    edit_dropdown_protocol = [('1', 'Secure protocol'), ('2', 'New release (newly introduced protocol or developed to address weaknesses on previous version'), ('3', 'Protocol with various discovered vulnerabilities'), ('4', 'Deprecated protocol')]
+    edit_protocol_analysis_evaluation = SelectField("Security Protocol Risk", choices=edit_dropdown_protocol, default='1',
+                                                validators=[Optional()])
     edit_dropdown_zone = [('1', 'Corporate Intranet'), ('2', 'Business Partners/Clients'), ('3', 'Employee Private networks'), ('4', 'Public space')]
     edit_operating_zone = SelectField('Operating zone', choices=edit_dropdown_zone, default='1', validators=[Optional()])
     edit_last_touch_date = DateTimeField("Last Touch", validators=[Optional()])

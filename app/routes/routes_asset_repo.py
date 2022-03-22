@@ -67,8 +67,8 @@ def view_repo_assets(asset_id=-1):
                     value_weight = RepoService.query.filter(RepoService.assets.any(id=to_edit_asset.id)).count()
                     value_calculations = value_weight * (int(new_edit_form.edit_loss_of_revenue.data) + int(new_edit_form.edit_additional_expenses.data) + \
                                 int(new_edit_form.edit_security_levels.data) + int(new_edit_form.edit_integrity.data) + \
-                                int(new_edit_form.edit_availability.data) + int(new_edit_form.edit_confidentiality.data))
-                    final_value = 1 if value_calculations <= 6 else 2 if value_calculations <= 8 else 3
+                                int(new_edit_form.edit_availability.data) + int(new_edit_form.edit_confidentiality.data) + + int(new_edit_form.edit_protocol_analysis_evaluation.data))
+                    final_value = 1 if value_calculations <= 7 else 2 if value_calculations <= 14 else 3
                 else:
                     final_value = None
 
@@ -88,7 +88,7 @@ def view_repo_assets(asset_id=-1):
                 to_edit_asset.loss_of_revenue = new_edit_form.edit_loss_of_revenue.data
                 to_edit_asset.additional_expenses = new_edit_form.edit_additional_expenses.data
                 to_edit_asset.security_levels = new_edit_form.edit_security_levels.data
-                to_edit_asset.customer_service = new_edit_form.edit_customer_service.data
+                to_edit_asset.protocol_analysis_evaluation = new_edit_form.edit_protocol_analysis_evaluation.data
                 to_edit_asset.operating_zone = new_edit_form.edit_operating_zone.data
                 to_edit_asset.last_touch_date = new_edit_form.edit_last_touch_date.data
                 to_edit_asset.type_fk = edit_type_fk_id
@@ -141,7 +141,7 @@ def view_repo_assets(asset_id=-1):
                                          loss_of_revenue=new_asset_form.loss_of_revenue.data,
                                          additional_expenses=new_asset_form.additional_expenses.data,
                                          security_levels=new_asset_form.security_levels.data,
-                                         customer_service=new_asset_form.customer_service.data,
+                                         protocol_analysis_evaluation=new_asset_form.protocol_analysis_evaluation.data,
                                          operating_zone=new_asset_form.operating_zone.data,
                                          last_touch_date=new_asset_form.last_touch_date.data,
                                          type_fk=edit_type_fk_id,
@@ -205,7 +205,7 @@ def view_repo_assets(asset_id=-1):
         #                              loss_of_revenue=new_asset_form.loss_of_revenue.data,
         #                              additional_expenses=new_asset_form.additional_expenses.data,
         #                              security_levels=new_asset_form.security_levels.data,
-        #                              customer_service=new_asset_form.customer_service.data,
+        #                              protocol_analysis_evaluation=new_asset_form.protocol_analysis_evaluation.data,
         #                              operating_zone=new_asset_form.operating_zone.data,
         #                              last_touch_date=new_asset_form.last_touch_date.data,
         #                              type_fk=type_fk_id)
@@ -243,6 +243,7 @@ def view_repo_assets(asset_id=-1):
             json_asset_instance["current_status_id"] = json_asset_instance["current_status"]
             json_asset_instance["operating_zone_id"] = json_asset_instance["operating_zone"]
             json_asset_instance["security_levels_id"] = json_asset_instance["security_levels"]
+            json_asset_instance["protocol_analysis_evaluation_id"] = json_asset_instance["protocol_analysis_evaluation"]
             json_asset_instance["integrity"] = 'Low' if json_asset_instance["integrity"] == 1 else 'Medium' if json_asset_instance["integrity"] == 2 else 'High'
             json_asset_instance["availability"] = 'Low' if json_asset_instance["availability"] == 1 else 'Medium' if json_asset_instance["availability"] == 2 else 'High'
             json_asset_instance["confidentiality"] = 'Low' if json_asset_instance["confidentiality"] == 1 else 'Medium' if json_asset_instance["confidentiality"] == 2 else 'High'
@@ -252,6 +253,7 @@ def view_repo_assets(asset_id=-1):
             json_asset_instance["current_status"] = 'Active' if json_asset_instance["current_status"] == 1 else 'Inactive' if json_asset_instance["current_status"] == 2 else 'Disposed' if json_asset_instance["current_status"] == 3 else 'Unknown'
             json_asset_instance["operating_zone"] = 'Corporate Intranet' if json_asset_instance["operating_zone"] == 1 else 'Business Partners/Clients' if json_asset_instance["operating_zone"] == 2 else 'Employee Private networks' if json_asset_instance["operating_zone"] == 3 else 'Public space'
             json_asset_instance["security_levels"] = 'No specific requirements or security protection necessary' if json_asset_instance["security_levels"] == 1 else 'Protection against casual or coincidental violation' if json_asset_instance["security_levels"] == 2 else 'Protection against intentional violation using simple means with low resources, generic skills and low motivation' if json_asset_instance["security_levels"] == 3 else 'Protection against intentional violation using sophisticated means with moderate resources, specific skills and moderate motivation' if json_asset_instance["security_levels"] == 4 else 'Protection against intentional violation using sophisticated means with extended resources, specific skills and high motivation'
+            json_asset_instance["protocol_analysis_evaluation"] = 'Secure protocol' if json_asset_instance["protocol_analysis_evaluation"] == 1 else 'New release (newly introduced protocol or developed to address weaknesses on previous version' if json_asset_instance["protocol_analysis_evaluation"] == 2 else 'Protocol with various discovered vulnerabilities' if json_asset_instance["protocol_analysis_evaluation"] == 3 else 'Deprecated protocol'
 
         print(json_assets)
         json_assets = json.dumps(json_assets)
