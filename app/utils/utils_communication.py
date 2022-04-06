@@ -30,9 +30,9 @@ def get_mlflow_experiment(port="5010", experiment="asset.variety.Server"):
     # Remove junk info from input json
 
 
-    print("--------SENDING---------")
-    print(url)
-    print(dict_to_load)
+    # print("--------SENDING---------")
+    # print(url)
+    # print(dict_to_load)
     f = open(dict_to_load)
     # to_clean_data = dict_to_load["data"][0]
     # for entry in to_clean_data:
@@ -43,9 +43,9 @@ def get_mlflow_experiment(port="5010", experiment="asset.variety.Server"):
     headers = {
         'Content-Type': 'application/json'
     }
-    print("--------SENDING---------")
-    print(url)
-    print(payload)
+    # print("--------SENDING---------")
+    # print(url)
+    # print(payload)
     response = requests.request("POST", url, headers=headers, data=payload)
     return response
 
@@ -88,31 +88,31 @@ def get_ml_flow_info(experiment, root_dir):
         e = client.get_experiment_by_name(experiment)
     except mlflow.exceptions.MlflowException:
         return False
-    print(e.experiment_id, e.name)
+    # print(e.experiment_id, e.name)
     # define / create local directory to store example
     local_dir = os.path.join(root_dir, e.name)
     if not os.path.exists(local_dir):
         os.mkdir(local_dir)
     runs = client.search_runs(e.experiment_id)
     print_run_info(runs)
-    print("--")
+    # print("--")
     # download last run artifacts
     local_path = client.download_artifacts(runs[0].info.run_id, "model/input_example.json", local_dir)
-    print("Artifacts downloaded in: {}".format(local_dir))
-    print("Artifacts: {}".format(local_dir))
+    # print("Artifacts downloaded in: {}".format(local_dir))
+    # print("Artifacts: {}".format(local_dir))
     return True
 
 
 def send_alert_new_asset(asset_obj):
     now = datetime.now()
 
-    print("1")
+    # print("1")
     try:
         asset_vulnerabilities_count = VulnerabilityReportVulnerabilitiesLink.query.join(RepoAsset).filter(
             RepoAsset.id == asset_obj.id).count()
     except SQLAlchemyError:
         return Response("SQLAlchemyError", 500)
-    print("2")
+    # print("2")
     alert_to_send = {
         "alert_type": "new_asset_detected",
         "date_time": now.strftime("%m/%d/%Y, %H:%M:%S"),
@@ -124,7 +124,7 @@ def send_alert_new_asset(asset_obj):
         "asset_url": GLOBAL_IP + "repo/assets/" + str(asset_obj.id) + "/"
     }
 
-    print("Alerts is --------", alert_to_send, flush=True)
+    # print("Alerts is --------", alert_to_send, flush=True)
     return alert_to_send
 
 
@@ -149,7 +149,7 @@ def send_alert_old_asset(asset_obj):
         "asset_url": GLOBAL_IP + "repo/assets/" + str(asset_obj.id) + "/"
     }
 
-    print("Alerts is --------", alert_to_send, flush=True)
+    # print("Alerts is --------", alert_to_send, flush=True)
     # SendKafkaReport(alert_to_send, "rcra-alerts")
     return alert_to_send
 
@@ -207,7 +207,7 @@ def send_alert_info_update_needed(asset_obj=None, threat_obj=None, threat_exposu
         "pages_update_url": pages_to_send
     }
 
-    print("Alerts is --------", alert_to_send, flush=True)
+    # print("Alerts is --------", alert_to_send, flush=True)
     return alert_to_send
 
 
@@ -358,9 +358,9 @@ def send_risk_report(report_id, asset_id, threat_id):
     for alert in alerts_triggered:
         if alert == "":
             continue
-        print("-------ALERT WITH ERROR")
-        print(alert)
-        print(type(alert))
+        # print("-------ALERT WITH ERROR")
+        # print(alert)
+        # print(type(alert))
         alerts_to_add.append(json.loads(alert))
 
 
@@ -404,84 +404,21 @@ def send_risk_report(report_id, asset_id, threat_id):
                     # "Evaluation" : [json.loads(utility_inference_values[1]), json.loads(utility_inference_values[2])]
             },
             "alerts" : alerts_to_add,
-            # "utilities": {
-            #     "CIA": {
-            #         "most_probable_scenarios" : [
-            #             {
-            #                 "confidentiality" : "medium",
-            #                 "integrity" : "medium",
-            #                 "availability" : "low",
-            #                 "probability" : "0.2891"
-            #
-            #             },
-            #             {
-            #                 "confidentiality": "high",
-            #                 "integrity": "high",
-            #                 "availability": "medium",
-            #                 "probability": "0.2654"
-            #
-            #             },
-            #             {
-            #                 "confidentiality": "medium",
-            #                 "integrity": "medium",
-            #                 "availability": "medium",
-            #                 "probability": "0.1266"
-            #
-            #             },
-            #         ],
-            #         "optimal_scenario":{
-            #             "confidentiality": "low",
-            #             "integrity": "low",
-            #             "availability": "low",
-            #             "probability": "0.0225"
-            #         }
-            #     },
-            #     "Evaluation":{
-            #         "most_probable_scenarios" : [
-            #             {
-            #                 "monetary" : "low",
-            #                 "safety" : "low",
-            #                 "probability" : "0.6275"
-            #             },
-            #             {
-            #                 "monetary" : "medium",
-            #                 "safety" : "medium",
-            #                 "probability": "0.1573"
-            #
-            #             },
-            #             {
-            #                 "monetary" : "low",
-            #                 "safety" : "medium",
-            #                 "probability": "0.0853"
-            #             },
-            #         ],
-            #         "optimal_scenario":{
-            #             "monetary" : "low",
-            #                 "safety" : "low",
-            #                 "probability" : "0.6275"
-            #         }
-            #     },
-            # },
-            # "alerts": {
-            #     "objectives": {
-            #         "confidentiality": {
-            #             "level" : "high",
-            #             "threshold" : "0.4"
-            #         }
-            #     }
-            # }
+
         }
     }
 
-    print("----- THE REPORT IS -----")
-    print(report_to_send)
-    print(json.dumps(report_to_send))
+    # print("----- THE REPORT IS -----")
+    # print(report_to_send)
+    # print(json.dumps(report_to_send))
     with open('example_output.json', 'w', encoding='utf-8') as f:
         json.dump(report_to_send, f, ensure_ascii=False, indent=4)
-    report_to_send = json.dumps(report_to_send)
+
+    # No need to json dumps since it is done in the next function right before sending
+    # report_to_send = json.dumps(report_to_send)
 
     # print(report_to_send)
-    # SendKafkaReport(report_to_send, "rcra-report-topic")
+    SendKafkaReport(report_to_send, "rcra-report-topic")
 
 
 # def send_risk_report(report_id, asset_id, threat_id):
@@ -649,7 +586,7 @@ def sendDSSScore():
     )
 
     bundle = stix2.Bundle(asset, attack, relationship, rcra)
-    print(bundle, flush=True)
+    # print(bundle, flush=True)
     stix2validator.validate_instance(bundle)
     SendKafkaReport(str(bundle), "rcra-report-topic")
 
@@ -685,7 +622,7 @@ def sendDSSScoreTest():
     )
 
     bundle = stix2.Bundle(asset, attack, relationship, rcra)
-    print(bundle, flush=True)
+    # print(bundle, flush=True)
     stix2validator.validate_instance(bundle)
     SendKafkaReport(str(bundle), "rcra-report-topic-test")
 
@@ -721,7 +658,7 @@ def send_dss_alert():
     # )
 
     bundle = stix2.Bundle(asset, attack, relationship)
-    print(bundle, flush=True)
+    # print(bundle, flush=True)
     stix2validator.validate_instance(bundle)
     # SendKafkaReport(str(bundle))
     return str(bundle)

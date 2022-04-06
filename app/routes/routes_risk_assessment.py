@@ -22,8 +22,8 @@ from app.utils.utils_risk_assessment import start_risk_assessment, start_risk_as
 def repo_risk_configuration_threat_exposure(threat_id=1, asset_id=-1):
     if request.method == 'POST':
         # # new_service_form = FormAddRepoService
-        print("Requests are: ")
-        print(request.form)
+        # print("Requests are: ")
+        # print(request.form)
         # # The name in the input forms has the following template
         # # "mat|<materialisation_id>|<response_id>|<threat_occurrence>" for materialisations
         # # "cons|<consequence_id>|<response_id>|<threat_occurrence>" for consequences
@@ -52,7 +52,7 @@ def repo_risk_configuration_threat_exposure(threat_id=1, asset_id=-1):
             flash('Added threat "{}" and asset "{}" exposure information'.format(threat_id, asset_id))
         return redirect("/repo/risk/configuration/threat/exposure/" + threat_id + "/asset/" + asset_id + "/")
     else:
-        print("Threat id is" + str(threat_id))
+        # print("Threat id is" + str(threat_id))
         try:
             repo_threats = RepoThreat.query.all()
         except SQLAlchemyError:
@@ -109,11 +109,11 @@ def repo_risk_configuration_threat_exposure(threat_id=1, asset_id=-1):
                 repo_threat_id=threat_id)
 
             if existing_exposure_item.count() == 0:
-                print("NO PREVIOUS INPUT------------------------")
-                print(RepoRiskThreatAssetMaterialisation.query.filter_by(
-                    repo_asset_id=asset_id,
-                    repo_threat_id=threat_id).first())
-                print("threat_id =" + str(type(threat_id)) + "asset_id= " + str(type(asset_id)))
+                # print("NO PREVIOUS INPUT------------------------")
+                # print(RepoRiskThreatAssetMaterialisation.query.filter_by(
+                #     repo_asset_id=asset_id,
+                #     repo_threat_id=threat_id).first())
+                # print("threat_id =" + str(type(threat_id)) + "asset_id= " + str(type(asset_id)))
                 for materialisation in repo_threat_materialisations:
                     temp_array_threat_materialisation_calculation = []
                     for response in repo_threat_responses:
@@ -141,8 +141,8 @@ def repo_risk_configuration_threat_exposure(threat_id=1, asset_id=-1):
 
                 existing_user_input_exposure = convert_database_items_to_json_table(
                     existing_exposure_item)
-                print("Existing Input:")
-                print(existing_user_input_exposure[0])
+                # print("Existing Input:")
+                # print(existing_user_input_exposure[0])
 
                 risk_skill_level = existing_user_input_exposure[0]["risk_skill_level"]
                 risk_actor = existing_user_input_exposure[0]["risk_actor"]
@@ -200,7 +200,7 @@ def repo_risk_configuration_threat_exposure(threat_id=1, asset_id=-1):
         # for toprint in array_threat_consequence_calculation:
         #     print("Consequences are: ", toprint)
 
-        print("Threat id is" + str(threat_id))
+        # print("Threat id is" + str(threat_id))
         return render_template("templates_risk_assessment/repo_risk_configuration_threat_exposure.html",
                                threat_id=threat_id, asset_id=asset_id,
                                repo_threats=repo_threats, this_threat=this_threat, repo_assets=repo_assets,
@@ -508,7 +508,7 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
 
         radar_data = [str(mon_risk / 11), str(est_pol_proc / 26), str(wrk_awar / 10), str(phi_prot / 22), str(fac_acc / 8), str(thi_par_acc / 3), str(res_red / 14)]
 
-        print("Threat id is" + str(threat_id))
+        # print("Threat id is" + str(threat_id))
         try:
             repo_threats = RepoThreat.query.all()
         except SQLAlchemyError:
@@ -557,14 +557,14 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
             if RepoRiskThreatAssetMaterialisation.query.filter_by(
                     repo_asset_id=asset_id,
                     repo_threat_id=threat_id).count() == 0:
-                print("NO PREVIOUS INPUT------------------------")
-                print(RepoRiskThreatAssetMaterialisation.query.filter_by(
-                    repo_asset_id=asset_id,
-                    repo_threat_id=threat_id).first())
-                print("threat_id =" + str(type(threat_id)) + "asset_id= " + str(type(asset_id)))
-                print("----------==============----------")
-                print(repo_threat_materialisations)
-                print(repo_threat_responses)
+                # print("NO PREVIOUS INPUT------------------------")
+                # print(RepoRiskThreatAssetMaterialisation.query.filter_by(
+                #     repo_asset_id=asset_id,
+                #     repo_threat_id=threat_id).first())
+                # print("threat_id =" + str(type(threat_id)) + "asset_id= " + str(type(asset_id)))
+                # print("----------==============----------")
+                # print(repo_threat_materialisations)
+                # print(repo_threat_responses)
                 for materialisation in repo_threat_materialisations:
                     temp_array_threat_materialisation_calculation = []
                     for response in repo_threat_responses:
@@ -605,8 +605,8 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
                 existing_user_input_consequence = convert_database_items_to_json_table(existing_user_input_consequence)
                 existing_user_input_materialisation = convert_database_items_to_json_table(
                     existing_user_input_materialisation)
-                print("Existing Input:")
-                print(existing_user_input_consequence)
+                # print("Existing Input:")
+                # print(existing_user_input_consequence)
 
                 for materialisation in repo_threat_materialisations:
                     temp_array_threat_materialisation_calculation = []
@@ -626,8 +626,8 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
                                 prob_item = item
 
                         if prob_item:
-                            print("Prob Item is:")
-                            print(prob_item)
+                            # print("Prob Item is:")
+                            # print(prob_item)
                             temp_array_threat_materialisation_calculation.append(
                                 {"response": response, "materialisation": materialisation, "threat_occurrence": True,
                                  "prob": prob_item['prob']})
@@ -650,8 +650,8 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
                                 prob_item = item
 
                         if prob_item:
-                            print("Prob Item is:")
-                            print(prob_item)
+                            # print("Prob Item is:")
+                            # print(prob_item)
                             temp_array_threat_materialisation_calculation.append(
                                 {"response": response, "materialisation": materialisation, "threat_occurrence": False,
                                  "prob": prob_item['prob']})
@@ -678,8 +678,8 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
                                 prob_item = item
 
                         if prob_item:
-                            print("Prob Item is:")
-                            print(prob_item)
+                            # print("Prob Item is:")
+                            # print(prob_item)
                             temp_array_threat_consequence_calculation.append(
                                 {"response": response, "consequence": consequence, "threat_occurrence": True,
                                  "prob": prob_item['prob']})
@@ -700,8 +700,8 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
                                 prob_item = item
 
                         if prob_item:
-                            print("Prob Item is:")
-                            print(prob_item)
+                            # print("Prob Item is:")
+                            # print(prob_item)
                             temp_array_threat_consequence_calculation.append(
                                 {"response": response, "consequence": consequence, "threat_occurrence": False,
                                  "prob": prob_item['prob']})
@@ -739,7 +739,7 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
         except SQLAlchemyError:
             return Response("SQLAlchemyError", 500)
 
-        print("------------------------------======================================================")
+        # print("------------------------------======================================================")
 
         #
         # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
@@ -749,15 +749,15 @@ def repo_risk_configuration_threat_asset(threat_id, asset_id):
         json_vulnerabilities = convert_database_items_to_json_table(repo_vulnerabilities)
         for it, instance in enumerate(json_vulnerabilities):
             instance["cve_actual_id"] = repo_vulnerabilities[it].cve.CVEId
-            print(instance, flush=True)
-            print("---")
+            # print(instance, flush=True)
+            # print("---")
         json_controls = json.dumps(json_controls, default=str)
         json_vulnerabilities = json.dumps(json_vulnerabilities, default=str)
 
-        print("Threat id is" + str(threat_id))
-        print(json_controls)
-        print(json_vulnerabilities)
-        print(array_threat_materialisation_calculation)
+        # print("Threat id is" + str(threat_id))
+        # print(json_controls)
+        # print(json_vulnerabilities)
+        # print(array_threat_materialisation_calculation)
         return render_template("templates_risk_assessment/repo_risk_configuration_threat_asset.html",
                                threat_id=threat_id, asset_id=asset_id, json_controls=json_controls,
                                json_vulnerabilities=json_vulnerabilities,
@@ -816,12 +816,12 @@ def repo_risk_configuration_impacts_risk(threat_id=1, asset_id=-1, impact_id=-1)
             # print(related_mixed_state)
             # Entry doesnt exist create new one
             # Create main entry
-            print("ARRAYS ARE")
-            print(related_service_state)
-            print(related_service_list)
+            # print("ARRAYS ARE")
+            # print(related_service_state)
+            # print(related_service_list)
             # print(json.dumps(related_service_list))
-            print(related_consequence_state)
-            print(related_consequence_list)
+            # print(related_consequence_state)
+            # print(related_consequence_list)
             # print(json.dumps(related_consequence_list))
             does_exist = RepoAssetThreatConsequenceServiceImpactRelationship.query.filter_by(
                 repo_asset_id=asset_id,
@@ -831,10 +831,10 @@ def repo_risk_configuration_impacts_risk(threat_id=1, asset_id=-1, impact_id=-1)
                 consequences_state=json.dumps(related_consequence_state)
             )
             if does_exist.count() > 0:
-                print("Value exists =-=-=-=-=-=-=-=-=-=-=-=-=-=")
+                # print("Value exists =-=-=-=-=-=-=-=-=-=-=-=-=-=")
                 to_score_entry = does_exist.first()
             else:
-                print("Value new =-=-=-=-=-=-=-=-=-=-=-=-=-=")
+                # print("Value new =-=-=-=-=-=-=-=-=-=-=-=-=-=")
                 to_score_entry = RepoAssetThreatConsequenceServiceImpactRelationship(repo_asset_id=asset_id,
                                                                                      repo_threat_id=threat_id,
                                                                                      repo_impact_id=impact_id,
@@ -845,18 +845,18 @@ def repo_risk_configuration_impacts_risk(threat_id=1, asset_id=-1, impact_id=-1)
                                                                                      )
                 db.session.add(to_score_entry)
                 db.session.flush()
-            print(to_score_entry)
+            # print(to_score_entry)
             if deconstructedId[0] == "low":
-                print("Value low is: ----------", request.form[user_input], "-------------")
+                # print("Value low is: ----------", request.form[user_input], "-------------")
                 to_score_entry.low_prob = request.form[user_input]
             elif deconstructedId[0] == "medium":
-                print("Value med is: ----------", request.form[user_input], "-------------")
+                # print("Value med is: ----------", request.form[user_input], "-------------")
                 to_score_entry.med_prob = request.form[user_input]
             else:
-                print("Value high is: ----------", request.form[user_input], "-------------")
+                # print("Value high is: ----------", request.form[user_input], "-------------")
                 to_score_entry.high_prob = request.form[user_input]
 
-        print("WILL SAVE NOW")
+        # print("WILL SAVE NOW")
         db.session.commit()
         flash('Impact Info Added-Edited Successfully')
         return redirect(
@@ -919,11 +919,11 @@ def repo_risk_configuration_impacts_risk(threat_id=1, asset_id=-1, impact_id=-1)
 
         array_impact_calculation = []
 
-        print("Related services are")
-        print(repo_related_services)
-
-        print("Related Consequence are")
-        print(repo_related_consequences)
+        # print("Related services are")
+        # print(repo_related_services)
+        #
+        # print("Related Consequence are")
+        # print(repo_related_consequences)
 
         for repo_temp_service in repo_related_services:
             if not array_impact_calculation:
@@ -957,9 +957,9 @@ def repo_risk_configuration_impacts_risk(threat_id=1, asset_id=-1, impact_id=-1)
 
                 array_impact_calculation = array_impact_calculation + temp_impact_array
 
-        print("--- FINAL ARRAY ---")
-        for temp in array_impact_calculation:
-            print(temp)
+        # print("--- FINAL ARRAY ---")
+        # for temp in array_impact_calculation:
+        #     print(temp)
 
         # If there are aready values
         does_exist = RepoAssetThreatConsequenceServiceImpactRelationship.query.filter_by(
@@ -976,11 +976,11 @@ def repo_risk_configuration_impacts_risk(threat_id=1, asset_id=-1, impact_id=-1)
                 to_send.append(33)
             # to_score_entry = does_exist.first()
         else:
-            print("---Doesnt Exist ----")
+            # print("---Doesnt Exist ----")
             custom_it = 0
             does_exist = does_exist.all()
             for to_send in array_impact_calculation:
-                print(does_exist[custom_it])
+                # print(does_exist[custom_it])
                 to_send.append(does_exist[custom_it].low_prob)
                 to_send.append(does_exist[custom_it].med_prob)
                 to_send.append(does_exist[custom_it].high_prob)
@@ -1030,7 +1030,7 @@ def repo_risk_configuration_objective_risk(objective_id=1):
                     {"imp_id": str(temp_entry[custom_it + 0]), "state": str(temp_state)})
                 related_impact_list.append(temp_entry[custom_it + 1])
 
-            print(related_impact_state)
+            # print(related_impact_state)
 
             does_exist = RepoObjectiveImpactRelationship.query.filter_by(
                 repo_objective_id=objective_id,
@@ -1155,7 +1155,7 @@ def repo_risk_configuration_objective_risk(objective_id=1):
             #     else:
             #         to_add_main.high_prob = request.form[user_input]
 
-        print("WILL SAVE NOW")
+        # print("WILL SAVE NOW")
         db.session.commit()
 
         flash('Objective Risk "{}" Added Succesfully'.format(objective_id))
@@ -1311,8 +1311,8 @@ def repo_risk_configuration_objective_risk(objective_id=1):
         #         print(to_send)
         # # for
 
-        for to_send in array_impact_calculation:
-            print(to_send)
+        # for to_send in array_impact_calculation:
+        #     print(to_send)
 
         return render_template("templates_risk_assessment/repo_risk_configuration_objectives_risk.html",
                                repo_objectives=repo_objectives,
@@ -1333,8 +1333,8 @@ def repo_risk_configuration_utility_risk(utility_id=1):
             custom_it = 0
             results = list(request.form.values())
             for existing_value in existing_values:
-                print(custom_it)
-                print(results)
+                # print(custom_it)
+                # print(results)
                 existing_value.utility_value = results[custom_it]
                 custom_it += 1
 
@@ -1377,8 +1377,8 @@ def repo_risk_configuration_utility_risk(utility_id=1):
         except SQLAlchemyError:
             return Response("SQLAlchemyError", 500)
 
-        print(this_utility)
-        print("----------")
+        # print(this_utility)
+        # print("----------")
         try:
             repo_objectives_related = RepoObjective.query.filter(
                 RepoObjective.utilities.any(id=int(utility_id))).all()
@@ -1412,10 +1412,10 @@ def repo_risk_configuration_utility_risk(utility_id=1):
                         {"id": repo_objective_related.id, "name": repo_objective_related.name, "state": "high"})
 
                 array_utility_calculation = array_utility_calculation + temp_array_utility_calculation_1 + temp_array_utility_calculation_2
-
-        print("TEST")
-        for two in array_utility_calculation:
-            print(two)
+        #
+        # print("TEST")
+        # for two in array_utility_calculation:
+        #     print(two)
 
         # existing_values = db.session.query(RepoUtilityObjectiveRelationship,
         #                                    RepoUtilityObjectiveRelationshipManyToMany).join(
@@ -1432,9 +1432,9 @@ def repo_risk_configuration_utility_risk(utility_id=1):
             joined = existing_values.all()
             it = 0
             for to_edit in joined:
-                print("NEW TEST")
-                print(to_edit)
-                print(array_utility_calculation[it])
+                # print("NEW TEST")
+                # print(to_edit)
+                # print(array_utility_calculation[it])
                 array_utility_calculation[it].append({"value": to_edit.utility_value})
                 it += 1
 
@@ -1443,9 +1443,9 @@ def repo_risk_configuration_utility_risk(utility_id=1):
             for to_edit in array_utility_calculation:
                 to_edit.append({"value": "50"})
 
-        print("TEST3")
-        for two in array_utility_calculation:
-            print(two)
+        # print("TEST3")
+        # for two in array_utility_calculation:
+        #     print(two)
 
         repo_utilities = convert_database_items_to_json_table(repo_utilities)
         return render_template("templates_risk_assessment/repo_risk_configuration_utlity_risk.html",
@@ -2326,8 +2326,8 @@ def view_repo_risk_reports():
         custom_it = 0
         json_detailed_report_to_add = {}
         for each_report in repo_reports:
-            print("Example ARE --------")
-            print(json_reports[custom_it])
+            # print("Example ARE --------")
+            # print(json_reports[custom_it])
             #  Add basic info to dashboard
             this_risk_assessment = each_report.risk_assessment
             json_reports[custom_it]["asset_name"] = this_risk_assessment.asset.name
@@ -2363,7 +2363,7 @@ def view_repo_risk_reports():
             objectives_inference_list.pop()
             utility_inference_list.pop()
             alerts_triggered.pop()
-            print(materialisations_list)
+            # print(materialisations_list)
             json_detailed_report_to_add["exposure"] = []
             json_detailed_report_to_add["materialisations"] = []
             json_detailed_report_to_add["consequences"] = []
@@ -2486,7 +2486,7 @@ def view_repo_risk_reports():
             #
             # }
 
-        print(json_reports)
+        # print(json_reports)
         json_reports = json.dumps(json_reports)
         # json_reports = json.dumps(json_reports)
 

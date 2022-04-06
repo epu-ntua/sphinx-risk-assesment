@@ -15,8 +15,8 @@ def v_report(fpath):
 
 def my_excel_read(xpath, xcol, cwe_code):
     theFile = openpyxl.load_workbook(xpath)
-    print(theFile.sheetnames)
-    print("All sheet names {} ".format(theFile.sheetnames))
+    # print(theFile.sheetnames)
+    # print("All sheet names {} ".format(theFile.sheetnames))
     currentSheet = theFile.active
     # for rowidx in range(1, currentSheet.max_row + 1):
     # ws['B'] will return all cells on the B column until the last one (similar to max_row but it's only for the B column)
@@ -40,8 +40,8 @@ def get_cwe_codes(myreport):
 
 ###### console tests
 # for VAaaS report - get CVE codes
-for ip, rid, port, asset, cvss, cve, oid, name in v_report("app/Json_texts/report1.json"):
-     print(ip, rid, port, asset, cvss, cve, oid, name)
+# for ip, rid, port, asset, cvss, cve, oid, name in v_report("app/Json_texts/report1.json"):
+#      print(ip, rid, port, asset, cvss, cve, oid, name)
 ##### through NVD API - get CWE codes
 # response = requests.get("https://services.nvd.nist.gov/rest/json/cve/1.0/CVE-2009-3421")
 # if response.status_code == 200:

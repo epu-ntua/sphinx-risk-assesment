@@ -23,7 +23,7 @@ def view_repo_assets(asset_id=-1):
         # Distinction can only be made by the id of the submit button
         if 'edit_submit' in request.form:
             if new_edit_form.validate_on_submit():
-                print("PUT ACTOR", "|", new_edit_form.edit_id.data, "|", flush=True)
+                # print("PUT ACTOR", "|", new_edit_form.edit_id.data, "|", flush=True)
 
                 try:
                     to_edit_asset = RepoAsset.query.filter_by(id=new_edit_form.edit_id.data).first()
@@ -101,14 +101,14 @@ def view_repo_assets(asset_id=-1):
                 return redirect("/repo/assets/")
             else:
                 # If error in validation, then error
-                print(new_edit_form.errors)
+                # print(new_edit_form.errors)
                 flash('Error: Validation Error - Couldn\'t edit asset, ')
                 return redirect("/repo/assets/")
 
         elif "submit" in request.form:
             # If new asset form has been submitted
             if new_asset_form.validate_on_submit():
-                print("POST ACTOR", flush=True)
+                # print("POST ACTOR", flush=True)
                 edit_owner_id = None
                 edit_verified_by_id = None
                 edit_net_group_fk_id = None
@@ -156,13 +156,13 @@ def view_repo_assets(asset_id=-1):
                 return redirect("/repo/assets/")
             else:
                 # If error in validation, then error
-                print(new_asset_form.errors)
+                # print(new_asset_form.errors)
                 flash('Error: Validation Error - Couldn\'t add asset, ')
                 return redirect("/repo/assets/")
         else:
             # If none of them, then error
-            print(new_asset_form.errors)
-            print(new_edit_form.errors)
+            # print(new_asset_form.errors)
+            # print(new_edit_form.errors)
             flash('Error: No correct form submitted - Couldn\'t add asset, ')
             return redirect("/repo/assets/")
 
@@ -253,12 +253,12 @@ def view_repo_assets(asset_id=-1):
             json_asset_instance["operating_zone"] = 'Corporate Intranet' if json_asset_instance["operating_zone"] == 1 else 'Business Partners/Clients' if json_asset_instance["operating_zone"] == 2 else 'Employee Private networks' if json_asset_instance["operating_zone"] == 3 else 'Public space'
             json_asset_instance["security_levels"] = 'No specific requirements or security protection necessary' if json_asset_instance["security_levels"] == 1 else 'Protection against casual or coincidental violation' if json_asset_instance["security_levels"] == 2 else 'Protection against intentional violation using simple means with low resources, generic skills and low motivation' if json_asset_instance["security_levels"] == 3 else 'Protection against intentional violation using sophisticated means with moderate resources, specific skills and moderate motivation' if json_asset_instance["security_levels"] == 4 else 'Protection against intentional violation using sophisticated means with extended resources, specific skills and high motivation'
 
-        print(json_assets)
+        # print(json_assets)
         json_assets = json.dumps(json_assets)
 
         new_asset_form = FormAddRepoAsset()
         edit_asset_form = FormEditRepoAsset()
-        print("REPO ASSETS", json_assets)
+        # print("REPO ASSETS", json_assets)
         return render_template("templates_asset_repo/view_repo_assets.html", repo_assets=json_assets,
                                new_asset_form=new_asset_form, edit_asset_form=edit_asset_form, asset_id=asset_id)
 
@@ -277,7 +277,7 @@ def view_repo_impacts():
             flash('Impact "{}" Added Succesfully'.format(new_impact_form.name.data))
             return redirect('/repo/impacts/')
         else:
-            print("Errors", new_impact_form.errors, flush=True)
+            # print("Errors", new_impact_form.errors, flush=True)
             flash('Objective "{}" Error on add'.format(new_impact_form.name.data))
 
         return redirect('/repo/impacts/')
@@ -435,7 +435,7 @@ def view_repo_objective_info(objective_id):
 def view_repo_utilities():
     if request.method == 'POST':
         if 'submit_utility' in request.form:
-            print("UTILITY IS:", request.form)
+            # print("UTILITY IS:", request.form)
             to_add_utility = RepoUtility(name=request.form["name"])
 
             db.session.add(to_add_utility)
@@ -474,10 +474,10 @@ def view_repo_utilities():
 
         json_utilities = convert_database_items_to_json_table(repo_utilities)
 
-        print(json_utilities)
+        # print(json_utilities)
 
         for utility in json_utilities:
-            print(utility["id"])
+            # print(utility["id"])
             try:
                 repo_objectives_related = RepoObjective.query.filter(
                     RepoObjective.utilities.any(id=utility["id"])).all()
@@ -491,7 +491,7 @@ def view_repo_utilities():
                 # Passing this to add edit functionality at a later date
                 utility["Objective" + str(repo_objective_related.id)] = repo_objective_related.name
 
-        print(json_utilities)
+        # print(json_utilities)
         json_utilities = json.dumps(json_utilities)
 
         new_utlity_form = FormAddRepoUtility()
@@ -507,7 +507,7 @@ def view_repo_actors():
 
         if new_actor_form.validate_on_submit():
             if new_actor_form.id.data:
-                print("PUT ACTOR", "|", new_actor_form.id.data, "|", flush=True)
+                # print("PUT ACTOR", "|", new_actor_form.id.data, "|", flush=True)
 
                 try:
                     to_edit_actor = RepoActor.query.filter_by(id=new_actor_form.id.data).first()
@@ -521,7 +521,7 @@ def view_repo_actors():
                 db.session.commit()
                 return redirect("/repo/actors/")
             else:
-                print("POST ACTOR", flush=True)
+                # print("POST ACTOR", flush=True)
                 # print(new_actor_form.name.data, flush=True)
                 to_add_actor = RepoActor(name=new_actor_form.name.data)
                 db.session.add(to_add_actor)
@@ -530,7 +530,7 @@ def view_repo_actors():
                 flash('Actor "{}" Added Succesfully'.format(new_actor_form.name.data))
                 return redirect("/repo/actors/")
         else:
-            print(new_actor_form.errors)
+            # print(new_actor_form.errors)
             flash('Error: Validation Error - Couldn\'t add actor, ')
             return redirect("/repo/actors/")
 
@@ -547,7 +547,7 @@ def view_repo_actors():
         json_actors = convert_database_items_to_json_table(repo_actors)
         json_actors = json.dumps(json_actors)
         # print("ACTORS ARE --------")
-        print(json_actors)
+        # print(json_actors)
         new_actor_form = FormAddRepoActor()
         return render_template("templates_asset_repo/view_repo_actors.html", repo_actors=json_actors,
                                new_actor_form=new_actor_form)
@@ -594,8 +594,8 @@ def view_repo_services():
 
         json_services = convert_database_items_to_json_table(repo_services)
         json_services = json.dumps(json_services)
-        print("ACTORS ARE --------")
-        print(json_services)
+        # print("ACTORS ARE --------")
+        # print(json_services)
         new_service_form = FormAddRepoService()
         return render_template("templates_asset_repo/view_repo_services.html", repo_services=json_services,
                                new_service_form=new_service_form)
@@ -608,7 +608,7 @@ def view_repo_net_groups():
 
         if new_net_group_form.validate_on_submit():
             if new_net_group_form.id.data:
-                print("PUT ACTOR", "|", new_net_group_form.id.data, "|", flush=True)
+                # print("PUT ACTOR", "|", new_net_group_form.id.data, "|", flush=True)
 
                 try:
                     to_add_net_group = RepoNetGroup.query.filter_by(id=new_net_group_form.id.data).first()
@@ -622,7 +622,7 @@ def view_repo_net_groups():
                 db.session.commit()
                 return redirect("/repo/net_groups/")
             else:
-                print("POST ACTOR", flush=True)
+                # print("POST ACTOR", flush=True)
                 # print(new_actor_form.name.data, flush=True)
                 to_add_net_group = RepoNetGroup(name=new_net_group_form.name.data)
                 db.session.add(to_add_net_group)
@@ -685,7 +685,7 @@ def view_repo_vulnerabilities():
                 db.session.commit()
                 return redirect("/repo/vulnerabilities/")
             else:
-                print("POST ACTOR", flush=True)
+                # print("POST ACTOR", flush=True)
                 # print(new_actor_form.name.data, flush=True)
                 to_add_vulnerability = VulnerabilityReportVulnerabilitiesLink(name=new_vulnerability_form.name.data)
                 to_add_vulnerability = VulnerabilityReportVulnerabilitiesLink(VReport_id=new_vulnerability_form.VReport_id.data)
@@ -710,7 +710,7 @@ def view_repo_vulnerabilities():
 
         json_vulnerabilities = convert_database_items_to_json_table(repo_vulnerabilities)
         for it,json_vulnerability in enumerate(json_vulnerabilities):
-            print(json_vulnerability)
+            # print(json_vulnerability)
             json_vulnerability["asset_id"] = repo_vulnerabilities[it].asset.name
             json_vulnerability["cve_id"] = repo_vulnerabilities[it].cve.CVEId
             json_vulnerability["VReport_id"] = repo_vulnerabilities[it].vreport.reportId
@@ -748,7 +748,7 @@ def view_repo_vulnerability_info(vulnerability_id):
                 db.session.commit()
                 return redirect("/repo/vulnerabilities/")
             else:
-                print("POST ACTOR", flush=True)
+                # print("POST ACTOR", flush=True)
                 # print(new_actor_form.name.data, flush=True)
                 to_add_vulnerability = VulnerabilityReportVulnerabilitiesLink(name=new_vulnerability_form.name.data)
                 db.session.add(to_add_vulnerability)
@@ -776,8 +776,8 @@ def view_repo_vulnerability_info(vulnerability_id):
 
         this_vulnerability = convert_database_items_to_json_table(this_vulnerability)
         this_vulnerability = json.dumps(this_vulnerability, default=str)
-        print("ACTORS ARE --------")
-        print(json_vulnerabilities)
+        # print("ACTORS ARE --------")
+        # print(json_vulnerabilities)
         json_vulnerabilities = [{
             "id": 1, "name": "Control - 1", "effectiveness": 56
         },
@@ -814,7 +814,7 @@ def view_repo_threats():
                 db.session.commit()
                 return redirect("/repo/threats/")
             else:
-                print("POST ACTOR", flush=True)
+                # print("POST ACTOR", flush=True)
                 # print(new_actor_form.name.data, flush=True)
                 to_add_threat = RepoThreat(name=new_threat_form.name.data)
                 db.session.add(to_add_threat)
@@ -852,7 +852,7 @@ def view_repo_threat_info(threat_id):
         new_response_form = FormAddRepoResponse()
 
         if new_materialisation_form.validate_on_submit():
-            print("SAVING MATERIALISATION")
+            # print("SAVING MATERIALISATION")
             to_add_materialisation = RepoMaterialisation(
                 name=new_materialisation_form.name_materialisation.data,
                 threat_id=new_materialisation_form.threat_id.data)
@@ -863,7 +863,7 @@ def view_repo_threat_info(threat_id):
             print("Form Materialisation Error :", new_materialisation_form.errors)
 
         if new_consequence_form.validate_on_submit():
-            print("SAVING CONSEQUENCE")
+            # print("SAVING CONSEQUENCE")
             to_add_consequences = RepoConsequence(name=new_consequence_form.name_consequence.data,
                                                   threat_id=new_consequence_form.threat_id.data,
                                                   materialisation_id=new_consequence_form.materialisation_fk.data.id)
@@ -874,7 +874,7 @@ def view_repo_threat_info(threat_id):
             print("Form Materialisation Error :", new_materialisation_form.errors)
 
         if new_response_form.validate_on_submit():
-            print("SAVING RESPONSE")
+            # print("SAVING RESPONSE")
             to_add_response = RepoResponse(name=new_response_form.name.data, threat_id=new_response_form.threat_id.data)
 
             db.session.add(to_add_response)
@@ -922,7 +922,7 @@ def view_repo_threat_info(threat_id):
         new_consequence_form = FormAddRepoConsequence()
 
         new_response_form = FormAddRepoResponse()
-        print("Mats here is: ", repo_materialisations)
+        # print("Mats here is: ", repo_materialisations)
         return render_template("templates_asset_repo/view_repo_threat_info.html", repo_threat=repo_threat,
                                repo_threat_dict=repo_threat_dict,
                                repo_materialisations=repo_materialisations, repo_consequences=repo_consequences,
@@ -1074,8 +1074,8 @@ def view_repo_serivce_info(service_id):
         new_service_impact_form = FormAddRepoServiceImpact()
 
         if new_service_impact_form.validate_on_submit():
-            print("SAVING SERVICE IMPACT CONNECTION: ")
-            print(new_service_impact_form.impact_fk.data.id)
+            # print("SAVING SERVICE IMPACT CONNECTION: ")
+            # print(new_service_impact_form.impact_fk.data.id)
             try:
                 this_service = RepoService.query.filter_by(id=service_id).first()
             except SQLAlchemyError:
@@ -1085,11 +1085,11 @@ def view_repo_serivce_info(service_id):
                 this_impact = RepoImpact.query.filter_by(id=new_service_impact_form.impact_fk.data.id).first()
             except SQLAlchemyError:
                 return Response("SQLAlchemyError", 500)
-            print("SAVING SERVICE IMPACT CONNECTION 2")
+            # print("SAVING SERVICE IMPACT CONNECTION 2")
             this_service.impacts.append(this_impact)
-            print("SAVING SERVICE IMPACT CONNECTION 3")
+            # print("SAVING SERVICE IMPACT CONNECTION 3")
             db.session.commit()
-            print("SAVING SERVICE IMPACT CONNECTION 4")
+            # print("SAVING SERVICE IMPACT CONNECTION 4")
             # to_add_materialisation = RepoMaterialisation(
             #     name=new_materialisation_form.name_materialisation.data,
             #     threat_id=new_materialisation_form.threat_id.data)
@@ -1186,15 +1186,15 @@ def view_repo_asset_services_relation(asset_id):
             else:
                 related_service = None
             if request.form[str(service.id)] == "0":
-                print("NO RELATION", service.name)
+                # print("NO RELATION", service.name)
                 # Find if service was prebiously related
 
                 if related_service is not None:
                     # If it exists delete it
-                    print("NO RELATION DELETE", service.name, ":", repo_asset.services)
+                    # print("NO RELATION DELETE", service.name, ":", repo_asset.services)
                     repo_asset.services.remove(related_service)
                 else:
-                    print("NO RELATION NOTHING", service.name)
+                    # print("NO RELATION NOTHING", service.name)
                     # Otherwise do nothing
                     continue
             else:
@@ -1202,10 +1202,10 @@ def view_repo_asset_services_relation(asset_id):
 
                 if related_service is not None:
                     # If it exists do nothing
-                    print("RELATION NOTHING", service.name)
+                    # print("RELATION NOTHING", service.name)
                     continue
                 else:
-                    print("RELATION ADD", service.name)
+                    # print("RELATION ADD", service.name)
                     # Otherwise add it
                     repo_asset.services.append(service)
 
@@ -1238,7 +1238,7 @@ def view_repo_asset_services_relation(asset_id):
         except SQLAlchemyError:
             return Response("SQLAlchemyError", 500)
 
-        print("Start Related Services:", related_services)
+        # print("Start Related Services:", related_services)
         repo_asset = convert_database_items_to_json_table(repo_asset)
         repo_asset = json.dumps(repo_asset)
 
@@ -1254,8 +1254,8 @@ def view_repo_asset_services_relation(asset_id):
         related_services = ast.literal_eval(related_services)
         unrelated_services = ast.literal_eval(unrelated_services)
 
-        print("Related Services:", related_services)
-        print("Unrelated Services:", unrelated_services)
+        # print("Related Services:", related_services)
+        # print("Unrelated Services:", unrelated_services)
         return render_template("templates_asset_repo/view_repo_assets_services_relation.html", repo_assets=repo_asset,
                                related_services=related_services, unrelated_services=unrelated_services,
                                asset_id=asset_id)
@@ -1291,10 +1291,10 @@ def view_repo_controls():
                 db.session.add(to_add_control)
                 db.session.commit()
 
-                print("DATA_________________")
-                print(new_control_form.vulnerability.data.id)
-                print(to_add_control.name)
-                print(to_add_control.vulnerabilities.id)
+                # print("DATA_________________")
+                # print(new_control_form.vulnerability.data.id)
+                # print(to_add_control.name)
+                # print(to_add_control.vulnerabilities.id)
                 # try:
                 #     to_relate_vulnerability = VulnerabilityReportVulnerabilitiesLink.query.filter_by(
                 #         id=new_control_form.vulnerability.data.id).first()
@@ -1318,13 +1318,13 @@ def view_repo_controls():
         # print(repo_actors[0].__table__.columns._data.keys(), flush=True)
 
         json_controls = convert_database_items_to_json_table(repo_controls)
-        print("Controls ARE --------")
+        # print("Controls ARE --------")
         for it, control in enumerate(json_controls):
             control["vulnerability"] = repo_controls[it].vulnerabilities.cve.CVEId
             control["vulnerability_id"] = {"id": control["vulnerability_id"],
                                            "name": repo_controls[it].vulnerabilities.cve.CVEId}
             # print(type(control))
-            print(control)
+            # print(control)
 
         json_controls = json.dumps(json_controls)
         # print(json_controls)

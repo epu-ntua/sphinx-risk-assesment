@@ -14,13 +14,13 @@ from app.utils.utils_risk_profiles import get_RiskML_value
 
 @app.route('/alerts/new_asset/')
 def alerts_new_asset():
-    print("--HERe")
+    # print("--HERe")
     try:
         repo_asset_first = RepoAsset.query.first()
     except SQLAlchemyError:
         return Response("SQLAlchemyError", 500)
     result = send_alert_new_asset(repo_asset_first)
-    print("--HERe 2", result)
+    # print("--HERe 2", result)
 
     return Response(status=200)
 
@@ -55,7 +55,7 @@ def mlflow_info():
     experiments = "asset.variety.Server"
     current_dict = os.getcwd()
     dict_to_save = os.path.join(current_dict, "mlflow_info")
-    print("PATH IS --------------", dict_to_save, flush=True)
+    # print("PATH IS --------------", dict_to_save, flush=True)
     get_ml_flow_info(experiments, dict_to_save)
     return Response(status=200)
 
@@ -72,8 +72,8 @@ def risk_siem_alert_test_1():
     xx = siem_alerts(rep)
     # response = get_mlflow_experiment()
 
-    print("Response is --------------", flush=True)
-    print(xx)
+    # print("Response is --------------", flush=True)
+    # print(xx)
 
     return Response(status=200)
 
@@ -83,8 +83,8 @@ def risk_siem_alert_test_2():
     xx = siem_alerts(rep)
     # response = get_mlflow_experiment()
 
-    print("Response is --------------", flush=True)
-    print(xx)
+    # print("Response is --------------", flush=True)
+    # print(xx)
 
     return Response(status=200)
 
@@ -97,7 +97,7 @@ def mlflow_data_clean_test():
     result = get_RiskML_value(["action.malware.variety.Exploit misconfig", "action.malware.variety.Exploit vuln"], [],
                               "action.malware.variety.Ransomware", "5022")
     # response = get_mlflow_experiment()
-    print("Response is --------------", result, flush=True)
+    # print("Response is --------------", result, flush=True)
     return Response(status=200)
 
 
@@ -122,8 +122,8 @@ def siem_event_alert():
             'requestedTicket': requestedTicket
         }
         response = requests.request("GET", url, params=params)
-        print("---------------------------------------", flush=True)
-        print("Authorisation result is: ", response.status_code, flush=True)
+        # print("---------------------------------------", flush=True)
+        # print("Authorisation result is: ", response.status_code, flush=True)
 
         if response.status_code == 200:
             # Validate the input is correct
@@ -147,11 +147,11 @@ def ID_visualisation_data():
         'requestedservice': requestedservice,
         'requestedTicket': requestedTicket
     }
-    print("---------------------------------------", flush=True)
-    print(url)
+    # print("---------------------------------------", flush=True)
+    # print(url)
     response = requests.request("GET", url, params=params)
-    print("---------------------------------------", flush=True)
-    print("Authorisation result is: ", response.status_code, flush=True)
+    # print("---------------------------------------", flush=True)
+    # print("Authorisation result is: ", response.status_code, flush=True)
 
     if response.status_code == 200:
         print("Authorisation is accepted", flush=True)
@@ -209,9 +209,9 @@ def kb_cve():
     selectedticket = response.json()
     requestedTicket = selectedticket["data"]
 
-    print("---------------------------------------", flush=True)
-    print("Login ticket is: ", requestedTicket, flush=True)
-    print("---------------------------------------", flush=True)
+    # print("---------------------------------------", flush=True)
+    # print("Login ticket is: ", requestedTicket, flush=True)
+    # print("---------------------------------------", flush=True)
 
     # Need knowledge base url
     # id
@@ -226,9 +226,9 @@ def kb_cve():
     response = requests.request("GET", url, params=params)
     reqdata = response.json()
 
-    print("---------------------------------------", flush=True)
-    print("KB response is: ", reqdata, flush=True)
-    print("---------------------------------------", flush=True)
+    # print("---------------------------------------", flush=True)
+    # print("KB response is: ", reqdata, flush=True)
+    # print("---------------------------------------", flush=True)
 
     return reqdata
 
@@ -274,9 +274,9 @@ def RCRAgetFCDEversion():
     selectedticket = response.json()
     requestedTicket = selectedticket["data"]
 
-    print("---------------------------------------", flush=True)
-    print("Login ticket is: ", requestedTicket, flush=True)
-    print("---------------------------------------", flush=True)
+    # print("---------------------------------------", flush=True)
+    # print("Login ticket is: ", requestedTicket, flush=True)
+    # print("---------------------------------------", flush=True)
 
     # # this step was omitted in D6.2
     # url1 = "http://sphinx-kubernetes.intracom-telecom.com:8080/SMPlatform/manager/rst/ServiceInfo"
@@ -296,9 +296,9 @@ def RCRAgetFCDEversion():
     responsex = requests.request("GET", urlx, params=params)
     reqdata = responsex.json()
 
-    print("---------------------------------------", flush=True)
-    print("FDCE response is: ", reqdata, flush=True)
-    print("---------------------------------------", flush=True)
+    # print("---------------------------------------", flush=True)
+    # print("FDCE response is: ", reqdata, flush=True)
+    # print("---------------------------------------", flush=True)
 
     #
     # url2 = "http://127.0.0.1:5003/FCDEgetversion"

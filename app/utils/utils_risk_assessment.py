@@ -11,12 +11,12 @@ from flask import Response
 # OBSOLETE WILL BE REMOVED AT NEXT UPDATE
 # Replaced by get_threat_exposure_value(asset_id, threat_id)
 def calculate_exposure(skill, motive, source, actor, opportunity):
-    print("---------Exposure Values---------")
-    print(skill)
-    print(motive)
-    print(source)
-    print(actor)
-    print(opportunity)
+    # print("---------Exposure Values---------")
+    # print(skill)
+    # print(motive)
+    # print(source)
+    # print(actor)
+    # print(opportunity)
     exposure = (skill + motive + source + actor + opportunity) / 5
     exposure = exposure / 100
     return exposure
@@ -42,8 +42,8 @@ def risk_assessment_save_report(threat_id, asset_id, risk_assessment_result, rep
     utility_inference = ""
     alert_triggered = ""
 
-    print("-------------- All ITEMS ARE ------------------")
-    print(risk_assessment_result.items())
+    # print("-------------- All ITEMS ARE ------------------")
+    # print(risk_assessment_result.items())
     for key, value in risk_assessment_result.items():
         # print("KEY IS")
         # print(key)
@@ -74,13 +74,13 @@ def risk_assessment_save_report(threat_id, asset_id, risk_assessment_result, rep
                 value.values[0]) + "|" + str(
                 value.values[1]) + "|" + str(value.values[2]) + "|"
         elif temp_key == "util":
-            print("[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]")
-            print(value)
-            print("}}}}}}}}}}}}}}}}}}}{{{{{{{{{{{{{{{{{{{")
+            # print("[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]")
+            # print(value)
+            # print("}}}}}}}}}}}}}}}}}}}{{{{{{{{{{{{{{{{{{{")
             optimal_value = {}
             highest_values = []
             for index, row in value.iterrows():
-                print(type(temp_digit))
+                # print(type(temp_digit))
                 if temp_digit == "1":
                     if index == ("0", "0"):
                         # print(";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;")
@@ -120,13 +120,13 @@ def risk_assessment_save_report(threat_id, asset_id, risk_assessment_result, rep
                         for it in (0, 1, 2):
                             for it2 in (0, 1, 2):
                                 if highest_values[it2]["probability"] < row[it]:
-                                    print("VALUES TO  UPADTRE ARE---------------------")
-                                    print(index)
-                                    print(type(row))
-                                    print(row)
-                                    print(row.index[0][1])
-                                    print(row.index[1][1])
-                                    print(row.index[2][1])
+                                    # print("VALUES TO  UPADTRE ARE---------------------")
+                                    # print(index)
+                                    # print(type(row))
+                                    # print(row)
+                                    # print(row.index[0][1])
+                                    # print(row.index[1][1])
+                                    # print(row.index[2][1])
 
                                     # Create new object to add to the list of highest values
                                     to_add = {
@@ -215,13 +215,13 @@ def risk_assessment_save_report(threat_id, asset_id, risk_assessment_result, rep
                         for it in (0, 1, 2):
                             for it2 in (0, 1, 2):
                                 if highest_values[it2]["probability"] < row[it]:
-                                    print("VALUES TO  UPADTRE ARE---------------------")
-                                    print(index)
-                                    print(type(row))
-                                    print(row)
-                                    print(row.index[0][1])
-                                    print(row.index[1][1])
-                                    print(row.index[2][1])
+                                    # print("VALUES TO  UPADTRE ARE---------------------")
+                                    # print(index)
+                                    # print(type(row))
+                                    # print(row)
+                                    # print(row.index[0][1])
+                                    # print(row.index[1][1])
+                                    # print(row.index[2][1])
 
                                     # Create new object to add to the list of highest values
                                     to_add = {
@@ -285,8 +285,8 @@ def risk_assessment_save_report(threat_id, asset_id, risk_assessment_result, rep
 
     # Check Objectives for alerts
     objectives_to_check = objectives_inference.split("|")
-    print("-------------ALL ALERTS CHECK -----------------------")
-    print(objectives_to_check)
+    # print("-------------ALL ALERTS CHECK -----------------------")
+    # print(objectives_to_check)
     for alert in these_alerts:
         # If value is 0 then there is no alert to check
         # alert.alert_level is wether there is an alert and the value of the alert that its triggered
@@ -523,7 +523,7 @@ def start_risk_assessment(threat_id, asset_id):
     # exposure = calculate_exposure(this_exposure.risk_skill_level, this_exposure.risk_motive, this_exposure.risk_source,
     #                               this_exposure.risk_actor, this_exposure.risk_opportunity)
 
-    print("-------------------------------------- EXPOSURE IS ----------------------------------------------", exposure)
+    # print("-------------------------------------- EXPOSURE IS ----------------------------------------------", exposure)
     diag.cpt(exposureNodeId).fillWith([1 - exposure, exposure])
     # diag.cpt("te1").fillWith([1, 0])
 
@@ -609,8 +609,8 @@ def start_risk_assessment(threat_id, asset_id):
             # repo_objective_id=objective.id,
         )
 
-        print("--------------COUNT IS---------------")
-        print(asset_threat_impact_values.count())
+        # print("--------------COUNT IS---------------")
+        # print(asset_threat_impact_values.count())
         if asset_threat_impact_values.count() > 0:
             for asset_threat_impact_value in asset_threat_impact_values:
                 nodeImpactId = "imp" + str(impact.id)
@@ -661,7 +661,7 @@ def start_risk_assessment(threat_id, asset_id):
                 diag.cpt(nodeImpactId)[impact_node_id] = impact_node_value
         else:
             nodeImpactId = "imp" + str(impact.id)
-            print(nodeImpactId)
+            # print(nodeImpactId)
             diag.saveBIFXML(os.path.join("out", "GiraDynamicTEST.bifxml"))
             diag.cpt(nodeImpactId).fillWith([1, 0, 0])
 
@@ -736,15 +736,15 @@ def start_risk_assessment(threat_id, asset_id):
     diag.saveBIFXML(os.path.join("out", "GiraDynamic.bifxml"))
     # diag.saveBIF(os.path.join("out", "GiraDynamic.bif"))
 
-    print("------- Topological Order -------")
-    print(diag.topologicalOrder())
+    # print("------- Topological Order -------")
+    # print(diag.topologicalOrder())
 
 
     ie = gum.ShaferShenoyLIMIDInference(diag)
 
-    print("------- Is Solvable -------")
-    print(ie.isSolvable())
-    print("------- Is Something -------")
+    # print("------- Is Solvable -------")
+    # print(ie.isSolvable())
+    # print("------- Is Something -------")
     # diag.cpt("re").fillWith([0.6, 0.4])
     # print()
 
@@ -784,12 +784,12 @@ def start_risk_assessment(threat_id, asset_id):
     # --------------------------
 
     ie.makeInference()
-    print("---optimal decision---")
-    print(ie.optimalDecision("re"))
-    # print(ie.optimalDecision(nodeServId))
-    print("--- maximum utility---")
-
-    print(ie.MEU())
+    # print("---optimal decision---")
+    # print(ie.optimalDecision("re"))
+    # # print(ie.optimalDecision(nodeServId))
+    # print("--- maximum utility---")
+    #
+    # print(ie.MEU())
 
     # print("-------- INFERENCE RESULTS ----------")
     # print(ie.posterior('obj1'))
@@ -837,14 +837,14 @@ def start_risk_assessment(threat_id, asset_id):
     for utility in these_utils:
         nodeUtilId = "util" + str(utility.id)
         to_result_util = ie.posterior(nodeUtilId).topandas()
-        print("--------- UTILITY " + nodeUtilId + "----------")
-        print(ie.posterior(nodeUtilId))
+        # print("--------- UTILITY " + nodeUtilId + "----------")
+        # print(ie.posterior(nodeUtilId))
         results[nodeUtilId] = to_result_util
 
-    print(ie.posteriorUtility("util2"))
-
-    print("----------EXPOSURE POSTERIOR LIST -----------")
-    print(ie.posterior("te" + str(this_threat.id)).tolist())
+    # print(ie.posteriorUtility("util2"))
+    #
+    # print("----------EXPOSURE POSTERIOR LIST -----------")
+    # print(ie.posterior("te" + str(this_threat.id)).tolist())
     return results
     # Print Graph
     # with open(os.path.join("out", "GiraDynamic.bifxml"), "r") as out:
@@ -1035,7 +1035,7 @@ def start_risk_assessment_alert(threat_id, asset_id, exposure_value = None, mate
     # exposure = calculate_exposure(this_exposure.risk_skill_level, this_exposure.risk_motive, this_exposure.risk_source,
     #                               this_exposure.risk_actor, this_exposure.risk_opportunity)
 
-    print("-------------------------------------- EXPOSURE IS ----------------------------------------------", exposure)
+    # print("-------------------------------------- EXPOSURE IS ----------------------------------------------", exposure)
     diag.cpt(exposureNodeId).fillWith([1 - exposure, exposure])
     # diag.cpt("te1").fillWith([1, 0])
 
@@ -1122,8 +1122,8 @@ def start_risk_assessment_alert(threat_id, asset_id, exposure_value = None, mate
             # repo_objective_id=objective.id,
         )
 
-        print("--------------COUNT IS---------------")
-        print(asset_threat_impact_values.count())
+        # print("--------------COUNT IS---------------")
+        # print(asset_threat_impact_values.count())
         if asset_threat_impact_values.count() > 0:
             for asset_threat_impact_value in asset_threat_impact_values:
                 nodeImpactId = "imp" + str(impact.id)
@@ -1174,7 +1174,7 @@ def start_risk_assessment_alert(threat_id, asset_id, exposure_value = None, mate
                 diag.cpt(nodeImpactId)[impact_node_id] = impact_node_value
         else:
             nodeImpactId = "imp" + str(impact.id)
-            print(nodeImpactId)
+            # print(nodeImpactId)
             diag.saveBIFXML(os.path.join("out", "GiraDynamicTEST.bifxml"))
             diag.cpt(nodeImpactId).fillWith([1, 0, 0])
 
@@ -1249,15 +1249,15 @@ def start_risk_assessment_alert(threat_id, asset_id, exposure_value = None, mate
     diag.saveBIFXML(os.path.join("out", "GiraDynamic.bifxml"))
     # diag.saveBIF(os.path.join("out", "GiraDynamic.bif"))
 
-    print("------- Topological Order -------")
-    print(diag.topologicalOrder())
+    # print("------- Topological Order -------")
+    # print(diag.topologicalOrder())
 
 
     ie = gum.ShaferShenoyLIMIDInference(diag)
 
-    print("------- Is Solvable -------")
-    print(ie.isSolvable())
-    print("------- Is Something -------")
+    # print("------- Is Solvable -------")
+    # print(ie.isSolvable())
+    # print("------- Is Something -------")
 
 
     no_forgetting_array = []
@@ -1265,7 +1265,7 @@ def start_risk_assessment_alert(threat_id, asset_id, exposure_value = None, mate
     no_forgetting_array.append("re")
 
     # ------------- Setting Evidence -------------
-    print("SETTING EVIDENCE")
+    # print("SETTING EVIDENCE")
     # Setup value increase
     # Run an initial inference to get the value that will be added after wards
     if materialisation_value_increase is not None or exposure_value_increase is not None:
@@ -1281,15 +1281,15 @@ def start_risk_assessment_alert(threat_id, asset_id, exposure_value = None, mate
 
             exposureNodeId = "te" + str(this_threat.id)
             ie.addEvidence(exposureNodeId, [1-exposure_new_evidence, exposure_new_evidence])
-            print("==========PREVIOUS EXP VALUE================")
-            print(exposure_value_increase)
-            print(exposure_new_evidence)
-            print(1-exposure_new_evidence)
+            # print("==========PREVIOUS EXP VALUE================")
+            # print(exposure_value_increase)
+            # print(exposure_new_evidence)
+            # print(1-exposure_new_evidence)
 
         if materialisation_value_increase is not None:
             temp_list = temp_ie.posterior(nodeMatId).tolist()
-            print(temp_list)
-            print(temp_ie.posterior(nodeMatId).topandas())
+            # print(temp_list)
+            # print(temp_ie.posterior(nodeMatId).topandas())
             materialisation_value_to_increase = temp_list[1]*materialisation_value_increase/100
             materialisation_new_evidence = temp_list[1] + materialisation_value_to_increase
             if materialisation_new_evidence > 1:
@@ -1300,10 +1300,10 @@ def start_risk_assessment_alert(threat_id, asset_id, exposure_value = None, mate
                 # ie.addEvidence(nodeMatId, [1-0.3330799999999999, 0.3330799999999999])
                 ie.addEvidence(nodeMatId, [1-materialisation_new_evidence, materialisation_new_evidence])
 
-            print("==========PREVIOUS MAT VALUE================")
-            print(materialisation_value_to_increase)
-            print(materialisation_new_evidence)
-            print(1-materialisation_new_evidence)
+            # print("==========PREVIOUS MAT VALUE================")
+            # print(materialisation_value_to_increase)
+            # print(materialisation_new_evidence)
+            # print(1-materialisation_new_evidence)
 
 
 
@@ -1324,7 +1324,7 @@ def start_risk_assessment_alert(threat_id, asset_id, exposure_value = None, mate
     # Consequences depend on type of threat
     # Find which threat we are handling now
     if consequence_values is not None:
-        print("CONSEQUENCES ERROR")
+        # print("CONSEQUENCES ERROR")
         if threat_id == "1":
             ie.addEvidence( "con" + str(these_consequences[0].id), [1 -consequence_values/100,consequence_values/100]) # Disrupt Operations
             ie.addEvidence( "con" + str(these_consequences[1].id), [1 -consequence_values/100,consequence_values/100]) # Unauthorised Control
@@ -1381,7 +1381,7 @@ def start_risk_assessment_alert(threat_id, asset_id, exposure_value = None, mate
             ie.addEvidence("con" + str(these_consequences[4].id), [1-consequence_values/100,consequence_values / 100])  # Unauthorised modification of data
             ie.addEvidence("con" + str(these_consequences[5].id),[1-consequence_values/100, consequence_values / 100])  # Infrastructure malfunction
         else:
-            print("-------SKIPPED------")
+            # print("-------SKIPPED------")
             pass
 
     # Impact and Obj nodes are left as is
@@ -1391,12 +1391,12 @@ def start_risk_assessment_alert(threat_id, asset_id, exposure_value = None, mate
     # -Make Inference-
     ie.makeInference()
 
-    print("---optimal decision---")
-    print(ie.optimalDecision("re"))
-    # print(ie.optimalDecision(nodeServId))
-    print("--- maximum utility---")
-
-    print(ie.MEU())
+    # print("---optimal decision---")
+    # print(ie.optimalDecision("re"))
+    # # print(ie.optimalDecision(nodeServId))
+    # print("--- maximum utility---")
+    #
+    # print(ie.MEU())
 
     # print("-------- INFERENCE RESULTS ----------")
     # print(ie.posterior('obj1'))
@@ -1837,7 +1837,7 @@ def risk_assessment_manual(threat_id, asset_id, exposures_set, materialisations_
             elif exposure_set["value"] == "nothing":
                 value_to_add = 0
             else:
-                print("Error passing values to risk assessment")
+                # print("Error passing values to risk assessment")
                 continue
 
             nodeTeId = "te" + str(exposure_set["id"])
@@ -1851,7 +1851,7 @@ def risk_assessment_manual(threat_id, asset_id, exposures_set, materialisations_
             elif response_set_set["value"] == "nothing":
                 value_to_add = 0
             else:
-                print("Error passing values to risk assessment")
+                # print("Error passing values to risk assessment")
                 continue
 
             # print("Responses are set")
@@ -1865,7 +1865,7 @@ def risk_assessment_manual(threat_id, asset_id, exposures_set, materialisations_
             elif materialisation_set["value"] == "nothing":
                 value_to_add = 0
             else:
-                print("Error passing values to risk assessment")
+                # print("Error passing values to risk assessment")
                 continue
 
             # print("Materialisations are set")
@@ -1879,7 +1879,7 @@ def risk_assessment_manual(threat_id, asset_id, exposures_set, materialisations_
             elif consequence_set["value"] == "nothing":
                 value_to_add = 0
             else:
-                print("Error passing values to risk assessment")
+                # print("Error passing values to risk assessment")
                 continue
 
             nodeConsId = "con" + str(consequence_set["id"])
@@ -1892,7 +1892,7 @@ def risk_assessment_manual(threat_id, asset_id, exposures_set, materialisations_
             elif service_set["value"] == "nothing":
                 value_to_add = 0
             else:
-                print("Error passing values to risk assessment")
+                # print("Error passing values to risk assessment")
                 continue
 
             nodeServId = "serv" + str(service_set["id"])
@@ -1905,7 +1905,7 @@ def risk_assessment_manual(threat_id, asset_id, exposures_set, materialisations_
             elif impact_set["value"] == "nothing":
                 value_to_add = 0
             else:
-                print("Error passing values to risk assessment")
+                # print("Error passing values to risk assessment")
                 continue
 
             nodeImpId = "imp" + str(impact_set["id"])
@@ -1918,7 +1918,7 @@ def risk_assessment_manual(threat_id, asset_id, exposures_set, materialisations_
             elif objective_set["value"] == "nothing":
                 value_to_add = 0
             else:
-                print("Error passing values to risk assessment")
+                # print("Error passing values to risk assessment")
                 continue
 
             nodeObjId = "obj" + str(objective_set["id"])

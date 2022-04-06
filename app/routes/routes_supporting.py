@@ -43,6 +43,7 @@ def setup_database():
 def asset_reputation():
     result = request.json
     reputation_report = json.load(result)
+    # print("-----REPUTATION RECEIVED----")
     SendKafkaReport(reputation_report, "rcra-asset-reputation")
 
     for asset_reputation_entry in reputation_report:

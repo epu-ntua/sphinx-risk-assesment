@@ -31,18 +31,18 @@ def get_ml_flow_info(experiment, root_dir):
         e = client.get_experiment_by_name(experiment)
     except mlflow.exceptions.MlflowException:
         return False
-    print(e.experiment_id, e.name)
+    # print(e.experiment_id, e.name)
     # define / create local directory to store example
     local_dir = os.path.join(root_dir, e.name)
     if not os.path.exists(local_dir):
         os.mkdir(local_dir)
     runs = client.search_runs(e.experiment_id)
     # print_run_info(runs)
-    print("--")
+    # print("--")
     # download last run artifacts
     local_path = client.download_artifacts(runs[0].info.run_id, "model/input_example.json", local_dir)
-    print("Artifacts downloaded in: {}".format(local_dir))
-    print("Artifacts: {}".format(local_dir))
+    # print("Artifacts downloaded in: {}".format(local_dir))
+    # print("Artifacts: {}".format(local_dir))
     return True
 
 def get_RiskML_value(asset_type, action_type, estimation_type, port):
@@ -51,7 +51,7 @@ def get_RiskML_value(asset_type, action_type, estimation_type, port):
     # asset.variety = {Server, User Device, Person, Media}
     # asset.asset.variety = {S.Database, S.Web.application, U.Desctop or laptop}
     # attribute = {Confidenciality,availability,integrity}
-    print("To start", flush=True)
+    # print("To start", flush=True)
 
     # Get root directory to save json input in correct path
     current_dict = os.getcwd()
@@ -473,7 +473,7 @@ def get_RiskML_value(asset_type, action_type, estimation_type, port):
     # print(payload)
     response = requests.request("POST", url, headers=headers, data=payload)
     response_converted = json.loads(response.content)
-    print("Response is:", response_converted[0])
+    # print("Response is:", response_converted[0])
     return response_converted[0]
 # endregion 1 RiskML
 # region 2 TIAR Threat metrics

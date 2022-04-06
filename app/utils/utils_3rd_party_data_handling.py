@@ -85,7 +85,7 @@ def SendKafkaReport(report, topic_to_write):
         print("Kafka producing sending data encountered an error")
 
     result = producer.flush()
-    print(result, flush=True)
+    # print(result, flush=True)
     producer.close()
 
 # ############################## UNITL HERE ######################################
@@ -236,9 +236,9 @@ def send_risk_report(report_id, asset_id, threat_id):
     for alert in alerts_triggered:
         if alert == "":
             continue
-        print("-------ALERT WITH ERROR")
-        print(alert)
-        print(type(alert))
+        # print("-------ALERT WITH ERROR")
+        # print(alert)
+        # print(type(alert))
         alerts_to_add.append(json.loads(alert))
 
 
@@ -282,84 +282,19 @@ def send_risk_report(report_id, asset_id, threat_id):
                     # "Evaluation" : [json.loads(utility_inference_values[1]), json.loads(utility_inference_values[2])]
             },
             "alerts" : alerts_to_add,
-            # "utilities": {
-            #     "CIA": {
-            #         "most_probable_scenarios" : [
-            #             {
-            #                 "confidentiality" : "medium",
-            #                 "integrity" : "medium",
-            #                 "availability" : "low",
-            #                 "probability" : "0.2891"
-            #
-            #             },
-            #             {
-            #                 "confidentiality": "high",
-            #                 "integrity": "high",
-            #                 "availability": "medium",
-            #                 "probability": "0.2654"
-            #
-            #             },
-            #             {
-            #                 "confidentiality": "medium",
-            #                 "integrity": "medium",
-            #                 "availability": "medium",
-            #                 "probability": "0.1266"
-            #
-            #             },
-            #         ],
-            #         "optimal_scenario":{
-            #             "confidentiality": "low",
-            #             "integrity": "low",
-            #             "availability": "low",
-            #             "probability": "0.0225"
-            #         }
-            #     },
-            #     "Evaluation":{
-            #         "most_probable_scenarios" : [
-            #             {
-            #                 "monetary" : "low",
-            #                 "safety" : "low",
-            #                 "probability" : "0.6275"
-            #             },
-            #             {
-            #                 "monetary" : "medium",
-            #                 "safety" : "medium",
-            #                 "probability": "0.1573"
-            #
-            #             },
-            #             {
-            #                 "monetary" : "low",
-            #                 "safety" : "medium",
-            #                 "probability": "0.0853"
-            #             },
-            #         ],
-            #         "optimal_scenario":{
-            #             "monetary" : "low",
-            #                 "safety" : "low",
-            #                 "probability" : "0.6275"
-            #         }
-            #     },
-            # },
-            # "alerts": {
-            #     "objectives": {
-            #         "confidentiality": {
-            #             "level" : "high",
-            #             "threshold" : "0.4"
-            #         }
-            #     }
-            # }
+
         }
     }
 
-    print("----- THE REPORT IS -----")
-    print(report_to_send)
-    print(json.dumps(report_to_send))
+    # print("----- THE REPORT IS -----")
+    # print(report_to_send)
+    # print(json.dumps(report_to_send))
     with open('example_output.json', 'w', encoding='utf-8') as f:
         json.dump(report_to_send, f, ensure_ascii=False, indent=4)
-    report_to_send = json.dumps(report_to_send)
+    # report_to_send = json.dumps(report_to_send)
 
     # print(report_to_send)
-    # SendKafkaReport(report_to_send, "rcra-report-topic")
+    SendKafkaReport(report_to_send, "rcra-report-topic")
 
 
 def send_alert_new_asset(asset_id):
@@ -370,13 +305,13 @@ def send_alert_new_asset(asset_id):
     except SQLAlchemyError:
         return Response("SQLAlchemyError", 500)
 
-    print("1")
+    # print("1")
     try:
         asset_vulnerabilities_count = VulnerabilityReportVulnerabilitiesLink.query.join(RepoAsset).filter(
             RepoAsset.id == asset_obj.id).count()
     except SQLAlchemyError:
         return Response("SQLAlchemyError", 500)
-    print("2")
+    # print("2")
     alert_to_send = {
         "alert_type": "new_asset_detected",
         "date_time": now.strftime("%m/%d/%Y, %H:%M:%S"),
@@ -387,11 +322,11 @@ def send_alert_new_asset(asset_id):
         "asset_url": GLOBAL_IP + "repo/assets/" + str(asset_obj.id) + "/"
     }
 
-    print("Alerts is --------", alert_to_send, flush=True)
+    # print("Alerts is --------", alert_to_send, flush=True)
     with open('send_alert_new_asset'+ str(asset_id) +'.json', 'w', encoding='utf-8') as f:
         json.dump(alert_to_send, f, ensure_ascii=False, indent=4)
 
-    # SendKafkaReport(alert_to_send, "rcra-report-topic")
+    SendKafkaReport(alert_to_send, "rcra-alerts")
     return alert_to_send
 
 def send_alert_info_update_needed(asset_id=None, threat_id=None, threat_exposure_info=-1,
@@ -457,10 +392,12 @@ def send_alert_info_update_needed(asset_id=None, threat_id=None, threat_exposure
         "pages_update_url": pages_to_send
     }
 
-    print("Alerts is --------", alert_to_send, flush=True)
+    # print("Alerts is --------", alert_to_send, flush=True)
     with open('send_alert_info_update_needed' + str(asset_id) + '.json', 'w', encoding='utf-8') as f:
         json.dump(alert_to_send, f, ensure_ascii=False, indent=4)
     return alert_to_send
+
+    SendKafkaReport(alert_to_send, "rcra-alerts")
 
 
 def security_event_risk_reports(report_id):
@@ -491,11 +428,11 @@ def security_event_risk_reports(report_id):
         ]
     }
 
-    print("Alerts is --------", alert_to_send, flush=True)
+    # print("Alerts is --------", alert_to_send, flush=True)
     with open('security_event_risk_reports' + str(report_id) + '.json', 'w', encoding='utf-8') as f:
         json.dump(alert_to_send, f, ensure_ascii=False, indent=4)
 
-
+    SendKafkaReport(alert_to_send, "rcra-alerts")
 
 
 def CAPEC_excel_insertData(capecexcelpath):
@@ -583,9 +520,9 @@ def CVE_excel_insertData(cveexcelpath):
 def v_report(fpath):
     with open(fpath, "r") as fp:
         obj = json.load(fp)
-        print("VRERPORT")
-        print(obj)
-        print(type(obj))
+        # print("VRERPORT")
+        # print(obj)
+        # print(type(obj))
         if obj["id"] is not None:
             reprow_reportId = obj["id"]
             if db.session.query(VulnerabilityReport.id).filter_by(reportId=reprow_reportId).first() is not None:
@@ -664,7 +601,7 @@ def v_report(fpath):
 def v_report_json(report_name, report_details):
     # obj = json.load(fp)
     obj = report_details
-    print("VRERPORT")
+    # print("VRERPORT")
     # print(obj)
     # print(type(obj))
     if obj["id"] is not None:
@@ -698,7 +635,7 @@ def v_report_json(report_name, report_details):
             else:
                 continue
         # TODO: Change to search with MAC address???
-        print(my_asset_IP)
+        # print(my_asset_IP)
         if db.session.query(RepoAsset.id).filter_by(ip=my_asset_IP).first() is None:
             my_repo_asset = RepoAsset(ip=my_asset_IP)
             my_repo_asset.mac_address = my_asset_MAC if my_asset_MAC is not None else ""
@@ -740,8 +677,8 @@ def v_report_json(report_name, report_details):
                 if item.get('service_vulnerabilities'):
                     for service_data in item['service_vulnerabilities'][0].items():
                         vulnerability_item = service_data[1]
-                        print(vulnerability_item)
-                        print(type(vulnerability_item))
+                        # print(vulnerability_item)
+                        # print(type(vulnerability_item))
                         if isinstance(vulnerability_item, Dict) and vulnerability_item.get('null'):
                             for cve_item in vulnerability_item['null']:
                                 if cve_item['type'] == "cve":
@@ -1010,33 +947,33 @@ def siem_alerts(report_details):
             if db.session.query(RepoAsset.ip).filter_by(ip=alert_asset_ip).first() is not None:
                 my_asset = db.session.query(RepoAsset).filter_by(ip=alert_asset_ip).first()
 
-                print("_______MYASSETIS____________")
-                print(my_asset)
-                print("_______MYTHREATIS____________")
-                print(my_threat)
+                # print("_______MYASSETIS____________")
+                # print(my_asset)
+                # print("_______MYTHREATIS____________")
+                # print(my_threat)
                 this_risk_assessment = RepoRiskAssessment.query.filter_by(repo_threat_id=my_threat.id,
                                                                           repo_asset_id=my_asset.id).first()
                 if this_risk_assessment is None:
                     pass
                 else:
-                    print("HELLO 1")
+                    # print("HELLO 1")
                     risk_assessment_result = start_risk_assessment_alert(my_threat.id, my_asset.id,
                                                                          materialisation_value=100,
                                                                          consequence_values=100)
-                    print("HELLO 1.5")
+                    # print("HELLO 1.5")
                     risk_assessment_saved = risk_assessment_save_report(my_threat.id, my_asset.id,
                                                                         risk_assessment_result, "incident")
                     send_risk_report(risk_assessment_saved.id, my_asset.id, my_threat.id)
-                    print("HELLO 2")
+                    # print("HELLO 2")
                     security_event_risk_reports(risk_assessment_saved.id)
 
-                print("HELLO 3")
+                # print("HELLO 3")
                 # TODO: Initiate Risk Assessment for this asset with mat1 and the rest nodes = 100% [we will define these for each threat- in RA call]
                 other_net_assets = get_all_assets_of_network_group(my_asset)
-                print("---- OTHER ASSETS ARE ----")
-                print(other_net_assets)
+                # print("---- OTHER ASSETS ARE ----")
+                # print(other_net_assets)
                 if other_net_assets:
-                    print("Assets on this Networks")
+                    # print("Assets on this Networks")
                     for each_asset in other_net_assets:
                         # Check if the asset and threat pair has a risk assessment report ready
                         # If there isnt continue
@@ -1045,7 +982,7 @@ def siem_alerts(report_details):
 
 
                         if not each_asset.verified:
-                            print("I'm not verified")
+                            # print("I'm not verified")
                             send_alert_new_asset(each_asset.id)
                             continue
                             # risk_assessment_result = start_risk_assessment_alert(my_threat.id, each_asset.id, materialisation_value=100,consequence_values=100)

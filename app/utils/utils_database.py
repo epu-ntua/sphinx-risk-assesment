@@ -48,15 +48,15 @@ def rcra_db_init():
     # print(output)
 
     print("Initiating Database", flush=True)
-    if RepoService.query.count() is not 0:
-        print(RepoService.query.count())
+    if RepoService.query.count() != 0:
+        # print(RepoService.query.count())
         return "Already exists"
 
     # Adding Services
     to_add_services = import_fixture_from_file("repo_service")
 
     for service_json in to_add_services:
-        print(service_json)
+        # print(service_json)
         to_add_service = RepoService(**service_json)
         db.session.add(to_add_service)
 
@@ -172,8 +172,8 @@ def rcra_db_init():
     to_add_assets = import_fixture_from_file("repo_asset")
     for asset in to_add_assets:
         tempasset = asset
-        print("--------TEMP ASSET VALUES IS --------")
-        print(tempasset)
+        # print("--------TEMP ASSET VALUES IS --------")
+        # print(tempasset)
         if tempasset["verified"] == "":
             tempasset["verified"] = None
         elif tempasset["verified"] == "0":
@@ -218,9 +218,9 @@ def rcra_db_init():
     # Adding cves
     to_add_cves = import_fixture_from_file("common_vulnerabilities_and_exposures")
     for cve in to_add_cves:
-        print("-----------------TEMP IS -------------")
+        # print("-----------------TEMP IS -------------")
         tempcve = cve
-        print(tempcve)
+        # print(tempcve)
         # cve = json.load(cve)
         if tempcve["baseScore"] == "":
             tempcve["baseScore"] = None

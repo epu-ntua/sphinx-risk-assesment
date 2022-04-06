@@ -129,13 +129,14 @@ def SendKafkaReport(report, topic_to_write):
     # #                         value_serializer=lambda value: value.encode())
     #
     #
-    print("Trying to send with Kafka Producer")
+    # print("Trying to send with Kafka Producer")
     try:
         producer.send(topic_to_write, json.dumps(report))
     except KafkaError:
         print("Kafka producing sending data encountered an error")
 
     result = producer.flush()
+    print("Data Sent to Kafka result:")
     print(result, flush=True)
     producer.close()
 
@@ -171,7 +172,7 @@ def generate_checkpoint(steps, kafkaInitialiser):
 def get_kafka_data(kafka_topic):
     # #KAFKA CLIENT CONSUMER
     #   try:
-    print("Trying Consume")
+    print("Starting Kafka Consumer")
     consumer = KafkaConsumer(bootstrap_servers=BOOTSTRAP_SERVERS,
                              #auto_offset_reset='earliest',
                              security_protocol='SASL_SSL',
@@ -196,7 +197,7 @@ def get_kafka_data(kafka_topic):
                 #'msg_partition': msg.partition(),  # Partition id from which the message was extracted
                 #'msg_topic': msg.topic(),  # Topic in which Producer posted the message to
             }
-            print(dat)
+            # print(dat)
             # print("Kafka output:", json.loads(msg.value.decode()))
 
     consumer.close()
@@ -205,10 +206,10 @@ def get_kafka_data_print_test(kafka_topic):
     # #KAFKA CLIENT CONSUMER
     #   try:
     # print("Trying Consume: ", kafka_topic, flush = True)
-    print(BOOTSTRAP_SERVERS)
-    print(path_to_kafka_cert)
-    print(TokenProvider())
-    print("----------Consume Info End ""--------------------------------")
+    # print(BOOTSTRAP_SERVERS)
+    # print(path_to_kafka_cert)
+    # print(TokenProvider())
+    # print("----------Consume Info End ""--------------------------------")
     consumer = KafkaConsumer(bootstrap_servers=BOOTSTRAP_SERVERS,
                              auto_offset_reset='latest',
                              enable_auto_commit=True,
@@ -241,9 +242,9 @@ def get_kafka_data_print_test(kafka_topic):
     #   print("KafkaConsumer error when initialising")
     #  return "Encountered Error"
 
-    print("Reading Consumer")
+    print("Listening to Kafka Consumer")
     for msg in consumer:
-        print("Reading")
+        print("Reading new consumer data")
         if msg:
             dat = {
                 "msg" : msg
@@ -276,14 +277,14 @@ def get_kafka_data_print_test(kafka_topic):
                 # print(result["data"])
                 # print(type(result["data"]))
                 # print(type(result["data"]["vaaas-reports"]))
-                print(json.loads(result["data"]["vaaas-reports"]))
+                # print(json.loads(result["data"]["vaaas-reports"]))
                 result_json = json.loads(result["data"]["vaaas-reports"])
                 for attribute, value in result_json.items():
-                    print(attribute)
-                    print("---")
-                    print(value)
-                    print(type(attribute))
-                    print(type(value))
+                    # print(attribute)
+                    # print("---")
+                    # print(value)
+                    # print(type(attribute))
+                    # print(type(value))
                     v_report_json(attribute,value)
                 # utils.handle_kafka_input(msg, "vaaas-reports")
                 print("-------------------------------------------------------------------------", flush=True)

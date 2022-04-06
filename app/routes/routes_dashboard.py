@@ -80,10 +80,10 @@ def repo_dashboard_asset():
             if assets_name_list_instance is None:
                 assets_name_list[it] = "No_name"
 
-        print("-----------------------------------------------------", assets_name_list)
+        # print("-----------------------------------------------------", assets_name_list)
         # for asset in repo_asset:
-        print(asset_type_values_list)
-        print(asset_types_list)
+        # print(asset_type_values_list)
+        # print(asset_types_list)
 
         # repo_assets_type = json.dumps(repo_assets_type)
 
@@ -116,7 +116,7 @@ def repo_dashboard_threat():
                 "cwe": "1"
             }
         ]
-        print(repo_threats)
+        # print(repo_threats)
         return render_template('templates_dashboard/repo_threat_dashboard.html', repo_threats=repo_threats,
                                )
 
@@ -377,7 +377,7 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, report_id=-1):
                 except SQLAlchemyError as er:
                     print(er)
                     return "SQLAlchemyError"
-                print(this_risk_assessment)
+                # print(this_risk_assessment)
                 report_id = this_risk_assessment[0].id
 
             this_exposure = convert_database_items_to_json_table(this_exposure)
@@ -459,8 +459,8 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, report_id=-1):
 
             if report_id != -1:
                 new_risk_assessment_result = {}
-                print("--------------ACTUAL-----------")
-                print(this_risk_assessment)
+                # print("--------------ACTUAL-----------")
+                # print(this_risk_assessment)
                 # print(type())
                 # print(this_risk_assessment[0]["exposure_inference"])
                 exposure_inference_values = this_risk_assessment[0]["exposure_inference"].split("|")
@@ -581,17 +581,17 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, report_id=-1):
                 #         }
                 #     )
                 # }
-                print("--------------ACTUAL-----------")
-
-                print("--------------NEW ACTUAL-----------")
-                # print(temp_exposure_df)
-                print("--------------NEW ACTUAL-----------")
-
-                print("--------------RESSSSSSSSSSSSSSUUUUUUUUUUUUUUUUUUULLLLLLLLLLLLLLLLLTTTTTTTTT-----------")
+                # print("--------------ACTUAL-----------")
+                #
+                # print("--------------NEW ACTUAL-----------")
+                # # print(temp_exposure_df)
+                # print("--------------NEW ACTUAL-----------")
+                #
+                # print("--------------RESSSSSSSSSSSSSSUUUUUUUUUUUUUUUUUUULLLLLLLLLLLLLLLLLTTTTTTTTT-----------")
                 # print(risk_assessment_result)
                 real_te12 = risk_assessment_result["te12"]
-                print(real_te12)
-                print(real_te12.get(key="te12"))
+                # print(real_te12)
+                # print(real_te12.get(key="te12"))
                 # print(type(real_te12.get([0])))
                 # print(real_te12.get([1]))
                 # print(type(real_te12.get([1])))
@@ -604,9 +604,9 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, report_id=-1):
                 temp_series = pd.DataFrame(temp_series.to_frame()).to_html()
                 # temp_series = {"te12": temp_series}
                 actual_temp = pd.Series(data=temp_series)
-                print("TEMPSERIES IS")
-                print(actual_temp)
-                print("--------------RESSSSSSSSSSSSSSUUUUUUUUUUUUUUUUUUULLLLLLLLLLLLLLLLLTTTTTTTTT-----------")
+                # print("TEMPSERIES IS")
+                # print(actual_temp)
+                # print("--------------RESSSSSSSSSSSSSSUUUUUUUUUUUUUUUUUUULLLLLLLLLLLLLLLLLTTTTTTTTT-----------")
                 # print(repo_threats)
 
             # Table showing objective results
@@ -655,7 +655,7 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, report_id=-1):
                 "Availability": "",
                 "Safety": ""
             }
-            print(risk_assessment_result)
+            # print(risk_assessment_result)
             for objective in these_objectives:
 
                 # Due to differences between the values loaded from report and default risk assessment need different call
@@ -777,11 +777,11 @@ def repo_dashboard_risk_objectives(threat_id=1, asset_id=-1, report_id=-1):
                 json_reports[custom_it]["detailed"] = json_detailed_report_to_add
                 custom_it = custom_it + 1
 
-            print(json_reports)
+            # print(json_reports)
             for each_report in json_reports:
                 each_report["date_time"] = each_report["date_time"].strftime("%m/%d/%Y, %H:%M:%S")
-            print("==============================================")
-            print(json_reports)
+            # print("==============================================")
+            # print(json_reports)
             json_reports = json.dumps(json_reports)
 
         # existing_report_data = {
@@ -840,10 +840,10 @@ def repo_dashboard_vulnerability():
 
         for vulnerability_object in repo_vulnerabilities:
             # Count asset types
-            print(vulnerability_object.asset)
+            # print(vulnerability_object.asset)
             dict_assets_type[vulnerability_object.asset.type.name] += 1
-            print(vulnerability_object.cve.CVEId)
-            print(dict_vulnerabilities_occurrence)
+            # print(vulnerability_object.cve.CVEId)
+            # print(dict_vulnerabilities_occurrence)
             if vulnerability_object.cve.CVEId:
                 if vulnerability_object.cve.CVEId in dict_vulnerabilities_occurrence:
                     dict_vulnerabilities_occurrence[vulnerability_object.cve.CVEId] += 1
@@ -852,7 +852,7 @@ def repo_dashboard_vulnerability():
 
             # Gather data for timeline vulnerarbilities
             time_since_insertion = datetime.now() - vulnerability_object.date
-            print("Timedelta is: ", time_since_insertion.resolution.days)
+            # print("Timedelta is: ", time_since_insertion.resolution.days)
             if time_since_insertion.resolution.days < 365:
                 used_asset_log = {"asset": vulnerability_object.asset_id, "vulnerability": vulnerability_object.cve_id}
                 if used_asset_log in already_used_asset_vulnerabilities:
@@ -867,7 +867,7 @@ def repo_dashboard_vulnerability():
         now = datetime.now()
         vulnerability_months_list = [(now + relativedelta(months=i)).strftime('%b') for i in range(12)]
 
-        print(vulnerability_months_list)
+        # print(vulnerability_months_list)
 
         asset_types_list = list(dict_assets_type.keys())
         asset_types_vulnerability_occurrence = list(dict_assets_type.values())
@@ -888,10 +888,10 @@ def repo_dashboard_vulnerability():
 
         repo_assets = convert_database_items_to_json_table(repo_assets)
         repo_assets = json.dumps(repo_assets)
-        print("--------- Vuln Dashboard Data is -----------")
-        print(asset_types_list)
-        print(asset_types_vulnerability_occurrence)
-        print(repo_assets)
+        # print("--------- Vuln Dashboard Data is -----------")
+        # print(asset_types_list)
+        # print(asset_types_vulnerability_occurrence)
+        # print(repo_assets)
         return render_template('templates_dashboard/repo_vulnerability_dashboard.html',
                                repo_assets=repo_assets,
                                asset_types_vulnerability_occurrence=asset_types_vulnerability_occurrence,
@@ -1020,8 +1020,8 @@ def repo_dashboard_risk_history(threat_id=1, asset_id=-1,type_id=-1):
                     return Response("SQLAlchemyError", 500)
                 type_display = "Incident Secondary"
 
-            print("_++_+_+_+_+_+_++")
-            print(type_id)
+            # print("_++_+_+_+_+_+_++")
+            # print(type_id)
             for single_report in repo_reports:
                 # Add labels for the graphs
                 all_reports_datetimes.append(single_report.date_time.strftime("%m/%d/%Y, %H:%M:%S") + " | " + single_report.type)
@@ -1086,11 +1086,11 @@ def repo_dashboard_risk_history(threat_id=1, asset_id=-1,type_id=-1):
                 json_reports[custom_it]["detailed"] = json_detailed_report_to_add
                 custom_it = custom_it + 1
 
-            print(json_reports)
+            # print(json_reports)
             for each_report in json_reports:
                 each_report["date_time"] = each_report["date_time"].strftime("%m/%d/%Y, %H:%M:%S")
-            print("==============================================")
-            print(json_reports)
+            # print("==============================================")
+            # print(json_reports)
             json_reports = json.dumps(json_reports)
 
         # existing_report_data = {
